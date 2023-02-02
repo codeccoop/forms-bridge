@@ -1,0 +1,54 @@
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      changes: 
+        - README.md
+        - .gitlab-ci.yml
+      when: never
+          # Do no allow manually triggered pipelines to prevent duplicates!
+          # Instead rerun the pipeline created with the last push
+    - if: $CI_PIPELINE_SOURCE != "push"
+      when: never
+    # Only execute when a valid version tag like 1.0, 2.3-dev or similar is given
+    # Required is always one point like 1.0
+    - if: $CI_COMMIT_TAG =~ /^[0-9]+[.][0-9]+([.][0-9]+)?([-a-z])*$/
+
+stages:          # List of stages for jobs, and their order of execution
+  - package
+  - upload
+  - release
+
+variables:
+  # Package version can only contain numbers (0-9), and dots (.).
+  # Must be in the format of X.Y.Z, i.e. should match /\A\d+\.\d+\.\d+\z/ regular expresion.
+  # See https://docs.gitlab.com/ee/user/packages/generic_packages/#publish-a-package-file
+  ZIP: $CI_PROJECT_NAME.zip
+
+  PACKAGE_VERSION: $CI_COMMIT_TAG
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${PACKAGE_VERSION}"
+
+package: 
+  image: javieraviles/zip:latest
+  stage: package
+  script:      
+    - 'zip -r $ZIP *'
+    - 'ls -lah'
+  artifacts:
+    paths:
+      - $ZIP
+upload:
+  stage: upload
+  image: curlimages/curl:latest
+  script:
+    - |
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ${ZIP} ${PACKAGE_REGISTRY_URL}/${ZIP}
+      
+release:
+  # Caution, as of 2021-02-02 these assets links require a login, see:
+  # https://gitlab.com/gitlab-org/gitlab/-/issues/299384
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  script:
+    - |
+      release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
+        --assets-link "{\"name\":\"${ZIP}\",\"url\":\"${PACKAGE_REGISTRY_URL}\/${ZIP}\",\"link_type\":\"package\",\"filepath\":\"\/plugins\/${ZIP}\"}"
