@@ -2,7 +2,7 @@
 
 function wpct_forms_missing_dependencies()
 {
-    global $WPCT_FORMS_DEPENDENCIES;
+    $WPCT_FORMS_DEPENDENCIES = $GLOBALS['WPCT_FORMS_DEPENDENCIES'];
     $missings = array();
     foreach ($WPCT_FORMS_DEPENDENCIES as $name => $file) {
         if (!wpct_forms_is_plugin_active($file)) {

@@ -8,7 +8,7 @@
  * Author URI:      https://coopdevs.org
  * Text Domain:     wpct-forms-ce
  * Domain Path:     /languages
- * Version:         0.1.0
+ * Version:         0.1.3
  *
  * @package         Wpct_Forms_CE
  */
@@ -42,8 +42,9 @@ function wpct_forms_ce_control_error($response, $feed, $entry, $form)
 require_once "includes/dependencies-checker.php";
 
 // Define plugin dependencies
-$WPCT_FORMS_DEPENDENCIES = array(
+$GLOBALS['WPCT_FORMS_DEPENDENCIES'] = array(
     'Gravity-forms' => 'gravityforms/gravityforms.php'
 );
+
 // Plugin dependencies validation
 wpct_forms_check_dependencies();
