@@ -22,7 +22,9 @@ function wpct_forms_ce_api_submissions($entry, $form)
 
 function wpct_gform_after_submission_build_call_body($entry, $form)
 {
-	$form_vals = array();
+	$form_vals = array(
+		'entry_id' => $entry['id']
+	);
 	foreach ($form['fields'] as $field) {
 		$inputs = $field->get_entry_inputs();
 		// composed fields
@@ -48,7 +50,7 @@ function wpct_gform_after_submission_build_call_body($entry, $form)
 function wpct_forms_ce_get_crmlead_apicall_body($form_vals)
 {
 	$body = array(
-		'name' => $form_vals['source_xml_id'] . ' submission ref: ',
+		'name' => $form_vals['source_xml_id'] . ' submission: '.$form_vals['entry_id'],
 		'metadata' => array()
 	);
 	foreach ($form_vals as $form_key => $form_val) {
