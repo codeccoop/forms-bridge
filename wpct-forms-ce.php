@@ -38,13 +38,11 @@ function wpct_forms_ce_control_error($response, $feed, $entry, $form)
     }
 }
 
-// Dependency checker
-require_once "includes/dependencies-checker.php";
-
-// Define plugin dependencies
-$GLOBALS['WPCT_FORMS_DEPENDENCIES'] = array(
-    'Gravity-forms' => 'gravityforms/gravityforms.php'
-);
-
-// Plugin dependencies validation
-wpct_forms_check_dependencies();
+add_action('admin_init', 'wpct_forms_ce_init', 10);
+function wpct_forms_ce_init()
+{
+    add_filter('wpct_dependencies_check', function ($dependencies) {
+        $dependencies['gravityforms/gravityforms.php'] = '<a href="https://www.gravityforms.com/">Gravity Forms</a>';
+        return $dependencies;
+    });
+}
