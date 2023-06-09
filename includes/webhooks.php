@@ -2,67 +2,15 @@
 add_action('gform_after_submission', 'wpct_forms_ce_api_submissions', 10, 2);
 function wpct_forms_ce_api_submissions($entry, $form)
 {
-	$form_vals = wpct_gform_after_submission_build_call_body($entry, $form);
-	if (isset($form_vals['source_xml_id'])) {
-		$crmlead_apicall_body = wpct_forms_ce_get_crmlead_apicall_body($form_vals);
-		$response = wpct_oc_post_odoo('/api/private/crm-lead', $crmlead_apicall_body);
-		if ($response) {
-			$response_json = json_decode($response['body']);
-		} else {
-			// Admin error email
-			$to = wpct_forms_ce_option_getter('wpct_forms_ce_general', 'notification_receiver');
-			$subject = "Odoo subscription request submission error: Form(" . $form['id'] . ") Entry (" . $entry['id'] . ")";
-			$body = "Submission subscription request for entry: " . $entry['id'] . " failed.<br/>Form id: " . $form['id'] . "<br/>Form title: " . $form['title'];
-			wp_mail($to, $subject, $body);
-		}
-	} else {
-		// throw new Exception("Error Processing Request", 1);
-	}
-}
+	$form_vals = wpct_forms_ce_parse_form_entry($entry, $form);
+	if (!isset($submission['source_xml_id'])) throw new Exception('Error Processing Request', 400);
+	$submission_payload = apply_filters('wpct_forms_ce_prepare_submission', $form_vals);
 
-function wpct_gform_after_submission_build_call_body($entry, $form)
-{
-	$form_vals = array(
-		'entry_id' => $entry['id']
-	);
-	foreach ($form['fields'] as $field) {
-		$inputs = $field->get_entry_inputs();
-		// composed fields
-		if (is_array($inputs)) {
-			foreach ($inputs as $input) {
-				$input_code = $field->inputName;
-				if ($input['name']) {
-					$form_vals[$input['name']] = rgar($entry, (string) $input['id']);
-				}
-			}
-			// simple fields
-		} else {
-			$input_code = $field->inputName;
-			if ($input_code) {
-				$form_vals[$input_code] = rgar($entry, (string) $field->id);
-			}
-		}
+	$response = wpct_oc_post_odoo('/api/private/crm-lead', $submission_payload);
+	if (!$response) {
+		$to = wpct_forms_ce_option_getter('wpct_forms_ce_general', 'notification_receiver');
+		$subject = 'Odoo subscription request submission error: Form(' . $form['id'] . ') Entry (' . $entry['id'] . ')';
+		$body = 'Submission subscription request for entry: ' . $entry['id'] . ' failed.<br/>Form id: ' . $form['id'] . "<br/>Form title: " . $form['title'];
+		wp_mail($to, $subject, $body);
 	}
-
-	return $form_vals;
-}
-
-function wpct_forms_ce_get_crmlead_apicall_body($form_vals)
-{
-	$body = array(
-		'name' => $form_vals['source_xml_id'] . ' submission: ' . $form_vals['entry_id'],
-		'metadata' => array()
-	);
-	foreach ($form_vals as $form_key => $form_val) {
-		if ($form_key == 'company_id') {
-			$body[$form_key] = (int) $form_val;
-		} elseif ($form_key == 'email_from') {
-			$body[$form_key] = $form_val;
-		}
-		$body['metadata'][] = array(
-			'key' => $form_key,
-			'value' => $form_val
-		);
-	}
-	return $body;
 }
