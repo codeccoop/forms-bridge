@@ -20,7 +20,7 @@ require_once "includes/options-page.php";
 require_once "includes/webhooks.php";
 require_once "includes/submissions.php";
 
-/* Lang population */
+/* Fields population */
 require_once "includes/fields-population.php";
 
 add_action('admin_init', 'wpct_forms_ce_init', 10);
