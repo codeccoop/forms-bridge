@@ -16,8 +16,9 @@
 /* Options Page */
 require_once "includes/options-page.php";
 
-/* Options Page */
+/* Webhooks */
 require_once "includes/webhooks.php";
+require_once "includes/submissions.php";
 
 /* Lang population */
 add_filter('gform_field_value_current_lang', 'wpct_forms_ce_populate_current_lang');

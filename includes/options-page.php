@@ -110,13 +110,13 @@ function wpct_forms_ce_init_settings()
         __('Eficiencia energètica', 'wpct-forms-ce'),
         fn () => wpct_forms_ce_action_render('eficiencia'),
         'wpct_forms_ce',
-        'wpct_fomrms_ce_actions_section'
+        'wpct_forms_ce_actions_section'
     );
     add_settings_field(
         'mobilitat',
         __('Mobilitat sostenible', 'wpct-forms-ce'),
         fn () => wpct_forms_ce_action_render('mobilitat'),
-        'wpct_froms_ce',
+        'wpct_forms_ce',
         'wpct_forms_ce_actions_section'
     );
     add_settings_field(
