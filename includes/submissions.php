@@ -50,8 +50,8 @@ function wpct_forms_ce_parse_form_entry($entry, $form)
 
 function wpct_forms_ce_add_cord_id($form_values)
 {
-    if (!isset($form_values['odoo_company_id']) || !$form_values['odoo_company_id']) {
-        $form_values['odoo_company_id'] = wpct_forms_ce_option_getter('wpct_forms_ce_general', 'coord_id');
+    if (!isset($form_values['company_id']) || !$form_values['company_id']) {
+        $form_values['company_id'] = wpct_forms_ce_option_getter('wpct_forms_ce_general', 'coord_id');
     }
     return $form_values;
 }
@@ -82,7 +82,7 @@ function wpct_forms_ce_get_submission_payload($form_vals)
     );
 
     foreach ($form_vals as $key => $val) {
-        if ($key == 'odoo_company_id') {
+        if ($key == 'company_id') {
             $payload['company_id'] = (int) $val;
         } elseif ($key == 'email_from') {
             $payload[$key] = $val;
