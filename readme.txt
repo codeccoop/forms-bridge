@@ -16,5 +16,5 @@ GravityForm's submissions to the [CRM Lead](https://git.coopdevs.org/coopdevs/od
 
 == Changelog ==
 
-= 0.1.0 =
+= 1.0.0 =
 * Initial commit before fork from [WPCT Forms CE](https://git.coopdevs.org/coopdevs/website/wp/wp-plugins/wpct-forms-ce)
