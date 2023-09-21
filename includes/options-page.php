@@ -44,7 +44,7 @@ function wpct_crm_forms_init_settings()
             'description' => __('Configuració global dels formularis', 'wpct-crm-forms'),
             'show_in_rest' => false,
             'default' => array(
-                'coord_id' => 1,
+                'coord_id' => 0,
                 'notification_receiver' => 'admin@example.com'
             )
         )
