@@ -12,7 +12,12 @@ function wpct_crm_forms_parse_form_entry($entry, $form)
     foreach ($form['fields'] as $field) {
         if ($field->type === 'consent') continue;
 
-        $input_name = $field->inputName ? $field->inputName : $field->label;
+        $input_name = $field->inputName
+            ? $field->inputName
+            : ($field->adminLabel
+                ? $field->adminLabel
+                : $field->label);
+
         $inputs = $field->get_entry_inputs();
         if (is_array($inputs)) {
             // composed fields
@@ -31,7 +36,7 @@ function wpct_crm_forms_parse_form_entry($entry, $form)
                 foreach ($inputs as $input) {
                     $value = rgar($entry, (string) $input['id']);
                     if ($input_name && $value) {
-                        $values[] = $value;
+                        $values[] = wpct_crm_forms_format_value($value, $field, $input);
                     }
                 }
 
@@ -40,12 +45,22 @@ function wpct_crm_forms_parse_form_entry($entry, $form)
         } else {
             // simple fields
             if ($input_name) {
-                $form_vals[$input_name] = rgar($entry, (string) $field->id);
+                $raw_value = rgar($entry, (string) $field->id);
+                $form_vals[$input_name] = wpct_crm_forms_format_value($raw_value, $field);
             }
         }
     }
 
     return $form_vals;
+}
+
+function wpct_crm_forms_format_value($value, $field, $input = null)
+{
+    if ($field->type === 'fileupload') {
+        if (!is_array($field->get_entry_inputs())) return json_decode($value)[0];
+    }
+
+    return $value;
 }
 
 function wpct_crm_forms_add_cord_id($form_values)
@@ -104,6 +119,7 @@ function wpct_crm_forms_get_submission_payload($form_vals)
 /**
  * Pipe form submission transformations to get the submission post payload
  */
+add_filter('wpct_crm_forms_prepare_submission', 'wpct_crm_forms_prepare_submission', 10, 2);
 function wpct_crm_forms_prepare_submission($form_vals)
 {
     $form_vals = wpct_crm_forms_add_cord_id($form_vals);
@@ -111,22 +127,26 @@ function wpct_crm_forms_prepare_submission($form_vals)
     return wpct_crm_forms_get_submission_payload($form_vals);
 }
 
-add_filter('wpct_crm_forms_prepare_submission', 'wpct_crm_forms_prepare_submission', 10, 2);
-
 
 /**
  * Store uploads on a custom folder
  */
-add_filter('gform_upload_path', 'wpct_forms_sm_upload_path', 90);
-function wpct_forms_sm_upload_path()
+add_filter('gform_upload_path', 'wpct_crm_forms_upload_path', 90);
+function wpct_crm_forms_upload_path($path_info)
 {
     $upload_dir = wp_upload_dir();
-    $path = $upload_dir['basedir'] . '/forms';
-    if (!is_dir($path)) mkdir($path);
-    $path .= '/' . date('Y');
-    if (!is_dir($path)) mkdir($path);
-    $path .= '/' . date('m');
-    if (!is_dir($path)) mkdir($path);
+    $basedir = dirname($upload_dir['basedir']);
 
-    return $path;
+    $path = $basedir . '/crm-uploads';
+    if (!is_dir($path)) mkdir($path, 0700);
+    $path .= '/' . date('Y');
+    if (!is_dir($path)) mkdir($path, 0700);
+    $path .= '/' . date('m');
+    if (!is_dir($path)) mkdir($path, 0700);
+    $path_info['path'] = $path;
+
+    $url = content_url(str_replace($basedir, '', $path)) . '/';
+    $path_info['url'] = $url;
+
+    return $path_info;
 };
