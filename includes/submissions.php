@@ -5,9 +5,9 @@
  */
 function wpct_crm_forms_parse_form_entry($entry, $form)
 {
-    $form_vals = array(
+    $form_vals = [
         'entry_id' => $entry['id']
-    );
+    ];
 
     foreach ($form['fields'] as $field) {
         if ($field->type === 'consent') continue;
@@ -92,10 +92,10 @@ function wpct_crm_forms_cleanup_empties($form_vals)
  */
 function wpct_crm_forms_get_submission_payload($form_vals)
 {
-    $payload = array(
+    $payload = [
         'name' => $form_vals['source_xml_id'] . ' submission: ' . $form_vals['entry_id'],
-        'metadata' => array()
-    );
+        'metadata' => []
+    ];
 
     foreach ($form_vals as $key => $val) {
         if ($key == 'company_id') {
@@ -106,10 +106,10 @@ function wpct_crm_forms_get_submission_payload($form_vals)
             $payload['source_xml_id'] = $val;
         }
 
-        $payload['metadata'][] = array(
+        $payload['metadata'][] = [
             'key' => $key,
             'value' => $val
-        );
+        ];
     }
 
     return $payload;
