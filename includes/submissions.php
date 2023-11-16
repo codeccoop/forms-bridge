@@ -10,6 +10,7 @@ function wpct_crm_forms_parse_form_entry($entry, $form)
     );
 
     foreach ($form['fields'] as $field) {
+        if ($field->type === 'section') continue;
         if ($field->type === 'consent') continue;
 
         $input_name = $field->inputName
