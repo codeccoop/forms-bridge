@@ -24,6 +24,9 @@ require_once "includes/attachments.php";
 /* Fields population */
 require_once "includes/fields-population.php";
 
+/* Custom fields */
+require_once "includes/fields/iban/index.php";
+
 /* Dependencies */
 add_filter('wpct_dependencies_check', function ($dependencies) {
     $dependencies['Gravity Forms'] = '<a href="https://www.gravityforms.com/">Gravity Forms</a>';
