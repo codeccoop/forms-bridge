@@ -11,7 +11,6 @@ function wpct_crm_forms_parse_form_entry($entry, $form)
 
     foreach ($form['fields'] as $field) {
         if ($field->type === 'section') continue;
-        if ($field->type === 'consent') continue;
 
         $input_name = $field->inputName
             ? $field->inputName
@@ -20,6 +19,7 @@ function wpct_crm_forms_parse_form_entry($entry, $form)
                 : $field->label);
 
         $inputs = $field->get_entry_inputs();
+
         if (is_array($inputs)) {
             // composed fields
             $names = array_map(function ($input) {
@@ -37,7 +37,8 @@ function wpct_crm_forms_parse_form_entry($entry, $form)
                 foreach ($inputs as $input) {
                     $value = rgar($entry, (string) $input['id']);
                     if ($input_name && $value) {
-                        $values[] = wpct_crm_forms_format_value($value, $field, $input);
+                        $value = wpct_crm_forms_format_value($value, $field, $input);
+                        if ($value !== null) $values[] = $value;
                     }
                 }
 
@@ -60,6 +61,9 @@ function wpct_crm_forms_format_value($value, $field, $input = null)
     try {
         if ($field->type === 'fileupload' && $value && is_string($value)) {
             return implode(',', json_decode($value));
+        } else if ($field->type === 'consent') {
+            if (isset($input['isHidden']) && $input['isHidden']) return null;
+            return $value;
         }
     } catch (Exception $e) {
         // do nothing
