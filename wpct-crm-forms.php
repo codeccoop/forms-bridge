@@ -8,7 +8,7 @@
  * Author URI:      https://www.codeccoop.org
  * Text Domain:     wpct-crm-forms
  * Domain Path:     /languages
- * Version:         1.0.2
+ * Version:         1.0.3
  *
  * @package         WPCT_CRM_Forms
  */
