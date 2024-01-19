@@ -10,7 +10,7 @@ GFForms::include_addon_framework();
 
 class Addon extends GFAddOn
 {
-    protected $_version = WPCT_ERP_FORMS_IBAN_FIELD;
+    protected $_version = WPCT_ERP_FORMS_IBAN_FIELD_VERSION;
     protected $_slug = 'wpct-erp-forms-iban-field';
     protected $_title = 'Gravity Forms IBAN validated text field';
     protected $_short_title = 'IBAN field';

@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('wpct_erp_FORMS_IBAN_FIELD', '1.0');
+define('WPCT_ERP_FORMS_IBAN_FIELD_VERSION', '1.0');
 add_action('gform_loaded', 'wpct_erp_forms_load_iban_field', 5);
 function wpct_erp_forms_load_iban_field()
 {
