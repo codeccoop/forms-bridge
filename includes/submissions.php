@@ -3,7 +3,7 @@
 /**
  * Gent gform entry and form objects and parse it to a form values array
  */
-function wpct_crm_forms_parse_form_entry($entry, $form)
+function wpct_erp_forms_parse_form_entry($entry, $form)
 {
     $form_vals = [
         'entry_id' => $entry['id']
@@ -37,7 +37,7 @@ function wpct_crm_forms_parse_form_entry($entry, $form)
                 foreach ($inputs as $input) {
                     $value = rgar($entry, (string) $input['id']);
                     if ($input_name && $value) {
-                        $value = wpct_crm_forms_format_value($value, $field, $input);
+                        $value = wpct_erp_forms_format_value($value, $field, $input);
                         if ($value !== null) $values[] = $value;
                     }
                 }
@@ -48,7 +48,7 @@ function wpct_crm_forms_parse_form_entry($entry, $form)
             // simple fields
             if ($input_name) {
                 $raw_value = rgar($entry, (string) $field->id);
-                $form_vals[$input_name] = wpct_crm_forms_format_value($raw_value, $field);
+                $form_vals[$input_name] = wpct_erp_forms_format_value($raw_value, $field);
             }
         }
     }
@@ -56,7 +56,7 @@ function wpct_crm_forms_parse_form_entry($entry, $form)
     return $form_vals;
 }
 
-function wpct_crm_forms_format_value($value, $field, $input = null)
+function wpct_erp_forms_format_value($value, $field, $input = null)
 {
     try {
         if ($field->type === 'fileupload' && $value && is_string($value)) {
@@ -72,10 +72,10 @@ function wpct_crm_forms_format_value($value, $field, $input = null)
     return $value;
 }
 
-function wpct_crm_forms_add_cord_id($form_values)
+function wpct_erp_forms_add_cord_id($form_values)
 {
     if (!isset($form_values['company_id']) || !$form_values['company_id']) {
-        $form_values['company_id'] = wpct_crm_forms_option_getter('wpct_crm_forms_general', 'coord_id');
+        $form_values['company_id'] = wpct_erp_forms_option_getter('wpct_erp_forms_general', 'coord_id');
     }
 
     return $form_values;
@@ -84,7 +84,7 @@ function wpct_crm_forms_add_cord_id($form_values)
 /**
  * Remove empty fields from form submission
  */
-function wpct_crm_forms_cleanup_empties($form_vals)
+function wpct_erp_forms_cleanup_empties($form_vals)
 {
     foreach ($form_vals as $key => $val) {
         if (empty($val)) {
@@ -99,7 +99,7 @@ function wpct_crm_forms_cleanup_empties($form_vals)
 /**
  * Transform form submission array into a payload data structure
  */
-function wpct_crm_forms_get_submission_payload($form_vals)
+function wpct_erp_forms_get_submission_payload($form_vals)
 {
     $payload = [
         'name' => $form_vals['source_xml_id'] . ' submission: ' . $form_vals['entry_id'],
@@ -128,10 +128,10 @@ function wpct_crm_forms_get_submission_payload($form_vals)
 /**
  * Pipe form submission transformations to get the submission post payload
  */
-add_filter('wpct_crm_forms_prepare_submission', 'wpct_crm_forms_prepare_submission', 10, 2);
-function wpct_crm_forms_prepare_submission($form_vals)
+add_filter('wpct_erp_forms_prepare_submission', 'wpct_erp_forms_prepare_submission', 10, 2);
+function wpct_erp_forms_prepare_submission($form_vals)
 {
-    $form_vals = wpct_crm_forms_add_cord_id($form_vals);
-    $form_vals = wpct_crm_forms_cleanup_empties($form_vals);
-    return wpct_crm_forms_get_submission_payload($form_vals);
+    $form_vals = wpct_erp_forms_add_cord_id($form_vals);
+    $form_vals = wpct_erp_forms_cleanup_empties($form_vals);
+    return wpct_erp_forms_get_submission_payload($form_vals);
 }

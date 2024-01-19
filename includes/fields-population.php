@@ -8,11 +8,11 @@
 /*     return wpct_forms_ce_option_getter('wpct_forms_ce_general', 'coord_id'); */
 /* } */
 
-add_filter('gform_field_value_current_lang', 'wpct_crm_forms_populate_current_lang');
-function wpct_crm_forms_populate_current_lang($value)
+add_filter('gform_field_value_current_lang', 'wpct_erp_forms_populate_current_lang');
+function wpct_erp_forms_populate_current_lang($value)
 {
     if ($value) {
-        $locale = wpct_crm_forms_format_current_lang($value);
+        $locale = wpct_erp_forms_format_current_lang($value);
     } else {
         $language = apply_filters('wpml_post_language_details', null);
 
@@ -26,7 +26,7 @@ function wpct_crm_forms_populate_current_lang($value)
     return $locale;
 }
 
-function wpct_crm_forms_format_current_lang($code)
+function wpct_erp_forms_format_current_lang($code)
 {
     $languages = apply_filters('wpml_active_languages', null);
     if ($languages && !is_wp_error($languages) && isset($languages[$code])) {

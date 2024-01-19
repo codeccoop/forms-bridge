@@ -1,19 +1,19 @@
 <?php
-add_action('gform_after_submission', 'wpct_crm_forms_api_submissions', 10, 2);
-function wpct_crm_forms_api_submissions($entry, $form)
+add_action('gform_after_submission', 'wpct_erp_forms_api_submissions', 10, 2);
+function wpct_erp_forms_api_submissions($entry, $form)
 {
-	$form_vals = wpct_crm_forms_parse_form_entry($entry, $form);
+    $form_vals = wpct_erp_forms_parse_form_entry($entry, $form);
 
-	// Exit submission if form isn't bound to Odoo
-	if (!isset($form_vals['source_xml_id'])) return;
+    // Exit submission if form isn't bound to Odoo
+    if (!isset($form_vals['source_xml_id'])) return;
 
-	$submission_payload = apply_filters('wpct_crm_forms_prepare_submission', $form_vals);
+    $submission_payload = apply_filters('wpct_erp_forms_prepare_submission', $form_vals);
 
-	$response = wpct_oc_post_odoo('/api/private/crm-lead', $submission_payload);
-	if (!$response) {
-		$to = wpct_crm_forms_option_getter('wpct_crm_forms_general', 'notification_receiver');
-		$subject = 'Odoo subscription request submission error: Form(' . $form['id'] . ') Entry (' . $entry['id'] . ')';
-		$body = 'Submission subscription request for entry: ' . $entry['id'] . ' failed.<br/>Form id: ' . $form['id'] . "<br/>Form title: " . $form['title'];
-		wp_mail($to, $subject, $body);
-	}
+    $response = wpct_oc_post_odoo('/api/private/crm-lead', $submission_payload);
+    if (!$response) {
+        $to = wpct_erp_forms_option_getter('wpct_erp_forms_general', 'notification_receiver');
+        $subject = 'Odoo subscription request submission error: Form(' . $form['id'] . ') Entry (' . $entry['id'] . ')';
+        $body = 'Submission subscription request for entry: ' . $entry['id'] . ' failed.<br/>Form id: ' . $form['id'] . "<br/>Form title: " . $form['title'];
+        wp_mail($to, $subject, $body);
+    }
 }
