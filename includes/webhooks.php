@@ -1,6 +1,6 @@
 <?php
-add_action('gform_after_submission', 'wpct_erp_forms_api_submissions', 10, 2);
-function wpct_erp_forms_api_submissions($entry, $form)
+add_action('wpct_erp_after_submission', 'wpct_erp_forms_do_submissions', 10, 2);
+function wpct_erp_forms_do_submissions($entry, $form)
 {
     $form_vals = wpct_erp_forms_parse_form_entry($entry, $form);
 
