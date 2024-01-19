@@ -14,7 +14,7 @@
  */
 
 /* Settings */
-require_once "includes/settings/index.php";
+require_once "includes/options/index.php";
 
 /* Webhooks */
 require_once "includes/webhooks.php";
