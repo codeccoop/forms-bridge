@@ -32,6 +32,7 @@ class GF extends Integration
         $entry_data = $this->get_entry_data($entry, $form);
         $submission = $this->serialize_entry_data($entry_data);
         $this->cleanup_empties($submission);
+        $this->add_coord_id($submission);
         return $submission;
     }
 
@@ -102,6 +103,15 @@ class GF extends Integration
         }
 
         return $value;
+    }
+
+    private function add_coord_id(&$submission)
+    {
+        if (!isset($submission['company_id']) || $submission['company_id']) {
+            $settings = get_option('wpct_erp_forms_general', []);
+            if (!isset($settings['coord_id'])) return;
+            $submission['company_id'] = $settings['coord_id'];
+        }
     }
 }
 
