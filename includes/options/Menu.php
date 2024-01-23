@@ -16,15 +16,21 @@ class Menu
 
     public function register()
     {
-        add_options_page(
-            $this->name,
-            $this->name,
-            'manage_options',
-            $this->settings->getName(),
-            function () {
-                $this->render_page();
-            }
-        );
+        add_action('admin_menu', function () {
+            add_options_page(
+                $this->name,
+                $this->name,
+                'manage_options',
+                $this->settings->get_name(),
+                function () {
+                    $this->render_page();
+                }
+            );
+        });
+
+        add_action('admin_init', function () {
+            $this->settings->register();
+        });
     }
 
     private function render_page()
@@ -35,8 +41,8 @@ class Menu
             <h1><?= $this->name ?></h1>
             <form action="options.php" method="post">
                 <?php
-                settings_fields($this->settings->getName());
-                do_settings_sections($this->settings->getName());
+                settings_fields($this->settings->get_name());
+                do_settings_sections($this->settings->get_name());
                 submit_button();
                 ?>
             </form>
@@ -45,7 +51,7 @@ class Menu
         echo ob_get_clean();
     }
 
-    public function getSettings()
+    public function get_settings()
     {
         return $this->settings;
     }

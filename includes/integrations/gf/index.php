@@ -2,16 +2,15 @@
 
 namespace WPCT_ERP_FORMS\Integrations;
 
+use WPCT_ERP_FORMS\Fields\GF\Iban\Field as IbanField;
 use WPCT_ERP_FORMS\Integrations\Integration;
 use Exception;
 
-require_once 'fields/iban/index.php';
 require_once 'attachments.php';
 require_once 'fields-population.php';
 
 class GF extends Integration
 {
-
     public static $fields = [
         IbanField::class
     ];
@@ -21,19 +20,27 @@ class GF extends Integration
         add_action('gform_after_submission', function ($entry, $form) {
             $this->do_submission($entry, $form);
         }, 10, 2);
+
+        add_action('admin_init', function () {
+            global $wpct_erp_forms_admin_menu;
+            ($wpct_erp_forms_admin_menu->get_settings())->register_field('coord_id', 'wpct_erp_forms_general');
+        }, 90);
+
+        add_filter('wpct_erp_forms_general_default', function ($defaults) {
+            $defaults['coord_id'] = 1;
+            return $defaults;
+        });
     }
 
     public function serialize_form($form)
     {
-        return get_object_vars($form);
+        return $form;
     }
 
 
     public function serialize_submission($entry, $form)
     {
-        $entry_data = $this->get_entry_data($entry, $form);
-        $submission = $this->serialize_entry_data($entry_data);
-        $this->cleanup_empties($submission);
+        $submission = $this->get_entry_data($entry, $form);
         $this->add_coord_id($submission);
         return $submission;
     }

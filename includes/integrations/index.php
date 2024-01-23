@@ -16,12 +16,12 @@ if (defined('WPCF7_VERSION')) {
     require_once 'wpcf7/index.php';
     add_action('plugins_loaded', function () {
         WPCTIntegrationsRegistry::$instances['wpcf7'] = new WPCF7();
-    });
+    }, 90);
 }
 
 if (class_exists('GFForms')) {
     require_once 'gf/index.php';
     add_action('plugins_loaded', function () {
         WPCTIntegrationsRegistry::$instances['gf'] = new GF();
-    });
+    }, 90);
 }

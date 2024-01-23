@@ -4,11 +4,11 @@
 		return `<table id="<?= $setting ?>[<?= $field ?>][${key}]">
                 <tr>
                     <th>form_id</th>
-                    <td><input type="text" name="<?= $setting ?>[<?= $field ?>][${key}][form_id]" value="<?= $values['form_id'] ?>"></td>
+                    <td><input type="text" name="<?= $setting ?>[<?= $field ?>][${key}][form_id]" value="<?= $values['endpoints'][0]['form_id'] ?>"></td>
                 </tr>
                 <tr>
                     <th>endpoint</th>
-                    <td><input type="text" name="<?= $setting ?>[<?= $field ?>][${key}][endpoint]" value="<?= $values['endpoint'] ?>"></td>
+                    <td><input type="text" name="<?= $setting ?>[<?= $field ?>][${key}][endpoint]" value="<?= $values['endpoints'][0]['endpoint'] ?>"></td>
                 </tr>
             </table>`;
 	}

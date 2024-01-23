@@ -177,7 +177,7 @@ class Field extends BaseField
                 throw new Exception();
             }
         } catch (Exception) {
-            $result->invalidate($tag, 'Invalid IBAN format');
+            $result->invalidate($tag, __('Invalid IBAN format', 'wpct-erp-forms'));
         }
     }
 }

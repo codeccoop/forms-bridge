@@ -1,0 +1,68 @@
+# Copyright (C) 2024 Còdec Cooperativa
+# This file is distributed under the same license as the Wpct ERP Forms plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Wpct ERP Forms 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpct-erp-forms\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-01-23T18:24:08+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.9.0\n"
+"X-Domain: wpct-erp-forms\n"
+
+#. Plugin Name of the plugin
+msgid "Wpct ERP Forms"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://git.coopdevs.org/codeccoop/wp/wpct-erp-forms"
+msgstr ""
+
+#. Description of the plugin
+msgid "Plugin to bridge WP forms submissions to a ERP backend"
+msgstr ""
+
+#. Author of the plugin
+msgid "Còdec Cooperativa"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://www.codeccoop.org"
+msgstr ""
+
+msgid "wpct_erp_forms_general--title"
+msgstr ""
+
+msgid "wpct_erp_forms_general--description"
+msgstr ""
+
+msgid "wpct_erp_forms_general__notification_receiver--label"
+msgstr ""
+
+msgid "wpct_erp_forms_general__coord_id--label"
+msgstr ""
+
+msgid "wpct_erp_forms_api--title"
+msgstr ""
+
+msgid "wpct_erp_forms_api--description"
+msgstr ""
+
+msgid "wpct_erp_forms_api__endpoints--label"
+msgstr ""
+
+msgid "Foo"
+msgstr ""
+
+msgid "The IBAN you inserted is not valid."
+msgstr ""
+
+msgid "IBAN"
+msgstr ""
+
+msgid "Invalid IBAN format"
+msgstr ""

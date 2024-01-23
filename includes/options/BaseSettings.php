@@ -11,16 +11,61 @@ class Undefined
 class BaseSettings
 {
 
-    public $_name;
+    public $group_name;
+    private $_defaults = [];
 
-    public function getName()
+    public function get_name()
     {
-        return $this->_name;
+        return $this->group_name;
     }
 
     public function register()
     {
         throw new Exception('You have to overwrite this method');
+    }
+
+    public function register_setting($name, $default = [])
+    {
+        $default = $this->get_default($name, $default);
+        error_log(print_r($default, true));
+        register_setting(
+            $this->group_name,
+            $name,
+            [
+                'type' => 'array',
+                'show_in_rest' => false,
+                'default' => $default,
+            ],
+        );
+
+        add_settings_section(
+            $name . '_section',
+            __($name . '--title', 'wpct-erp-forms'),
+            function () use ($name) {
+                $title = __($name . '--description', 'wpct-erp-forms');
+                echo "<p>{$title}</p>";
+            },
+            $this->group_name,
+        );
+
+        $this->_defaults[$name] = $default;
+    }
+
+    public function register_field($field_name, $setting_name)
+    {
+        $field_id = $setting_name . '__' . $field_name;
+        add_settings_field(
+            $field_name,
+            __($field_id . '--label', 'wpct-erp-forms'),
+            function () use ($setting_name, $field_name) {
+                echo $this->field_render($setting_name, $field_name);
+            },
+            $this->group_name,
+            $setting_name . '_section',
+            [
+                'class' => $field_id,
+            ]
+        );
     }
 
     public function field_render($setting, $field, $value = new Undefined())
@@ -72,10 +117,11 @@ class BaseSettings
 
     public function control_render($setting, $field)
     {
-        $values = $this->default_values();
+        $values = $this->get_default($setting);
+        error_log(print_r($values, true));
         ob_start();
 ?>
-        <div class="<?= $setting; ?>[<?= $field ?>]--controls">
+        <div class="<?= $setting; ?>__<?= $field ?>--controls">
             <button class="button button-primary" data-action="add">Add</button>
             <button class="button button-secondary" data-action="remove">Remove</button>
         </div>
@@ -96,6 +142,12 @@ class BaseSettings
         $setting = get_option($setting) ? get_option($setting) : [];
         if (!key_exists($option, $setting)) return null;
         return $setting[$option];
+    }
+
+    public function get_default($setting_name, $default = [])
+    {
+        $default = isset($this->_defaults[$setting_name]) ? $this->_defaults[$setting_name] : $default;
+        return apply_filters($setting_name . '_default', $default);
     }
 }
 
