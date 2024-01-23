@@ -13,15 +13,15 @@ class WPCTIntegrationsRegistry
 }
 
 if (defined('WPCF7_VERSION')) {
-    require_once 'contactform7/index.php';
+    require_once 'wpcf7/index.php';
     add_action('plugins_loaded', function () {
-        WPCTIntegrationsRegistry::$instances[] = new WPCF7();
+        WPCTIntegrationsRegistry::$instances['wpcf7'] = new WPCF7();
     });
 }
 
 if (class_exists('GFForms')) {
-    require_once 'gravityforms/index.php';
+    require_once 'gf/index.php';
     add_action('plugins_loaded', function () {
-        WPCTIntegrationsRegistry::$instances[] = new GF();
+        WPCTIntegrationsRegistry::$instances['gf'] = new GF();
     });
 }

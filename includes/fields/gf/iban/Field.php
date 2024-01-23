@@ -1,11 +1,11 @@
 <?php
 
-namespace WPCT_ERP_FORMS\IBAN_Field;
+namespace WPCT_ERP_FORMS\Fields\GF\Iban;
 
 use Exception;
 use GF_Field;
 
-class Field extends GF_Field
+class GFField extends GF_Field
 {
     /**
      * @var array @type Country codes

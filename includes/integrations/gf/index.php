@@ -5,12 +5,16 @@ namespace WPCT_ERP_FORMS\Integrations;
 use WPCT_ERP_FORMS\Integrations\Integration;
 use Exception;
 
-/* Custom fields */
-
 require_once 'fields/iban/index.php';
+require_once 'attachments.php';
+require_once 'fields-population.php';
 
 class GF extends Integration
 {
+
+    public static $fields = [
+        IbanField::class
+    ];
 
     public function register()
     {

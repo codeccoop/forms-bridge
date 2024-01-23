@@ -6,14 +6,17 @@ use Exception;
 
 class Integration
 {
+    public static $fields = [];
     private static $instances = [];
 
     public function __construct()
     {
-        add_action('init', function () {
-            $integration = self::get_instance();
-            $integration->register();
-        });
+        add_action('init', [$this, 'register']);
+
+        foreach (static::$fields as $field) {
+            $_field = $field::get_instance();
+            $_field->register();
+        }
     }
 
     protected function __clone()
@@ -29,7 +32,7 @@ class Integration
     {
         $cls = static::class;
         if (!isset(self::$instances[$cls])) {
-            self::$instances[$cls] = new static();
+            self::class::$instances[$cls] = new static();
         }
 
         return self::$instances[$cls];

@@ -3,9 +3,13 @@
 namespace WPCT_ERP_FORMS\Integrations;
 
 use WPCT_ERP_FORMS\Integrations\Integration;
+use WPCT_ERP_FORMS\Fields\WPCF7\Iban\Field as IbanField;
 
 class WPCF7 extends Integration
 {
+    public static $fields = [
+        IbanField::class
+    ];
 
     public function register()
     {
