@@ -24,7 +24,7 @@ require_once 'includes/fields/index.php';
 
 /* Dependencies */
 add_filter('wpct_dependencies_check', function ($dependencies) {
-    $dependencies['Wpct Odoo Connect'] = '<a href="https://git.coopdevs.org/coopdevs/website/wp/wp-plugins/wpct-odoo-connect">Wpct Odoo Connect</a>';
+    $dependencies['Wpct Http Backend'] = '<a href="https://git.coopdevs.org/codeccoop/wp/wpct-http-backend/">Wpct Http Backend</a>';
     return $dependencies;
 });
 
