@@ -58,7 +58,7 @@ class Menu
         </div>
 <?php
         $output = ob_get_clean();
-        echo apply_filters('wpct_st_menu_page_content', $output);
+        echo apply_filters('wpct_epr_forms_menu_page_content', $output);
     }
 
     public function get_settings()
