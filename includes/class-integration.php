@@ -1,8 +1,6 @@
 <?php
 
-namespace WPCT_ERP_FORMS\Integrations;
-
-use Exception;
+namespace WPCT_ERP_FORMS;
 
 class Integration
 {

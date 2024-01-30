@@ -1,11 +1,14 @@
 <?php
 
-namespace WPCT_ERP_FORMS\Integrations;
+namespace WPCT_ERP_FORMS\WPCF7;
 
-use WPCT_ERP_FORMS\Integrations\Integration;
-use WPCT_ERP_FORMS\Fields\WPCF7\Iban\Field as IbanField;
+use WPCT_ERP_FORMS\Integration as BaseIntegration;
+use WPCT_ERP_FORMS\WPCF7\Fields\Iban\Field as IbanField;
 
-class WPCF7 extends Integration
+// Fields
+require_once dirname(__FILE__, 3) . '/fields/wpcf7/iban/index.php';
+
+class Integration extends BaseIntegration
 {
     public static $fields = [
         IbanField::class

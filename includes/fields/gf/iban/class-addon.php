@@ -1,6 +1,6 @@
 <?php
 
-namespace WPCT_ERP_FORMS\Fields\GF\Iban;
+namespace WPCT_ERP_FORMS\GF\Fields\Iban;
 
 use GFForms;
 use GFAddOn;

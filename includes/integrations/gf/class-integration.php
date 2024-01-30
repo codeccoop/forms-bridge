@@ -1,15 +1,17 @@
 <?php
 
-namespace WPCT_ERP_FORMS\Integrations;
+namespace WPCT_ERP_FORMS\GF;
 
-use WPCT_ERP_FORMS\Fields\GF\Iban\Field as IbanField;
-use WPCT_ERP_FORMS\Integrations\Integration;
-use Exception;
+use WPCT_ERP_FORMS\GF\Fields\Iban\Field as IbanField;
+use WPCT_ERP_FORMS\Integration as BaseIntegration;
 
 require_once 'attachments.php';
 require_once 'fields-population.php';
 
-class GF extends Integration
+// Fields
+require_once dirname(__FILE__, 3) . '/fields/gf/iban/index.php';
+
+class Integration extends BaseIntegration
 {
     public static $fields = [
         IbanField::class

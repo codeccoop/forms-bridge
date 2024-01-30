@@ -1,10 +1,9 @@
 <?php
 
-namespace WPCT_ERP_FORMS\Options;
+namespace WPCT_ERP_FORMS;
 
 class Menu
 {
-
     private $name;
     private $settings;
 
@@ -14,23 +13,33 @@ class Menu
         $this->settings = $settings;
     }
 
-    public function register()
+    public function on_load()
     {
         add_action('admin_menu', function () {
-            add_options_page(
-                $this->name,
-                $this->name,
-                'manage_options',
-                $this->settings->get_name(),
-                function () {
-                    $this->render_page();
-                }
-            );
+            $this->add_menu();
         });
 
         add_action('admin_init', function () {
-            $this->settings->register();
+            $this->register_settings();
         });
+    }
+
+    private function add_menu()
+    {
+        add_options_page(
+            $this->name,
+            $this->name,
+            'manage_options',
+            $this->settings->get_name(),
+            function () {
+                $this->render_page();
+            },
+        );
+    }
+
+    private function register_settings()
+    {
+        $this->settings->register();
     }
 
     private function render_page()
@@ -48,7 +57,8 @@ class Menu
             </form>
         </div>
 <?php
-        echo ob_get_clean();
+        $output = ob_get_clean();
+        echo apply_filters('wpct_st_menu_page_content', $output);
     }
 
     public function get_settings()

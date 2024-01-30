@@ -1,5 +1,10 @@
 <?php
 
+namespace WPCT_ERP_FORMS;
+
+use WPCT_ERP_FORMS\WPCF7\Integration as Wpcf7Integration;
+use WPCT_ERP_FORMS\GF\Integration as GFIntegration;
+
 /**
  * Plugin Name:     Wpct ERP Forms
  * Plugin URI:      https://git.coopdevs.org/codeccoop/wp/wpct-erp-forms
@@ -13,28 +18,51 @@
  * @package         wpct_erp_forms
  */
 
-/* Settings */
-require_once 'includes/options/index.php';
+require_once 'includes/class-menu.php';
+require_once 'includes/class-settings.php';
+require_once 'includes/class-integration.php';
+require_once 'includes/fields/class-field.php';
 
-/* Integrations */
-require_once 'includes/integrations/index.php';
-
-/* Fields */
-require_once 'includes/fields/index.php';
-
-/* Dependencies */
-add_filter('wpct_dependencies_check', function ($dependencies) {
-    $dependencies['Wpct Http Backend'] = '<a href="https://git.coopdevs.org/codeccoop/wp/wpct-http-backend/">Wpct Http Backend</a>';
-    return $dependencies;
-});
-
-/* Localization */
-add_action('plugins_loaded', 'wpct_erp_forms_i18n', 10);
-function wpct_erp_forms_i18n()
+class Plugin
 {
-    load_plugin_textdomain(
-        'wpct-erp-forms',
-        false,
-        dirname(plugin_basename(__FILE__)) . '/languages'
-    );
+    private $menu;
+    private $integrations = [];
+
+    public function __construct()
+    {
+        $settings = new Settings();
+        $this->menu = new Menu('Wpct ERP Forms', $settings);
+
+        load_plugin_textdomain(
+            'wpct-erp-forms',
+            false,
+            dirname(plugin_basename(__FILE__)) . '/languages',
+        );
+    }
+
+    public function on_load()
+    {
+        add_action('init', function () {
+            /* Dependencies */
+            add_filter('wpct_dependencies_check', function ($dependencies) {
+                $dependencies['Wpct Http Backend'] = '<a href="https://git.coopdevs.org/codeccoop/wp/wpct-http-backend/">Wpct Http Backend</a>';
+                return $dependencies;
+            });
+
+            if (is_plugin_active('wp-contact-form-7/wp-contact-form-7.php')) {
+                require_once 'includes/integrations/wpcf7/class-integration.php';
+                $this->integrations['wpcf7'] = new Wpcf7Integration();
+            } else if (is_plugin_active('gravityforms/gravityforms.php')) {
+                require_once 'includes/integrations/gf/class-integration.php';
+                $this->integrations['gf'] = new GFIntegration();
+            }
+        });
+
+        $this->menu->on_load();
+    }
 }
+
+add_action('plugins_loaded', function () {
+    $plugin = new Plugin();
+    $plugin->on_load();
+}, 10);

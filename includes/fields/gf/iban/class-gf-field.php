@@ -1,8 +1,7 @@
 <?php
 
-namespace WPCT_ERP_FORMS\Fields\GF\Iban;
+namespace WPCT_ERP_FORMS\GF\Fields\Iban;
 
-use Exception;
 use GF_Field;
 
 class GFField extends GF_Field

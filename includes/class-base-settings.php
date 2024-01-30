@@ -1,8 +1,6 @@
 <?php
 
-namespace WPCT_ERP_FORMS\Options;
-
-use Exception;
+namespace WPCT_ERP_FORMS;
 
 class Undefined
 {
@@ -76,7 +74,11 @@ class BaseSettings
         }
 
         if (!is_array($value)) {
-            return $this->input_render($setting, $field, $value);
+            if (is_bool($value)) {
+                return $this->checkbox_render($setting, $field, $value);
+            } else {
+                return $this->input_render($setting, $field, $value);
+            }
         } else {
             $fieldset = $this->fieldset_render($setting, $field, $value);
             if ($is_root) {
@@ -86,6 +88,11 @@ class BaseSettings
 
             return $fieldset;
         }
+    }
+
+    private function checkbox_render($setting, $field, $value)
+    {
+        return "<input type='checkbox' name='{$setting}[$field]' " . ($value ? 'checked' : '') . " />";
     }
 
     public function input_render($setting, $field, $value)
@@ -125,7 +132,7 @@ class BaseSettings
             <button class="button button-secondary" data-action="remove">Remove</button>
         </div>
         <script>
-            <?php include 'fieldsetControl.js' ?>
+            <?php include 'fieldset-control-js.php' ?>
         </script>
 <?php
         return ob_get_clean();

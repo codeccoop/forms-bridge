@@ -1,9 +1,8 @@
 <?php
 
-namespace WPCT_ERP_FORMS\Fields\WPCF7\Iban;
+namespace WPCT_ERP_FORMS\WPCF7\Fields\Iban;
 
-use WPCT_ERP_FORMS\Fields\BaseField;
-use Exception;
+use WPCT_ERP_FORMS\Field as BaseField;
 
 class Field extends BaseField
 {

@@ -1,10 +1,8 @@
 <?php
 
-namespace WPCT_ERP_FORMS\Fields;
+namespace WPCT_ERP_FORMS;
 
-use Exception;
-
-class BaseField
+class Field
 {
     private static $instances = [];
 

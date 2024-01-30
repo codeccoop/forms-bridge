@@ -1,14 +1,12 @@
 <?php
 
-namespace WPCT_ERP_FORMS\Options;
+namespace WPCT_ERP_FORMS;
 
-use WPCT_ERP_FORMS\Options\BaseSettings;
-
-require_once 'BaseSettings.php';
+require_once 'class-base-settings.php';
 
 class Settings extends BaseSettings
 {
-    public $group_name = 'wpct_erp_forms';
+    public $group_name = 'wpct-erp-forms';
     private $_default_endpoint = '/api/private/crm-lead';
 
     public function register()
@@ -17,8 +15,8 @@ class Settings extends BaseSettings
         $this->register_setting(
             $setting_name,
             [
-                'notification_receiver' => 'admin@example.com'
-            ]
+                'notification_receiver' => 'admin@example.coop'
+            ],
         );
 
         $this->register_field('notification_receiver', $setting_name);
@@ -31,7 +29,7 @@ class Settings extends BaseSettings
                     [
                         'form_id' => 0,
                         'endpoint' => $this->_default_endpoint,
-                    ]
+                    ],
                 ],
             ],
         );
