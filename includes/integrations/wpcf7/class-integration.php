@@ -14,8 +14,10 @@ class Integration extends BaseIntegration
         IbanField::class
     ];
 
-    public function register()
+    protected function __construct()
     {
+        parent::__construct();
+
         add_filter('wpcf7_before_send_mail', function ($form, &$abort, $submission) {
             $this->do_submission($submission, $form);
         }, 10, 3);

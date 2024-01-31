@@ -6,20 +6,22 @@ class Undefined
 {
 };
 
-class BaseSettings
+abstract class BaseSettings extends Singleton
 {
 
-    public $group_name;
+    protected $group_name;
     private $_defaults = [];
+
+    abstract public function register();
+
+    public function __construct($textdomain)
+    {
+        $this->group_name = $textdomain;
+    }
 
     public function get_name()
     {
         return $this->group_name;
-    }
-
-    public function register()
-    {
-        throw new Exception('You have to overwrite this method');
     }
 
     public function register_setting($name, $default = [])
@@ -37,9 +39,9 @@ class BaseSettings
 
         add_settings_section(
             $name . '_section',
-            __($name . '--title', 'wpct-erp-forms'),
+            __($name . '--title', $this->group_name),
             function () use ($name) {
-                $title = __($name . '--description', 'wpct-erp-forms');
+                $title = __($name . '--description', $this->group_name);
                 echo "<p>{$title}</p>";
             },
             $this->group_name,
@@ -53,7 +55,7 @@ class BaseSettings
         $field_id = $setting_name . '__' . $field_name;
         add_settings_field(
             $field_name,
-            __($field_id . '--label', 'wpct-erp-forms'),
+            __($field_id . '--label', $this->group_name),
             function () use ($setting_name, $field_name) {
                 echo $this->field_render($setting_name, $field_name);
             },
@@ -74,11 +76,7 @@ class BaseSettings
         }
 
         if (!is_array($value)) {
-            if (is_bool($value)) {
-                return $this->checkbox_render($setting, $field, $value);
-            } else {
-                return $this->input_render($setting, $field, $value);
-            }
+            return $this->input_render($setting, $field, $value);
         } else {
             $fieldset = $this->fieldset_render($setting, $field, $value);
             if ($is_root) {
@@ -90,19 +88,30 @@ class BaseSettings
         }
     }
 
-    private function checkbox_render($setting, $field, $value)
-    {
-        return "<input type='checkbox' name='{$setting}[$field]' " . ($value ? 'checked' : '') . " />";
-    }
-
     public function input_render($setting, $field, $value)
     {
-        return "<input type='text' name='{$setting}[{$field}]' value='{$value}' />";
+        $default_value = $this->get_default($setting);
+        $keys = explode('][', $field);
+        for ($i = 0; $i < count($keys); $i++) {
+            $default_value = isset($default_value[$keys[$i]]) ? $default_value[$keys[$i]] : $default_value[0];
+        }
+        $is_bool = is_bool($default_value);
+        if ($is_bool) {
+            $is_bool = true;
+            $value = 'on' === $value;
+        }
+
+        if ($is_bool) {
+            return "<input type='checkbox' name='{$setting}[$field]' " . ($value ? 'checked' : '') . " />";
+        } else {
+            return "<input type='text' name='{$setting}[{$field}]' value='{$value}' />";
+        }
     }
 
     public function fieldset_render($setting, $field, $data)
     {
-        $fieldset = "<table id='{$setting}[{$field}]'>";
+        $table_id = $setting . '__' . str_replace('][', '_', $field);
+        $fieldset = "<table id='{$table_id}'>";
         $is_list = is_list($data);
         foreach (array_keys($data) as $key) {
             $fieldset .= '<tr>';
@@ -116,31 +125,23 @@ class BaseSettings
         return $fieldset;
     }
 
-    public function default_values()
-    {
-        throw new Exception('You have to overwrite this method');
-    }
-
     public function control_render($setting, $field)
     {
-        $values = $this->get_default($setting);
-        error_log(print_r($values, true));
+        $defaults = $this->get_default($setting);
         ob_start();
 ?>
         <div class="<?= $setting; ?>__<?= $field ?>--controls">
             <button class="button button-primary" data-action="add">Add</button>
             <button class="button button-secondary" data-action="remove">Remove</button>
         </div>
-        <script>
-            <?php include 'fieldset-control-js.php' ?>
-        </script>
+        <?php include 'fieldset-control-js.php' ?>
 <?php
         return ob_get_clean();
     }
 
     public function control_style($setting, $field)
     {
-        return "<style>.{$setting}_{$field} td td, .{$setting}_{$field} td th{padding:0}.{$setting}_{$field} table table{margin-bottom:1rem}</style>";
+        return "<style>#{$setting}__{$field} td td,#{$setting}__{$field} td th{padding:0}#{$setting}__{$field} table table{margin-bottom:1rem}</style>";
     }
 
     public function option_getter($setting, $option)

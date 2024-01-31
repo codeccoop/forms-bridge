@@ -6,7 +6,6 @@ require_once 'class-base-settings.php';
 
 class Settings extends BaseSettings
 {
-    public $group_name = 'wpct-erp-forms';
     private $_default_endpoint = '/api/private/crm-lead';
 
     public function register()

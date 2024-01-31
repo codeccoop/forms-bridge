@@ -55,9 +55,6 @@ msgstr ""
 msgid "wpct_erp_forms_api__endpoints--label"
 msgstr ""
 
-msgid "Foo"
-msgstr ""
-
 msgid "The IBAN you inserted is not valid."
 msgstr ""
 

@@ -2,14 +2,14 @@
 
 namespace WPCT_ERP_FORMS\GF;
 
-use WPCT_ERP_FORMS\GF\Fields\Iban\Field as IbanField;
+use WPCT_ERP_FORMS\GF\Fields\Iban\FieldAdapter as IbanField;
 use WPCT_ERP_FORMS\Integration as BaseIntegration;
 
 require_once 'attachments.php';
 require_once 'fields-population.php';
 
 // Fields
-require_once dirname(__FILE__, 3) . '/fields/gf/iban/class-field.php';
+require_once dirname(__FILE__, 3) . '/fields/gf/iban/class-field-adapter.php';
 
 class Integration extends BaseIntegration
 {

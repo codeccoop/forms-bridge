@@ -2,25 +2,22 @@
 
 namespace WPCT_ERP_FORMS;
 
-class Menu
+class Menu extends Singleton
 {
     private $name;
     private $settings;
 
-    public function __construct($name, $settings)
+    protected function __construct($name, $settings)
     {
         $this->name = $name;
         $this->settings = $settings;
-    }
 
-    public function on_load()
-    {
         add_action('admin_menu', function () {
             $this->add_menu();
         });
 
         add_action('admin_init', function () {
-            $this->register_settings();
+            $this->settings->register();
         });
     }
 
@@ -35,11 +32,6 @@ class Menu
                 $this->render_page();
             },
         );
-    }
-
-    private function register_settings()
-    {
-        $this->settings->register();
     }
 
     private function render_page()

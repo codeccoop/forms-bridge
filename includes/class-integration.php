@@ -4,45 +4,33 @@ namespace WPCT_ERP_FORMS;
 
 use WPCT_HB\Http_Client as Wpct_Http_Client;
 
-class Integration
+abstract class Integration extends Singleton
 {
     public static $fields = [];
-    private static $instances = [];
 
-    public function __construct()
+    abstract public function serialize_submission($submission, $form);
+    abstract public function serialize_form($form);
+
+    protected function __construct()
     {
-        add_action('init', [$this, 'register']);
-
-        foreach (static::$fields as $field) {
-            $_field = $field::get_instance();
-            $_field->register();
+        foreach (static::$fields as $Field) {
+            $field = $Field::get_instance();
         }
     }
 
-    protected function __clone()
+    public function init()
     {
-    }
-
-    public function __wakeup()
-    {
-        throw new \Exception("Cannot unserialize a singleton.");
-    }
-
-    public static function get_instance()
-    {
-        $cls = static::class;
-        if (!isset(self::$instances[$cls])) {
-            self::class::$instances[$cls] = new static();
+        foreach (static::$fields as $Field) {
+            $field = $Field::get_instance();
+            $field->init();
         }
-
-        return self::$instances[$cls];
     }
 
     public function submit($payload, $endpoints)
     {
         $success = true;
         foreach ($endpoints as $endpoint) {
-            $response = Wpct_Http_Client::get($endpoint, $payload);
+            $response = Wpct_Http_Client::post($endpoint, $payload);
 
             if (!$response) {
                 $success = false;
@@ -132,20 +120,5 @@ class Integration
         return apply_filters('wpct_erp_forms_endpoints', array_map(function ($map) {
             return $map['endpoint'];
         }, $maps));
-    }
-
-    public function register()
-    {
-        throw new Exception('Method to overwrite by inheritance');
-    }
-
-    public function serialize_submission($submission, $form)
-    {
-        throw new Exception('Method to overwrite by inheritance');
-    }
-
-    public function serialize_form($form)
-    {
-        throw new Exception('Method to overwrite by inheritance');
     }
 }

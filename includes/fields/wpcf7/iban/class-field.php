@@ -110,32 +110,22 @@ class Field extends BaseField
         'z' => 35
     ];
 
-    public function register()
+    protected function __construct()
     {
-        add_action('wpcf7_init', function () {
-            $this->_register();
-        });
+        add_filter('wpcf7_validate_iban*', [$this, 'validate'], 20, 2);
+        add_filter('wpcf7_validate_iban', [$this, 'validate'], 20, 2);
     }
 
-    private function _register()
+    public function init()
     {
         wpcf7_add_form_tag(
             ['iban', 'iban*'],
-            function ($tag) {
-                return $this->handler($tag);
-            },
+            [$this, 'handler'],
             ['name-attr' => true]
         );
-
-        add_filter('wpcf7_validate_iban*', function ($result, $tag) {
-            return $this->validate($result, $tag);
-        }, 20, 2);
-        add_filter('wpcf7_validate_iban', function ($result, $tag) {
-            return $this->validate($result, $tag);
-        }, 20, 2);
     }
 
-    private function handler($tag)
+    public function handler($tag)
     {
         $atts = [
             'type' => 'text',
@@ -146,7 +136,7 @@ class Field extends BaseField
         return $input;
     }
 
-    private function validate($result, $tag)
+    public function validate($result, $tag)
     {
         $value = $_POST[$tag->name];
         try {
@@ -178,5 +168,7 @@ class Field extends BaseField
         } catch (Exception) {
             $result->invalidate($tag, __('Invalid IBAN format', 'wpct-erp-forms'));
         }
+
+        return $result;
     }
 }

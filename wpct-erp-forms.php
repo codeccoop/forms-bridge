@@ -2,7 +2,6 @@
 
 namespace WPCT_ERP_FORMS;
 
-use Exception;
 use WPCT_ERP_FORMS\WPCF7\Integration as Wpcf7Integration;
 use WPCT_ERP_FORMS\GF\Integration as GFIntegration;
 
@@ -19,51 +18,57 @@ use WPCT_ERP_FORMS\GF\Integration as GFIntegration;
  * @package         wpct_erp_forms
  */
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+require_once 'includes/class-singleton.php';
+require_once 'includes/class-plugin.php';
 require_once 'includes/class-menu.php';
 require_once 'includes/class-settings.php';
 require_once 'includes/class-integration.php';
-require_once 'includes/fields/class-field.php';
+require_once 'includes/class-field.php';
 
-class Plugin
+class Wpct_Erp_Forms extends Plugin
 {
-    private $menu;
-    private $integrations = [];
 
-    public function __construct()
+    private $_integrations = [];
+
+    protected $name = 'Wpct ERP Forms';
+    protected $textdomain = 'wpct-erp-forms';
+    protected $dependencies = [
+        'Wpct Http Backend' => '<a href="https://git.coopdevs.org/codeccoop/wp/wpct-http-backend/">Wpct Http Backend</a>'
+    ];
+
+    protected function __construct()
     {
-        $settings = new Settings();
-        $this->menu = new Menu('Wpct ERP Forms', $settings);
+        parent::__construct();
 
-        load_plugin_textdomain(
-            'wpct-erp-forms',
-            false,
-            dirname(plugin_basename(__FILE__)) . '/languages',
-        );
+        if (apply_filters('wpct_dc_is_plugin_active', false, 'contact-form-7/wp-contact-form-7.php')) {
+            require_once 'includes/integrations/wpcf7/class-integration.php';
+            $this->_integrations['wpcf7'] = Wpcf7Integration::get_instance();
+        } else if (apply_filters('wpct_dc_is_plugin_active', false, 'gravityforms/gravityforms.php')) {
+            require_once 'includes/integrations/gf/class-integration.php';
+            $this->_integrations['gf'] = GFIntegration::get_instance();
+        }
     }
 
-    public function on_load()
+    public function init()
     {
-        add_action('init', function () {
-            /* Dependencies */
-            add_filter('wpct_dependencies_check', function ($dependencies) {
-                $dependencies['Wpct Http Backend'] = '<a href="https://git.coopdevs.org/codeccoop/wp/wpct-http-backend/">Wpct Http Backend</a>';
-                return $dependencies;
-            });
+        foreach ($this->_integrations as $integration) {
+            $integration->init();
+        }
+    }
 
-            if (apply_filters('wpct_dc_is_plugin_active', false, 'contact-form-7/wp-contact-form-7.php')) {
-                require_once 'includes/integrations/wpcf7/class-integration.php';
-                $this->integrations['wpcf7'] = new Wpcf7Integration();
-            } else if (apply_filters('wpct_dc_is_plugin_active', false, 'gravityforms/gravityforms.php')) {
-                require_once 'includes/integrations/gf/class-integration.php';
-                $this->integrations['gf'] = new GFIntegration();
-            }
-        });
+    public static function activate()
+    {
+    }
 
-        $this->menu->on_load();
+    public static function deactivate()
+    {
     }
 }
 
 add_action('plugins_loaded', function () {
-    $plugin = new Plugin();
-    $plugin->on_load();
+    $plugin = Wpct_Erp_Forms::get_instance();
 }, 10);
