@@ -1,7 +1,8 @@
 function ConditionalControl(el, meta) {
 	this.el = el;
 	this.type = el.getAttribute("type");
-	this.fieldName = el.getAttribute("name");
+	this.fieldName =
+		el.getAttribute("name") && el.getAttribute("name").replace(/\[\]/, "");
 	this.conditional =
 		meta && meta.classList.contains("wpcf7-form-control-conditional");
 	this.conditions = {};

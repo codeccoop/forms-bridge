@@ -72,7 +72,7 @@ class Integration extends BaseIntegration
         $files = [];
         $uploads = $submission->uploaded_files();
         foreach ($uploads as $file_name => $paths) {
-            if (sizeof($paths) > 0 && $$paths[0]) {
+            if (sizeof($paths) > 0 && $paths[0]) {
                 $files[$file_name] = $paths[0];
             }
         };

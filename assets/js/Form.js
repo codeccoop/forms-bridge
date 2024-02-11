@@ -36,10 +36,6 @@ function Form(el) {
 		control.on("change", () => this.updateVisibility(control));
 	}
 
-	this.el.addEventListener("wpcf7beforesubmit", (ev) =>
-		this.beforeSubmit(ev)
-	);
-
 	this.el.addEventListener("wpcf7reset", (ev) => this.reset(ev));
 
 	// Initial visibility update
@@ -114,12 +110,6 @@ Form.prototype.getState = function () {
 	}, {});
 };
 
-Form.prototype.beforeSubmit = function ({ detail }) {
-	this.controls.forEach((control) => {
-		console.log(control.fieldName, detail.formData.get(control.fieldName));
-	});
-};
-
 Form.prototype.reset = function ({ detail }) {
 	this.controls.forEach(
 		(control) => (control.value = control.defaultValue || "")
@@ -130,7 +120,7 @@ Form.prototype.reset = function ({ detail }) {
 			top: Math.max(0, this.el.offsetTop - 20),
 			behavior: "smooth",
 		});
-	}, 1e3);
+	}, 500);
 };
 
 export default Form;
