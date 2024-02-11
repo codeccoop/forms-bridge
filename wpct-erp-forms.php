@@ -76,6 +76,14 @@ class Wpct_Erp_Forms extends Abstract\Plugin
 
     public function enqueue_scripts()
     {
+        if (isset($this->_integrations['wpcf7'])) {
+            wp_enqueue_style(
+                'wpct-wpcf7-theme',
+                plugin_dir_url(__FILE__) . 'assets/css/wpct7-theme.css',
+                [],
+                WPCT_ERP_FORMS_VERSION,
+            );
+        }
     }
 }
 

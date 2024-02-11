@@ -31,11 +31,9 @@ class Integration extends BaseIntegration
         add_filter('wpcf7_form_elements', function ($tags) {
             $plugin_url = plugin_dir_url(dirname(__FILE__, 4) . '/wpct-erp-forms.php');
             $script_url = $plugin_url . 'assets/js/conditional-fields.js';
-            $style_url = $plugin_url . 'assets/css/wpct7-theme.css';
             ob_start();
 ?>
             <script src="<?= $script_url ?>" type="module"></script>
-            <link rel="stylesheet" href="<?= $style_url ?>" />
             <style>
                 .wpcf7-form-control-conditional-wrap {
                     display: none
