@@ -1,8 +1,8 @@
 import ConditionalControl from "./ConditionalControl.js";
 
-function ConditionalCheckbox(el, meta) {
+function ConditionalRadio(el, meta) {
 	ConditionalControl.call(this, el, meta);
-	this.options = Array.from(el.querySelectorAll("input[type='checkbox']"));
+	this.options = Array.from(el.querySelectorAll("input[type='radio']"));
 	for (const option of this.options) {
 		option.addEventListener("change", (ev) => {
 			setTimeout(() => {
@@ -13,7 +13,7 @@ function ConditionalCheckbox(el, meta) {
 	}
 
 	this.fieldName = this.controlWrap.dataset.name;
-	this.type = "checkbox";
+	this.type = "radio";
 	this.el.value = this.getValue();
 	Object.defineProperty(this, "defaultValue", {
 		writable: false,
@@ -23,10 +23,13 @@ function ConditionalCheckbox(el, meta) {
 	});
 }
 
-ConditionalCheckbox.prototype = Object.create(ConditionalControl.prototype);
+ConditionalRadio.prototype = Object.create(ConditionalControl.prototype);
 
-ConditionalCheckbox.prototype.getValue = function () {
-	return this.options.filter((opt) => opt.checked).map((opt) => opt.value);
+ConditionalRadio.prototype.getValue = function () {
+	return this.options
+		.filter((opt) => opt.checked)
+		.map((opt) => opt.value)
+		.pop();
 };
 
-export default ConditionalCheckbox;
+export default ConditionalRadio;

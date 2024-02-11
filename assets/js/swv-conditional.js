@@ -15,10 +15,13 @@ for (const form of document.querySelectorAll(".wpcf7 > form")) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-	window.swv.validators.conditional = function (a) {
+	function conditionalValidator(a) {
 		const validator = window.swv.validators[this.condition];
 		if (validator) {
 			validator.call(this, a);
 		}
-	};
+	}
+
+	window.swv.validators.conditional = conditionalValidator;
+	window.swv.validators.conditionalfile = conditionalValidator;
 });

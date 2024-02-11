@@ -1,7 +1,5 @@
 function ConditionalControl(el, meta) {
 	this.el = el;
-	this.controlWrap = this.el.parentElement;
-	this.conditionalWrap = this.controlWrap.parentElement.parentElement;
 	this.type = el.getAttribute("type");
 	this.fieldName = el.getAttribute("name");
 	this.conditional =
@@ -16,9 +14,6 @@ function ConditionalControl(el, meta) {
 				acum[field] = val;
 				return acum;
 			}, {});
-		this.conditionalWrap.classList.add(
-			"wpcf7-form-control-conditional-wrap"
-		);
 	}
 
 	Object.defineProperty(this, "value", {
@@ -44,7 +39,22 @@ function ConditionalControl(el, meta) {
 			return this.conditionalWrap.classList.contains("visible");
 		},
 	});
+
+	this.prepareDom(meta);
 }
+
+ConditionalControl.prototype.prepareDom = function (meta) {
+	this.controlWrap = this.el.parentElement;
+	this.conditionalWrap = this.controlWrap.parentElement.parentElement;
+
+	if (this.conditional) {
+		this.conditionalWrap.classList.add(
+			"wpcf7-form-control-conditional-wrap"
+		);
+	}
+
+	if (meta) meta.parentElement.removeChild(meta);
+};
 
 ConditionalControl.prototype.validateConditions = function (state) {
 	if (!this.conditional) return true;
@@ -98,28 +108,6 @@ ConditionalControl.prototype.on = function (event, callback) {
 
 ConditionalControl.prototype.off = function (event, callback) {
 	this.el.removeEventListener(event, callback);
-};
-
-ConditionalControl.prototype.emptyValue = function () {
-	this._memValue = this.value;
-	switch (this.type) {
-		case "text":
-			return "wpct-empty";
-		case "email":
-			return "wpct-empty@mail.com";
-		case "tel":
-			return "+000000000";
-		case "url":
-			return "https://wpct-empty.com";
-		case "date":
-			return "0001-01-01";
-		case "number":
-			return -1234567890;
-		case "checkbox":
-		case "select":
-		case "radio":
-			return ["wpct-empty"];
-	}
 };
 
 export default ConditionalControl;

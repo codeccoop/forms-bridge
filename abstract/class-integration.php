@@ -121,7 +121,7 @@ abstract class Integration extends Singleton
     private function get_endpoints($form_id)
     {
         $maps = array_filter(
-            get_option('wpct_erp_forms_api', ['endpoints' => []])['endpoints'],
+            get_option('wpct-erp-forms_api', ['endpoints' => []])['endpoints'],
             function ($map) use ($form_id) {
                 return (string) $map['form_id'] === (string) $form_id;
             }
