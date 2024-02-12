@@ -59,34 +59,34 @@ abstract class Integration extends Singleton
         $form = $this->serialize_form($form);
         if (!$this->has_endpoints($form['id'])) return;
 
-        $files = $this->get_files($submission, $form);
-        $submission = $this->serialize_submission($submission, $form);
-
+        $files = apply_filters('wpct_erp_forms_submission_files', $this->get_files($submission, $form), $submission, $form);
         $submission = apply_filters('wpct_erp_forms_before_submission', $submission, $form);
-        $this->cleanup_empties($submission);
 
-        $payload = $this->get_payload($submission);
+        $data = $this->serialize_submission($submission, $form);
+        $this->cleanup_empties($data);
+
+        $payload = $this->get_payload($data, $submission, $form);
         $endpoints = $this->get_endpoints($form['id']);
 
         $success = $this->submit($payload, $endpoints, $files);
 
-        if ($success) do_action('wpct_erp_forms_after_submission', $submission, $form);
-        else do_action('wpct_erp_forms_on_failure', $submission, $form);
+        if ($success) do_action('wpct_erp_forms_after_submission', $data, $submission, $form);
+        else do_action('wpct_erp_forms_on_failure', $data, $submission, $form, $this);
     }
 
     public function get_files($submission, $form)
     {
-        return null;
+        return [];
     }
 
-    public function get_payload($submission)
+    public function get_payload($data, $submission, $form)
     {
         $payload = [
-            'name' => $submission['source_xml_id'] . ' submission: ' . $submission['id'],
+            'name' => $data['source_xml_id'] . ' submission: ' . $data['id'],
             'metadata' => []
         ];
 
-        foreach ($submission as $key => $val) {
+        foreach ($data as $key => $val) {
             if ($key == 'email_from') {
                 $payload[$key] = $val;
             } elseif ($key === 'source_xml_id') {
@@ -99,7 +99,7 @@ abstract class Integration extends Singleton
             ];
         }
 
-        return apply_filters('wpct_erp_forms_payload', $payload);
+        return apply_filters('wpct_erp_forms_payload', $payload, $submission, $form);
     }
 
     private function cleanup_empties(&$submission)
