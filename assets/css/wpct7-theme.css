@@ -1,28 +1,20 @@
 .wpcf7-form.submitting {
-  cursor: wait;
+	cursor: wait;
 }
 
-.wpcf7-form.submitting .wpcf7-form-control input, {
-.wpcf7-form.submitting .wpcf7-form-control select, {
+.wpcf7-form.submitting .wpcf7-form-control input,
+.wpcf7-form.submitting .wpcf7-form-control select,
 .wpcf7-form.submitting .wpcf7-form-control textarea {
-  cursor: wait;
-  pointer-events: none;
-}
-
-.wpcf7-form-control-conditional-wrap {
-	display: none;
-}
-
-.wpcf7-form-control-conditional-wrap.visible {
-	display: block;
+	cursor: wait;
+	pointer-events: none;
 }
 
 .wpcf7-form-control.wpcf7-not-valid {
-  color: var(--wp--preset--color--vivid-red);
-  font-style: italic;
+	color: var(--wp--preset--color--vivid-red);
+	font-style: italic;
 }
 
-.wpcf7-form-control.wpcf7-radio.vertical .wpcf7-list-item {
+.wpcf7-form-control.wpcf7-radio.vertical .wpcf7-list-item,
 .wpcf7-form-control.wpcf7-checkbox.vertical .wpcf7-list-item {
 	display: block;
 }

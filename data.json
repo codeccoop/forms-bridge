@@ -1,0 +1,33 @@
+{
+    "type": "new",
+    "name": "PAULASIMON SIMON SIMON",
+    "firstname": "PAULASIMON",
+    "lastname": "SIMON SIMON",
+    "email": "9td2bvoqg@netscape.com",
+    "address": {
+      "street": "Plaza Penitente, 1, 1 A",
+      "zip_code": "16843",
+      "city": "Villas de la Ventosa",
+      "state": "CU",
+      "country": "ES"
+    },
+    "lang": "en_US",
+    "vat": "es57116963m",
+    "payment_type": "single",
+    "nationality": "ES",
+    "discovery_channel_id": 1,
+    "sponsor_vat": "es72114326m",
+    "birthdate": "1999-09-09",
+    "gender": "female",
+    "is_company": false,
+    "data_policy_approved": true,
+    "financial_risk_approved": true,
+    "generic_rules_approved": true,
+    "internal_rules_approved": true,
+    "ordered_parts": 1,
+    "share_product": 100,
+    "id_connector": "holamundo!!",
+    "somnuvol_account_name": "mellamojuan",
+    "vat_image_name": "mellamojuan.png",
+    "vat_image": "asdasdasdasdasd" # base64 encoded image
+  }

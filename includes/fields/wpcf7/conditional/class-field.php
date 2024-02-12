@@ -74,8 +74,6 @@ class Field extends BaseField
             $rules['conditional'] = 'WCPT_WPCF7_Conditional_Rule';
             return $rules;
         });
-
-        add_action('wp_enqueue_scripts', [$this, 'enqueue_script']);
     }
 
     public function init()
@@ -148,18 +146,6 @@ class Field extends BaseField
         }
 
         return $type;
-    }
-
-    public function enqueue_script()
-    {
-        $plugin = dirname(__FILE__, 5) . '/wpct-erp-forms.php';
-        wp_enqueue_script(
-            'wpct-swv-conditional',
-            plugin_dir_url($plugin) . 'assets/js/swv-conditional.js',
-            WPCT_ERP_FORMS_VERSION,
-            [],
-            true,
-        );
     }
 
     public function add_rules($schema, $form)

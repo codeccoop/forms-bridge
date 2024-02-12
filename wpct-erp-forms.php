@@ -83,6 +83,13 @@ class Wpct_Erp_Forms extends Abstract\Plugin
                 [],
                 WPCT_ERP_FORMS_VERSION,
             );
+        } else if (isset($this->_integrations['gf'])) {
+            wp_register_script(
+                'wpct-gf-app',
+                plugin_dir_url(__FILE__) . 'assets/js/gf.js',
+                [],
+                WPCT_ERP_FORMS_VERSION
+            );
         }
     }
 }

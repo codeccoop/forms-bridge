@@ -8,3 +8,5 @@ node_modules/
 *.tar.gz
 *.zip
 .nvimrc
+assets/js/wpcf7.js
+assets/js/gf.js

@@ -30,13 +30,16 @@ class Integration extends BaseIntegration
 
         add_filter('wpcf7_form_elements', function ($tags) {
             $plugin_url = plugin_dir_url(dirname(__FILE__, 4) . '/wpct-erp-forms.php');
-            $script_url = $plugin_url . 'assets/js/conditional-fields.js';
+            $script_url = $plugin_url . 'assets/js/wpcf7.js';
             ob_start();
 ?>
             <script src="<?= $script_url ?>" type="module"></script>
             <style>
                 .wpcf7-form-control-conditional-wrap {
                     display: none
+                }
+                .wpcf7-form-control-conditional-wrap.visible {
+                    display: block;
                 }
             </style>
 <?php
@@ -49,6 +52,14 @@ class Integration extends BaseIntegration
     {
         $data = $submission->get_posted_data();
         $data['id'] = $submission->get_posted_data_hash();
+        foreach ($data as $key => $val) {
+            if ((int) $val == $val) {
+                $number = (float) $val;
+                if ((string) $number === $val) {
+                    $data[$key] = $number;
+                }
+            }
+        }
 
         return $data;
     }
