@@ -10,3 +10,4 @@ node_modules/
 .nvimrc
 assets/js/wpcf7.js
 assets/js/gf.js
+.php-cs-fixer.cache

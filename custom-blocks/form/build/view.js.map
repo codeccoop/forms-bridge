@@ -1,0 +1,1 @@
+{"version":3,"file":"view.js","mappings":";;;;;AAAAA,QAAQ,CAACC,gBAAgB,CAAC,kBAAkB,EAAE,MAAMC,OAAO,CAACC,GAAG,CAAC,YAAY,CAAC,CAAC,C","sources":["webpack://wpct-form/./src/view.js"],"sourcesContent":["document.addEventListener(\"DOMContentLoaded\", () => console.log(\"I'm a form\"));\n"],"names":["document","addEventListener","console","log"],"sourceRoot":""}

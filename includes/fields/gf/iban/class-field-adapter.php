@@ -7,7 +7,7 @@ use WPCT_ERP_FORMS\Abstract\Field as BaseField;
 use GFAddOn;
 
 require_once 'class-addon.php';
-require_once 'class-gf-field.php';
+require_once 'class-field.php';
 
 class FieldAdapter extends BaseField
 {

@@ -33,9 +33,11 @@ require_once 'abstract/class-integration.php';
 require_once 'includes/class-menu.php';
 require_once 'includes/class-settings.php';
 
+require_once 'custom-blocks/form/form.php';
+require_once 'custom-blocks/form-control/form-control.php';
+
 class Wpct_Erp_Forms extends Abstract\Plugin
 {
-
     private $_integrations = [];
 
     protected $name = 'Wpct ERP Forms';
@@ -51,7 +53,7 @@ class Wpct_Erp_Forms extends Abstract\Plugin
         if (apply_filters('wpct_dc_is_plugin_active', false, 'contact-form-7/wp-contact-form-7.php')) {
             require_once 'includes/integrations/wpcf7/class-integration.php';
             $this->_integrations['wpcf7'] = Wpcf7Integration::get_instance();
-        } else if (apply_filters('wpct_dc_is_plugin_active', false, 'gravityforms/gravityforms.php')) {
+        } elseif (apply_filters('wpct_dc_is_plugin_active', false, 'gravityforms/gravityforms.php')) {
             require_once 'includes/integrations/gf/class-integration.php';
             $this->_integrations['gf'] = GFIntegration::get_instance();
         }
@@ -83,7 +85,7 @@ class Wpct_Erp_Forms extends Abstract\Plugin
                 [],
                 WPCT_ERP_FORMS_VERSION,
             );
-        } else if (isset($this->_integrations['gf'])) {
+        } elseif (isset($this->_integrations['gf'])) {
             wp_register_script(
                 'wpct-gf-app',
                 plugin_dir_url(__FILE__) . 'assets/js/gf.js',
@@ -97,11 +99,3 @@ class Wpct_Erp_Forms extends Abstract\Plugin
 add_action('plugins_loaded', function () {
     $plugin = Wpct_Erp_Forms::get_instance();
 }, 10);
-
-add_filter('wpct_erp_forms_payload', function ($payload) {
-    foreach ($payload['metadata'] as $datum) {
-        $payload[$datum['key']] = $datum['value'];
-    }
-    unset($payload['metadata']);
-    return $payload;
-}, 90, 1);

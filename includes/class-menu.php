@@ -37,15 +37,15 @@ class Menu extends Abstract\Singleton
     private function render_page()
     {
         ob_start();
-?>
+        ?>
         <div class="wrap">
             <h1><?= $this->name ?></h1>
             <form action="options.php" method="post">
-                <?php
-                settings_fields($this->settings->get_name());
-                do_settings_sections($this->settings->get_name());
-                submit_button();
-                ?>
+            <?php
+            settings_fields($this->settings->get_name());
+			do_settings_sections($this->settings->get_name());
+			submit_button();
+			?>
             </form>
         </div>
 <?php

@@ -8,9 +8,20 @@ class Undefined
 
 abstract class Settings extends Singleton
 {
-
     protected $group_name;
-    private $_defaults = [];
+    private $_defaults = [
+        'wpct-erp-forms_general' => [
+            'notification_receiver' => 'admin@example.coop'
+        ],
+        'wpct-erp-forms_api' => [
+			'endpoints' => [
+				[
+					'form_id' => 0,
+					'endpoint' => '/api/private/crm-lead',
+				]
+			]
+        ]
+    ];
 
     abstract public function register();
 
@@ -24,16 +35,16 @@ abstract class Settings extends Singleton
         return $this->group_name;
     }
 
-    public function register_setting($name, $default = [])
+    public function register_setting($name)
     {
-        $default = $this->get_default($name, $default);
+        $defaults = $this->get_defaults($name);
         register_setting(
             $this->group_name,
             $name,
             [
                 'type' => 'array',
                 'show_in_rest' => false,
-                'default' => $default,
+                'default' => $defaults,
             ],
         );
 
@@ -47,7 +58,11 @@ abstract class Settings extends Singleton
             $this->group_name,
         );
 
-        $this->_defaults[$name] = $default;
+        $this->_defaults[$name] = $defaults;
+
+        foreach (array_keys($defaults) as $field) {
+            $this->register_field($field, $name);
+        }
     }
 
     public function register_field($field_name, $setting_name)
@@ -90,10 +105,16 @@ abstract class Settings extends Singleton
 
     public function input_render($setting, $field, $value)
     {
-        $default_value = $this->get_default($setting);
+        $default_value = $this->get_defaults($setting, $field);
         $keys = explode('][', $field);
+		$is_list = is_list($default_value);
         for ($i = 0; $i < count($keys); $i++) {
-            $default_value = isset($default_value[$keys[$i]]) ? $default_value[$keys[$i]] : $default_value[0];
+			$key = $keys[$i];
+			if ($is_list) {
+				$key = (int) $key;
+			}
+            $default_value = isset($default_value[$key]) ? $default_value[$key] : $default_value[0];
+			$is_list = is_list($default_value);
         }
         $is_bool = is_bool($default_value);
         if ($is_bool) {
@@ -115,9 +136,11 @@ abstract class Settings extends Singleton
         $is_list = is_list($data);
         foreach (array_keys($data) as $key) {
             $fieldset .= '<tr>';
-            if (!$is_list) $fieldset .= "<th>{$key}</th>";
+            if (!$is_list) {
+                $fieldset .= "<th>{$key}</th>";
+            }
             $_field = $field . '][' . $key;
-            $fieldset .= "<td>{$this->field_render($setting,$_field,$data[$key])}</td>";
+            $fieldset .= "<td>{$this->field_render($setting, $_field, $data[$key])}</td>";
             $fieldset .= '</tr>';
         }
         $fieldset .= '</table>';
@@ -127,10 +150,10 @@ abstract class Settings extends Singleton
 
     public function control_render($setting, $field)
     {
-        $defaults = $this->get_default($setting);
+        $defaults = $this->get_defaults($setting);
         $script_path = dirname(__FILE__, 2) . '/assets/js/fieldset-control-js.php';
         ob_start();
-?>
+        ?>
         <div class="<?= $setting; ?>__<?= $field ?>--controls">
             <button class="button button-primary" data-action="add">Add</button>
             <button class="button button-secondary" data-action="remove">Remove</button>
@@ -148,20 +171,32 @@ abstract class Settings extends Singleton
     public function option_getter($setting, $option)
     {
         $setting = get_option($setting) ? get_option($setting) : [];
-        if (!key_exists($option, $setting)) return null;
+        if (!key_exists($option, $setting)) {
+            return null;
+        }
         return $setting[$option];
     }
 
-    public function get_default($setting_name, $default = [])
+    public function get_defaults($setting_name, $field = null)
     {
-        $default = isset($this->_defaults[$setting_name]) ? $this->_defaults[$setting_name] : $default;
-        return apply_filters($setting_name . '_default', $default);
+        $defaults = isset($this->_defaults[$setting_name]) ? $this->_defaults[$setting_name] : [];
+        $defaults = apply_filters($setting_name . '_defaults', $defaults);
+
+        if ($field) {
+
+        }
+
+        return $defaults;
     }
 }
 
 function is_list($arr)
 {
-    if (!is_array($arr)) return false;
-    if (sizeof($arr) === 0) return true;
+    if (!is_array($arr)) {
+        return false;
+    }
+    if (sizeof($arr) === 0) {
+        return true;
+    }
     return array_keys($arr) === range(0, count($arr) - 1);
 }

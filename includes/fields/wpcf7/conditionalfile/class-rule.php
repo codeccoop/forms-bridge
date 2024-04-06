@@ -1,6 +1,6 @@
 <?php
 
-class WCPT_WPCF7_ConditionalFile_Rule extends WPCF7_SWV_Rule
+class WCPT_WPCF7_ConditionalFile_Rule extends Contactable\SWV\Rule
 {
     const rule_name = 'conditionalfile';
 

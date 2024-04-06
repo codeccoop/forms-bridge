@@ -48,7 +48,18 @@ class Integration extends BaseIntegration
         }, 90, 1);
     }
 
-    public function serialize_submission($submission, $form = null)
+	public function serialize_field($field, $form)
+	{
+		return [
+			'type' => $field->basetype,
+			'name' => $field->rawname,
+			'label' => $field->labels,
+			'values' => $field->values,
+			'id' => null,
+		];
+	}
+
+    public function serialize_submission($submission, $form)
     {
         $data = $submission->get_posted_data();
         $data['id'] = $submission->get_posted_data_hash();
@@ -69,23 +80,25 @@ class Integration extends BaseIntegration
         return [
             'id' => $form->id(),
             'title' => $form->title(),
-            'name' => $form->name(),
-            'properties' => $form->get_properties(),
-            'tag' => $form->unit_tag(),
-            'locale' => $form->locale(),
+			'fields' => array_map(function ($field) use ($form) {
+				return $this->serialize_field($field, $form);
+			}, $form->scan_form_tags()),
         ];
     }
 
-    public function get_files($submission, $form)
+    public function get_uploads($submission, $form)
     {
-        $files = [];
+        $uploads = [];
         $uploads = $submission->uploaded_files();
         foreach ($uploads as $file_name => $paths) {
-            if (sizeof($paths) > 0 && $paths[0]) {
-                $files[$file_name] = $paths[0];
+            if (!empty($paths)) {
+				$uploads[$file_name] = [
+					'path' => $paths[0],
+					'is_multi' => false
+				];
             }
         };
 
-        return $files;
+        return $uploads;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace WPCT_ERP_FORMS\GF;
 
+use Exception;
+use TypeError;
 use WPCT_ERP_FORMS\Abstract\Integration as BaseIntegration;
 use WPCT_ERP_FORMS\GF\Fields\Iban\FieldAdapter as IbanField;
 
@@ -22,93 +24,118 @@ class Integration extends BaseIntegration
         add_action('gform_after_submission', function ($entry, $form) {
             $this->do_submission($entry, $form);
         }, 10, 2);
-
-        add_action('admin_init', function () {
-            global $wpct_erp_forms_admin_menu;
-            ($wpct_erp_forms_admin_menu->get_settings())->register_field('coord_id', 'wpct-erp-forms_general');
-        }, 90);
-
-        add_filter('wpct-erp-forms_general_default', function ($defaults) {
-            $defaults['coord_id'] = 1;
-            return $defaults;
-        });
     }
 
     public function serialize_form($form)
     {
+        return [
+            'id' => $form['id'],
+            'title' => $form['title'],
+            'description' => $form['description'],
+            'fields' => array_map(function ($field) {
+                return $this->serialize_field($field);
+            }, $form['fields']),
+        ];
         return $form;
     }
 
-
-    public function serialize_submission($entry, $form)
+    private function serialize_field($field)
     {
-        $submission = $this->get_entry_data($entry, $form);
-        $this->add_coord_id($submission);
-        return $submission;
+        switch ($field->type) {
+            case 'fileupload':
+                $type = $field->multipleFiles ? 'files' : 'file';
+                break;
+            default:
+                $type = $field->type;
+                break;
+        }
+
+        $name = $field->inputName
+            ? $field->inputName
+            : ($field->adminLabel
+                ? $field->adminLabel
+                : $field->label);
+
+        return [
+            'type' => $type,
+            'name' => $name,
+            'label' => $field->label,
+            'id' => $field->id,
+            'inputs' => $field->get_entry_inputs(),
+        ];
     }
 
-    private function get_entry_data($entry, $form)
+
+    public function serialize_submission($submission, $form_data)
     {
-        $submission = [
-            'entry_id' => $entry['id']
+        $data = [
+            'id' => $submission['id']
         ];
 
-        foreach ($form['fields'] as $field) {
-            if ($field->type === 'section') continue;
+        foreach ($form_data['fields'] as $field) {
+            if (
+                $field['type'] === 'section'
+                    || $field['type'] === 'file'
+                    || $field['type'] === 'files'
+                    || $field['type'] === 'html'
+            ) {
+                continue;
+            }
 
-            $input_name = $field->inputName
-                ? $field->inputName
-                : ($field->adminLabel
-                    ? $field->adminLabel
-                    : $field->label);
-
-            $inputs = $field->get_entry_inputs();
+            $input_name = $field['name'];
+            $inputs = $field['inputs'];
 
             if (is_array($inputs)) {
                 // composed fields
                 $names = array_map(function ($input) {
                     return $input['name'];
                 }, $inputs);
-                if (sizeof(array_filter($names, fn ($name) => $name))) {
+                if (!empty(array_filter($names))) {
                     // Composed with subfields
                     for ($i = 0; $i < sizeof($inputs); $i++) {
-                        if (empty($names[$i])) continue;
-                        $submission[$names[$i]] = rgar($entry, (string) $inputs[$i]['id']);
+                        if (empty($names[$i])) {
+                            continue;
+                        }
+                        $data[$names[$i]] = rgar($submission, (string) $inputs[$i]['id']);
                     }
                 } else {
                     // Plain composed
                     $values = [];
                     foreach ($inputs as $input) {
-                        $value = rgar($entry, (string) $input['id']);
+                        $value = rgar($submission, (string) $input['id']);
                         if ($input_name && $value) {
                             $value = $this->format_value($value, $field, $input);
-                            if ($value !== null) $values[] = $value;
+                            if ($value !== null) {
+                                $values[] = $value;
+                            }
                         }
                     }
 
-                    $submission[$input_name] = implode(',', $values);
+                    $data[$input_name] = implode(',', $values);
                 }
             } else {
                 // simple fields
                 if ($input_name) {
-                    $raw_value = rgar($entry, (string) $field->id);
-                    $submission[$input_name] = $this->format_value($raw_value, $field);
+                    $raw_value = rgar($submission, (string) $field['id']);
+                    $data[$input_name] = $this->format_value($raw_value, $field);
                 }
             }
         }
 
-        return $submission;
+        return $data;
     }
 
     private function format_value($value, $field, $input = null)
     {
         try {
-            if ($field->type === 'fileupload' && $value && is_string($value)) {
-                return implode(',', json_decode($value));
-            } else if ($field->type === 'consent') {
-                if (isset($input['isHidden']) && $input['isHidden']) return null;
+            if ($field['type'] === 'consent') {
+                if (isset($input['isHidden']) && $input['isHidden']) {
+                    return null;
+                }
                 return $value;
             }
+        } catch (TypeError $e) {
+            // do nothing
         } catch (Exception $e) {
             // do nothing
         }
@@ -116,12 +143,46 @@ class Integration extends BaseIntegration
         return $value;
     }
 
-    private function add_coord_id(&$submission)
+    // private function add_coord_id(&$submission)
+    // {
+    //     if (!isset($submission['company_id']) || $submission['company_id']) {
+    //         $settings = get_option('wpct_erp_forms_general', []);
+    //         if (!isset($settings['coord_id'])) {
+    //             return;
+    //         }
+    //         $submission['company_id'] = $settings['coord_id'];
+    //     }
+    // }
+
+    public function get_uploads($submission, $form_data)
     {
-        if (!isset($submission['company_id']) || $submission['company_id']) {
-            $settings = get_option('wpct_erp_forms_general', []);
-            if (!isset($settings['coord_id'])) return;
-            $submission['company_id'] = $settings['coord_id'];
-        }
+        $private_upload = wpct_erp_forms_private_upload($form_data['id']);
+
+        return array_reduce(array_filter($form_data['fields'], function ($field) {
+            return $field['type'] === 'file' || $field['type'] === 'files';
+        }), function ($carry, $field) use ($submission, $private_upload) {
+            $paths = rgar($submission, (string) $field['id']);
+            if (empty($paths)) {
+                return $carry;
+            }
+
+            $paths = $field['type'] === 'files' ? json_decode($paths) : [$paths];
+            $paths = array_map(function ($path) use ($private_upload) {
+                if ($private_upload) {
+                    $url = parse_url($path);
+                    parse_str($url['query'], $query);
+                    $path = wpct_erp_forms_attachment_path($query['erp-forms-attachment']);
+                }
+
+                return $path;
+            }, $paths);
+
+            $carry[$field['name']] = [
+                'path' => $field['type'] === 'files' ? $paths : $paths[0],
+                'is_multi' => $field['type'] === 'files'
+            ];
+
+            return $carry;
+        }, []);
     }
 }
