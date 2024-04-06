@@ -1,5 +1,6 @@
 for (const form of document.querySelectorAll(".wpcf7 > form")) {
-	let _wpcft, _schema;
+	let _wpcft = form.wpcf7,
+		_schema = form.wpcf7?.schema;
 	Object.defineProperty(form, "wpcf7", {
 		get: () => _wpcft,
 		set: (val) => {
@@ -11,6 +12,10 @@ for (const form of document.querySelectorAll(".wpcf7 > form")) {
 				},
 			});
 		},
+	});
+
+	form.querySelectorAll(".wpcf7-files").forEach((control) => {
+		control.name = control.name + "[]";
 	});
 }
 

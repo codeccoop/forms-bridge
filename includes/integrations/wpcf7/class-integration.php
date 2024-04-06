@@ -6,11 +6,13 @@ use WPCT_ERP_FORMS\Abstract\Integration as BaseIntegration;
 use WPCT_ERP_FORMS\WPCF7\Fields\Iban\Field as IbanField;
 use WPCT_ERP_FORMS\WPCF7\Fields\Conditional\Field as ConditionalField;
 use WPCT_ERP_FORMS\WPCF7\Fields\ConditionalFile\Field as ConditionalFileField;
+use WPCT_ERP_FORMS\WPCF7\Fields\Files\Field as FilesField;
 
 // Fields
 require_once dirname(__FILE__, 3) . '/fields/wpcf7/iban/class-field.php';
 require_once dirname(__FILE__, 3) . '/fields/wpcf7/conditional/class-field.php';
 require_once dirname(__FILE__, 3) . '/fields/wpcf7/conditionalfile/class-field.php';
+require_once dirname(__FILE__, 3) . '/fields/wpcf7/files/class-field.php';
 
 class Integration extends BaseIntegration
 {
@@ -18,6 +20,7 @@ class Integration extends BaseIntegration
         IbanField::class,
         ConditionalField::class,
         ConditionalFileField::class,
+        FilesField::class,
     ];
 
     protected function __construct()
@@ -32,7 +35,7 @@ class Integration extends BaseIntegration
             $plugin_url = plugin_dir_url(dirname(__FILE__, 4) . '/wpct-erp-forms.php');
             $script_url = $plugin_url . 'assets/js/wpcf7.js';
             ob_start();
-?>
+            ?>
             <script src="<?= $script_url ?>" type="module"></script>
             <style>
                 .wpcf7-form-control-conditional-wrap {
@@ -43,50 +46,55 @@ class Integration extends BaseIntegration
                 }
             </style>
 <?php
-            $assets = ob_get_clean();
+                        $assets = ob_get_clean();
             return $tags . $assets;
         }, 90, 1);
     }
 
-	public function serialize_field($field, $form)
-	{
-		$type = $field->basetype;
-		if ($type === 'conditional') {
-			$type = $field->get_option('type')[0];
-		}
+    public function serialize_field($field, $form)
+    {
+        $type = $field->basetype;
+        if ($type === 'conditional') {
+            $type = $field->get_option('type')[0];
+        }
 
-		$options = [];
-		if (is_array($field->values)) {
-			$values = $field->pipes->collect_afters();
-			for ($i = 0; $i < sizeof($field->raw_values); $i++) {
-				$options[] = [
-					'value' => $values[$i],
-					'label' => $field->labels[$i],
-				];
-			}
-		}
+        $options = [];
+        if (is_array($field->values)) {
+            $values = $field->pipes->collect_afters();
+            for ($i = 0; $i < sizeof($field->raw_values); $i++) {
+                $options[] = [
+                    'value' => $values[$i],
+                    'label' => $field->labels[$i],
+                ];
+            }
+        }
 
-		return [
-			'id' => $field->get_id_option(),
-			'type' => $type,
-			'name' => $field->raw_name,
-			'label' => $field->name,
-			'required' => $field->is_required(),
-			'options' => $options,
-			'conditional' => $field->basetype === 'conditional' || $field->basetype === 'fileconditional',
-		];
-	}
+        return [
+            'id' => $field->get_id_option(),
+            'type' => $type,
+            'name' => $field->raw_name,
+            'label' => $field->name,
+            'required' => $field->is_required(),
+            'options' => $options,
+            'conditional' => $field->basetype === 'conditional' || $field->basetype === 'fileconditional',
+        ];
+    }
 
-    public function serialize_submission($submission, $form)
+    public function serialize_submission($submission, $form_data)
     {
         $data = $submission->get_posted_data();
-        $data['id'] = $submission->get_posted_data_hash();
+        $data['submission_id'] = $submission->get_posted_data_hash();
         foreach ($data as $key => $val) {
-            if ((int) $val == $val) {
+            $i = array_search($key, array_column($form_data['fields'], 'name'));
+            $field = $form_data['fields'][$i];
+
+            if ($field['type'] === 'number') {
                 $number = (float) $val;
                 if ((string) $number === $val) {
                     $data[$key] = $number;
                 }
+            } elseif ($field['type'] === 'file' || $field['type'] === 'submit') {
+                unset($data[$key]);
             }
         }
 
@@ -98,9 +106,9 @@ class Integration extends BaseIntegration
         return [
             'id' => $form->id(),
             'title' => $form->title(),
-			'fields' => array_map(function ($field) use ($form) {
-				return $this->serialize_field($field, $form);
-			}, $form->scan_form_tags()),
+            'fields' => array_map(function ($field) use ($form) {
+                return $this->serialize_field($field, $form);
+            }, $form->scan_form_tags()),
         ];
     }
 
@@ -110,10 +118,11 @@ class Integration extends BaseIntegration
         $uploads = $submission->uploaded_files();
         foreach ($uploads as $file_name => $paths) {
             if (!empty($paths)) {
-				$uploads[$file_name] = [
-					'path' => $paths[0],
-					'is_multi' => false
-				];
+                $is_multi = sizeof($paths) > 1;
+                $uploads[$file_name] = [
+                    'path' => $is_multi ? $paths : $paths[0],
+                    'is_multi' => $is_multi,
+                ];
             }
         };
 

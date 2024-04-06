@@ -85,6 +85,14 @@ class Wpct_Erp_Forms extends Abstract\Plugin
                 [],
                 WPCT_ERP_FORMS_VERSION,
             );
+
+			wp_enqueue_script(
+				'wpct-wpcf7-swv-validators',
+				plugin_dir_url(__FILE__) . 'assets/js/wpcf7-swv-validators.js',
+				[],
+				WPCT_ERP_FORMS_VERSION,
+				true,
+			);
         } elseif (isset($this->_integrations['gf'])) {
             wp_register_script(
                 'wpct-gf-app',
