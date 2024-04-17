@@ -65,7 +65,7 @@ abstract class Integration extends Singleton
 
         $uploads = $this->get_uploads($submission, $form_data);
 
-        $data = $this->serialize_submission($submission, $form_data);
+		$data = $this->serialize_submission($submission, $form_data);
         $this->cleanup_empties($data);
 
         $payload = apply_filters('wpct_erp_forms_payload', $this->get_payload($data, $form_data), $uploads, $form_data);
@@ -90,7 +90,8 @@ abstract class Integration extends Singleton
     public function get_payload($data, $form_data)
     {
         $payload = [
-            'name' => "'{$form_data['title']}' submission: {$data['id']}",
+            'name' => "'{$form_data['title']}' submission: {$data['submission_id']}",
+			'submission_id' => $data['submission_id'],
             'metadata' => []
         ];
 
