@@ -7,6 +7,7 @@ use GF_Field;
 
 class GFField extends GF_Field
 {
+	// https://gist.github.com/afgomez/5691823#file-validate_spanish_id-js-L88
     private static $_dni_regex = '/^(\d{8})([A-Z])$/';
     private static $_cif_regex = '/^([ABCDEFGHJKLMNPQRSUVW])(\d{7})([0-9A-J])$/';
     private static $_nie_regex = '/^[XYZ]\d{7,8}[A-Z]$/';
