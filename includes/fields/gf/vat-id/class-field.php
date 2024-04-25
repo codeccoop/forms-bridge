@@ -62,6 +62,7 @@ class GFField extends GF_Field
             'placeholder_setting',
             'description_setting',
             'css_class_setting',
+			'prepopulate_field_setting',
         ];
     }
 
