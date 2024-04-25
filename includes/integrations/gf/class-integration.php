@@ -28,7 +28,7 @@ class Integration extends BaseIntegration
             $this->do_submission($entry, $form);
         }, 10, 2);
 
-		parent::__construct();
+        parent::__construct();
     }
 
     public function serialize_form($form)
@@ -118,10 +118,7 @@ class Integration extends BaseIntegration
                 }, $inputs);
                 if (!empty(array_filter($names))) {
                     // Composed with subfields
-                    for ($i = 0; $i < sizeof($inputs); $i++) {
-                        if (empty($names[$i])) {
-                            continue;
-                        }
+                    foreach (array_keys($names) as $i) {
                         $data[$names[$i]] = rgar($submission, (string) $inputs[$i]['id']);
                     }
                 } else {
@@ -168,17 +165,6 @@ class Integration extends BaseIntegration
 
         return $value;
     }
-
-    // private function add_coord_id(&$submission)
-    // {
-    //     if (!isset($submission['company_id']) || $submission['company_id']) {
-    //         $settings = get_option('wpct_erp_forms_general', []);
-    //         if (!isset($settings['coord_id'])) {
-    //             return;
-    //         }
-    //         $submission['company_id'] = $settings['coord_id'];
-    //     }
-    // }
 
     public function get_uploads($submission, $form_data)
     {
