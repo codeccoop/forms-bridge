@@ -43,7 +43,7 @@ class Wpct_Erp_Forms extends Abstract\Plugin
     protected $name = 'Wpct ERP Forms';
     protected $textdomain = 'wpct-erp-forms';
     protected $dependencies = [
-        'Wpct Http Backend' => '<a href="https://git.coopdevs.org/codeccoop/wp/wpct-http-backend/">Wpct Http Backend</a>'
+        'Wpct Http Bridge' => '<a href="https://git.coopdevs.org/codeccoop/wp/wpct-http-bridge/">Wpct Http Bridge</a>'
     ];
 
     protected function __construct()

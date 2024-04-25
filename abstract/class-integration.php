@@ -2,7 +2,7 @@
 
 namespace WPCT_ERP_FORMS\Abstract;
 
-use WPCT_HB\Http_Client as Wpct_Http_Client;
+use WPCT_HTTP\Http_Client as Wpct_Http_Client;
 use Exception;
 
 abstract class Integration extends Singleton
