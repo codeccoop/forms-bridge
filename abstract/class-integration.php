@@ -7,20 +7,11 @@ use Exception;
 
 abstract class Integration extends Singleton
 {
-    public static $fields = [];
-
     abstract public function serialize_submission($submission, $form);
     abstract public function serialize_form($form);
 
     protected function __construct()
     {
-        foreach (static::$fields as $Field) {
-            $field = $Field::get_instance();
-            add_action('init', function () use ($field) {
-                $field->init();
-            });
-        }
-
         add_action('init', [$this, 'init']);
     }
 
@@ -32,6 +23,7 @@ abstract class Integration extends Singleton
     {
         $success = true;
         foreach ($endpoints as $endpoint) {
+
             if (empty($files)) {
                 $response = Wpct_Http_Client::post($endpoint, $payload);
             } else {

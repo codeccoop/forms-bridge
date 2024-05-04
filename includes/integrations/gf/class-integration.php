@@ -5,23 +5,12 @@ namespace WPCT_ERP_FORMS\GF;
 use Exception;
 use TypeError;
 use WPCT_ERP_FORMS\Abstract\Integration as BaseIntegration;
-use WPCT_ERP_FORMS\GF\Fields\Iban\FieldAdapter as IbanField;
-use WPCT_ERP_FORMS\GF\Fields\VatID\FieldAdapter as VatIDField;
 
 require_once 'attachments.php';
 require_once 'fields-population.php';
 
-// Fields
-require_once dirname(__FILE__, 3) . '/fields/gf/iban/class-field-adapter.php';
-require_once dirname(__FILE__, 3) . '/fields/gf/vat-id/class-field-adapter.php';
-
 class Integration extends BaseIntegration
 {
-    public static $fields = [
-        IbanField::class,
-        VatIDField::class,
-    ];
-
     protected function __construct()
     {
         add_action('gform_after_submission', function ($entry, $form) {

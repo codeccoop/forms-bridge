@@ -27,7 +27,6 @@ define('WPCT_ERP_FORMS_VERSION', '1.0.1');
 require_once 'abstract/class-singleton.php';
 require_once 'abstract/class-plugin.php';
 require_once 'abstract/class-settings.php';
-require_once 'abstract/class-field.php';
 require_once 'abstract/class-integration.php';
 
 require_once 'includes/class-menu.php';
