@@ -3,26 +3,9 @@
 namespace WPCT_ERP_FORMS\WPCF7;
 
 use WPCT_ERP_FORMS\Abstract\Integration as BaseIntegration;
-use WPCT_ERP_FORMS\WPCF7\Fields\Iban\Field as IbanField;
-use WPCT_ERP_FORMS\WPCF7\Fields\Conditional\Field as ConditionalField;
-use WPCT_ERP_FORMS\WPCF7\Fields\ConditionalFile\Field as ConditionalFileField;
-use WPCT_ERP_FORMS\WPCF7\Fields\Files\Field as FilesField;
-
-// Fields
-require_once dirname(__FILE__, 3) . '/fields/wpcf7/iban/class-field.php';
-require_once dirname(__FILE__, 3) . '/fields/wpcf7/conditional/class-field.php';
-require_once dirname(__FILE__, 3) . '/fields/wpcf7/conditionalfile/class-field.php';
-require_once dirname(__FILE__, 3) . '/fields/wpcf7/files/class-field.php';
 
 class Integration extends BaseIntegration
 {
-    public static $fields = [
-        IbanField::class,
-        ConditionalField::class,
-        ConditionalFileField::class,
-        FilesField::class,
-    ];
-
     protected function __construct()
     {
         parent::__construct();
