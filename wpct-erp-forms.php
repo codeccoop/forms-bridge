@@ -44,8 +44,8 @@ class Wpct_Erp_Forms extends Abstract\Plugin
     protected $dependencies = [
         'wpct-http-bridge/wpct-http-bridge.php' => [
             'name' => 'Wpct Http Bridge',
-            'url' => 'https://git.coopdevs.org/codeccoop/wp/wpct-http-bridge/',
-            'download' => 'https://git.coopdevs.org/codeccoop/wp/wpct-http-bridge/-/releases/permalink/latest/downloads/plugins/wpct-http-bridge.zip'
+            'url' => 'https://git.coopdevs.org/codeccoop/wp/plugins/wpct-http-bridge/',
+            'download' => 'https://git.coopdevs.org/codeccoop/wp/plugins/wpct-http-bridge/-/releases/permalink/latest/downloads/plugins/wpct-http-bridge.zip'
         ]
     ];
 
