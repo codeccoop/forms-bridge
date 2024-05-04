@@ -90,4 +90,4 @@ class Wpct_Erp_Forms extends Abstract\Plugin
 
 add_action('plugins_loaded', function () {
     $plugin = Wpct_Erp_Forms::get_instance();
-}, 5);
+}, 9);
