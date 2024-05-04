@@ -9,7 +9,7 @@ use WPCT_ERP_FORMS\GF\Integration as GFIntegration;
  * Plugin Name:     Wpct ERP Forms
  * Plugin URI:      https://git.coopdevs.org/codeccoop/wp/wpct-erp-forms
  * Description:     Plugin to bridge WP forms submissions to a ERP backend
- * Author:          Còdec Cooperativa
+ * Author:          Còdec
  * Author URI:      https://www.codeccoop.org
  * Text Domain:     wpct-erp-forms
  * Domain Path:     languages
@@ -42,7 +42,11 @@ class Wpct_Erp_Forms extends Abstract\Plugin
     protected $name = 'Wpct ERP Forms';
     protected $textdomain = 'wpct-erp-forms';
     protected $dependencies = [
-        'Wpct Http Bridge' => '<a href="https://git.coopdevs.org/codeccoop/wp/wpct-http-bridge/">Wpct Http Bridge</a>'
+        'wpct-http-bridge/wpct-http-bridge.php' => [
+            'name' => 'Wpct Http Bridge',
+            'url' => 'https://git.coopdevs.org/codeccoop/wp/wpct-http-bridge/',
+            'download' => 'https://git.coopdevs.org/codeccoop/wp/wpct-http-bridge/-/releases/permalink/latest/downloads/plugins/wpct-http-bridge.zip'
+        ]
     ];
 
     protected function __construct()
@@ -56,6 +60,19 @@ class Wpct_Erp_Forms extends Abstract\Plugin
             require_once 'includes/integrations/gf/class-integration.php';
             $this->_integrations['gf'] = GFIntegration::get_instance();
         }
+
+        add_filter('plugin_action_links', function ($links, $file) {
+            if ($file !== plugin_basename(__FILE__)) {
+                return $links;
+            }
+
+            $url = admin_url('options-general.php?page=wpct-erp-forms');
+            $label = __('Settings', 'wpct-erp-forms');
+            $link = "<a href='{$url}'>{$label}</a>";
+            array_unshift($links, $link);
+            return $links;
+        }, 5, 2);
+
     }
 
     public function init()

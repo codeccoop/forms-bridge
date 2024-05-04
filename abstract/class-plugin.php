@@ -51,7 +51,7 @@ abstract class Plugin extends Singleton
 
     private function check_dependencies()
     {
-        add_filter('wpct_dependencies_check', function ($dependencies) {
+        add_filter('wpct_dc_dependencies', function ($dependencies) {
             foreach ($this->dependencies as $label => $url) {
                 $dependencies[$label] = $url;
             }
