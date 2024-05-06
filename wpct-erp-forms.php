@@ -13,7 +13,7 @@ use WPCT_ERP_FORMS\GF\Integration as GFIntegration;
  * Author URI:      https://www.codeccoop.org
  * Text Domain:     wpct-erp-forms
  * Domain Path:     languages
- * Version:         1.1.2
+ * Version:         1.1.3
  *
  * @package         wpct_erp_forms
  */
