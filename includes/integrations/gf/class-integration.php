@@ -54,9 +54,7 @@ class Integration extends BaseIntegration
         if (is_array($inputs)) {
             $inputs = array_map(function ($input) {
                 return ['name' => $input['name'], 'label' => $input['label'], 'id' => $input['id']];
-            }, array_filter($inputs, function ($input) {
-                return $input['name'];
-            }));
+            }, $inputs);
         } else {
             $inputs = [];
         }
@@ -108,6 +106,9 @@ class Integration extends BaseIntegration
                 if (!empty(array_filter($names))) {
                     // Composed with subfields
                     foreach (array_keys($names) as $i) {
+                        if (empty($names[$i])) {
+                            continue;
+                        }
                         $data[$names[$i]] = rgar($submission, (string) $inputs[$i]['id']);
                     }
                 } else {
@@ -128,7 +129,11 @@ class Integration extends BaseIntegration
             } else {
                 // simple fields
                 if ($input_name) {
-                    $raw_value = rgar($submission, (string) $field['id']);
+                    if ($field['type'] === 'consent') {
+                        $raw_value = rgar($submission, $field['id'] . '.1');
+                    } else {
+                        $raw_value = rgar($submission, (string) $field['id']);
+                    }
                     $data[$input_name] = $this->format_value($raw_value, $field);
                 }
             }
