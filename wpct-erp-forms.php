@@ -1,22 +1,20 @@
 <?php
 
+/*
+Plugin Name:     Wpct ERP Forms
+Plugin URI:      https://git.coopdevs.org/codeccoop/wp/wpct-erp-forms
+Description:     Plugin to bridge WP forms submissions to a ERP backend
+Author:          Còdec
+Author URI:      https://www.codeccoop.org
+Text Domain:     wpct-erp-forms
+Domain Path:     /languages
+Version:         1.1.3
+*/
+
 namespace WPCT_ERP_FORMS;
 
 use WPCT_ERP_FORMS\WPCF7\Integration as Wpcf7Integration;
 use WPCT_ERP_FORMS\GF\Integration as GFIntegration;
-
-/**
- * Plugin Name:     Wpct ERP Forms
- * Plugin URI:      https://git.coopdevs.org/codeccoop/wp/wpct-erp-forms
- * Description:     Plugin to bridge WP forms submissions to a ERP backend
- * Author:          Còdec
- * Author URI:      https://www.codeccoop.org
- * Text Domain:     wpct-erp-forms
- * Domain Path:     languages
- * Version:         1.1.3
- *
- * @package         wpct_erp_forms
- */
 
 if (!defined('ABSPATH')) {
     exit;
@@ -40,6 +38,7 @@ class Wpct_Erp_Forms extends Abstract\Plugin
     private $_integrations = [];
 
     protected $name = 'Wpct ERP Forms';
+    protected $index = 'wpct-erp-forms.php';
     protected $textdomain = 'wpct-erp-forms';
     protected $dependencies = [
         'wpct-http-bridge/wpct-http-bridge.php' => [
@@ -67,7 +66,7 @@ class Wpct_Erp_Forms extends Abstract\Plugin
             }
 
             $url = admin_url('options-general.php?page=wpct-erp-forms');
-            $label = __('Settings', 'wpct-erp-forms');
+            $label = __('Settings');
             $link = "<a href='{$url}'>{$label}</a>";
             array_unshift($links, $link);
             return $links;

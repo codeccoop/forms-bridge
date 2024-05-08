@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wpct ERP Forms 1.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpct-erp-forms\n"
-"Last-Translator: \n"
+"Last-Translator: Lucas García <lucas@codeccoop.org>\n"
 "Language-Team: Spanish (Spain)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,55 +17,43 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Loco-Version: 2.6.6; wp-6.2.3"
 
-#. Author of the plugin
-msgid "Còdec Cooperativa"
-msgstr "Còdec Cooperativa"
-
-msgid "Foo"
-msgstr "Bar"
+#. Plugin Name of the plugin
+msgid "Wpct ERP Forms"
+msgstr "Wpct ERP Forms"
 
 #. Plugin URI of the plugin
 msgid "https://git.coopdevs.org/codeccoop/wp/wpct-erp-forms"
 msgstr "https://git.coopdevs.org/codeccoop/wp/wpct-erp-forms"
 
-#. Author URI of the plugin
-msgid "https://www.codeccoop.org"
-msgstr "https://www.codeccoop.org"
-
-msgid "IBAN"
-msgstr "IBAN"
-
-msgid "Invalid IBAN format"
-msgstr "Formato inválido de IBAN"
-
 #. Description of the plugin
 msgid "Plugin to bridge WP forms submissions to a ERP backend"
 msgstr "Plugin para conectar formularios WP con el backend de un ERP"
 
-msgid "The IBAN you inserted is not valid."
-msgstr "El IBAN que has insertado no es válido"
+#. Author of the plugin
+msgid "Còdec Cooperativa"
+msgstr "Còdec Cooperativa"
 
-#. Plugin Name of the plugin
-msgid "Wpct ERP Forms"
-msgstr "Wpct ERP Forms"
+#. Author URI of the plugin
+msgid "https://www.codeccoop.org"
+msgstr "https://www.codeccoop.org"
 
-msgid "wpct_erp_forms_api--description"
-msgstr "Configuracióm de los endpoints asociados a los formularios"
-
-msgid "wpct_erp_forms_api--title"
-msgstr "REST API"
-
-msgid "wpct_erp_forms_api__endpoints--label"
-msgstr "Endpoints"
-
-msgid "wpct_erp_forms_general--description"
-msgstr "Configuración general del plugin"
-
-msgid "wpct_erp_forms_general--title"
+msgid "wpct-erp-forms_general--title"
 msgstr "General"
 
-msgid "wpct_erp_forms_general__coord_id--label"
+msgid "wpct-erp-forms_general--description"
+msgstr "Configuración general del plugin"
+
+msgid "wpct-erp-forms_general__notification_receiver--label"
+msgstr "Receptor de notificaciones"
+
+msgid "wpct-erp-forms_general__coord_id--label"
 msgstr "ID de la coordinadora"
 
-msgid "wpct_erp_forms_general__notification_receiver--label"
-msgstr "Receptor de notificaciones"
+msgid "wpct-erp-forms_api--title"
+msgstr "REST API"
+
+msgid "wpct-erp-forms_api--description"
+msgstr "Configuracióm de los endpoints asociados a los formularios"
+
+msgid "wpct-erp-forms_api__endpoints--label"
+msgstr "Endpoints"

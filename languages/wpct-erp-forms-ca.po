@@ -4,67 +4,57 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wpct ERP Forms 1.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpct-erp-forms\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: Lucas García <lucas@codeccoop.org>\n"
 "Language-Team: Catalan\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2024-01-23T18:24:08+00:00\n"
 "PO-Revision-Date: 2024-01-23 19:28+0000\n"
-"X-Generator: Loco https://localise.biz/\n"
 "X-Domain: wpct-erp-forms\n"
 "Language: ca\n"
 "Plural-Forms: nplurals=2; plural=n != 1;"
-
-#. Author of the plugin
-msgid "Còdec Cooperativa"
-msgstr "Còdec Cooperativa"
-
-msgid "Foo"
-msgstr "Bar"
-
-#. Plugin URI of the plugin
-msgid "https://git.coopdevs.org/codeccoop/wp/wpct-erp-forms"
-msgstr "https://git.coopdevs.org/codeccoop/wp/wpct-erp-forms"
-
-#. Author URI of the plugin
-msgid "https://www.codeccoop.org"
-msgstr "https://www.codeccoop.org"
-
-msgid "IBAN"
-msgstr "IBAN"
-
-msgid "Invalid IBAN format"
-msgstr "Format d'IBAN invàlid"
-
-#. Description of the plugin
-msgid "Plugin to bridge WP forms submissions to a ERP backend"
-msgstr "Plugin per connectar formularis de WP amb el backend d'un ERP"
-
-msgid "The IBAN you inserted is not valid."
-msgstr "L'IBAN que has insertat no és valid"
 
 #. Plugin Name of the plugin
 msgid "Wpct ERP Forms"
 msgstr "Wpct ERP Forms"
 
-msgid "wpct_erp_forms_api--description"
-msgstr "Configuració dels endpoints associats als formularsi"
+#. Plugin URI of the plugin
+msgid "https://git.coopdevs.org/codeccoop/wp/wpct-erp-forms"
+msgstr "https://git.coopdevs.org/codeccoop/wp/wpct-erp-forms"
 
-msgid "wpct_erp_forms_api--title"
-msgstr "REST API"
+#. Description of the plugin
+msgid "Plugin to bridge WP forms submissions to a ERP backend"
+msgstr "Plugin per connectar formularis de WP amb el backend d'un ERP"
 
-msgid "wpct_erp_forms_api__endpoints--label"
-msgstr "Endpoints"
+#. Author of the plugin
+msgid "Còdec Cooperativa"
+msgstr "Còdec Cooperativa"
 
-msgid "wpct_erp_forms_general--description"
-msgstr "Configuració general del plugin"
+#. Author URI of the plugin
+msgid "https://www.codeccoop.org"
+msgstr "https://www.codeccoop.org"
 
-msgid "wpct_erp_forms_general--title"
+msgid "wpct-erp-forms_general--title"
 msgstr "General"
 
-msgid "wpct_erp_forms_general__coord_id--label"
+msgid "wpct-erp-forms_general--description"
+msgstr "Configuració general del plugin"
+
+msgid "wpct-erp-forms_general__notification_receiver--label"
+msgstr "Receptor de notificacions"
+
+msgid "wpct-erp-forms_general__coord_id--label"
 msgstr "ID de la coordinadora"
 
-msgid "wpct_erp_forms_general__notification_receiver--label"
-msgstr "Receptor de notificacions"
+msgid "wpct-erp-forms_api--title"
+msgstr "REST API"
+
+msgid "wpct-erp-forms_api--description"
+msgstr "Configuració dels endpoints associats als formularsi"
+
+msgid "wpct-erp-forms_api__endpoints--label"
+msgstr "Endpoints"
+
+msgid "foo"
+msgstr "bar"

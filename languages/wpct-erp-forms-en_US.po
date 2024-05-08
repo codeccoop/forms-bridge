@@ -4,13 +4,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wpct ERP Forms 1.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpct-erp-forms\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Last-Translator: Lucas García <lucas@codeccoop.org>\n"
+"Language-Team: English (USA)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2024-01-23T18:24:08+00:00\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2024-01-23T18:24:08+00:00\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: wpct-erp-forms\n"
 
@@ -34,32 +34,23 @@ msgstr "Còdec Cooperativa"
 msgid "https://www.codeccoop.org"
 msgstr "https://www.codeccoop.org"
 
-msgid "wpct_erp_forms_general--title"
+msgid "wpct-erp-forms_general--title"
 msgstr "General settings"
 
-msgid "wpct_erp_forms_general--description"
+msgid "wpct-erp-forms_general--description"
 msgstr "Global configuration of the plugin"
 
-msgid "wpct_erp_forms_general__notification_receiver--label"
+msgid "wpct-erp-forms_general__notification_receiver--label"
 msgstr "Email receiver for submission errors"
 
-msgid "wpct_erp_forms_general__coord_id--label"
+msgid "wpct-erp-forms_general__coord_id--label"
 msgstr "Coord ID"
 
-msgid "wpct_erp_forms_api--title"
+msgid "wpct-erp-forms_api--title"
 msgstr "API settings"
 
-msgid "wpct_erp_forms_api--description"
+msgid "wpct-erp-forms_api--description"
 msgstr "Bridge forms to endpoints"
 
-msgid "wpct_erp_forms_api__endpoints--label"
+msgid "wpct-erp-forms_api__endpoints--label"
 msgstr "Endpoints"
-
-msgid "The IBAN you inserted is not valid."
-msgstr "The IBAN you'd inserted is not valid"
-
-msgid "IBAN"
-msgstr "IBAN"
-
-msgid "Invalid IBAN format"
-msgstr "Invalid IBAN format"
