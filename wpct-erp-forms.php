@@ -8,7 +8,7 @@ Author:          Còdec
 Author URI:      https://www.codeccoop.org
 Text Domain:     wpct-erp-forms
 Domain Path:     /languages
-Version:         1.1.4
+Version:         1.2.0
 */
 
 namespace WPCT_ERP_FORMS;
