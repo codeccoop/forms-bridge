@@ -25,6 +25,9 @@ abstract class Plugin extends Singleton
             throw new \Exception('Bad plugin initialization');
         }
 
+		if (empty($this->index)) {
+			$this->index = sanitize_title($this->name);
+		}
         $this->index = dirname(__FILE__, 2) . '/' . $this->index;
 
         $this->check_dependencies();
@@ -51,6 +54,11 @@ abstract class Plugin extends Singleton
     {
         return $this->name;
     }
+
+	public function get_index()
+	{
+		return $this->index;
+	}
 
     public function get_textdomain()
     {

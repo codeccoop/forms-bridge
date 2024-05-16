@@ -39,9 +39,9 @@ class Settings extends Abstract\Settings
 	{
 		global $wpdb;
 		if (apply_filters('wpct_dc_is_active', false, 'contact-form-7/wp-contact-form-7.php')) {
-			return $wpdb->get_results("SELECT id, post_title title FROM wp_posts WHERE post_type = 'wpcf7_contact_form' AND post_status = 'publish'");
+			return $wpdb->get_results("SELECT id, post_title title FROM {$wpdb->prefix}posts WHERE post_type = 'wpcf7_contact_form' AND post_status = 'publish'");
         } elseif (apply_filters('wpct_dc_is_active', false, 'gravityforms/gravityforms.php')) {
-			return $wpdb->get_results("SELECT id, title FROM wp_gf_form WHERE is_active = TRUE");
+			return $wpdb->get_results("SELECT id, title FROM {$wpdb->prefix}gf_form WHERE is_active = 1 AND is_trash = 0");
         }
 
 	}

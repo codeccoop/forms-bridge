@@ -165,15 +165,15 @@ abstract class Settings extends Singleton
     public function control_render($setting, $field)
     {
         $defaults = $this->get_defaults($setting);
-        $script_path = dirname(__FILE__, 2) . '/includes/fieldset-control-js.php';
         ob_start();
         ?>
         <div class="<?= $setting; ?>__<?= $field ?>--controls">
             <button class="button button-primary" data-action="add">Add</button>
             <button class="button button-secondary" data-action="remove">Remove</button>
         </div>
-        <?php include  $script_path; ?>
-<?php
+		<?php
+        $script_path = dirname(__FILE__, 2) . '/includes/fieldset-control-js.php';
+        include $script_path;
         return ob_get_clean();
     }
 

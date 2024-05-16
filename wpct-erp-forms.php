@@ -71,7 +71,6 @@ class Wpct_Erp_Forms extends Abstract\Plugin
             array_unshift($links, $link);
             return $links;
         }, 5, 2);
-
     }
 
     public function init()
