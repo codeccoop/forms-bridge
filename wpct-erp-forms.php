@@ -8,7 +8,7 @@ Author:          Còdec
 Author URI:      https://www.codeccoop.org
 Text Domain:     wpct-erp-forms
 Domain Path:     /languages
-Version:         1.2.0
+Version:         1.2.1
 */
 
 namespace WPCT_ERP_FORMS;
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WPCT_ERP_FORMS_VERSION', '1.1.4');
+define('WPCT_ERP_FORMS_VERSION', '1.2.1');
 
 require_once 'abstract/class-singleton.php';
 require_once 'abstract/class-plugin.php';
