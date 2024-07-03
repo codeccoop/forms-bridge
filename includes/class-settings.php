@@ -2,7 +2,7 @@
 
 namespace WPCT_ERP_FORMS;
 
-class Settings extends Abstract\Settings
+class Settings extends WPCT_ABSTRACT\Settings
 {
 
     public function register()
@@ -38,9 +38,9 @@ class Settings extends Abstract\Settings
 	private function get_forms()
 	{
 		global $wpdb;
-		if (apply_filters('wpct_dc_is_active', false, 'contact-form-7/wp-contact-form-7.php')) {
+		if (apply_filters('wpct_is_plugin_active', false, 'contact-form-7/wp-contact-form-7.php')) {
 			return $wpdb->get_results("SELECT id, post_title title FROM {$wpdb->prefix}posts WHERE post_type = 'wpcf7_contact_form' AND post_status = 'publish'");
-        } elseif (apply_filters('wpct_dc_is_active', false, 'gravityforms/gravityforms.php')) {
+        } elseif (apply_filters('wpct_is_plugin_active', false, 'gravityforms/gravityforms.php')) {
 			return $wpdb->get_results("SELECT id, title FROM {$wpdb->prefix}gf_form WHERE is_active = 1 AND is_trash = 0");
         }
 

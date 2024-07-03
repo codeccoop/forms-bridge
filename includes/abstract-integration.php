@@ -1,11 +1,11 @@
 <?php
 
-namespace WPCT_ERP_FORMS\Abstract;
+namespace WPCT_ABSTRACT;
 
 use WPCT_HTTP\Http_Client as Wpct_Http_Client;
 use Exception;
 
-abstract class Integration extends Singleton
+abstract class Integration extends WPCT_ABSTRACT\Singleton
 {
     abstract public function serialize_submission($submission, $form);
     abstract public function serialize_form($form);
@@ -13,10 +13,6 @@ abstract class Integration extends Singleton
     protected function __construct()
     {
         add_action('init', [$this, 'init']);
-        // add_action('wpct_erp_forms_ref', function ($data) {
-        //     $ref = apply_filters('wpct_erp_forms_filter_ref', $data['ref'], $data['form_id']);
-        //     $this->set_form_ref($data['form_id'], $ref);
-        // }, 10);
     }
 
     public function init()

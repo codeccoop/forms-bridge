@@ -22,40 +22,33 @@ if (!defined('ABSPATH')) {
 
 define('WPCT_ERP_FORMS_VERSION', '1.3.0');
 
-require_once 'abstract/class-singleton.php';
-require_once 'abstract/class-plugin.php';
-require_once 'abstract/class-settings.php';
-require_once 'abstract/class-integration.php';
+require_once 'abstracts/class-singleton.php';
+require_once 'abstracts/class-plugin.php';
+require_once 'abstracts/class-settings.php';
+require_once 'abstracts/class-integration.php';
 
+require_once 'http-bridge/wpct-http-bridge.php';
+require_once 'i18n/wpct-i18n.php';
+
+require_once 'includes/abstract-integration.php';
 require_once 'includes/class-menu.php';
 require_once 'includes/class-settings.php';
 
-require_once 'custom-blocks/form/form.php';
-require_once 'custom-blocks/form-control/form-control.php';
-
-class Wpct_Erp_Forms extends Abstract\Plugin
+class Wpct_Erp_Forms extends \WPCT_ABSTRACT\Plugin
 {
     private $_integrations = [];
 
     protected $name = 'Wpct ERP Forms';
-    protected $index = 'wpct-erp-forms.php';
     protected $textdomain = 'wpct-erp-forms';
-    protected $dependencies = [
-        'wpct-http-bridge/wpct-http-bridge.php' => [
-            'name' => 'Wpct Http Bridge',
-            'url' => 'https://git.coopdevs.org/codeccoop/wp/plugins/wpct-http-bridge/',
-            'download' => 'https://git.coopdevs.org/codeccoop/wp/plugins/wpct-http-bridge/-/releases/permalink/latest/downloads/plugins/wpct-http-bridge.zip'
-        ]
-    ];
 
     protected function __construct()
     {
         parent::__construct();
 
-        if (apply_filters('wpct_dc_is_active', false, 'contact-form-7/wp-contact-form-7.php')) {
+        if (apply_filters('wpct_is_plugin_active', false, 'contact-form-7/wp-contact-form-7.php')) {
             require_once 'includes/integrations/wpcf7/class-integration.php';
             $this->_integrations['wpcf7'] = Wpcf7Integration::get_instance();
-        } elseif (apply_filters('wpct_dc_is_active', false, 'gravityforms/gravityforms.php')) {
+        } elseif (apply_filters('wpct_is_plugin_active', false, 'gravityforms/gravityforms.php')) {
             require_once 'includes/integrations/gf/class-integration.php';
             $this->_integrations['gf'] = GFIntegration::get_instance();
         }

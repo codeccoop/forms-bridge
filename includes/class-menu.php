@@ -2,7 +2,7 @@
 
 namespace WPCT_ERP_FORMS;
 
-class Menu extends Abstract\Singleton
+class Menu extends \WPCT_ABSTRACT\Singleton
 {
     private $name;
     private $settings;
