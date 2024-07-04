@@ -33,7 +33,7 @@ package:
   image: javieraviles/zip:latest
   stage: package
   script:      
-    - 'zip -r $ZIP *'
+    - 'zip -r $ZIP * -x package.json -x package-lock.json -x phpunit.xml.dist -x Gruntfile.js -x CODE_OF_CONDUCT.md -x README.md -x ./tests/* -x ./bin/* -x .distignore -x .editorconfig -x .gitignore -x .gitlab-ci.yml -x .gitmodules -x .phpcs.xml.dist -x .travis.yml -x *.git*'
     - 'ls -lah'
   artifacts:
     paths:
