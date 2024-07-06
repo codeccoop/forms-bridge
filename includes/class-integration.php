@@ -10,42 +10,66 @@ abstract class Integration extends Singleton
 {
     abstract public function serialize_submission($submission, $form);
     abstract public function serialize_form($form);
-	abstract public function get_uploads($submission, $form_data);
-	abstract public function init();
+    abstract public function get_uploads($submission, $form_data);
+    abstract public function init();
 
     protected function __construct()
     {
         add_action('init', [$this, 'init']);
+
+        add_filter('option_wpct-erp-forms_rest-api', function ($setting) {
+            return $this->populate_refs($setting);
+        }, 10, 1);
+        add_filter('option_wpct-erp-forms_rpc-api', function ($setting) {
+            return $this->populate_refs($setting);
+        }, 10, 1);
+        add_action('update_option', function ($option, $from, $to) {
+            if ($option === 'wpct-erp-forms_rest-api' || $option === 'wpct-erp-forms_rpc-api') {
+                foreach ($to['forms'] as $form) {
+                    $this->set_form_ref($form['form_id'], $form['ref']);
+                }
+            }
+        }, 10, 3);
     }
 
     public function submit($payload, $endpoints, $uploads, $form_data)
     {
         $success = true;
-        foreach ($endpoints as $endpoint) {
+        foreach ($endpoints as $proto => $urls) {
+            foreach ($urls as $url) {
+                if (!$success) {
+                    continue;
+                }
 
-            if (empty($uploads)) {
-                $response = Wpct_Http_Client::post($endpoint, $payload);
-            } else {
-                $response = Wpct_Http_Client::post_multipart($endpoint, $payload, $uploads);
+                if ($proto === 'rpc') {
+                    $data = $this->rpc_payload($payload);
+				} else {
+					$data = $payload;
+				}
+                if (empty($uploads)) {
+                    $response = Wpct_Http_Client::post($url, $data);
+                } else {
+                    $response = Wpct_Http_Client::post_multipart($url, $data, $uploads);
+                }
+
+                $success = $success && (bool) $response;
+            }
+        }
+
+        if (!$success) {
+            $email = Settings::get_setting('wpct-erp-forms', 'general', 'notification_receiver');
+            if (empty($email)) {
+                return;
             }
 
-            if (!$response) {
-                $success = false;
-
-                $settings = get_option('wpct-erp-forms_general');
-                if (!isset($settings['notification_receiver'])) {
-                    return;
-                }
-
-                $to = $settings['notification_receiver'];
-                $subject = 'Wpct ERP Forms Error';
-                $body = "Form ID: {$form_data['id']}\n";
-                $body .= "Form title: {$form_data['title']}";
-                $body .= 'Submission: ' . print_r($payload, true);
-                $success = wp_mail($to, $subject, $body);
-                if (!$success) {
-                    throw new Exception('Error while submitting form ' . $form_data['id']);
-                }
+            $to = $email;
+            $subject = 'Wpct ERP Forms Error';
+            $body = "Form ID: {$form_data['id']}\n";
+            $body .= "Form title: {$form_data['title']}";
+            $body .= 'Submission: ' . print_r($payload, true);
+            $success = wp_mail($to, $subject, $body);
+            if (!$success) {
+                throw new Exception('Error while submitting form ' . $form_data['id']);
             }
         }
 
@@ -55,7 +79,7 @@ abstract class Integration extends Singleton
     public function do_submission($submission, $form)
     {
         $form_data = $this->serialize_form($form);
-        if (!$this->has_endpoints($form_data['id'])) {
+        if ($form_data['ref'] === null) {
             return;
         }
 
@@ -76,7 +100,7 @@ abstract class Integration extends Singleton
         $this->cleanup_empties($data);
         $payload = apply_filters('wpct_erp_forms_payload', $data, $uploads, $form_data);
 
-        $endpoints = apply_filters('wpct_erp_forms_endpoints', $this->get_endpoints($form_data['id']), $payload, $uploads, $form_data);
+        $endpoints = apply_filters('wpct_erp_forms_endpoints', $this->get_form_endpoints($form_data['id']), $payload, $uploads, $form_data);
 
         do_action('wpct_erp_forms_before_submission', $payload, $uploads, $form_data);
         $success = $this->submit($payload, $endpoints, $uploads, $form_data);
@@ -99,31 +123,37 @@ abstract class Integration extends Singleton
         return $submission;
     }
 
-    public function has_endpoints($form_id)
+    private function get_form_endpoints($form_id)
     {
-        return sizeof($this->get_endpoints($form_id)) > 0;
-    }
+        $rest_forms = Settings::get_setting('wpct-erp-forms', 'rest-api', 'forms');
+        $rpc_forms = Settings::get_setting('wpct-erp-forms', 'rpc-api', 'forms');
+        $rpc_endpoint = Settings::get_setting('wpct-erp-forms', 'rpc-api', 'endpoint');
 
-    private function get_endpoints($form_id)
-    {
-        $maps = array_filter(
-            get_option('wpct-erp-forms_api', ['endpoints' => []])['endpoints'],
-            function ($map) use ($form_id) {
-                return (string) $map['form_id'] === (string) $form_id;
-            }
-        );
+        $endpoints = [
+            'rpc' => $rpc_forms,
+            'rest' => $rest_forms,
+        ];
 
-        return array_map(function ($map) {
-            return $map['endpoint'];
-        }, $maps);
+        foreach ($endpoints as $proto => $forms) {
+            $endpoints[$proto] = array_map(function ($form) use ($rpc_endpoint) {
+                return isset($form['endpoint']) ? $form['endpoint'] : $rpc_endpoint;
+            }, array_filter(
+                $forms,
+                function ($form) use ($form_id) {
+                    return (string) $form['form_id'] === (string) $form_id;
+                }
+            ));
+        }
+
+        return $endpoints;
     }
 
     public function get_form_ref($form_id)
     {
-        $setting = get_option('wpct-erp-forms_api', ['endpoints' => []]);
-        foreach ($setting['endpoints'] as $endpoint) {
-            if ((string) $endpoint['form_id'] === (string) $form_id) {
-                return isset($endpoint['ref']) ? $endpoint['ref'] : null;
+        $setting = get_option('wpct-erp-forms_refs', []);
+        foreach ($setting as $ref_id => $ref) {
+            if ((string) $ref_id === (string) $form_id) {
+                return $ref;
             }
         }
 
@@ -132,14 +162,46 @@ abstract class Integration extends Singleton
 
     public function set_form_ref($form_id, $ref)
     {
-        $setting = get_option('wpct-erp-forms_api', ['endpoints' => []]);
-        for ($i = 0; $i < count($setting['endpoints']); $i++) {
-            if ((string) $setting['endpoints'][$i]['form_id'] === (string) $form_id) {
-                $endpoints[$i]['ref'] = $ref;
-                break;
+        $setting = get_option('wpct-erp-forms_refs', []);
+        $setting[$form_id] = $ref;
+        update_option('wpct-erp-forms_refs', $setting);
+    }
+
+    private function populate_refs($setting)
+    {
+        $refs = get_option('wpct-erp-forms_refs', []);
+        for ($i = 0; $i < count($setting['forms']); $i++) {
+            $form = $setting['forms'][$i];
+            if (!isset($refs[$form['form_id']])) {
+                continue;
             }
+            $form['ref'] = $refs[$form['form_id']];
+            $setting['forms'][$i] = $form;
         }
 
-		update_option('wpct-erp-forms_api', $setting);
+        return $setting;
+    }
+
+    private function rpc_payload($payload)
+    {
+        $setting = Settings::get_setting('wpct-erp-forms', 'rpc-api');
+
+        return [
+            'jsonrpc' => '2.0',
+            'method' => 'call',
+            'id' => time(),
+            'params' => [
+                'service' => 'object',
+                'method' => 'execute',
+                'args' => [
+                    $setting['database'],
+                    $setting['user'],
+                    $setting['password'],
+                    $setting['model'],
+                    'create',
+                    $payload
+                ]
+            ]
+        ];
     }
 }

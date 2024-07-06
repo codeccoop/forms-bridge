@@ -34,7 +34,6 @@ require_once 'wpct-i18n/wpct-i18n.php';
 require_once 'includes/class-integration.php';
 require_once 'includes/class-menu.php';
 require_once 'includes/class-settings.php';
-require_once 'includes/class-rest-controller.php';
 
 class Wpct_Erp_Forms extends BasePlugin
 {
@@ -68,12 +67,13 @@ class Wpct_Erp_Forms extends BasePlugin
             array_unshift($links, $link);
             return $links;
         }, 5, 2);
-
-		new REST_Controller();
     }
 
     public function init()
     {
+        add_filter('option_wpct-http-bridge_general', function () {
+            return Settings::get_setting('wpct-erp-forms', 'general');
+        });
     }
 
     public static function activate()

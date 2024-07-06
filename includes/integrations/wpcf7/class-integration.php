@@ -2,7 +2,7 @@
 
 namespace WPCT_ERP_FORMS\WPCF7;
 
-use WPCT_ERP_FORMS\Abstract\Integration as BaseIntegration;
+use WPCT_ERP_FORMS\Integration as BaseIntegration;
 
 class Integration extends BaseIntegration
 {
@@ -13,22 +13,6 @@ class Integration extends BaseIntegration
         add_filter('wpcf7_before_send_mail', function ($form, &$abort, $submission) {
             $this->do_submission($submission, $form);
         }, 10, 3);
-
-        // add_action('wpcf7_save_contact_form', function ($form, $args, $context) {
-        //     $field = array_filter($form->scan_form_tags(), function ($tag) {
-        //         $field = $this->serialize_field($tag, null);
-        //         return $field['name'] === 'erp_form_ref';
-        //     });
-
-        //     if (sizeof($field) === 0) {
-        //         return;
-        //     } else {
-        //         $field = $field[0];
-        //         $ref = $field->get_option('default')[0];
-        //     }
-
-        //     do_action('wpct_erp_forms_ref', ['form_id' => $form->id(), 'ref' => $ref]);
-        // }, 10, 3);
     }
 
     public function init()
