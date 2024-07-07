@@ -52,7 +52,7 @@ abstract class Integration extends Singleton
                     $response = Wpct_Http_Client::post_multipart($url, $data, $uploads);
                 }
 
-                $success = $success && (bool) $response;
+                $success = $success && !is_wp_error($response);
             }
         }
 
@@ -65,8 +65,9 @@ abstract class Integration extends Singleton
             $to = $email;
             $subject = 'Wpct ERP Forms Error';
             $body = "Form ID: {$form_data['id']}\n";
-            $body .= "Form title: {$form_data['title']}";
-            $body .= 'Submission: ' . print_r($payload, true);
+            $body .= "Form title: {$form_data['title']}\n";
+            $body .= 'Submission: ' . print_r($payload, true) . "\n";
+			$body .= 'Error: ' . print_r($response->get_error_data(), true) . "\n";
             $success = wp_mail($to, $subject, $body);
             if (!$success) {
                 throw new Exception('Error while submitting form ' . $form_data['id']);
@@ -203,7 +204,7 @@ abstract class Integration extends Singleton
         ]);
         $res = Wpct_Http_Client::post($url, $payload);
 
-        if (!$res) {
+        if (is_wp_error($res)) {
             throw new Exception('Error while establish RPC session');
         }
 
