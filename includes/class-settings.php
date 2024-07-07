@@ -45,9 +45,12 @@ class Settings extends BaseSettings
                 'forms' => [
                     'type' => 'array',
                     'items' => [
-                        'form_id' => 'number',
-                        'endpoint' => 'string',
-                        'ref' => 'string',
+                        'type' => 'object',
+                        'properties' => [
+                            'form_id' => ['type' => 'string'],
+                            'endpoint' => ['type' => 'string'],
+                            'ref' => ['type' => 'string'],
+                        ],
                     ]
                 ]
             ],
@@ -66,27 +69,30 @@ class Settings extends BaseSettings
             'rpc-api',
             [
                 'endpoint' => [
-                    'type' => 'string'
+                    'type' => 'string',
                 ],
                 'user' => [
-                    'type' => 'string'
+                    'type' => 'string',
                 ],
                 'password' => [
-                    'type' => 'string'
+                    'type' => 'string',
                 ],
                 'database' => [
-                    'type' => 'string'
+                    'type' => 'string',
                 ],
                 'model' => [
-                    'type' => 'string'
+                    'type' => 'string',
                 ],
                 'forms' => [
                     'type' => 'array',
                     'items' => [
-                        'form_id' => 'string',
-                        'ref' => 'string'
-                    ]
-                ]
+                        'type' => 'object',
+                        'properties' => [
+                            'form_id' => ['type' => 'string'],
+                            'ref' => ['type' => 'string'],
+                        ],
+                    ],
+                ],
             ],
             [
                 'endpoint' => '/jsonrpc',
@@ -97,10 +103,10 @@ class Settings extends BaseSettings
                 'forms' => [
                     [
                         'form_id' => 0,
-                        'ref' => null
-                    ]
-                ]
-            ]
+                        'ref' => null,
+                    ],
+                ],
+            ],
         );
     }
 
@@ -115,7 +121,7 @@ class Settings extends BaseSettings
 
     private function render_forms_dropdown($setting, $field, $value)
     {
-		$setting_name = $this->setting_name($setting);
+        $setting_name = $this->setting_name($setting);
         $forms = self::get_forms();
         $options = array_merge(['<option value=""></option>'], array_map(function ($form) use ($value) {
             $selected = $form->id == $value ? 'selected' : '';
