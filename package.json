@@ -1,6 +1,6 @@
 {
   "name": "wpct-crm-forms",
-  "version": "1.0.0",
+  "version": "2.0.1",
   "main": "Gruntfile.js",
   "author": "Còdec",
   "scripts": {
