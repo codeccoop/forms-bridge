@@ -31,7 +31,7 @@ require_once 'abstracts/class-settings.php';
 require_once 'wpct-http-bridge/wpct-http-bridge.php';
 require_once 'wpct-i18n/wpct-i18n.php';
 
-require_once 'includes/class-integration.php';
+require_once 'includes/abstract-integration.php';
 require_once 'includes/class-menu.php';
 require_once 'includes/class-settings.php';
 

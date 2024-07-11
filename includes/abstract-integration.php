@@ -46,7 +46,7 @@ abstract class Integration extends Singleton
                 $response = Wpct_Http_Client::post_multipart($endpoint, $payload, $attachments);
             }
 
-            $success = $success && !is_wp_error($response);
+            $success = $success && !is_wp_error($response) && apply_filters('_wpct_erp_forms_validate_rpc_response', true, $response);
         }
 
         if (!$success) {
@@ -115,7 +115,13 @@ abstract class Integration extends Singleton
             ];
         }, $models);
 
-        return $this->submit($requests);
+        $validation = fn ($result, $res) => $this->rpc_response_validation($res);
+        add_filter('_wpct_erp_forms_validate_rpc_response', $validation, 2, 10);
+
+        $result = $this->submit($requests);
+
+        remove_filter('_wpct_erp_forms_validate_rpc_response', $validation, 2, 10);
+        return $result;
     }
 
     private function submit_rest($endpoints, $payload, $attachments, $form_data)
@@ -225,6 +231,9 @@ abstract class Integration extends Singleton
         }
 
         $login = (array) json_decode($res['body'], true);
+        if (isset($login['error'])) {
+            throw new Exception('RPC login error');
+        }
         $user_id = $login['result'];
         return [$session_id, $user_id];
     }
@@ -241,5 +250,15 @@ abstract class Integration extends Singleton
                 'args' => $args,
             ],
         ];
+    }
+
+    private function rpc_response_validation($res)
+    {
+        $payload = (array) json_decode($res['body'], true);
+        if (isset($payload['error'])) {
+            return false;
+        }
+
+        return true;
     }
 }
