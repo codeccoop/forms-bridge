@@ -38,7 +38,7 @@ require_once 'includes/class-settings.php';
 class Wpct_Erp_Forms extends BasePlugin
 {
     private $_integrations = [];
-	private $_refs = null;
+    private $_refs = null;
 
     public static $name = 'Wpct ERP Forms';
     public static $textdomain = 'wpct-erp-forms';
@@ -88,8 +88,12 @@ class Wpct_Erp_Forms extends BasePlugin
         add_action('update_option', function ($option, $from, $to) {
             $plugin = Wpct_Erp_Forms::get_instance();
             if ($option === 'wpct-erp-forms_rest-api' || $option === 'wpct-erp-forms_rpc-api') {
-                foreach ($to['forms'] as $form) {
-                    $plugin->set_form_ref($form['form_id'], $form['ref']);
+                if (empty($to)) {
+                    delete_option($option);
+                } else {
+                    foreach ($to['forms'] as $form) {
+                        $plugin->set_form_ref($form['form_id'], $form['ref']);
+                    }
                 }
             }
         }, 10, 3);
@@ -107,24 +111,24 @@ class Wpct_Erp_Forms extends BasePlugin
     {
     }
 
-	private function get_form_refs()
-	{
-		if (empty($this->_refs)) {
-			$this->_refs = get_option('wpct-erp-forms_refs', []);
-		}
+    private function get_form_refs()
+    {
+        if (empty($this->_refs)) {
+            $this->_refs = get_option('wpct-erp-forms_refs', []);
+        }
 
-		return $this->_refs;
-	}
+        return $this->_refs;
+    }
 
-	private function set_form_refs($refs)
-	{
-		$this->_refs = $refs;
+    private function set_form_refs($refs)
+    {
+        $this->_refs = $refs;
         update_option('wpct-erp-forms_refs', $refs);
-	}
+    }
 
     public function get_form_ref($form_id)
     {
-		$refs = $this->get_form_refs();
+        $refs = $this->get_form_refs();
         foreach ($refs as $ref_id => $ref) {
             if ((string) $ref_id === (string) $form_id) {
                 return $ref;
@@ -136,14 +140,14 @@ class Wpct_Erp_Forms extends BasePlugin
 
     public function set_form_ref($form_id, $ref)
     {
-		$refs = $this->get_form_refs();
+        $refs = $this->get_form_refs();
         $refs[$form_id] = $ref;
-		$this->set_form_refs($refs);
+        $this->set_form_refs($refs);
     }
 
     private function populate_refs($setting)
     {
-		$refs = $this->get_form_refs();
+        $refs = $this->get_form_refs();
         for ($i = 0; $i < count($setting['forms']); $i++) {
             $form = $setting['forms'][$i];
             if (!isset($refs[$form['form_id']])) {
