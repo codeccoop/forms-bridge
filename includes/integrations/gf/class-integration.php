@@ -20,7 +20,7 @@ class Integration extends BaseIntegration
         parent::__construct();
     }
 
-	public function init()
+	protected function init()
 	{
 	}
 
@@ -29,7 +29,7 @@ class Integration extends BaseIntegration
         return [
             'id' => $form['id'],
             'title' => $form['title'],
-            'ref' => $this->get_form_ref($form['id']),
+            'ref' => apply_filters('wpct_erp_forms_form_ref', null, $form['id']),
             'description' => $form['description'],
             'fields' => array_map(function ($field) {
                 return $this->serialize_field($field);
@@ -165,7 +165,7 @@ class Integration extends BaseIntegration
         return $value;
     }
 
-    public function get_uploads($submission, $form_data)
+    protected function get_uploads($submission, $form_data)
     {
         $private_upload = wpct_erp_forms_private_upload($form_data['id']);
 

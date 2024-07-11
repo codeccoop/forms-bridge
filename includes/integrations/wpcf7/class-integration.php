@@ -15,11 +15,11 @@ class Integration extends BaseIntegration
         }, 10, 3);
     }
 
-    public function init()
+    protected function init()
     {
     }
 
-    public function serialize_field($field, $form_data)
+    private function serialize_field($field, $form_data)
     {
         $type = $field->basetype;
         if ($type === 'conditional') {
@@ -76,14 +76,14 @@ class Integration extends BaseIntegration
         return [
             'id' => $form->id(),
             'title' => $form->title(),
-            'ref' => $this->get_form_ref($form->id()),
+            'ref' => apply_filter('wpct_erp_forms_form_ref', null, $form->id()),
             'fields' => array_map(function ($field) use ($form) {
                 return $this->serialize_field($field, $form);
             }, $form->scan_form_tags()),
         ];
     }
 
-    public function get_uploads($submission, $form_data)
+    protected function get_uploads($submission, $form_data)
     {
         $uploads = [];
         $uploads = $submission->uploaded_files();
