@@ -69,9 +69,27 @@ class Wpct_Erp_Forms extends BasePlugin
             return $links;
         }, 5, 2);
 
-        add_filter('option_wpct-http-bridge_general', function () {
-            return Settings::get_setting('wpct-erp-forms', 'general');
+        add_filter('option_wpct-erp-forms_general', function ($value) {
+            $http_setting = Settings::get_setting('wpct-http-bridge', 'general');
+            foreach ($http_setting as $key => $val) {
+                $value[$key] = $val;
+            }
+
+            return $value;
         });
+
+        add_action('updated_option', function ($option, $from, $to) {
+            if ($option !== 'wpct-erp-forms_general') {
+                return;
+            }
+
+            $http_setting = Settings::get_setting('wpct-http-bridge', 'general');
+            foreach ($http_setting as $key => $val) {
+                $http_setting[$key] = $to[$key];
+            }
+
+            update_option('wpct-http-bridge_general', $http_setting);
+        }, 10, 3);
 
         add_filter('wpct_erp_forms_form_ref', function ($null, $form_id) {
             return $this->get_form_ref($form_id);
