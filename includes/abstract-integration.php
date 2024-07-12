@@ -13,8 +13,8 @@ abstract class Integration extends Singleton
     abstract protected function get_uploads($submission, $form_data);
     abstract protected function init();
 
-    private $submission = null;
-    private $uploads = null;
+    private $submission = [];
+    private $uploads = [];
 
     protected function __construct()
     {
@@ -145,18 +145,20 @@ abstract class Integration extends Singleton
             return;
         }
 
-        $this->uploads = $this->get_uploads($submission, $form_data);
-        $attachments = apply_filters('wpct_erp_forms_attachments', array_reduce(array_keys($this->uploads), function ($carry, $name) {
-            if ($this->uploads[$name]['is_multi']) {
-                for ($i = 1; $i <= count($this->uploads[$name]['path']); $i++) {
-                    $carry[$name . '_' . $i] = $this->uploads[$name]['path'][$i - 1];
+        $uploads = $this->get_uploads($submission, $form_data);
+        $this->uploads = array_reduce(array_keys($uploads), function ($carry, $name) use ($uploads) {
+            if ($uploads[$name]['is_multi']) {
+                for ($i = 1; $i <= count($uploads[$name]['path']); $i++) {
+                    $carry[$name . '_' . $i] = $uploads[$name]['path'][$i - 1];
                 }
             } else {
-                $carry[$name] = $this->uploads[$name]['path'];
+                $carry[$name] = $uploads[$name]['path'];
             }
 
             return $carry;
-        }, []), $form_data);
+        }, []);
+
+        $attachments = apply_filters('wpct_erp_forms_attachments', $uploads, $form_data);
 
         $this->submission = $this->serialize_submission($submission, $form_data);
         $this->cleanup_empties($submission);
