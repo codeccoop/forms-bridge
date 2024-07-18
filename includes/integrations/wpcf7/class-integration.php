@@ -73,10 +73,11 @@ class Integration extends BaseIntegration
 
     public function serialize_form($form)
     {
+		$form_id = $form->id();
         return [
-            'id' => $form->id(),
+            'id' => $form_id,
             'title' => $form->title(),
-            'ref' => apply_filter('wpct_erp_forms_form_ref', null, $form->id()),
+            'ref' => apply_filters('wpct_erp_forms_form_ref', null, $form_id),
             'fields' => array_map(function ($field) use ($form) {
                 return $this->serialize_field($field, $form);
             }, $form->scan_form_tags()),
