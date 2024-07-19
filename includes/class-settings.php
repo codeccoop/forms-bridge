@@ -96,7 +96,7 @@ class Settings extends BaseSettings
                 'endpoint' => '/jsonrpc',
                 'user' => 'admin',
                 'password' => 'admin',
-                'database' => 'default',
+                'database' => 'erp',
                 'forms' => [
                     [
                         'form_id' => 0,

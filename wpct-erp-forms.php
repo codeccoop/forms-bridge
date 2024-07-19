@@ -103,10 +103,6 @@ class Wpct_Erp_Forms extends BasePlugin
             return $this->populate_refs($setting);
         }, 10, 1);
 
-        add_filter('pre_update_option', function ($value, $option, $from) {
-            return $this->sanitize_option($option, $value, true);
-        }, 10, 3);
-
         add_action('updated_option', function ($option, $from, $to) {
             $this->on_option_updated($option, $to);
         }, 90, 3);
@@ -180,31 +176,9 @@ class Wpct_Erp_Forms extends BasePlugin
         return $setting;
     }
 
-    private function sanitize_option($option, $value)
-    {
-        $settings = ['wpct-erp-forms_rest-api', 'wpct-erp-forms_rpc-api']; // (Settings::get_instance())->get_settings();
-        if (in_array($option, $settings)) {
-            [$group, $setting] = explode('_', $option);
-            $default = Settings::get_default($group, $setting);
-
-            if (empty($value)) {
-                return $default;
-            }
-
-            $missing_keys = array_diff(array_keys($default), array_keys($value));
-            if (count($missing_keys) > 0) {
-                foreach ($missing_keys as $key) {
-                    $value[$key] = $default[$key];
-                }
-            }
-        }
-
-        return $value;
-    }
-
     private function on_option_updated($option, $value)
     {
-        $settings = ['wpct-erp-forms_rest-api', 'wpct-erp-forms_rpc-api']; // (Settings::get_instance())->get_settings();
+        $settings = ['wpct-erp-forms_rest-api', 'wpct-erp-forms_rpc-api'];
         if (in_array($option, $settings)) {
             $refs = $this->get_form_refs();
             foreach ($value['forms'] as $form) {
