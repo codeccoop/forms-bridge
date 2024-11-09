@@ -1,14 +1,18 @@
+// vendor
+import React from "react";
 import domReady from "@wordpress/dom-ready";
 import { createRoot } from "@wordpress/element";
 
-const SettingsPage = () => {
-  return <div>Placeholder for settings page</div>;
-};
+// source
+import SettingsPage from "./SettingsPage/index.jsx";
+import ErrorBoundary from "./ErrorBoundary.jsx";
 
 domReady(() => {
-  const root = createRoot(
-    document.getElementById("unadorned-announcement-bar-settings")
-  );
+  const root = createRoot(document.getElementById("wpct-erp-forms"));
 
-  root.render(<SettingsPage />);
+  root.render(
+    <ErrorBoundary fallback={<h1>Error</h1>}>
+      <SettingsPage />
+    </ErrorBoundary>
+  );
 });
