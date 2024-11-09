@@ -1,9 +1,7 @@
 const path = require("path");
 
 const buildEslintCommand = (filenames) =>
-  `eslint ${filenames
-    .map((f) => path.relative(process.cwd(), f))
-    .join(" --file ")}`;
+  `eslint ${filenames.map((f) => path.relative(process.cwd(), f)).join(" ")}`;
 
 const buildPrettierCommand = (filenames) =>
   `prettier --write --ignore-unknown ${filenames
