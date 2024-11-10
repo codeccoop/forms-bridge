@@ -27,7 +27,7 @@ const tabs = [
   },
   {
     name: "rpc-api",
-    title: "RPC API",
+    title: "Odoo JSON-RPC",
   },
 ];
 

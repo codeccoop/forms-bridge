@@ -10,14 +10,23 @@ import { useState, useRef, useEffect } from "@wordpress/element";
 
 // source
 import BackendHeaders from "./Headers";
+import useBackendNames from "../../hooks/useBackendNames";
 
 function NewBackend({ add }) {
+  const backendNames = useBackendNames();
+
   const [name, setName] = useState("");
   const [baseUrl, setBaseUrl] = useState("https://");
+  const [nameConflict, setNameConflict] = useState(false);
+
+  const handleSetName = (name) => {
+    setNameConflict(backendNames.has(name));
+    setName(name.trim());
+  };
 
   const onClick = () => add({ name, base_url: baseUrl, headers: [] });
 
-  const disabled = !(name && baseUrl);
+  const disabled = !(name && baseUrl && !disabled);
 
   return (
     <div
@@ -35,6 +44,11 @@ function NewBackend({ add }) {
       >
         <TextControl
           label={__("Backend name", "wpct-erp-forms")}
+          help={
+            nameConflict
+              ? __("This name is already in use", "wpct-erp-forms")
+              : ""
+          }
           value={name}
           onChange={setName}
           __nextHasNoMarginBottom
@@ -64,7 +78,16 @@ export default function Backend({ update, remove, ...data }) {
   if (data.name === "add") return <NewBackend add={update} />;
 
   const [name, setName] = useState(data.name);
+  const initialName = useRef(data.name);
   const nameInput = useRef();
+
+  const backendNames = useBackendNames();
+  const [nameConflict, setNameConflict] = useState(false);
+  const handleSetName = (name) => {
+    console.log(backendNames, name);
+    setNameConflict(name !== initialName.current && backendNames.has(name));
+    setName(name.trim());
+  };
 
   const setHeaders = (headers) => update({ ...data, headers });
 
@@ -76,19 +99,12 @@ export default function Backend({ update, remove, ...data }) {
 
   const timeout = useRef(false);
   useEffect(() => {
-    if (timeout.current === false) {
-      timeout.current = 0;
-      return;
-    }
-
     clearTimeout(timeout.current);
+    if (!name || nameConflict) return;
     timeout.current = setTimeout(() => update({ ...data, name }), 500);
   }, [name]);
 
-  useEffect(() => {
-    timeout.current = false;
-    setName(data.name);
-  }, [data.name]);
+  useEffect(() => setName(data.name), [data.name]);
 
   return (
     <div
@@ -107,8 +123,13 @@ export default function Backend({ update, remove, ...data }) {
         <TextControl
           ref={nameInput}
           label={__("Backend name", "wpct-erp-forms")}
+          help={
+            nameConflict
+              ? __("This name is already in use", "wpct-erp-forms")
+              : ""
+          }
           value={name}
-          onChange={setName}
+          onChange={handleSetName}
           onFocus={() => (focus = true)}
           onBlur={() => (focus = false)}
           __nextHasNoMarginBottom={true}

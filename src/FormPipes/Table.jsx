@@ -44,7 +44,12 @@ export default function PipesTable({ formId, pipes, setPipes }) {
 
   const setPipe = (attr, index, value) => {
     const newPipes = pipes.map((pipe, i) => {
-      if (index === i) pipe[attr] = value;
+      if (index === i) {
+        pipe[attr] = value;
+        if (attr === "from" && !pipe.to) {
+          pipe.to = value;
+        }
+      }
       return { ...pipe };
     });
 

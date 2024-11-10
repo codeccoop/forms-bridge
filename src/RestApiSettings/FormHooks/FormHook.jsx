@@ -12,9 +12,9 @@ import FormPipes from "../../FormPipes";
 
 function NewFormHook({ add }) {
   const [{ backends }] = useGeneral();
-  const backendOptions = backends.map(({ name, base_url }) => ({
+  const backendOptions = backends.map(({ name }) => ({
     label: name,
-    value: base_url,
+    value: name,
   }));
   const forms = useForms();
   const formOptions = forms.map(({ id, title }) => ({
@@ -101,9 +101,9 @@ export default function FormHook({ update, remove, ...data }) {
   if (data.name === "add") return <NewFormHook add={update} />;
 
   const [{ backends }] = useGeneral();
-  const backendOptions = backends.map(({ name, base_url }) => ({
+  const backendOptions = backends.map(({ name }) => ({
     label: name,
-    value: base_url,
+    value: name,
   }));
   const forms = useForms();
   const formOptions = forms.map(({ id, title }) => ({
