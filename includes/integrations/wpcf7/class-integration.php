@@ -6,6 +6,11 @@ use WPCT_ERP_FORMS\Integration as BaseIntegration;
 use WPCF7_ContactForm;
 use WPCF7_Submission;
 
+/**
+ * ContactForm7 integration.
+ *
+ * @since 1.0.0
+ */
 class Integration extends BaseIntegration
 {
     /**
@@ -137,8 +142,8 @@ class Integration extends BaseIntegration
                 null,
                 $form_id
             ),
-            'fields' => array_map(function ($field) use ($form) {
-                return $this->serialize_field($field, $form);
+            'fields' => array_map(function ($field) {
+                return $this->serialize_field($field);
             }, $form->scan_form_tags()),
         ];
     }
@@ -152,7 +157,7 @@ class Integration extends BaseIntegration
      * @param array $form_data Form data.
      * @return array $field_data Field data.
      */
-    private function serialize_field($field, $form_data)
+    private function serialize_field($field)
     {
         $type = $field->basetype;
         if ($type === 'conditional') {
@@ -207,6 +212,9 @@ class Integration extends BaseIntegration
                 }
             } elseif ($field['type'] === 'number') {
                 $data[$key] = (float) $val;
+                // } elseif (!in_array($field['type'], ['checkbox', 'select']) && is_array($val)) {
+            } elseif (is_array($val) && !is_array($_POST[$key])) {
+                $data[$key] = $val[0];
             } elseif (
                 $field['type'] === 'file' ||
                 $field['type'] === 'submit'

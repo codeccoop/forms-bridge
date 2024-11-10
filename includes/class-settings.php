@@ -4,10 +4,17 @@ namespace WPCT_ERP_FORMS;
 
 use WPCT_ABSTRACT\Settings as BaseSettings;
 
+/**
+ * Plugin settings.
+ *
+ * @since 1.0.0
+ */
 class Settings extends BaseSettings
 {
     /**
      * Return registered backends.
+     *
+     * @return object $instance Class instance.
      *
      * @since 3.0.0
      *
@@ -62,6 +69,8 @@ class Settings extends BaseSettings
     public function register()
     {
         $host = parse_url(get_bloginfo('url'))['host'];
+        //
+        // Register general setting
         $this->register_setting(
             'general',
             [
@@ -106,6 +115,7 @@ class Settings extends BaseSettings
             ]
         );
 
+        // Register REST API setting
         $this->register_setting(
             'rest-api',
             [
@@ -147,6 +157,7 @@ class Settings extends BaseSettings
             ]
         );
 
+        // Register RPC API setting
         $this->register_setting(
             'rpc-api',
             [

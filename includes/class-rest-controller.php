@@ -5,6 +5,11 @@ namespace WPCT_ERP_FORMS;
 use WP_Error;
 use WP_REST_Server;
 
+/**
+ * Plugin REST API controller
+ *
+ * @since 3.0.0
+ */
 class REST_Controller
 {
     /**
@@ -75,6 +80,7 @@ class REST_Controller
      */
     private function init()
     {
+        // register forms endpoint
         register_rest_route(
             "{$this->namespace}/v{$this->version}",
             '/erp-forms/forms',
@@ -89,6 +95,7 @@ class REST_Controller
             ]
         );
 
+        // register settings endpoint
         register_rest_route(
             "{$this->namespace}/v{$this->version}",
             '/erp-forms/settings/',

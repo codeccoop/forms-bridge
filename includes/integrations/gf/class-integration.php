@@ -5,13 +5,19 @@ namespace WPCT_ERP_FORMS\GF;
 use Exception;
 use TypeError;
 use WPCT_ERP_FORMS\Integration as BaseIntegration;
-use GFCommon;
 use GFAPI;
+use GFCommon;
 use GFFormDisplay;
+use GFFormsModel;
 
 require_once 'attachments.php';
 require_once 'fields-population.php';
 
+/**
+ * GravityForms integration.
+ *
+ * @since 1.0.0
+ */
 class Integration extends BaseIntegration
 {
     /**
@@ -50,12 +56,16 @@ class Integration extends BaseIntegration
     public function get_form()
     {
         $form_id = null;
-        if (!isset($_POST['gform_submit'])) {
+        if (isset($_POST['gform_submit'])) {
             require_once GFCommon::get_base_path() . '/form_display.php';
             $form_id = GFFormDisplay::is_submit_form_id_valid();
         }
 
-        $form = GFAPI::get_submission_form($form_id);
+        $form = GFAPI::get_form($form_id);
+        if (empty($form) || !$form['is_active'] || $form['is_trash']) {
+            return null;
+        }
+
         if (is_wp_error($form)) {
             return null;
         }
@@ -110,17 +120,43 @@ class Integration extends BaseIntegration
      */
     public function get_submission()
     {
-        $form = $this->get_form();
-        if (!$form) {
+        $form_data = $this->get_form();
+        if (!$form_data) {
             return null;
         }
 
-        $submission = GFAPI::get_submission();
-        $lead_id = gf_apply_filters(
-            ['gform_entry_id_pre_save_lead', $form_id],
-            null,
-            $form
+        $submission = GFFormsModel::get_current_lead(
+            GFAPI::get_form($form_data['id'])
         );
+        if (!$submission) {
+            return null;
+        }
+
+        return $this->serialize_submission($submission, $this->get_form());
+    }
+
+    /**
+     * Retrive the current submission uploaded files.
+     *
+     * @since 3.0.0
+     *
+     * @return array $files Collection of uploaded files.
+     */
+    public function get_uploads()
+    {
+        $form_data = $this->get_form();
+        if (!$form_data) {
+            return null;
+        }
+
+        $submission = GFFormsModel::get_current_lead(
+            GFAPI::get_form($form_data['id'])
+        );
+        if (!$submission) {
+            return null;
+        }
+
+        return $this->submission_uploads($submission, $this->get_form());
     }
 
     /**
@@ -158,9 +194,10 @@ class Integration extends BaseIntegration
      * @param array From data.
      * @return array $field_data Field data.
      */
-    private function serialize_field($field, $form_data)
+    private function serialize_field($field)
     {
         switch ($field->type) {
+            case 'post_image':
             case 'fileupload':
                 $type = $field->multipleFiles ? 'files' : 'file';
                 break;

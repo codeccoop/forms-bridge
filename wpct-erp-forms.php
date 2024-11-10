@@ -312,11 +312,19 @@ class Wpct_Erp_Forms extends BasePlugin
      */
     private function get_form_hooks($form_id)
     {
-        $rest_api = Settings::get_setting('wpct-erp-forms', 'rest-api');
-        $rpc_api = Settings::get_setting('wpct-erp-forms', 'rpc-api');
+        $rest_hooks = Settings::get_setting(
+            'wpct-erp-forms',
+            'rest-api',
+            'form_hooks'
+        );
+        $rpc_hooks = Settings::get_setting(
+            'wpct-erp-forms',
+            'rpc-api',
+            'form_hooks'
+        );
 
         return array_reduce(
-            array_merge($rest_api['form_hooks'], $rpc_api['form_hooks']),
+            array_merge($rest_hooks, $rpc_hooks),
             function ($hooks, $hook) use ($form_id) {
                 if ((int) $hook['form_id'] === (int) $form_id) {
                     $hooks[$hook['name']] = $hook;
