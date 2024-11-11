@@ -9,12 +9,13 @@ import { useI18n } from "../../providers/I18n";
 export default function FormHooks({ hooks, setHooks }) {
   const __ = useI18n();
   const tabs = hooks
-    .map(({ backend, endpoint, form_id, name, pipes }) => ({
+    .map(({ backend, method, endpoint, form_id, name, pipes }) => ({
       name,
       title: name,
-      form_id,
-      endpoint,
       backend,
+      method,
+      endpoint,
+      form_id,
       pipes,
     }))
     .concat([

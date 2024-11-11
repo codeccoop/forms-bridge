@@ -1,6 +1,11 @@
 // vendor
 import React from "react";
-import { TextControl, SelectControl, Button } from "@wordpress/components";
+import {
+  TextControl,
+  SelectControl,
+  Button,
+  __experimentalSpacer as Spacer,
+} from "@wordpress/components";
 import { useState, useRef, useEffect } from "@wordpress/element";
 
 // source
@@ -52,47 +57,80 @@ function NewFormHook({ add }) {
         style={{
           display: "flex",
           gap: "1em",
+          flexWrap: "wrap",
         }}
       >
-        <TextControl
-          label={__("Name", "wpct-erp-forms")}
-          help={
-            nameConflict
-              ? __("This name is already in use", "wpct-erp-forms")
-              : ""
-          }
-          value={name}
-          onChange={handleSetName}
-          __nextHasNoMarginBottom
-        />
-        <SelectControl
-          label={__("Backend", "wpct-erp-forms")}
-          value={backend}
-          onChange={setBackend}
-          options={backendOptions}
-          __nextHasNoMarginBottom
-        />
-        <TextControl
-          label={__("Model", "wpct-erp-forms")}
-          value={model}
-          onChange={setModel}
-          __nextHasNoMarginBottom
-        />
-        <SelectControl
-          label={__("Form", "wpct-erp-forms")}
-          value={formId}
-          onChange={setFormId}
-          options={formOptions}
-          __nextHasNoMarginBottom
-        />
-        <Button
-          variant="primary"
-          onClick={() => onClick()}
-          style={{ marginTop: "auto", height: "32px" }}
-          disabled={disabled}
-        >
-          {__("Add", "wpct-erp-forms")}
-        </Button>
+        <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
+          <TextControl
+            label={__("Name", "wpct-erp-forms")}
+            help={
+              nameConflict
+                ? __("This name is already in use", "wpct-erp-forms")
+                : ""
+            }
+            value={name}
+            onChange={handleSetName}
+            __nextHasNoMarginBottom
+          />
+        </div>
+        <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
+          <SelectControl
+            label={__("Backend", "wpct-erp-forms")}
+            value={backend}
+            onChange={setBackend}
+            options={backendOptions}
+            __nextHasNoMarginBottom
+          />
+        </div>
+        <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
+          <TextControl
+            label={__("Model", "wpct-erp-forms")}
+            value={model}
+            onChange={setModel}
+            __nextHasNoMarginBottom
+          />
+        </div>
+        <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
+          <SelectControl
+            label={__("Form", "wpct-erp-forms")}
+            value={formId}
+            onChange={setFormId}
+            options={formOptions}
+            __nextHasNoMarginBottom
+          />
+        </div>
+      </div>
+      <Spacer paddingY="calc(8px)" />
+      <div
+        style={{
+          display: "flex",
+          gap: "1em",
+          flexWrap: "wrap",
+        }}
+      >
+        <div>
+          <label
+            style={{
+              display: "block",
+              fontWeight: 500,
+              textTransform: "uppercase",
+              fontSize: "11px",
+              margin: 0,
+              marginBottom: "calc(4px)",
+              maxWidth: "100%",
+            }}
+          >
+            {__("Add form", "wpct-erp-forms")}
+          </label>
+          <Button
+            variant="primary"
+            onClick={() => onClick()}
+            style={{ width: "130px", justifyContent: "center", height: "32px" }}
+            disabled={disabled}
+          >
+            {__("Add", "wpct-erp-forms")}
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -152,42 +190,60 @@ export default function FormHook({ update, remove, ...data }) {
         style={{
           display: "flex",
           gap: "1em",
+          flexWrap: "wrap",
         }}
       >
-        <TextControl
-          ref={nameInput}
-          label={__("Name", "wpct-erp-forms")}
-          help={
-            nameConflict
-              ? __("This name is already in use", "wpct-erp-forms")
-              : ""
-          }
-          value={name}
-          onChange={handleSetName}
-          onFocus={() => (focus = true)}
-          onBlur={() => (focus = false)}
-          __nextHasNoMarginBottom
-        />
-        <SelectControl
-          label={__("Backend", "wpct-erp-forms")}
-          value={data.backend}
-          onChange={(backend) => update({ ...data, backend })}
-          options={backendOptions}
-          __nextHasNoMarginBottom
-        />
-        <TextControl
-          label={__("Model", "wpct-erp-forms")}
-          value={data.model}
-          onChange={(model) => update({ ...data, model })}
-          __nextHasNoMarginBottom
-        />
-        <SelectControl
-          label={__("Form", "wpct-erp-forms")}
-          value={data.form_id}
-          onChange={(form_id) => update({ ...data, form_id })}
-          options={formOptions}
-          __nextHasNoMarginBottom
-        />
+        <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
+          <TextControl
+            ref={nameInput}
+            label={__("Name", "wpct-erp-forms")}
+            help={
+              nameConflict
+                ? __("This name is already in use", "wpct-erp-forms")
+                : ""
+            }
+            value={name}
+            onChange={handleSetName}
+            onFocus={() => (focus = true)}
+            onBlur={() => (focus = false)}
+            __nextHasNoMarginBottom
+          />
+        </div>
+        <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
+          <SelectControl
+            label={__("Backend", "wpct-erp-forms")}
+            value={data.backend}
+            onChange={(backend) => update({ ...data, backend })}
+            options={backendOptions}
+            __nextHasNoMarginBottom
+          />
+        </div>
+        <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
+          <TextControl
+            label={__("Model", "wpct-erp-forms")}
+            value={data.model}
+            onChange={(model) => update({ ...data, model })}
+            __nextHasNoMarginBottom
+          />
+        </div>
+        <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
+          <SelectControl
+            label={__("Form", "wpct-erp-forms")}
+            value={data.form_id}
+            onChange={(form_id) => update({ ...data, form_id })}
+            options={formOptions}
+            __nextHasNoMarginBottom
+          />
+        </div>
+      </div>
+      <Spacer paddingY="calc(8px)" />
+      <div
+        style={{
+          display: "flex",
+          gap: "1em",
+          flexWrap: "wrap",
+        }}
+      >
         <div>
           <label
             style={{

@@ -7,8 +7,6 @@ use WP_Error;
 use Exception;
 use TypeError;
 
-use function WPCT_HTTP\wpct_http_post;
-
 /**
  * Integration abstract class.
  *
@@ -196,9 +194,9 @@ abstract class Integration extends Singleton
             );
             $this->apply_pipes($hook['pipes'], $payload);
             $headers = $backend->get_headers();
-            if (isset($hook['endpoint'])) {
+            if (isset($hook['method'], $hook['endpoint'])) {
                 $url = $backend->get_endpoint_url($hook['endpoint']);
-                $res = wpct_http_post($url, [
+                $res = $this->submit_rest($hook['method'], $url, [
                     'data' => $payload,
                     'files' => $attachments,
                     'headers' => $headers,
@@ -348,6 +346,36 @@ abstract class Integration extends Singleton
             },
             []
         );
+    }
+
+    /**
+     * Submit REST requests over HTTP methods.
+     *
+     * @since 3.0.4
+     *
+     * @param string $method HTTP method (GET, POST, PUT, DELETE).
+     * @param string $url Target URL.
+     * @param array $args Request arguments.
+     * @return array|WP_Error Request response.
+     */
+    private function submit_rest($method, $url, $args)
+    {
+        $m = strtolower($method);
+        $func = "\WPCT_HTTP\wpct_http_{$m}";
+        if (!is_callable($func)) {
+            return new WP_Error(
+                'http_method_not_allowed',
+                __("Unkown HTTP method: {$method}", 'wpct-erp-forms'),
+                ['status' => 405]
+            );
+        }
+
+        if (in_array($method, ['GET', 'DELETE'])) {
+            unset($args['headers']['Content-Type']);
+            $args['params'] = $args['data'];
+        }
+
+        return $func($url, $args);
     }
 
     /**
