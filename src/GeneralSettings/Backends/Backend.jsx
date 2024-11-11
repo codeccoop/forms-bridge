@@ -27,7 +27,7 @@ function NewBackend({ add }) {
 
   const onClick = () => add({ name, base_url: baseUrl, headers: [] });
 
-  const disabled = !(name && baseUrl && !disabled);
+  const disabled = !(name && baseUrl && !nameConflict);
 
   return (
     <div
@@ -51,7 +51,7 @@ function NewBackend({ add }) {
               : ""
           }
           value={name}
-          onChange={setName}
+          onChange={handleSetName}
           __nextHasNoMarginBottom
         />
         <TextControl

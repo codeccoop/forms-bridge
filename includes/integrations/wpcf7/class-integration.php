@@ -142,9 +142,17 @@ class Integration extends BaseIntegration
                 null,
                 $form_id
             ),
-            'fields' => array_map(function ($field) {
-                return $this->serialize_field($field);
-            }, $form->scan_form_tags()),
+            'fields' => array_map(
+                function ($field) {
+                    return $this->serialize_field($field);
+                },
+                array_values(
+                    array_filter($form->scan_form_tags(), function ($tag) {
+                        return $tag->basetype !== 'response' &&
+                            $tag->basetype !== 'submit';
+                    })
+                )
+            ),
         ];
     }
 
