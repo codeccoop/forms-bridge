@@ -259,6 +259,21 @@ class Wpct_Erp_Forms extends BasePlugin
             }
         });
 
+        // Check if current form is bound to certain hook
+        add_filter('wpct_erp_forms_is_hooked', function ($false, $hook_name) {
+            $integration = $this->get_integration();
+            if (!$integration) {
+                return $false;
+            }
+
+            $form = $integration->get_form();
+            if (!$form) {
+                return $false;
+            }
+
+            return isset($form['hooks'][$hook_name]);
+        });
+
         // Return the current submission data
         add_filter('wpct_erp_forms_submission', function ($null) {
             $integration = $this->get_integration();

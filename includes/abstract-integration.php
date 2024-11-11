@@ -174,13 +174,6 @@ abstract class Integration extends Singleton
         );
         $this->cleanup_empties($payload);
 
-        do_action(
-            'wpct_erp_forms_before_submission',
-            $payload,
-            $attachments,
-            $form_data
-        );
-
         foreach (array_values($hooks) as $hook) {
             $backend = apply_filters(
                 'wpct_http_backend',
@@ -189,13 +182,20 @@ abstract class Integration extends Singleton
             );
             $this->apply_pipes($hook['pipes'], $payload);
             $headers = $backend->get_headers();
+
             if (isset($hook['method'], $hook['endpoint'])) {
                 $url = $backend->get_endpoint_url($hook['endpoint']);
-                $res = $this->submit_rest($hook['method'], $url, [
+                $args = [
                     'data' => $payload,
                     'files' => $attachments,
                     'headers' => $headers,
-                ]);
+                ];
+
+                $this->before_submission(
+                    ['url' => $url, 'args' => $args],
+                    $form_data
+                );
+                $res = $this->submit_rest($hook['method'], $url, $args);
             } elseif (isset($hook['model'])) {
                 $endpoint = Settings::get_setting(
                     'wpct-erp-forms',
@@ -203,6 +203,7 @@ abstract class Integration extends Singleton
                     'endpoint'
                 );
                 $url = $backend->get_endpoint_url($endpoint);
+
                 $res = $this->submit_rpc(
                     $url,
                     $hook['model'],
@@ -213,29 +214,27 @@ abstract class Integration extends Singleton
                 );
             }
 
-            if (is_wp_error($res)) {
-                do_action(
-                    'wpct_erp_forms_on_failure',
-                    $res,
-                    $payload,
-                    $attachments,
-                    $form_data
-                );
+            $this->after_submission($res, $payload, $form_data);
+        }
+    }
 
-                $this->notify_error(
-                    $form_data,
-                    $payload,
-                    print_r($res->get_error_data(), true)
-                );
-            } else {
-                do_action(
-                    'wpct_erp_forms_after_submission',
-                    $res,
-                    $payload,
-                    $attachments,
-                    $form_data
-                );
-            }
+    private function before_submission($request, $form_data)
+    {
+        do_action('wpct_erp_forms_before_submission', $request, $form_data);
+    }
+
+    private function after_submission($response, $payload, $form_data)
+    {
+        if (is_wp_error($response)) {
+            do_action('wpct_erp_forms_on_failure', $response, $form_data);
+
+            $this->notify_error(
+                $form_data,
+                $payload,
+                print_r($response->get_error_data(), true)
+            );
+        } else {
+            do_action('wpct_erp_forms_after_submission', $response, $form_data);
         }
     }
 
@@ -308,7 +307,7 @@ abstract class Integration extends Singleton
     private function cleanup_empties(&$submission_data)
     {
         foreach ($submission_data as $key => $val) {
-            if (empty($val)) {
+            if ($val === '' || $val === null) {
                 unset($submission_data[$key]);
             }
         }
@@ -432,6 +431,18 @@ abstract class Integration extends Singleton
         $headers,
         $form_data
     ) {
+        $this->before_submission(
+            [
+                'url' => $url,
+                'args' => [
+                    'data' => $payload,
+                    'headers' => $headers,
+                    'files' => $attachments,
+                ],
+            ],
+            $form_data
+        );
+
         $database = Settings::get_setting(
             'wpct-erp-forms',
             'rpc-api',
@@ -468,6 +479,7 @@ abstract class Integration extends Singleton
             'files' => $attachments,
             'headers' => $headers,
         ]);
+
         if (isset($response['error'])) {
             return new WP_Error(
                 'rpc_api_error',
