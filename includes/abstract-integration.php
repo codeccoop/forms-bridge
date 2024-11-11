@@ -181,12 +181,7 @@ abstract class Integration extends Singleton
             $form_data
         );
 
-        $error = false;
         foreach (array_values($hooks) as $hook) {
-            if ($error) {
-                break;
-            }
-
             $backend = apply_filters(
                 'wpct_http_backend',
                 null,
@@ -219,29 +214,28 @@ abstract class Integration extends Singleton
             }
 
             if (is_wp_error($res)) {
+                do_action(
+                    'wpct_erp_forms_on_failure',
+                    $res,
+                    $payload,
+                    $attachments,
+                    $form_data
+                );
+
                 $this->notify_error(
                     $form_data,
                     $payload,
                     print_r($res->get_error_data(), true)
                 );
-                $error = true;
+            } else {
+                do_action(
+                    'wpct_erp_forms_after_submission',
+                    $res,
+                    $payload,
+                    $attachments,
+                    $form_data
+                );
             }
-        }
-
-        if (!$error) {
-            do_action(
-                'wpct_erp_forms_after_submission',
-                $payload,
-                $attachments,
-                $form_data
-            );
-        } else {
-            do_action(
-                'wpct_erp_forms_on_failure',
-                $payload,
-                $attachments,
-                $form_data
-            );
         }
     }
 
