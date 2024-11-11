@@ -1,83 +1,209 @@
-# Copyright (C) 2024 Còdec Cooperativa
+# Copyright (C) 2024 Còdec
 # This file is distributed under the same license as the Wpct ERP Forms plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Wpct ERP Forms 1.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpct-erp-forms\n"
-"Last-Translator: Lucas García <lucas@codeccoop.org>\n"
-"Language-Team: English (USA)\n"
+"Project-Id-Version: Wpct ERP Forms 3.0.0\n"
+"Report-Msgid-Bugs-To: https://git.coopdevs.org/codeccoop/wp/plugin/wpct-erp-forms\n"
+"Last-Translator: Còdec Coop <hola@codeccoop.org>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-01-23T18:24:08+00:00\n"
-"PO-Revision-Date: 2024-01-23T18:24:08+00:00\n"
-"X-Generator: WP-CLI 2.9.0\n"
+"POT-Creation-Date: 2024-11-11T01:41:33+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: wpct-erp-forms\n"
 
 #. Plugin Name of the plugin
+#: wpct-erp-forms.php
 msgid "Wpct ERP Forms"
-msgstr "Wpct ERP Forms"
+msgstr ""
 
 #. Plugin URI of the plugin
-msgid "https://git.coopdevs.org/codeccoop/wp/plugins/wpct-erp-forms"
-msgstr "https://git.coopdevs.org/codeccoop/wp/plugins/wpct-erp-forms"
+#: wpct-erp-forms.php
+msgid "https://git.coopdevs.org/codeccoop/wp/wpct-erp-forms"
+msgstr ""
 
 #. Description of the plugin
+#: wpct-erp-forms.php
 msgid "Plugin to bridge WP forms submissions to a ERP backend"
-msgstr "Plugin to bridge WP forms submissions to a ERP backend"
+msgstr ""
 
 #. Author of the plugin
-msgid "Còdec Cooperativa"
-msgstr "Còdec Cooperativa"
+#: wpct-erp-forms.php
+msgid "Còdec"
+msgstr ""
 
 #. Author URI of the plugin
+#: wpct-erp-forms.php
 msgid "https://www.codeccoop.org"
-msgstr "https://www.codeccoop.org"
+msgstr ""
 
-msgid "wpct-erp-forms_general--title"
-msgstr "General"
+#: includes/class-menu.php:32
+#: assets/plugin.bundle.js:1
+msgid "Loading"
+msgstr ""
 
-msgid "wpct-erp-forms_general--description"
-msgstr "Global configuration of the plugin EPR Forms"
+#: assets/plugin.bundle.js:1
+msgid "Pipes"
+msgstr ""
 
-msgid "wpct-erp-forms_general__notification_receiver--label"
-msgstr "Email receiver for submission errors"
+#: assets/plugin.bundle.js:1
+msgid "Form pipes"
+msgstr ""
 
-msgid "wpct-erp-forms_general__base_url--label"
-msgstr "ERP base url"
+#: assets/plugin.bundle.js:1
+msgid "String"
+msgstr ""
 
-msgid "wpct-erp-forms_general__api_key--label"
-msgstr "ERP API key"
+#: assets/plugin.bundle.js:1
+msgid "Integer"
+msgstr ""
 
-msgid "wpct-erp-forms_rest-api--title"
-msgstr "REST API"
+#: assets/plugin.bundle.js:1
+msgid "Decimal"
+msgstr ""
 
-msgid "wpct-erp-forms_rest-api--description"
-msgstr "Configure the connexion with the ERP's REST API"
+#: assets/plugin.bundle.js:1
+msgid "Boolean"
+msgstr ""
 
-msgid "wpct-erp-forms_rest-api__forms--label"
-msgstr "Forms"
+#: assets/plugin.bundle.js:1
+msgid "JSON"
+msgstr ""
 
-msgid "wpct-erp-forms_rpc-api--title"
-msgstr "RPC API"
+#: assets/plugin.bundle.js:1
+msgid "Ignore"
+msgstr ""
 
-msgid "wpct-erp-forms_rpc-api--description"
-msgstr "Configure the connexion with the ERP's JSON-RPC API"
+#: assets/plugin.bundle.js:1
+msgid "Submission ID"
+msgstr ""
 
-msgid "wpct-erp-forms_rpc-api__endpoint--label"
-msgstr "RPC API endpoint"
+#: assets/plugin.bundle.js:1
+msgid "Form format pipes"
+msgstr ""
 
-msgid "wpct-erp-forms_rpc-api__user--label"
-msgstr "API user login"
+#: assets/plugin.bundle.js:1
+msgid "From"
+msgstr ""
 
-msgid "wpct-erp-forms_rpc-api__password--label"
-msgstr "User password"
+#: assets/plugin.bundle.js:1
+msgid "To"
+msgstr ""
 
-msgid "wpct-erp-forms_rpc-api__database--label"
-msgstr "Database name"
+#: assets/plugin.bundle.js:1
+msgid "Cast as"
+msgstr ""
 
-msgid "wpct-erp-forms_rpc-api__model--label"
-msgstr "Model ID"
+#: assets/plugin.bundle.js:1
+msgid "Drop"
+msgstr ""
 
-msgid "wpct-erp-forms_rpc-api__forms--label"
-msgstr "Forms"
+#: assets/plugin.bundle.js:1
+msgid "Add"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Backend name"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "This name is already in use"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Backend base URL"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Remove backend"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Remove"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Backend HTTP Headers"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Header-Name"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Value"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Add Backend"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Backends"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "General"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Notification receiver"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Name"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Backend"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Endpoint"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Form"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Edit pipes"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Remove form"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Add Form"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Form Hooks"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "REST API"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Model"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "RPC API"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Database"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "User"
+msgstr ""
+
+#: assets/plugin.bundle.js:1
+msgid "Password"
+msgstr ""

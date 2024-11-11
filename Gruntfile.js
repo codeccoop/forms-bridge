@@ -1,56 +1,60 @@
-module.exports = function( grunt ) {
+module.exports = function (grunt) {
+  "use strict";
 
-	'use strict';
+  // Project configuration
+  grunt.initConfig({
+    pkg: grunt.file.readJSON("package.json"),
 
-	// Project configuration
-	grunt.initConfig( {
+    addtextdomain: {
+      options: {
+        textdomain: "wpct-erp-forms",
+      },
+      update_all_domains: {
+        options: {
+          updateDomains: true,
+        },
+        src: [
+          "*.php",
+          "**/*.php",
+          "!.git/**/*",
+          "!bin/**/*",
+          "!node_modules/**/*",
+          "!tests/**/*",
+        ],
+      },
+    },
 
-		pkg: grunt.file.readJSON( 'package.json' ),
+    wp_readme_to_markdown: {
+      your_target: {
+        files: {
+          "README.md": "readme.txt",
+        },
+      },
+    },
 
-		addtextdomain: {
-			options: {
-				textdomain: 'wpct-forms-ce',
-			},
-			update_all_domains: {
-				options: {
-					updateDomains: true
-				},
-				src: [ '*.php', '**/*.php', '!\.git/**/*', '!bin/**/*', '!node_modules/**/*', '!tests/**/*' ]
-			}
-		},
+    makepot: {
+      target: {
+        options: {
+          domainPath: "/languages",
+          exclude: [".git/*", "bin/*", "node_modules/*", "tests/*"],
+          mainFile: "wpct-erp-forms.php",
+          potFilename: "wpct-forms-ce.pot",
+          potHeaders: {
+            "poedit": true,
+            "x-poedit-keywordslist": true,
+          },
+          type: "wp-plugin",
+          updateTimestamp: true,
+        },
+      },
+    },
+  });
 
-		wp_readme_to_markdown: {
-			your_target: {
-				files: {
-					'README.md': 'readme.txt'
-				}
-			},
-		},
+  grunt.loadNpmTasks("grunt-wp-i18n");
+  grunt.loadNpmTasks("grunt-wp-readme-to-markdown");
+  grunt.registerTask("default", ["i18n", "readme"]);
+  grunt.registerTask("i18n", ["addtextdomain", "makepot"]);
+  grunt.registerTask("readme", ["wp_readme_to_markdown"]);
 
-		makepot: {
-			target: {
-				options: {
-					domainPath: '/languages',
-					exclude: [ '\.git/*', 'bin/*', 'node_modules/*', 'tests/*' ],
-					mainFile: 'wpct-forms-ce.php',
-					potFilename: 'wpct-forms-ce.pot',
-					potHeaders: {
-						poedit: true,
-						'x-poedit-keywordslist': true
-					},
-					type: 'wp-plugin',
-					updateTimestamp: true
-				}
-			}
-		},
-	} );
-
-	grunt.loadNpmTasks( 'grunt-wp-i18n' );
-	grunt.loadNpmTasks( 'grunt-wp-readme-to-markdown' );
-	grunt.registerTask( 'default', [ 'i18n','readme' ] );
-	grunt.registerTask( 'i18n', ['addtextdomain', 'makepot'] );
-	grunt.registerTask( 'readme', ['wp_readme_to_markdown'] );
-
-	grunt.util.linefeed = '\n';
-
+  grunt.util.linefeed = "\n";
 };

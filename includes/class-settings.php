@@ -4,67 +4,161 @@ namespace WPCT_ERP_FORMS;
 
 use WPCT_ABSTRACT\Settings as BaseSettings;
 
+/**
+ * Plugin settings.
+ *
+ * @since 1.0.0
+ */
 class Settings extends BaseSettings
 {
+    /**
+     * Return registered backends.
+     *
+     * @return object $instance Class instance.
+     *
+     * @since 3.0.0
+     *
+     * @return array $backends Collection of backend array representations.
+     */
+    public static function get_backends()
+    {
+        $setting = Settings::get_setting('wpct-erp-forms', 'general');
+        return array_map(function ($backend) {
+            return $backend['name'];
+        }, $setting['backends']);
+    }
+
+    /**
+     * Get form instances from database.
+     *
+     * @since 2.0.0
+     *
+     * @return array $forms Database record objects from form posts.
+     */
     public static function get_forms()
     {
         global $wpdb;
-        if (apply_filters('wpct_is_plugin_active', false, 'contact-form-7/wp-contact-form-7.php')) {
-            return $wpdb->get_results("SELECT id, post_title title FROM {$wpdb->prefix}posts WHERE post_type = 'wpcf7_contact_form' AND post_status = 'publish'");
-        } elseif (apply_filters('wpct_is_plugin_active', false, 'gravityforms/gravityforms.php')) {
-            return $wpdb->get_results("SELECT id, title FROM {$wpdb->prefix}gf_form WHERE is_active = 1 AND is_trash = 0");
+        if (
+            apply_filters(
+                'wpct_is_plugin_active',
+                false,
+                'contact-form-7/wp-contact-form-7.php'
+            )
+        ) {
+            return $wpdb->get_results(
+                "SELECT id, post_title title FROM {$wpdb->prefix}posts WHERE post_type = 'wpcf7_contact_form' AND post_status = 'publish'"
+            );
+        } elseif (
+            apply_filters(
+                'wpct_is_plugin_active',
+                false,
+                'gravityforms/gravityforms.php'
+            )
+        ) {
+            return $wpdb->get_results(
+                "SELECT id, title FROM {$wpdb->prefix}gf_form WHERE is_active = 1 AND is_trash = 0"
+            );
         }
     }
 
+    /**
+     * Register plugin settings.
+     *
+     * @since 2.0.0
+     */
     public function register()
     {
         $host = parse_url(get_bloginfo('url'))['host'];
+        //
+        // Register general setting
         $this->register_setting(
             'general',
             [
                 'notification_receiver' => [
                     'type' => 'string',
                 ],
-                'base_url' => [
-                    'type' => 'string',
-                ],
-                'api_key' => [
-                    'type' => 'string',
-                ],
-            ],
-            [
-                'notification_receiver' => 'admin@' . $host,
-                'base_url' => 'https://erp.' . $host,
-                'api_key' => '',
-            ],
-        );
-
-        $this->register_setting(
-            'rest-api',
-            [
-                'forms' => [
+                'backends' => [
                     'type' => 'array',
                     'items' => [
                         'type' => 'object',
                         'properties' => [
-                            'form_id' => ['type' => 'string'],
-                            'endpoint' => ['type' => 'string'],
-                            'ref' => ['type' => 'string'],
+                            'name' => ['type' => 'string'],
+                            'base_url' => ['type' => 'string'],
+                            'headers' => [
+                                'type' => 'array',
+                                'items' => [
+                                    'type' => 'object',
+                                    'properties' => [
+                                        'name' => ['type' => 'string'],
+                                        'value' => ['type' => 'string'],
+                                    ],
+                                ],
+                            ],
                         ],
-                    ]
-                ]
+                    ],
+                ],
             ],
             [
-                'forms' => [
+                'notification_receiver' => 'admin@' . $host,
+                'backends' => [
                     [
-                        'form_id' => null,
-                        'endpoint' => '/api/crm-lead',
-                        'ref' => null
-                    ]
-                ]
+                        'name' => 'ERP',
+                        'base_url' => 'https://erp.' . $host,
+                        'headers' => [
+                            [
+                                'name' => 'Authorization',
+                                'value' => 'Bearer <erp-backend-token>',
+                            ],
+                        ],
+                    ],
+                ],
             ]
         );
 
+        // Register REST API setting
+        $this->register_setting(
+            'rest-api',
+            [
+                'form_hooks' => [
+                    'type' => 'array',
+                    'items' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'name' => ['type' => 'string'],
+                            'backend' => ['type' => 'string'],
+                            'form_id' => ['type' => 'string'],
+                            'endpoint' => ['type' => 'string'],
+                            'pipes' => [
+                                'type' => 'array',
+                                'items' => [
+                                    'type' => 'object',
+                                    'properties' => [
+                                        'from' => ['type' => 'string'],
+                                        'to' => ['type' => 'string'],
+                                        'cast' => [
+                                            'type' => 'string',
+                                            'enum' => [
+                                                'boolean',
+                                                'string',
+                                                'integer',
+                                                'float',
+                                                'json',
+                                                'null',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'form_hooks' => [],
+            ]
+        );
+
+        // Register RPC API setting
         $this->register_setting(
             'rpc-api',
             [
@@ -80,14 +174,36 @@ class Settings extends BaseSettings
                 'database' => [
                     'type' => 'string',
                 ],
-                'forms' => [
+                'form_hooks' => [
                     'type' => 'array',
                     'items' => [
                         'type' => 'object',
                         'properties' => [
+                            'name' => ['type' => 'string'],
+                            'backend' => ['type' => 'string'],
                             'form_id' => ['type' => 'string'],
                             'model' => ['type' => 'string'],
-                            'ref' => ['type' => 'string'],
+                            'pipes' => [
+                                'type' => 'array',
+                                'items' => [
+                                    'type' => 'object',
+                                    'properties' => [
+                                        'from' => ['type' => 'string'],
+                                        'to' => ['type' => 'string'],
+                                        'cast' => [
+                                            'type' => 'string',
+                                            'enum' => [
+                                                'boolean',
+                                                'string',
+                                                'integer',
+                                                'float',
+                                                'json',
+                                                'null',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                 ],
@@ -97,42 +213,8 @@ class Settings extends BaseSettings
                 'user' => 'admin',
                 'password' => 'admin',
                 'database' => 'erp',
-                'forms' => [
-                    [
-                        'form_id' => 0,
-                        'model' => 'crm.lead',
-                        'ref' => null,
-                    ],
-                ],
-            ],
+                'form_hooks' => [],
+            ]
         );
     }
-
-    protected function input_render($setting, $field, $value)
-    {
-        if (preg_match('/^forms.*form_id$/', $field)) {
-            return $this->render_forms_dropdown($setting, $field, $value);
-		} elseif (preg_match('/password$/', $field)) {
-			return $this->password_input_render($setting, $field, $value);
-		}
-
-        return parent::input_render($setting, $field, $value);
-    }
-
-    private function render_forms_dropdown($setting, $field, $value)
-    {
-        $setting_name = $this->setting_name($setting);
-        $forms = self::get_forms();
-        $options = array_merge(['<option value=""></option>'], array_map(function ($form) use ($value) {
-            $selected = $form->id == $value ? 'selected' : '';
-            return "<option value='{$form->id}' {$selected}>{$form->title}</option>";
-        }, $forms));
-        return "<select name='{$setting_name}[{$field}]'>" . implode('', $options) . '</select>';
-    }
-
-	private function password_input_render($setting, $field, $value)
-	{
-		$setting_name = $this->setting_name($setting);
-		return "<input type='password' name='{$setting_name}[{$field}]' value='{$value}' />";
-	}
 }

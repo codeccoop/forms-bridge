@@ -1,0 +1,235 @@
+// vendor
+import React from "react";
+import { TextControl, SelectControl, Button } from "@wordpress/components";
+import { useState, useRef, useEffect } from "@wordpress/element";
+
+// source
+import { useForms } from "../../providers/Forms";
+import { useGeneral } from "../../providers/Settings";
+import { useI18n } from "../../providers/I18n";
+import useHookNames from "../../hooks/useHookNames";
+import FormPipes from "../../FormPipes";
+
+function NewFormHook({ add }) {
+  const __ = useI18n();
+  const [{ backends }] = useGeneral();
+  const backendOptions = backends.map(({ name }) => ({
+    label: name,
+    value: name,
+  }));
+  const forms = useForms();
+  const formOptions = forms.map(({ id, title }) => ({
+    label: title,
+    value: id,
+  }));
+
+  const hookNames = useHookNames();
+
+  const [name, setName] = useState("");
+  const [backend, setBackend] = useState(backendOptions?.[0].value || "");
+  const [model, setModel] = useState("");
+  const [formId, setFormId] = useState(formOptions?.[0].value || "");
+  const [nameConflict, setNameConflict] = useState(false);
+
+  const handleSetName = (name) => {
+    setNameConflict(hookNames.has(name));
+    setName(name.trim());
+  };
+
+  const onClick = () => add({ name, backend, model, form_id: formId });
+
+  const disabled = !(name && backend && model && formId && !nameConflict);
+
+  return (
+    <div
+      style={{
+        padding: "calc(24px) calc(32px)",
+        width: "calc(100% - 64px)",
+        backgroundColor: "rgb(245, 245, 245)",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          gap: "1em",
+        }}
+      >
+        <TextControl
+          label={__("Name", "wpct-erp-forms")}
+          help={
+            nameConflict
+              ? __("This name is already in use", "wpct-erp-forms")
+              : ""
+          }
+          value={name}
+          onChange={handleSetName}
+          __nextHasNoMarginBottom
+        />
+        <SelectControl
+          label={__("Backend", "wpct-erp-forms")}
+          value={backend}
+          onChange={setBackend}
+          options={backendOptions}
+          __nextHasNoMarginBottom
+        />
+        <TextControl
+          label={__("Model", "wpct-erp-forms")}
+          value={model}
+          onChange={setModel}
+          __nextHasNoMarginBottom
+        />
+        <SelectControl
+          label={__("Form", "wpct-erp-forms")}
+          value={formId}
+          onChange={setFormId}
+          options={formOptions}
+          __nextHasNoMarginBottom
+        />
+        <Button
+          variant="primary"
+          onClick={() => onClick()}
+          style={{ marginTop: "auto", height: "32px" }}
+          disabled={disabled}
+        >
+          {__("Add", "wpct-erp-forms")}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+let focus;
+export default function FormHook({ update, remove, ...data }) {
+  if (data.name === "add") return <NewFormHook add={update} />;
+
+  const __ = useI18n();
+  const [{ backends }] = useGeneral();
+  const backendOptions = backends.map(({ name }) => ({
+    label: name,
+    value: name,
+  }));
+  const forms = useForms();
+  const formOptions = forms.map(({ id, title }) => ({
+    label: title,
+    value: id,
+  }));
+
+  const [name, setName] = useState(data.name);
+  const initialName = useRef(data.name);
+  const nameInput = useRef();
+
+  const hookNames = useHookNames();
+  const [nameConflict, setNameConflict] = useState(false);
+  const handleSetName = (name) => {
+    setNameConflict(name !== initialName.current && hookNames.has(name));
+    setName(name.trim());
+  };
+
+  useEffect(() => {
+    if (focus) {
+      nameInput.current.focus();
+    }
+  }, []);
+
+  const timeout = useRef();
+  useEffect(() => {
+    clearTimeout(timeout.current);
+    if (!name || nameConflict) return;
+    timeout.current = setTimeout(() => update({ ...data, name }), 500);
+  }, [name]);
+
+  useEffect(() => setName(data.name), [data.name]);
+
+  return (
+    <div
+      style={{
+        padding: "calc(24px) calc(32px)",
+        width: "calc(100% - 64px)",
+        backgroundColor: "rgb(245, 245, 245)",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          gap: "1em",
+        }}
+      >
+        <TextControl
+          ref={nameInput}
+          label={__("Name", "wpct-erp-forms")}
+          help={
+            nameConflict
+              ? __("This name is already in use", "wpct-erp-forms")
+              : ""
+          }
+          value={name}
+          onChange={handleSetName}
+          onFocus={() => (focus = true)}
+          onBlur={() => (focus = false)}
+          __nextHasNoMarginBottom
+        />
+        <SelectControl
+          label={__("Backend", "wpct-erp-forms")}
+          value={data.backend}
+          onChange={(backend) => update({ ...data, backend })}
+          options={backendOptions}
+          __nextHasNoMarginBottom
+        />
+        <TextControl
+          label={__("Model", "wpct-erp-forms")}
+          value={data.model}
+          onChange={(model) => update({ ...data, model })}
+          __nextHasNoMarginBottom
+        />
+        <SelectControl
+          label={__("Form", "wpct-erp-forms")}
+          value={data.form_id}
+          onChange={(form_id) => update({ ...data, form_id })}
+          options={formOptions}
+          __nextHasNoMarginBottom
+        />
+        <div>
+          <label
+            style={{
+              display: "block",
+              fontWeight: 500,
+              textTransform: "uppercase",
+              fontSize: "11px",
+              marginBottom: "calc(4px)",
+            }}
+          >
+            {__("Edit pipes", "wpct-erp-forms")}
+          </label>
+          <FormPipes
+            formId={data.form_id}
+            pipes={data.pipes || []}
+            setPipes={(pipes) => update({ ...data, pipes })}
+          />
+        </div>
+        <div>
+          <label
+            style={{
+              display: "block",
+              fontWeight: 500,
+              textTransform: "uppercase",
+              fontSize: "11px",
+              margin: 0,
+              marginBottom: "calc(4px)",
+              maxWidth: "100%",
+            }}
+          >
+            {__("Remove form", "wpct-erp-forms")}
+          </label>
+          <Button
+            isDestructive
+            variant="primary"
+            onClick={() => remove(data)}
+            style={{ width: "130px", justifyContent: "center", height: "32px" }}
+          >
+            {__("Remove", "wpct-erp-forms")}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
