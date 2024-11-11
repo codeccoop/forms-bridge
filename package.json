@@ -1,6 +1,6 @@
 {
   "name": "wpct-erp-forms",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "main": "Gruntfile.js",
   "author": "Còdec",
   "scripts": {
