@@ -128,6 +128,10 @@ class Settings extends BaseSettings
                             'backend' => ['type' => 'string'],
                             'form_id' => ['type' => 'string'],
                             'endpoint' => ['type' => 'string'],
+                            'method' => [
+                                'type' => 'string',
+                                'enum' => ['GET', 'POST', 'PUT', 'DELETE'],
+                            ],
                             'pipes' => [
                                 'type' => 'array',
                                 'items' => [
