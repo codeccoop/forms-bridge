@@ -9,14 +9,14 @@
  * @param integer $form_id Source form ID.
  * @return array $path_info Attachments path info.
  */
-function wpct_erp_forms_upload_path($path_info, $form_id)
+function forms_bridge_upload_path($path_info, $form_id)
 {
-    $private_upload = wpct_erp_forms_private_upload($form_id);
+    $private_upload = forms_bridge_private_upload($form_id);
     if (!$private_upload) {
         return $path_info;
     }
 
-    $base_path = wpct_erp_forms_attachment_base_path();
+    $base_path = forms_bridge_attachment_base_path();
     $path =
         $base_path . '/' . implode('/', [$form_id, date('Y'), date('m')]) . '/';
 
@@ -36,23 +36,23 @@ deny from all'
     }
 
     $path_info['path'] = $path;
-    $path_info['url'] = wpct_erp_forms_attachment_url($path);
+    $path_info['url'] = forms_bridge_attachment_url($path);
     return $path_info;
 }
-add_filter('gform_upload_path', 'wpct_erp_forms_upload_path', 90, 2);
+add_filter('gform_upload_path', 'forms_bridge_upload_path', 90, 2);
 
 /**
  * Intercept GET requests with download query and send attachment file as response.
  *
  * @since 1.0.0
  */
-function wpct_erp_forms_download_file()
+function forms_bridge_download_file()
 {
-    if (!isset($_GET['erp-forms-attachment'])) {
+    if (!isset($_GET['forms-bridge-attachment'])) {
         return;
     }
 
-    $path = wpct_erp_forms_attachment_fullpath($_GET['erp-forms-attachment']);
+    $path = forms_bridge_attachment_fullpath($_GET['forms-bridge-attachment']);
 
     if (!(is_user_logged_in() && file_exists($path))) {
         global $wp_query;
@@ -87,7 +87,7 @@ function wpct_erp_forms_download_file()
     readfile($path);
     die();
 }
-add_action('init', 'wpct_erp_forms_download_file');
+add_action('init', 'forms_bridge_download_file');
 
 /**
  * Get gravityforms attachment store base path.
@@ -96,15 +96,15 @@ add_action('init', 'wpct_erp_forms_download_file');
  *
  * @return string $base_path Attachments store base path.
  */
-function wpct_erp_forms_attachment_base_path()
+function forms_bridge_attachment_base_path()
 {
     $upload_dir = wp_upload_dir();
     $base_path = apply_filters(
-        'wpct_erp_forms_upload_path',
-        $upload_dir['basedir'] . '/erp-forms'
+        'forms_bridge_upload_path',
+        $upload_dir['basedir'] . '/forms-bridge'
     );
     if (!($base_path && is_string($base_path))) {
-        throw new Exception('WPCT ERP Forms: Invalid upload path');
+        throw new Exception('Forms Bridge: Invalid upload path');
     }
     $base_path = preg_replace('/\/$/', '', $base_path);
     return $base_path;
@@ -118,9 +118,9 @@ function wpct_erp_forms_attachment_base_path()
  * @param string $filepath Attachment file path.
  * @return string $fullpath Attachment file absolute path.
  */
-function wpct_erp_forms_attachment_fullpath($filepath)
+function forms_bridge_attachment_fullpath($filepath)
 {
-    $base_path = wpct_erp_forms_attachment_base_path();
+    $base_path = forms_bridge_attachment_base_path();
     return $base_path . urldecode($filepath);
 }
 
@@ -132,12 +132,12 @@ function wpct_erp_forms_attachment_fullpath($filepath)
  * @param string $filepath Attachment file path.
  * @return string $url Attachment public URL.
  */
-function wpct_erp_forms_attachment_url($filepath)
+function forms_bridge_attachment_url($filepath)
 {
-    $base_path = wpct_erp_forms_attachment_base_path();
+    $base_path = forms_bridge_attachment_base_path();
     $url = get_site_url() . '/index.php?';
     $url .=
-        'erp-forms-attachment=' .
+        'forms-bridge-attachment=' .
         urlencode(str_replace($base_path, '', $filepath));
     return $url;
 }
@@ -150,7 +150,7 @@ function wpct_erp_forms_attachment_url($filepath)
  * @param integer $form_id Source form ID.
  * @return boolean $is_private Form uses private store.
  */
-function wpct_erp_forms_private_upload($form_id)
+function forms_bridge_private_upload($form_id)
 {
-    return apply_filters('wpct_erp_forms_private_upload', true, $form_id);
+    return apply_filters('forms_bridge_private_upload', true, $form_id);
 }

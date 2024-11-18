@@ -1,11 +1,13 @@
-# Wpct ERP Forms
+# Forms Bridge
 
-Bridge WP form builder plugins to remote backend over http requests.
+![Forms Bridge]()
 
-Wpct ERP Forms has integrations for [GravityForms](https://www.gravityforms.com)
+Bridge WP form builder plugins to any backend over http requests.
+
+Forms Bridge has integrations for [GravityForms](https://www.gravityforms.com)
 , [Contact Form 7](https://contactform7.com/) and [WP Forms](https://wpforms.com/).
 
-The plugin allow comunication with your ERP over REST or JSON-RPC API protocols.
+The plugin allow comunication with any backend over REST or JSON-RPC API protocols.
 
 > Http requests will be sent with data encoded as `application/json` if there is no uploads.
 Else if form submission contains files, the default behavior is to send data as
@@ -13,21 +15,23 @@ Else if form submission contains files, the default behavior is to send data as
 
 ## Installation
 
-Download the [latest release](https://git.coopdevs.org/codeccoop/wp/plugins/wpct-erp-forms/-/releases/permalink/latest/downloads/plugins/wpct-erp-forms.zip)
-as a zipfile. Once downloaded, decompress and place its content on your WP instance
-`wp-content/plugins`'s directory.
+Download the [latest release](https://git.coopdevs.org/codeccoop/wp/plugins/forms-bridge/-/releases/permalink/latest/downloads/plugins/forms-bridge.zip)
+as a zipfile. Once downloaded, go to your site plugins page and upload the zip file as a new plugin, WordPress
+will handle the rest.
 
-> Go to the [releases](https://git.coopdevs.org/codeccoop/wp/plugins/wpct-erp-forms/-/releases) to find previous versions.
+> Go to the [releases](https://git.coopdevs.org/codeccoop/wp/plugins/forms-bridge/-/releases) to find previous versions.
 
-You can install it with `wp-cli` with the next command:
+If you have access to a console on your server, you can install it with `wp-cli` with the next command:
 
 ```shell
-wp plugin install https://git.coopdevs.org/codeccoop/wp/plugins/wpct-erp-forms/-/releases/permalink/latest/downloads/plugins/wpct-erp-forms.zip
+wp plugin install https://git.coopdevs.org/codeccoop/wp/plugins/forms-bridge/-/releases/permalink/latest/downloads/plugins/forms-bridge.zip
 ```
 
-## Settings
+## Getting started
 
-Go to `Settings > Wpct ERP Forms` to manage plugin settings. This page has three main sections:
+Install your preferred form builder from the available integrations and build your web forms.
+Once done, go to `Settings > Forms Bridge` to bridge your forms. The settings page has three main
+sections:
 
 1. General
 	* **Notification receiver**: Email address receiver of failed submission notifications.
@@ -46,298 +50,10 @@ Go to `Settings > Wpct ERP Forms` to manage plugin settings. This page has three
 	relation needs a unique name, a from ID, a backend, and a model. Submission will be sent encoded
 	as JSON-RPC payloads.
 
-## API
+## Developers
 
-### Getters
-
-#### `wpct_erp_forms_form`
-
-Get the current form.
-
-Arguments:
-
-1. `any $default`: Default value.
-2. `integer $form_id`: If declared, try to return form by ID.
-
-Returns:
-
-1. `array|null $form_data`: Form data.
-
-Example:
-
-```php
-$form_data = apply_filters('wpct_erp_forms_form', null);
-if (!empty($form)) {
-	// do something
-}
-```
-
-#### `wpct_erp_forms_forms`
-
-Get available forms.
-
-Arguments:
-
-1. `any $default`: Default value.
-
-Returns:
-
-1. `array $forms_data`: Available forms as list of form data.
-
-Example:
-
-```php
-$forms_data = apply_filters('wpct_erp_forms_forms', []);
-foreach ($forms_data as $form_data) {
-	// do something
-}
-```
-
-#### `wpct_erp_forms_form_hooks`
-
-Get active hooks for the current form.
-
-Arguments:
-
-1. `any $default`: Default value.
-2. `integer $form_id`: If declared, try to return form hooks by ID.
-
-Returns:
-
-1. `array $hooks`: List of given form active hooks.
-
-Example:
-
-```php
-$hooks = apply_filters('wpct_erp_forms_form_hooks', [], 13);
-foreach ($hooks as $hook) {
-	// do something
-}
-```
-
-#### `wpct_erp_forms_is_hooked`
-
-Check if current form is hooked to a given hook.
-
-Arguments:
-
-1. `any $default`: Default value.
-2. `string $hook_name`: Needle hook name.
-
-Returns:
-
-1. `boolean $is_hooked`: True if form is hooked to the given hook, false otherwise.
-
-Example:
-
-```php
-$is_hooked = apply_filters('wpct_erp_forms_is_hooked', false, 'CRM Lead');
-if ($is_hooked) {
-	// do something
-}
-```
-
-#### `wpct_erp_forms_submission`
-
-Get the current form submission.
-
-Arguments:
-
-1. `any $default`: Default value.
-
-Returns:
-
-1. `array|null $submission`: Current form submission.
-
-Example:
-
-```php
-$submission = apply_filters('wpct_erp_forms_submission', null);
-if ($submission) {
-	// do something
-}
-```
-
-#### `wpct_erp_forms_uploads`
-
-Get the current form submission uploaded files.
-
-Arguments:
-
-1. `any $default`: Default value.
-
-Returns:
-
-1. `array|null`: Current form submission uploaded files.
-
-Example:
-
-```php
-$uploads = apply_filters('wpct_erp_forms_uploads', []);
-foreach ($uploads as $uplad) {
-	// do something
-}
-```
-
-### Filters
-
-#### `wpct_erp_forms_payload`
-
-Filters the submission data to be sent to the backend.
-
-Arguments:
-
-1. `array $payload`: Submission payload.
-2. `array $attachments`: Submission attached files.
-3. `array $form_data`: Form data.
-
-Example:
-
-```php
-add_filter('wpct_erp_forms_payload', function ($payload, $attachments, $form_data) {
-	return $payload;
-}, 10, 3);
-```
-
-#### `wpct_erp_forms_attachments`
-
-Filters attached files to be sent to the backend.
-
-Arguments:
-
-1. `array $attachments`: Submission attached files.
-2. `array $form_data`: Form data.
-
-Example:
-
-```php
-add_filter('wpct_erp_forms_attachments', function ($attachments, $form_data) {
-	return $attachments;
-}, 10, 3);
-```
-
-#### `wpct_erp_forms_rpc_login`
-
-Filters the JSON-RPC login payload.
-
-Arguments:
-
-1. `array $payload`: Login payload.
-
-Example:
-
-```php
-add_filter('wpct_erp_forms_rpc_login', function ($payload) {
-	return $payload;
-}, 10, 1);
-```
-
-#### `wpct_erp_forms_rpc_payload`
-
-Filters the submission data to be sent to the backend as a JSON-RPC call.
-
-Arguments:
-
-1. `array $payload`: Submission payload.
-2. `array $attachments`: Submission attached files.
-3. `array $form_data`: Form data.
-
-Example:
-
-```php
-add_filter('wpct_erp_forms_rpc_payload', function ($payload, $attachments, $form_data) {
-	return $payload;
-}, 10, 3);
-```
-
-#### `wpct_erp_forms_private_upload`
-
-Filter if form uploaded files should be stored in a private folder.
-
-Arguments:
-
-1. `boolan $is_private`: Default as true, controls uploads privacy.
-2. `integer $form_id`: Current form ID.
-
-Example:
-
-```php
-add_filter('wpct_erp_forms_private_upload', function ($is_private, $form_id) {
-	return true;
-}, 10, 2);
-```
-
-#### `wpct_erp_forms_upload_path`
-
-Filter private upload path.
-
-Arguments:
-
-1. `string $path`: Path to store uploaded files.
-
-Example:
-
-```php
-add_filter('wpct_erp_forms_upload_path', function ($path) {
-	return $path;
-}, 10, 1);
-```
-
-### Actions
-
-#### `wpct_erp_forms_before_submission`
-
-Action to do just before submission has been sent to the backend.
-
-Arguments:
-
-1. `array $payload`: Submission payload.
-2. `array $attachments`: Submission attached files.
-3. `array $form_data`: Form data.
-
-Example:
-
-```php
-add_action('wpct_erp_forms_before_submission', function ($payload, $attachments, $form_data) {
-	// do something
-}, 10, 3);
-```
-
-#### `wpct_erp_forms_after_submission`
-
-Action to do after the submission has been succesfuly sent to the backend.
-
-Arguments:
-
-1. `array $payload`: Submission payload.
-2. `array $attachments`: Submission attached files.
-3. `array $form_data`: Form data.
-
-Example:
-
-```php
-add_action('wpct_erp_forms_after_submission', function ($payload, $attachments, $form_data) {
-	// do something
-}, 10, 3);
-```
-
-#### `wpct_erp_forms_on_failure`
-
-Action to do after a request connexion error with the backend.
-
-Arguments:
-
-1. `array $payload`: Submission payload.
-2. `array $attachments`: Submission attached files.
-3. `array $form_data`: Form data.
-
-Example:
-
-```php
-add_action('wpct_erp_forms_on_failure', function ($payload, $attachments, $form_data) {
-	// do something
-}, 10, 3);
-```
+The plugin offers some hooks to expose its internal API. Go to [documentation](./docs/API.md) to see
+more details about the hooks. 
 
 ## Dependencies
 

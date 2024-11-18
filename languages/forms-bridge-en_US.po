@@ -1,63 +1,65 @@
+# Copyright (C) 2024 Còdec
+# This file is distributed under the same license as the Forms Bridge plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Wpct ERP Forms 3.0.0\n"
-"Report-Msgid-Bugs-To: https://git.coopdevs.org/codeccoop/wp/plugin/wpct-erp-forms\n"
+"Project-Id-Version: Forms Bridge 1.0.0\n"
+"Report-Msgid-Bugs-To: https://git.coopdevs.org/codeccoop/wp/plugin/forms-bridge\n"
 "Last-Translator: Còdec Coop <hola@codeccoop.org>\n"
-"Language-Team: Español <hola@codeccoop.org>\n"
+"Language-Team: English <hola@codeccoop.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2024-11-11T01:41:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Language: es_ES\n"
+"Language: en_US\n"
 "X-Generator: WP-CLI 2.10.0\n"
-"X-Domain: wpct-erp-forms\n"
+"X-Domain: forms-bridge\n"
 
 #. Plugin Name of the plugin
-#: wpct-erp-forms.php
-msgid "Wpct ERP Forms"
+#: forms-bridge.php
+msgid "Forms Bridge"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: wpct-erp-forms.php
-msgid "https://git.coopdevs.org/codeccoop/wp/wpct-erp-forms"
+#: forms-bridge.php
+msgid "https://git.coopdevs.org/codeccoop/wp/plugins/forms-bridge"
 msgstr ""
 
 #. Description of the plugin
-#: wpct-erp-forms.php
+#: forms-bridge.php
 msgid "Plugin to bridge WP forms submissions to a ERP backend"
 msgstr ""
 
 #. Author of the plugin
-#: wpct-erp-forms.php
+#: forms-bridge.php
 msgid "Còdec"
 msgstr ""
 
 #. Author URI of the plugin
-#: wpct-erp-forms.php
+#: forms-bridge.php
 msgid "https://www.codeccoop.org"
 msgstr ""
 
 #: includes/class-menu.php:32
 #: assets/plugin.bundle.js:1
 msgid "Loading"
-msgstr "Cargando"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Pipes"
-msgstr "Tubos"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Form pipes"
-msgstr "Tubos de formulario"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "String"
-msgstr "Texto"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Integer"
-msgstr "Entero"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Decimal"
@@ -65,7 +67,7 @@ msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Boolean"
-msgstr "Booleano"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "JSON"
@@ -73,71 +75,71 @@ msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Ignore"
-msgstr "Ignorar"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Submission ID"
-msgstr "ID de la entrada"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Form format pipes"
-msgstr "Tubos de formato"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "From"
-msgstr "De"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "To"
-msgstr "A"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Cast as"
-msgstr "Como"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Drop"
-msgstr "Borrar"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Add"
-msgstr "Añadir"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Backend name"
-msgstr "Nombre del backend"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "This name is already in use"
-msgstr "Este nombre ya está en uso"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Backend base URL"
-msgstr "URL base del backend"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Remove backend"
-msgstr "Eliminar backend"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Remove"
-msgstr "Eliminar"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Backend HTTP Headers"
-msgstr "Cabeceras HTTP del backend"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Header-Name"
-msgstr "Nombre-De-Cabecera"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Value"
-msgstr "Valor"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Add Backend"
-msgstr "Añadir Backend"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Backends"
@@ -149,11 +151,11 @@ msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Notification receiver"
-msgstr "Receptor de notificaciones"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Name"
-msgstr "Nombre"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Backend"
@@ -165,23 +167,23 @@ msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Form"
-msgstr "Formulario"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Edit pipes"
-msgstr "Editar tubos"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Remove form"
-msgstr "Eliminar formulario"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Add Form"
-msgstr "Añadir Formulario"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Form Hooks"
-msgstr "Ganchos de Formulario"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "REST API"
@@ -189,7 +191,7 @@ msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Model"
-msgstr "Modelo"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "RPC API"
@@ -197,12 +199,12 @@ msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Database"
-msgstr "Base de datos"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "User"
-msgstr "Usuario"
+msgstr ""
 
 #: assets/plugin.bundle.js:1
 msgid "Password"
-msgstr "Contraseña"
+msgstr ""

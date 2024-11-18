@@ -20,7 +20,7 @@ export default function RestApiSettings() {
   return (
     <Card size="large" style={{ height: "fit-content" }}>
       <CardHeader>
-        <Heading level={3}>{__("REST API", "wpct-erp-forms")}</Heading>
+        <Heading level={3}>{__("REST API", "forms-bridge")}</Heading>
       </CardHeader>
       <CardBody>
         <PanelRow>

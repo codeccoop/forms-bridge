@@ -1,6 +1,6 @@
 <?php
 
-namespace WPCT_ERP_FORMS;
+namespace FORMS_BRIDGE;
 
 use WPCT_ABSTRACT\Singleton;
 use WP_Error;
@@ -120,7 +120,7 @@ abstract class Integration extends Singleton
     private function notify_error($form_data, $payload, $error = '')
     {
         $email = Settings::get_setting(
-            'wpct-erp-forms',
+            'forms-bridge',
             'general',
             'notification_receiver'
         );
@@ -129,7 +129,7 @@ abstract class Integration extends Singleton
         }
 
         $to = $email;
-        $subject = 'Wpct ERP Forms Error';
+        $subject = 'Forms Bridge Error';
         $body = "Form ID: {$form_data['id']}\n";
         $body .= "Form title: {$form_data['title']}\n";
         $body .= 'Submission: ' . print_r($payload, true) . "\n";
@@ -161,13 +161,13 @@ abstract class Integration extends Singleton
 
         $uploads = $this->submission_uploads($submission, $form_data);
         $attachments = apply_filters(
-            'wpct_erp_forms_attachments',
+            'forms_bridge_attachments',
             $this->attachments($uploads),
             $form_data
         );
 
         $payload = apply_filters(
-            'wpct_erp_forms_payload',
+            'forms_bridge_payload',
             $this->serialize_submission($submission, $form_data),
             $attachments,
             $form_data
@@ -198,7 +198,7 @@ abstract class Integration extends Singleton
                 $res = $this->submit_rest($hook['method'], $url, $args);
             } elseif (isset($hook['model'])) {
                 $endpoint = Settings::get_setting(
-                    'wpct-erp-forms',
+                    'forms-bridge',
                     'rpc-api',
                     'endpoint'
                 );
@@ -220,13 +220,13 @@ abstract class Integration extends Singleton
 
     private function before_submission($request, $form_data)
     {
-        do_action('wpct_erp_forms_before_submission', $request, $form_data);
+        do_action('forms_bridge_before_submission', $request, $form_data);
     }
 
     private function after_submission($response, $payload, $form_data)
     {
         if (is_wp_error($response)) {
-            do_action('wpct_erp_forms_on_failure', $response, $form_data);
+            do_action('forms_bridge_on_failure', $response, $form_data);
 
             $this->notify_error(
                 $form_data,
@@ -234,7 +234,7 @@ abstract class Integration extends Singleton
                 print_r($response->get_error_data(), true)
             );
         } else {
-            do_action('wpct_erp_forms_after_submission', $response, $form_data);
+            do_action('forms_bridge_after_submission', $response, $form_data);
         }
     }
 
@@ -358,7 +358,7 @@ abstract class Integration extends Singleton
         if (!is_callable($func)) {
             return new WP_Error(
                 'http_method_not_allowed',
-                __("Unkown HTTP method: {$method}", 'wpct-erp-forms'),
+                __("Unkown HTTP method: {$method}", 'forms-bridge'),
                 ['status' => 405]
             );
         }
@@ -386,10 +386,10 @@ abstract class Integration extends Singleton
             'database' => $database,
             'user' => $user,
             'password' => $password,
-        ] = Settings::get_setting('wpct-erp-forms', 'rpc-api');
+        ] = Settings::get_setting('forms-bridge', 'rpc-api');
 
         $payload = apply_filters(
-            'wpct_erp_forms_rpc_login',
+            'forms_bridge_rpc_login',
             $this->rpc_payload($session_id, 'common', 'login', [
                 $database,
                 $user,
@@ -444,12 +444,12 @@ abstract class Integration extends Singleton
         );
 
         $database = Settings::get_setting(
-            'wpct-erp-forms',
+            'forms-bridge',
             'rpc-api',
             'database'
         );
         $password = Settings::get_setting(
-            'wpct-erp-forms',
+            'forms-bridge',
             'rpc-api',
             'password'
         );
@@ -461,7 +461,7 @@ abstract class Integration extends Singleton
         }
 
         $payload = apply_filters(
-            'wpct_erp_forms_rpc_payload',
+            'forms_bridge_rpc_payload',
             $this->rpc_payload($session_id, 'object', 'execute', [
                 $database,
                 $user_id,

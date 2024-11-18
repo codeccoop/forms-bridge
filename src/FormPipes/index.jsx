@@ -17,11 +17,11 @@ export default function FormPipes({ formId, pipes, setPipes }) {
         onClick={() => setOpen(true)}
         style={{ width: "130px", justifyContent: "center", height: "32px" }}
       >
-        {__("Pipes", "wpct-erp-forms")}
+        {__("Pipes", "forms-bridge")}
       </Button>
       {open && (
         <Modal
-          title={__("Form pipes", "wpct-erp-forms")}
+          title={__("Form pipes", "forms-bridge")}
           onRequestClose={() => setOpen(false)}
         >
           <PipesTable formId={formId} pipes={pipes} setPipes={setPipes} />

@@ -57,7 +57,7 @@ export default function SettingsProvider({ children }) {
 
   const saveSettings = () => {
     return apiFetch({
-      path: `${window.wpApiSettings.root}wpct/v1/erp-forms/settings`,
+      path: `${window.wpApiSettings.root}wp-bridges/v1/forms-bridge/settings`,
       method: "POST",
       headers: {
         "X-WP-Nonce": wpApiSettings.nonce,

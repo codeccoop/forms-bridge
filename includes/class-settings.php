@@ -1,6 +1,6 @@
 <?php
 
-namespace WPCT_ERP_FORMS;
+namespace FORMS_BRIDGE;
 
 use WPCT_ABSTRACT\Settings as BaseSettings;
 
@@ -22,7 +22,7 @@ class Settings extends BaseSettings
      */
     public static function get_backends()
     {
-        $setting = Settings::get_setting('wpct-erp-forms', 'general');
+        $setting = Settings::get_setting('forms-bridge', 'general');
         return array_map(function ($backend) {
             return $backend['name'];
         }, $setting['backends']);

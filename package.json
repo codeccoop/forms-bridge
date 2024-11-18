@@ -1,8 +1,9 @@
 {
-  "name": "wpct-erp-forms",
-  "version": "3.0.7",
+  "name": "forms-bridge",
+  "version": "1.0.0",
   "main": "Gruntfile.js",
   "author": "Còdec",
+  "license": "GPL-2.0-or-later",
   "scripts": {
     "start": "npm run dev",
     "dev": "npx esbuild ./src/index.jsx --bundle --outfile=./assets/plugin.bundle.js --watch",

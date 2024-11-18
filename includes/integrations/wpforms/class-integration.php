@@ -1,8 +1,8 @@
 <?php
 
-namespace WPCT_ERP_FORMS\WPFORMS;
+namespace FORMS_BRIDGE\WPFORMS;
 
-use WPCT_ERP_FORMS\Integration as BaseIntegration;
+use FORMS_BRIDGE\Integration as BaseIntegration;
 use WP_Post;
 use WPForms_Field_File_Upload;
 
@@ -152,7 +152,7 @@ class Integration extends BaseIntegration
             'id' => $form_id,
             'title' => $data['settings']['form_title'],
             'hooks' => apply_filters(
-                'wpct_erp_forms_form_hooks',
+                'forms_bridge_form_hooks',
                 null,
                 $form_id
             ),

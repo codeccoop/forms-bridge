@@ -1,8 +1,6 @@
 <?php
 /**
  * Class SampleTest
- *
- * @package Wpct_Forms_Ce
  */
 
 /**

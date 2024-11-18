@@ -1,9 +1,9 @@
 # Copyright (C) 2024 Còdec
-# This file is distributed under the same license as the Wpct ERP Forms plugin.
+# This file is distributed under the same license as the Forms Bridge plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Wpct ERP Forms 3.0.0\n"
-"Report-Msgid-Bugs-To: https://git.coopdevs.org/codeccoop/wp/plugin/wpct-erp-forms\n"
+"Project-Id-Version: Forms Bridge 1.0.0\n"
+"Report-Msgid-Bugs-To: https://git.coopdevs.org/codeccoop/wp/plugin/forms-bridge\n"
 "Last-Translator: Còdec Coop <hola@codeccoop.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,30 +12,30 @@ msgstr ""
 "POT-Creation-Date: 2024-11-11T01:41:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
-"X-Domain: wpct-erp-forms\n"
+"X-Domain: forms-bridge\n"
 
 #. Plugin Name of the plugin
-#: wpct-erp-forms.php
-msgid "Wpct ERP Forms"
+#: forms-bridge.php
+msgid "Forms Bridge"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: wpct-erp-forms.php
-msgid "https://git.coopdevs.org/codeccoop/wp/wpct-erp-forms"
+#: forms-bridge.php
+msgid "https://git.coopdevs.org/codeccoop/wp/plugins/forms-bridge"
 msgstr ""
 
 #. Description of the plugin
-#: wpct-erp-forms.php
+#: forms-bridge.php
 msgid "Plugin to bridge WP forms submissions to a ERP backend"
 msgstr ""
 
 #. Author of the plugin
-#: wpct-erp-forms.php
+#: forms-bridge.php
 msgid "Còdec"
 msgstr ""
 
 #. Author URI of the plugin
-#: wpct-erp-forms.php
+#: forms-bridge.php
 msgid "https://www.codeccoop.org"
 msgstr ""
 

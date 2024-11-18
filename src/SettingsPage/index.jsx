@@ -65,7 +65,7 @@ function SaveButton() {
       disabled={loading}
       __next40pxDefaultSize
     >
-      {(error && __("Error", "wpct-erp-forms")) || __("Save", "wpct-erp-forms")}
+      {(error && __("Error", "forms-bridge")) || __("Save", "forms-bridge")}
     </Button>
   );
 }
@@ -75,12 +75,12 @@ export default function SettingsPage() {
   return (
     <I18nProvider>
       <SettingsProvider>
-        <Heading level={1}>Wpct ERP Forms</Heading>
+        <Heading level={1}>Forms Bridge</Heading>
         <TabPanel
           initialTabName="general"
           tabs={tabs.map(({ name, title }) => ({
             name,
-            title: __(title, "wpct-erp-forms"),
+            title: __(title, "forms-bridge"),
           }))}
         >
           {(tab) => (

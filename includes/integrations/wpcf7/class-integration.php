@@ -1,8 +1,8 @@
 <?php
 
-namespace WPCT_ERP_FORMS\WPCF7;
+namespace FORMS_BRIDGE\WPCF7;
 
-use WPCT_ERP_FORMS\Integration as BaseIntegration;
+use FORMS_BRIDGE\Integration as BaseIntegration;
 use WPCF7_ContactForm;
 use WPCF7_Submission;
 
@@ -138,7 +138,7 @@ class Integration extends BaseIntegration
             'id' => $form_id,
             'title' => $form->title(),
             'hooks' => apply_filters(
-                'wpct_erp_forms_form_hooks',
+                'forms_bridge_form_hooks',
                 null,
                 $form_id
             ),

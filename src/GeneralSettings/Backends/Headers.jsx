@@ -46,7 +46,7 @@ export default function BackendHeaders({ headers, setHeaders }) {
           marginBottom: "calc(8px)",
         }}
       >
-        {__("Backend HTTP Headers", "wpct-erp-forms")}
+        {__("Backend HTTP Headers", "forms-bridge")}
       </label>
       <table style={{ width: "100%" }}>
         <tbody>
@@ -54,7 +54,7 @@ export default function BackendHeaders({ headers, setHeaders }) {
             <tr key={i}>
               <td>
                 <TextControl
-                  placeholder={__("Header-Name", "wpct-erp-forms")}
+                  placeholder={__("Header-Name", "forms-bridge")}
                   value={name}
                   onChange={(value) => setHeader("name", i, value)}
                   __nextHasNoMarginBottom
@@ -62,7 +62,7 @@ export default function BackendHeaders({ headers, setHeaders }) {
               </td>
               <td>
                 <TextControl
-                  placeholder={__("Value", "wpct-erp-forms")}
+                  placeholder={__("Value", "forms-bridge")}
                   value={value}
                   onChange={(value) => setHeader("value", i, value)}
                   __nextHasNoMarginBottom
@@ -75,7 +75,7 @@ export default function BackendHeaders({ headers, setHeaders }) {
                   onClick={() => dropHeader(i)}
                   style={{ height: "32px" }}
                 >
-                  {__("Drop", "wpct-erp-forms")}
+                  {__("Drop", "forms-bridge")}
                 </Button>
               </td>
             </tr>
@@ -88,7 +88,7 @@ export default function BackendHeaders({ headers, setHeaders }) {
         onClick={() => addHeader()}
         style={{ height: "32px" }}
       >
-        {__("Add", "wpct-erp-forms")}
+        {__("Add", "forms-bridge")}
       </Button>
     </div>
   );

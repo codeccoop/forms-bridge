@@ -1,6 +1,6 @@
 <?php
 
-namespace WPCT_ERP_FORMS;
+namespace FORMS_BRIDGE;
 
 use WPCT_ABSTRACT\Menu as BaseMenu;
 
@@ -18,7 +18,7 @@ class Menu extends BaseMenu
      *
      * @var string $settings_class Settings class name.
      */
-    protected static $settings_class = '\WPCT_ERP_FORMS\Settings';
+    protected static $settings_class = '\FORMS_BRIDGE\Settings';
 
     /**
      * Render plugin menu page.
@@ -28,8 +28,8 @@ class Menu extends BaseMenu
     protected function render_page($echo = true)
     {
         printf(
-            '<div class="wrap" id="wpct-erp-forms">%s</div>',
-            esc_html__('Loading', 'wpct-erp-forms')
+            '<div class="wrap" id="forms-bridge">%s</div>',
+            esc_html__('Loading', 'forms-bridge')
         );
     }
 }

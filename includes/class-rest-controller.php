@@ -1,6 +1,6 @@
 <?php
 
-namespace WPCT_ERP_FORMS;
+namespace FORMS_BRIDGE;
 
 use WP_Error;
 use WP_REST_Server;
@@ -17,7 +17,7 @@ class REST_Controller
      *
      * @since 3.0.0
      */
-    private $namespace = 'wpct';
+    private $namespace = 'wp-bridges';
 
     /**
      * @var int $version Handle the API version.
@@ -56,7 +56,7 @@ class REST_Controller
      */
     private static function error($code, $message, $status)
     {
-        return new WP_Error($code, __($message, 'wpct-erp-forms'), [
+        return new WP_Error($code, __($message, 'forms-bridge'), [
             'status' => $status,
         ]);
     }
@@ -83,7 +83,7 @@ class REST_Controller
         // register forms endpoint
         register_rest_route(
             "{$this->namespace}/v{$this->version}",
-            '/erp-forms/forms',
+            '/forms-bridge/forms',
             [
                 'methods' => WP_REST_Server::READABLE,
                 'callback' => function () {
@@ -98,7 +98,7 @@ class REST_Controller
         // register settings endpoint
         register_rest_route(
             "{$this->namespace}/v{$this->version}",
-            '/erp-forms/settings/',
+            '/forms-bridge/settings/',
             [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -131,7 +131,7 @@ class REST_Controller
      */
     private function forms()
     {
-        return apply_filters('wpct_erp_forms_forms', []);
+        return apply_filters('forms_bridge_forms', []);
     }
 
     /**
@@ -146,7 +146,7 @@ class REST_Controller
         $settings = [];
         foreach (self::$settings as $setting) {
             $settings[$setting] = Settings::get_setting(
-                'wpct-erp-forms',
+                'forms-bridge',
                 $setting
             );
         }
@@ -169,12 +169,12 @@ class REST_Controller
                 continue;
             }
 
-            $from = Settings::get_setting('wpct-erp-forms', $setting);
+            $from = Settings::get_setting('forms-bridge', $setting);
             $to = $data[$setting];
             foreach (array_keys($from) as $key) {
                 $to[$key] = isset($to[$key]) ? $to[$key] : $from[$key];
             }
-            update_option('wpct-erp-forms_' . $setting, $to);
+            update_option('forms-bridge_' . $setting, $to);
             $response[$setting] = $to;
         }
 

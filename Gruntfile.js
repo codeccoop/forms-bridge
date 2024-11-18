@@ -7,7 +7,7 @@ module.exports = function (grunt) {
 
     addtextdomain: {
       options: {
-        textdomain: "wpct-erp-forms",
+        textdomain: "forms-bridge",
       },
       update_all_domains: {
         options: {
@@ -37,8 +37,8 @@ module.exports = function (grunt) {
         options: {
           domainPath: "/languages",
           exclude: [".git/*", "bin/*", "node_modules/*", "tests/*"],
-          mainFile: "wpct-erp-forms.php",
-          potFilename: "wpct-forms-ce.pot",
+          mainFile: "forms-bridge.php",
+          potFilename: "forms-bridge.pot",
           potHeaders: {
             "poedit": true,
             "x-poedit-keywordslist": true,

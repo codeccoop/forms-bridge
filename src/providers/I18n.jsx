@@ -24,7 +24,7 @@ export default function I18nProvider({ children }) {
   useEffect(() => {
     const wpRoot = wpApiSettings.root.replace(/wp-json\/$/, "");
     fetch(
-      `${wpRoot}/wp-content/plugins/wpct-erp-forms/languages/wpct-erp-forms-${locale}.json`
+      `${wpRoot}/wp-content/plugins/forms-bridge/languages/wpct-erp-forms-${locale}.json`
     )
       .then((res) => res.json())
       .then((translations) => setTranslations(translations))

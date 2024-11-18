@@ -62,10 +62,10 @@ function NewFormHook({ add }) {
       >
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <TextControl
-            label={__("Name", "wpct-erp-forms")}
+            label={__("Name", "forms-bridge")}
             help={
               nameConflict
-                ? __("This name is already in use", "wpct-erp-forms")
+                ? __("This name is already in use", "forms-bridge")
                 : ""
             }
             value={name}
@@ -75,7 +75,7 @@ function NewFormHook({ add }) {
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <SelectControl
-            label={__("Backend", "wpct-erp-forms")}
+            label={__("Backend", "forms-bridge")}
             value={backend}
             onChange={setBackend}
             options={backendOptions}
@@ -84,7 +84,7 @@ function NewFormHook({ add }) {
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <TextControl
-            label={__("Model", "wpct-erp-forms")}
+            label={__("Model", "forms-bridge")}
             value={model}
             onChange={setModel}
             __nextHasNoMarginBottom
@@ -92,7 +92,7 @@ function NewFormHook({ add }) {
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <SelectControl
-            label={__("Form", "wpct-erp-forms")}
+            label={__("Form", "forms-bridge")}
             value={formId}
             onChange={setFormId}
             options={formOptions}
@@ -120,7 +120,7 @@ function NewFormHook({ add }) {
               maxWidth: "100%",
             }}
           >
-            {__("Add form", "wpct-erp-forms")}
+            {__("Add form", "forms-bridge")}
           </label>
           <Button
             variant="primary"
@@ -128,7 +128,7 @@ function NewFormHook({ add }) {
             style={{ width: "130px", justifyContent: "center", height: "32px" }}
             disabled={disabled}
           >
-            {__("Add", "wpct-erp-forms")}
+            {__("Add", "forms-bridge")}
           </Button>
         </div>
       </div>
@@ -196,10 +196,10 @@ export default function FormHook({ update, remove, ...data }) {
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <TextControl
             ref={nameInput}
-            label={__("Name", "wpct-erp-forms")}
+            label={__("Name", "forms-bridge")}
             help={
               nameConflict
-                ? __("This name is already in use", "wpct-erp-forms")
+                ? __("This name is already in use", "forms-bridge")
                 : ""
             }
             value={name}
@@ -211,7 +211,7 @@ export default function FormHook({ update, remove, ...data }) {
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <SelectControl
-            label={__("Backend", "wpct-erp-forms")}
+            label={__("Backend", "forms-bridge")}
             value={data.backend}
             onChange={(backend) => update({ ...data, backend })}
             options={backendOptions}
@@ -220,7 +220,7 @@ export default function FormHook({ update, remove, ...data }) {
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <TextControl
-            label={__("Model", "wpct-erp-forms")}
+            label={__("Model", "forms-bridge")}
             value={data.model}
             onChange={(model) => update({ ...data, model })}
             __nextHasNoMarginBottom
@@ -228,7 +228,7 @@ export default function FormHook({ update, remove, ...data }) {
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <SelectControl
-            label={__("Form", "wpct-erp-forms")}
+            label={__("Form", "forms-bridge")}
             value={data.form_id}
             onChange={(form_id) => update({ ...data, form_id })}
             options={formOptions}
@@ -254,7 +254,7 @@ export default function FormHook({ update, remove, ...data }) {
               marginBottom: "calc(4px)",
             }}
           >
-            {__("Edit pipes", "wpct-erp-forms")}
+            {__("Edit pipes", "forms-bridge")}
           </label>
           <FormPipes
             formId={data.form_id}
@@ -274,7 +274,7 @@ export default function FormHook({ update, remove, ...data }) {
               maxWidth: "100%",
             }}
           >
-            {__("Remove form", "wpct-erp-forms")}
+            {__("Remove form", "forms-bridge")}
           </label>
           <Button
             isDestructive
@@ -282,7 +282,7 @@ export default function FormHook({ update, remove, ...data }) {
             onClick={() => remove(data)}
             style={{ width: "130px", justifyContent: "center", height: "32px" }}
           >
-            {__("Remove", "wpct-erp-forms")}
+            {__("Remove", "forms-bridge")}
           </Button>
         </div>
       </div>

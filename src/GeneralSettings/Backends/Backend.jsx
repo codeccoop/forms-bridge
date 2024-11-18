@@ -44,10 +44,10 @@ function NewBackend({ add }) {
         }}
       >
         <TextControl
-          label={__("Backend name", "wpct-erp-forms")}
+          label={__("Backend name", "forms-bridge")}
           help={
             nameConflict
-              ? __("This name is already in use", "wpct-erp-forms")
+              ? __("This name is already in use", "forms-bridge")
               : ""
           }
           value={name}
@@ -56,7 +56,7 @@ function NewBackend({ add }) {
         />
         <TextControl
           style={{ minWidth: "250px" }}
-          label={__("Backend base URL", "wpct-erp-forms")}
+          label={__("Backend base URL", "forms-bridge")}
           value={baseUrl}
           onChange={setBaseUrl}
           __nextHasNoMarginBottom
@@ -67,7 +67,7 @@ function NewBackend({ add }) {
           style={{ marginTop: "auto", height: "32px" }}
           disabled={disabled}
         >
-          {__("Add", "wpct-erp-forms")}
+          {__("Add", "forms-bridge")}
         </Button>
       </div>
     </div>
@@ -123,10 +123,10 @@ export default function Backend({ update, remove, ...data }) {
       >
         <TextControl
           ref={nameInput}
-          label={__("Backend name", "wpct-erp-forms")}
+          label={__("Backend name", "forms-bridge")}
           help={
             nameConflict
-              ? __("This name is already in use", "wpct-erp-forms")
+              ? __("This name is already in use", "forms-bridge")
               : ""
           }
           value={name}
@@ -137,7 +137,7 @@ export default function Backend({ update, remove, ...data }) {
         />
         <TextControl
           style={{ minWidth: "250px" }}
-          label={__("Backend base URL", "wpct-erp-forms")}
+          label={__("Backend base URL", "forms-bridge")}
           value={data.base_url}
           onChange={(base_url) => update({ ...data, base_url })}
           __nextHasNoMarginBottom={true}
@@ -152,7 +152,7 @@ export default function Backend({ update, remove, ...data }) {
               marginBottom: "calc(4px)",
             }}
           >
-            {__("Remove backend", "wpct-erp-forms")}
+            {__("Remove backend", "forms-bridge")}
           </label>
           <Button
             isDestructive
@@ -160,7 +160,7 @@ export default function Backend({ update, remove, ...data }) {
             onClick={() => remove(data)}
             style={{ width: "150px", justifyContent: "center", height: "32px" }}
           >
-            {__("Remove", "wpct-erp-forms")}
+            {__("Remove", "forms-bridge")}
           </Button>
         </div>
       </div>

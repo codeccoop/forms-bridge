@@ -1,17 +1,16 @@
 <?php
 
-namespace WPCT_ERP_FORMS\GF;
+namespace FORMS_BRIDGE\GF;
 
+use FORMS_BRIDGE\Integration as BaseIntegration;
 use Exception;
 use TypeError;
-use WPCT_ERP_FORMS\Integration as BaseIntegration;
 use GFAPI;
 use GFCommon;
 use GFFormDisplay;
 use GFFormsModel;
 
 require_once 'attachments.php';
-require_once 'fields-population.php';
 
 /**
  * GravityForms integration.
@@ -173,7 +172,7 @@ class Integration extends BaseIntegration
             'id' => $form['id'],
             'title' => $form['title'],
             'hooks' => apply_filters(
-                'wpct_erp_forms_form_hooks',
+                'forms_bridge_form_hooks',
                 null,
                 $form['id']
             ),
@@ -367,7 +366,7 @@ class Integration extends BaseIntegration
      */
     protected function submission_uploads($submission, $form_data)
     {
-        $private_upload = wpct_erp_forms_private_upload($form_data['id']);
+        $private_upload = forms_bridge_private_upload($form_data['id']);
 
         return array_reduce(
             array_filter($form_data['fields'], function ($field) {
@@ -385,7 +384,7 @@ class Integration extends BaseIntegration
                     if ($private_upload) {
                         $url = parse_url($path);
                         parse_str($url['query'], $query);
-                        $path = wpct_erp_forms_attachment_fullpath(
+                        $path = forms_bridge_attachment_fullpath(
                             $query['erp-forms-attachment']
                         );
                     }

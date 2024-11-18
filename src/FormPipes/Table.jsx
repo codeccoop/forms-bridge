@@ -43,10 +43,10 @@ export default function PipesTable({ formId, pipes, setPipes }) {
   const __ = useI18n();
   const fields = useFormFields({ formId });
   const fromOptions = [
-    { label: __("Submission ID", "wpct-erp-forms"), value: "submission_id" },
+    { label: __("Submission ID", "forms-bridge"), value: "submission_id" },
   ].concat(
     fields.map((field) => ({
-      label: __(field.label, "wpct-erp-forms"),
+      label: __(field.label, "forms-bridge"),
       value: field.name,
     }))
   );
@@ -90,7 +90,7 @@ export default function PipesTable({ formId, pipes, setPipes }) {
           marginBottom: "calc(8px)",
         }}
       >
-        {__("Form format pipes", "wpct-erp-forms")}
+        {__("Form format pipes", "forms-bridge")}
       </label>
       <table style={{ width: "100%" }}>
         <tbody>
@@ -98,7 +98,7 @@ export default function PipesTable({ formId, pipes, setPipes }) {
             <tr key={i}>
               <td>
                 <SelectControl
-                  placeholder={__("From", "wpct-erp-forms")}
+                  placeholder={__("From", "forms-bridge")}
                   value={from}
                   onChange={(value) => setPipe("from", i, value)}
                   options={fromOptions}
@@ -107,7 +107,7 @@ export default function PipesTable({ formId, pipes, setPipes }) {
               </td>
               <td>
                 <TextControl
-                  placeholder={__("To", "wpct-erp-forms")}
+                  placeholder={__("To", "forms-bridge")}
                   value={to}
                   onChange={(value) => setPipe("to", i, value)}
                   __nextHasNoMarginBottom
@@ -115,11 +115,11 @@ export default function PipesTable({ formId, pipes, setPipes }) {
               </td>
               <td style={{ borderLeft: "1rem solid transparent" }}>
                 <SelectControl
-                  placeholder={__("Cast as", "wpct-erp-forms")}
+                  placeholder={__("Cast as", "forms-bridge")}
                   value={cast || "string"}
                   onChange={(value) => setPipe("cast", i, value)}
                   options={castOptions.map(({ label, value }) => ({
-                    label: __(label, "wpct-erp-forms"),
+                    label: __(label, "forms-bridge"),
                     value,
                   }))}
                   __nextHasNoMarginBottom
@@ -132,7 +132,7 @@ export default function PipesTable({ formId, pipes, setPipes }) {
                   onClick={() => dropPipe(i)}
                   style={{ height: "32px" }}
                 >
-                  {__("Drop", "wpct-erp-forms")}
+                  {__("Drop", "forms-bridge")}
                 </Button>
               </td>
             </tr>
@@ -145,7 +145,7 @@ export default function PipesTable({ formId, pipes, setPipes }) {
         onClick={() => addPipe()}
         style={{ height: "32px" }}
       >
-        {__("Add", "wpct-erp-forms")}
+        {__("Add", "forms-bridge")}
       </Button>
     </div>
   );

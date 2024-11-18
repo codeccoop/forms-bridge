@@ -2,9 +2,9 @@
   "translation-revision-date": "YEAR-MO-DA HO:MI+ZONE",
   "generator": "WP-CLI/2.10.0",
   "source": "assets/plugin.bundle.js",
-  "domain": "wpct-erp-forms",
+  "domain": "forms-bridge",
   "locale_data": {
-    "wpct-erp-forms": {
+    "forms-bridge": {
       "": {
         "domain": "messages",
         "lang": "es_ES",
