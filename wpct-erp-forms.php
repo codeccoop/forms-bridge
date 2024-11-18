@@ -2,13 +2,13 @@
 
 /*
 Plugin Name:     Wpct ERP Forms
-Plugin URI:      https://git.coopdevs.org/codeccoop/wp/wpct-erp-forms
+Plugin URI:      https://git.coopdevs.org/codeccoop/wp/plugins/wpct-erp-forms
 Description:     Plugin to bridge WP forms submissions to a ERP backend
 Author:          Còdec
 Author URI:      https://www.codeccoop.org
 Text Domain:     wpct-erp-forms
 Domain Path:     /languages
-Version:         3.0.6
+Version:         3.0.7
 */
 
 namespace WPCT_ERP_FORMS;
@@ -29,7 +29,7 @@ if (!defined('ABSPATH')) {
  *
  * @var string WPCT_ERP_FORMS_VERSION Current plugin versio.
  */
-define('WPCT_ERP_FORMS_VERSION', '3.0.6');
+define('WPCT_ERP_FORMS_VERSION', '3.0.7');
 
 require_once 'abstracts/class-singleton.php';
 require_once 'abstracts/class-plugin.php';
@@ -227,7 +227,7 @@ class Wpct_Erp_Forms extends BasePlugin
         // Return registerd form hooks
         add_filter(
             'wpct_erp_forms_form_hooks',
-            function ($null, $form_id) {
+            function ($default, $form_id) {
                 return $this->get_form_hooks($form_id);
             },
             10,
@@ -235,10 +235,10 @@ class Wpct_Erp_Forms extends BasePlugin
         );
 
         // Return pair plugin registered forms datums
-        add_filter('wpct_erp_forms_forms', function ($null) {
+        add_filter('wpct_erp_forms_forms', function () {
             $integration = $this->get_integration();
             if (!$integration) {
-                return $null;
+                return [];
             }
 
             return $integration->get_forms();
@@ -246,10 +246,10 @@ class Wpct_Erp_Forms extends BasePlugin
 
         // Return current pair plugin form representation
         // If $form_id is passed, retrives form by ID.
-        add_filter('wpct_erp_forms_form', function ($null, $form_id = null) {
+        add_filter('wpct_erp_forms_form', function ($default, $form_id = null) {
             $integration = $this->get_integration();
             if (!$integration) {
-                return $null;
+                return null;
             }
 
             if ($form_id) {
@@ -260,35 +260,35 @@ class Wpct_Erp_Forms extends BasePlugin
         });
 
         // Check if current form is bound to certain hook
-        add_filter('wpct_erp_forms_is_hooked', function ($false, $hook_name) {
+        add_filter('wpct_erp_forms_is_hooked', function ($default, $hook_name) {
             $integration = $this->get_integration();
             if (!$integration) {
-                return $false;
+                return false;
             }
 
             $form = $integration->get_form();
             if (!$form) {
-                return $false;
+                return false;
             }
 
             return isset($form['hooks'][$hook_name]);
         });
 
         // Return the current submission data
-        add_filter('wpct_erp_forms_submission', function ($null) {
+        add_filter('wpct_erp_forms_submission', function () {
             $integration = $this->get_integration();
             if (!$integration) {
-                return $null;
+                return null;
             }
 
             return $integration->get_submission();
         });
 
         // Return the current submission uploaded files
-        add_filter('wpct_erp_forms_uploads', function ($null) {
+        add_filter('wpct_erp_forms_uploads', function () {
             $integration = $this->get_integration();
             if (!$integration) {
-                return $null;
+                return null;
             }
 
             return $integration->get_uploads();
@@ -347,6 +347,20 @@ class Wpct_Erp_Forms extends BasePlugin
      */
     private function get_form_hooks($form_id)
     {
+        if (empty($form_id)) {
+            $integration = $this->get_integration();
+            if (!$integration) {
+                return [];
+            }
+
+            $form = $integration->get_form();
+            if (!$form) {
+                return [];
+            }
+
+            $form_id = $form['id'];
+        }
+
         $rest_hooks = Settings::get_setting(
             'wpct-erp-forms',
             'rest-api',

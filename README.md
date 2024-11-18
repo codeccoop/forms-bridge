@@ -1,9 +1,9 @@
 # Wpct ERP Forms
 
-Bridge WP form builder plugins' submissions to remote backend over http requests.
+Bridge WP form builder plugins to remote backend over http requests.
 
-Wpct ERP Forms has integrations with [GravityForms](https://www.gravityforms.com)
-and [Contact Form 7](https://contactform7.com/) and [WP Forms](https://wpforms.com/).
+Wpct ERP Forms has integrations for [GravityForms](https://www.gravityforms.com)
+, [Contact Form 7](https://contactform7.com/) and [WP Forms](https://wpforms.com/).
 
 The plugin allow comunication with your ERP over REST or JSON-RPC API protocols.
 
@@ -31,114 +31,256 @@ Go to `Settings > Wpct ERP Forms` to manage plugin settings. This page has three
 
 1. General
 	* **Notification receiver**: Email address receiver of failed submission notifications.
-	* **ERP base URL**: Base URL of the ERP where submissions will be sent.
-	* **ERP API key**: API key, if needed, to be sent with the request header `API-KEY`.
+	* **Backends**: List of configured backend connections. Each backend needs a unique name,
+	a base URL, and, optional, a map of HTTP headers.
 2. REST API
-	* **Forms**: A list of hooked forms and it's relation with your backend endpoints. Each
-	relation needs a form ID, an endpoint and a unique ref. Submission will be sent as
+	* **Form Hooks**: A list of hooked forms and it's relation with your backend endpoints. Each
+	relation needs a unique name, a form ID, a backend, and an endpoint. Submission will be sent as
 	encoded JSON objects.
-3. RPC API
-	* **RPC API endpoint**: Entry point of your ERP's RPC external API.
-	* **API user login**: Login of the ERP's user to use use on the API authentication requests.
+3. JSON-RPC API
+	* **RPC API endpoint**: Entry point of your ERP JSON-RPC external API.
+	* **API user login**: Login of the ERP's user to use on the API authentication requests.
 	* **User password**: Password of the user.
 	* **Database name**: Database  name to be used.
-	* **Forms**: A list of hooked forms and it's relation with your backend models. Each
-	relation needs a from ID, a model and a unique ref. Submission will be sent encoded
+	* **Form Hooks**: A list of hooked forms and it's relation with your backend models. Each
+	relation needs a unique name, a from ID, a backend, and a model. Submission will be sent encoded
 	as JSON-RPC payloads.
 
-## Hooks
+## API
+
+### Getters
+
+#### `wpct_erp_forms_form`
+
+Get the current form.
+
+Arguments:
+
+1. `any $default`: Default value.
+2. `integer $form_id`: If declared, try to return form by ID.
+
+Returns:
+
+1. `array|null $form_data`: Form data.
+
+Example:
+
+```php
+$form_data = apply_filters('wpct_erp_forms_form', null);
+if (!empty($form)) {
+	// do something
+}
+```
+
+#### `wpct_erp_forms_forms`
+
+Get available forms.
+
+Arguments:
+
+1. `any $default`: Default value.
+
+Returns:
+
+1. `array $forms_data`: Available forms as list of form data.
+
+Example:
+
+```php
+$forms_data = apply_filters('wpct_erp_forms_forms', []);
+foreach ($forms_data as $form_data) {
+	// do something
+}
+```
+
+#### `wpct_erp_forms_form_hooks`
+
+Get active hooks for the current form.
+
+Arguments:
+
+1. `any $default`: Default value.
+2. `integer $form_id`: If declared, try to return form hooks by ID.
+
+Returns:
+
+1. `array $hooks`: List of given form active hooks.
+
+Example:
+
+```php
+$hooks = apply_filters('wpct_erp_forms_form_hooks', [], 13);
+foreach ($hooks as $hook) {
+	// do something
+}
+```
+
+#### `wpct_erp_forms_is_hooked`
+
+Check if current form is hooked to a given hook.
+
+Arguments:
+
+1. `any $default`: Default value.
+2. `string $hook_name`: Needle hook name.
+
+Returns:
+
+1. `boolean $is_hooked`: True if form is hooked to the given hook, false otherwise.
+
+Example:
+
+```php
+$is_hooked = apply_filters('wpct_erp_forms_is_hooked', false, 'CRM Lead');
+if ($is_hooked) {
+	// do something
+}
+```
+
+#### `wpct_erp_forms_submission`
+
+Get the current form submission.
+
+Arguments:
+
+1. `any $default`: Default value.
+
+Returns:
+
+1. `array|null $submission`: Current form submission.
+
+Example:
+
+```php
+$submission = apply_filters('wpct_erp_forms_submission', null);
+if ($submission) {
+	// do something
+}
+```
+
+#### `wpct_erp_forms_uploads`
+
+Get the current form submission uploaded files.
+
+Arguments:
+
+1. `any $default`: Default value.
+
+Returns:
+
+1. `array|null`: Current form submission uploaded files.
+
+Example:
+
+```php
+$uploads = apply_filters('wpct_erp_forms_uploads', []);
+foreach ($uploads as $uplad) {
+	// do something
+}
+```
 
 ### Filters
 
 #### `wpct_erp_forms_payload`
 
-Filter the submission data to be sent to the backend.
+Filters the submission data to be sent to the backend.
 
 Arguments:
 
-1. `array $payload`: Associative array with form submission data.
-2. `array $uploads`:Associative array with form submission uploaded files.
-3. `array $form_data`: Associative array with form object information.
+1. `array $payload`: Submission payload.
+2. `array $attachments`: Submission attached files.
+3. `array $form_data`: Form data.
 
 Example:
 
 ```php
-add_filter('wpct_erp_forms_payload', function ($payload, $uploads, $form_data) {
+add_filter('wpct_erp_forms_payload', function ($payload, $attachments, $form_data) {
 	return $payload;
 }, 10, 3);
 ```
 
-#### `wpct_erp_forms_uploads`
+#### `wpct_erp_forms_attachments`
 
-Filters uploaded files to be sent to the backend.
+Filters attached files to be sent to the backend.
 
 Arguments:
 
-1. `array $uploads`: Associative array with form submission uploaded files.
-2. `array $form_data`: Associative array with form object information.
+1. `array $attachments`: Submission attached files.
+2. `array $form_data`: Form data.
 
 Example:
 
 ```php
-add_filter('wpct_erp_forms_uploads', function ($uploads, $form_data) {
-	return $uploads;
+add_filter('wpct_erp_forms_attachments', function ($attachments, $form_data) {
+	return $attachments;
 }, 10, 3);
 ```
-#### `wpct_erp_forms_endpoints`
 
-Filters the endpoints array to be used for each submission.
+#### `wpct_erp_forms_rpc_login`
+
+Filters the JSON-RPC login payload.
 
 Arguments:
-1. `array $endpoints`: Associative array with two positional arrays, one for each protocol,
-REST and RPC, with endpoints as string values. It will trigger one http request for each endpoint on the lists.
-_* Endpoints are relative to the **base_url** option defined on the options page.
-2. `array $payload`: Associative array with form submission data.
-3. `array $uploads`:  Associative array with form submission uploaded files.
-4. `array $form_data`: Associative array with form object information.
+
+1. `array $payload`: Login payload.
 
 Example:
 
 ```php
-add_filter('wpct_erp_forms_endpoints', function ($endpoints, $payload, $files, $form_data) {
-	return $endpoints;
-}, 10, 4);
+add_filter('wpct_erp_forms_rpc_login', function ($payload) {
+	return $payload;
+}, 10, 1);
 ```
 
 #### `wpct_erp_forms_rpc_payload`
 
-Filters the JSON-RPC form submission payload.
+Filters the submission data to be sent to the backend as a JSON-RPC call.
 
 Arguments:
-1. `array $payload`: Associative array with JSON-RPC payload containing form submission data.
-2. `array $uploads`: Associative array with form submission uploaded files.
-3. `array $form_data`: Associative array with form object information.
+
+1. `array $payload`: Submission payload.
+2. `array $attachments`: Submission attached files.
+3. `array $form_data`: Form data.
 
 Example:
 
 ```php
-add_filter('wpct_erp_forms_rcp_payload', function ($payload, $uploads, $form_data) {
+add_filter('wpct_erp_forms_rpc_payload', function ($payload, $attachments, $form_data) {
 	return $payload;
-});
+}, 10, 3);
 ```
 
-#### `wpct_http_headers`
+#### `wpct_erp_forms_private_upload`
 
-Use this hook to filters the headers of the HTTP requests. Use it to
-match your backend api requirements. For example, insert the `Authorization`
-header.
+Filter if form uploaded files should be stored in a private folder.
 
 Arguments:
 
-1. `array $headers`: Associative array with key values containing request header's.
-2. `string $method`: Request method.
-3. `string $url`: Request URL.
+1. `boolan $is_private`: Default as true, controls uploads privacy.
+2. `integer $form_id`: Current form ID.
 
 Example:
 
 ```php
-add_filter('wpct_http_headers', function ($headers, $method, $url) {
-    return $headers;
-}, 10, 3);
+add_filter('wpct_erp_forms_private_upload', function ($is_private, $form_id) {
+	return true;
+}, 10, 2);
+```
+
+#### `wpct_erp_forms_upload_path`
+
+Filter private upload path.
+
+Arguments:
+
+1. `string $path`: Path to store uploaded files.
+
+Example:
+
+```php
+add_filter('wpct_erp_forms_upload_path', function ($path) {
+	return $path;
+}, 10, 1);
 ```
 
 ### Actions
@@ -149,14 +291,14 @@ Action to do just before submission has been sent to the backend.
 
 Arguments:
 
-1. `array $payload`: Associative array with form submission data.
-2. `array $uploads`:Associative array with form submission uploaded files.
-3. `array $form_data`: Associative array with form object information.
+1. `array $payload`: Submission payload.
+2. `array $attachments`: Submission attached files.
+3. `array $form_data`: Form data.
 
 Example:
 
 ```php
-add_action('wpct_erp_forms_before_submission', function ($payload, $files, $form_data) {
+add_action('wpct_erp_forms_before_submission', function ($payload, $attachments, $form_data) {
 	// do something
 }, 10, 3);
 ```
@@ -167,31 +309,47 @@ Action to do after the submission has been succesfuly sent to the backend.
 
 Arguments:
 
-1. `array $payload`: Associative array with form submission data.
-2. `array $uploads`:Associative array with form submission uploaded files.
-3. `array $form`: Associative array with form object information.
+1. `array $payload`: Submission payload.
+2. `array $attachments`: Submission attached files.
+3. `array $form_data`: Form data.
 
 Example:
 
 ```php
-add_action('wpct_erp_forms_after_submission', function ($payload, $files, $form) {
+add_action('wpct_erp_forms_after_submission', function ($payload, $attachments, $form_data) {
 	// do something
 }, 10, 3);
 ```
+
 #### `wpct_erp_forms_on_failure`
 
 Action to do after a request connexion error with the backend.
 
 Arguments:
 
-1. `array $payload`: Associative array with form submission data.
-2. `array $uploads`:Associative array with form submission uploaded files.
-3. `array $form`: Associative array with form object information.
+1. `array $payload`: Submission payload.
+2. `array $attachments`: Submission attached files.
+3. `array $form_data`: Form data.
 
 Example:
 
 ```php
-add_action('wpct_erp_forms_on_failure', function ($payload, $files, $form) {
+add_action('wpct_erp_forms_on_failure', function ($payload, $attachments, $form_data) {
 	// do something
 }, 10, 3);
 ```
+
+## Dependencies
+
+This plugin relays on [Wpct HTTP Bridge](https://git.coopdevs.org/codeccoop/wp/plugins/wpct-http-bridge/)
+and [Wpct i18n](https://git.coopdevs.org/codeccoop/wp/plugins/wpct-i18n/) as depenendencies,
+as well as the [Wpct Plugin Abstracts](https://git.coopdevs.org/codeccoop/wp/plugins/wpct-plugin-abstracts)
+snippets. The plugin comes with its dependencies bundled in its releases, so you should not worry
+about its managment. You can see this plugins documentation to know more about its APIs.
+
+## Roadmap
+
+1. [ ] More agonstic JSON-RPC support decoupled from Odoo JSON-RPC API.
+2. [ ] Rename plugin to Forms Bridge and publish it on wordpress.org repositories.
+3. [ ] Backend connectors as an opt-in list with Odoo JSON-RPC API suited integration.
+3. [ ] Backend connectors as an opt-in list with Dolibarr REST API suited integration.
