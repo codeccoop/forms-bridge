@@ -5,7 +5,7 @@ namespace FORMS_BRIDGE;
 use WPCT_ABSTRACT\Menu as BaseMenu;
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit();
 }
 
 /**

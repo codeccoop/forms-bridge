@@ -2,12 +2,12 @@
 
 namespace FORMS_BRIDGE;
 
-use WPCT_ABSTRACT/Singleton;
+use WPCT_ABSTRACT\Singleton;
 use WP_Error;
 use WP_REST_Server;
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit();
 }
 
 /**
@@ -72,7 +72,7 @@ class REST_Controller extends Singleton
         // register forms endpoint
         register_rest_route(
             "{$this->namespace}/v{$this->version}",
-            '/forms-bridge/forms',
+            '/forms/forms',
             [
                 'methods' => WP_REST_Server::READABLE,
                 'callback' => function () {
@@ -87,7 +87,7 @@ class REST_Controller extends Singleton
         // register settings endpoint
         register_rest_route(
             "{$this->namespace}/v{$this->version}",
-            '/forms-bridge/settings/',
+            '/forms/settings/',
             [
                 [
                     'methods' => WP_REST_Server::READABLE,

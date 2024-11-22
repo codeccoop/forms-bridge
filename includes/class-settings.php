@@ -5,7 +5,7 @@ namespace FORMS_BRIDGE;
 use WPCT_ABSTRACT\Settings as BaseSettings;
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit();
 }
 
 /**
@@ -65,7 +65,7 @@ class Settings extends BaseSettings
     public function register()
     {
         $host = parse_url(get_bloginfo('url'))['host'];
-        //
+
         // Register general setting
         $this->register_setting(
             'general',
@@ -162,18 +162,10 @@ class Settings extends BaseSettings
         $this->register_setting(
             'rpc-api',
             [
-                'endpoint' => [
-                    'type' => 'string',
-                ],
-                'user' => [
-                    'type' => 'string',
-                ],
-                'password' => [
-                    'type' => 'string',
-                ],
-                'database' => [
-                    'type' => 'string',
-                ],
+                'endpoint' => ['type' => 'string'],
+                'user' => ['type' => 'string'],
+                'password' => ['type' => 'string'],
+                'database' => ['type' => 'string'],
                 'form_hooks' => [
                     'type' => 'array',
                     'items' => [

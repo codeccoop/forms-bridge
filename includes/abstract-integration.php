@@ -8,7 +8,7 @@ use Exception;
 use TypeError;
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit();
 }
 
 /**
@@ -156,7 +156,7 @@ abstract class Integration extends Singleton
 
         foreach (array_values($hooks) as $hook) {
             $backend = apply_filters(
-                'wpct_http_backend',
+                'http_bridge_backend',
                 null,
                 $hook['backend']
             );
@@ -337,7 +337,7 @@ abstract class Integration extends Singleton
     private function submit_rest($method, $url, $args)
     {
         $m = strtolower($method);
-        $func = "\WPCT_HTTP\wpct_http_{$m}";
+        $func = "\HTTP_BRIDGE\http_bridge_{$m}";
         if (!is_callable($func)) {
             return new WP_Error(
                 'http_method_not_allowed',
@@ -378,7 +378,7 @@ abstract class Integration extends Singleton
             ])
         );
 
-        $res = wpct_http_post($url, ['data' => $payload]);
+        $res = http_bridge_post($url, ['data' => $payload]);
 
         if (is_wp_error($res)) {
             throw new Exception('Error while establish RPC session');
@@ -453,7 +453,7 @@ abstract class Integration extends Singleton
             $form_data
         );
 
-        $response = wpct_http_post($url, [
+        $response = http_bridge_post($url, [
             'data' => $payload,
             'files' => $attachments,
             'headers' => $headers,
