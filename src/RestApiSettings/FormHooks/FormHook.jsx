@@ -49,10 +49,10 @@ function NewFormHook({ add }) {
   const hookNames = useHookNames();
 
   const [name, setName] = useState("");
-  const [backend, setBackend] = useState(backendOptions?.[0].value || "");
+  const [backend, setBackend] = useState(backendOptions[0]?.value || "");
   const [method, setMethod] = useState("POST");
   const [endpoint, setEndpoint] = useState("");
-  const [formId, setFormId] = useState(formOptions?.[0].value || "");
+  const [formId, setFormId] = useState(formOptions[0]?.value || "");
   const [nameConflict, setNameConflict] = useState(false);
 
   const handleSetName = (name) => {

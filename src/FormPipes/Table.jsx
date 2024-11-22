@@ -54,7 +54,7 @@ export default function PipesTable({ formId, pipes, setPipes }) {
     const newPipes = pipes.map((pipe, i) => {
       if (index === i) {
         pipe[attr] = value;
-        if (attr === "from" && !pipe.to) {
+        if (attr === "from" && pipe.to !== value) {
           pipe.to = value;
         }
       }
@@ -65,7 +65,9 @@ export default function PipesTable({ formId, pipes, setPipes }) {
   };
 
   const addPipe = () => {
-    const newPipes = pipes.concat([{ from: "", to: "", cast: "string" }]);
+    const newPipes = pipes.concat([
+      { from: "submission_id", to: "submission_id", cast: "string" },
+    ]);
     setPipes(newPipes);
   };
 
