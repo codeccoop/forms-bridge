@@ -66,4 +66,4 @@ release:
   script:
     - |
       release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
-        --assets-link "{\"name\":\"${ZIP}\",\"url\":\"${PACKAGE_REGISTRY_URL}\/${ZIP}\",\"link_type\":\"package\",\"filepath\":\"\/plugins\/${ZIP}\"}"
+        --assets-link "{\"name\":\"${ZIP}\",\"url\":\"${PACKAGE_REGISTRY_URL}\/${ZIP}\",\"link_type\":\"package\",\"filepath\":\"\/plugins\/bridges\/${ZIP}\"}"

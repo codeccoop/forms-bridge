@@ -2,41 +2,36 @@
 
 namespace FORMS_BRIDGE;
 
+use WPCT_ABSTRACT/Singleton;
 use WP_Error;
 use WP_REST_Server;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 /**
  * Plugin REST API controller
- *
- * @since 3.0.0
  */
-class REST_Controller
+class REST_Controller extends Singleton
 {
     /**
      * @var string $namespace Handle wp rest api plugin namespace.
-     *
-     * @since 3.0.0
      */
     private $namespace = 'wp-bridges';
 
     /**
      * @var int $version Handle the API version.
-     *
-     * @since 3.0.0
      */
     private $version = 1;
 
     /**
      * @var array $settings Handle the plugin settings names list.
-     *
-     * @since 3.0.0
      */
     private static $settings = ['general', 'rest-api', 'rpc-api'];
 
     /**
      * Setup a new rest api controller.
-     *
-     * @since 3.0.0
      *
      * @return object $controller Instance of REST_Controller.
      */
@@ -47,8 +42,6 @@ class REST_Controller
 
     /**
      * Internal WP_Error proxy.
-     *
-     * @since 3.0.0
      *
      * @param string $code
      * @param string $message
@@ -63,8 +56,6 @@ class REST_Controller
 
     /**
      * Binds class initializer to the rest_api_init hook
-     *
-     * @since 3.0.0
      */
     public function __construct()
     {
@@ -75,8 +66,6 @@ class REST_Controller
 
     /**
      * REST_Controller initializer.
-     *
-     * @since 3.0.0
      */
     private function init()
     {
@@ -125,8 +114,6 @@ class REST_Controller
     /**
      * GET requests forms endpoint callback.
      *
-     * @since 3.0.0
-     *
      * @return array $forms Collection of array form representations.
      */
     private function forms()
@@ -136,8 +123,6 @@ class REST_Controller
 
     /**
      * GET requests settings endpoint callback.
-     *
-     * @since 3.0.0
      *
      * @return array $settings Associative array with settings data.
      */
@@ -155,8 +140,6 @@ class REST_Controller
 
     /**
      * POST requests settings endpoint callback. Store settings on the options table.
-     *
-     * @since 3.0.0
      *
      * @return array $response New settings state.
      */
@@ -183,8 +166,6 @@ class REST_Controller
 
     /**
      * Check if current user can manage options
-     *
-     * @since 3.0.0
      *
      * @return boolean $allowed
      */

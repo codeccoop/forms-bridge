@@ -2,7 +2,7 @@
 
 /*
 Plugin Name:     Forms Bridge
-Plugin URI:      https://git.coopdevs.org/codeccoop/wp/plugins/forms-bridge
+Plugin URI:      https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge
 Description:     Plugin to bridge WP forms submissions to any backend
 Author:          Còdec
 Author URI:      https://www.codeccoop.org
@@ -16,7 +16,7 @@ namespace FORMS_BRIDGE;
 use FORMS_BRIDGE\WPCF7\Integration as Wpcf7Integration;
 use FORMS_BRIDGE\GF\Integration as GFIntegration;
 use FORMS_BRIDGE\WPFORMS\Integration as WPFormsIntegration;
-use FORMS_BRIDGE\Plugin as BasePlugin;
+use WPCT_ABASTRACT\Plugin as BasePlugin;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -24,8 +24,6 @@ if (!defined('ABSPATH')) {
 
 /**
  * Handle plugin version.
- *
- * @since 0.0.1
  *
  * @var string FORMS_BRIDGE_VERSION Current plugin version.
  */
@@ -36,20 +34,21 @@ require_once 'abstracts/class-plugin.php';
 require_once 'abstracts/class-menu.php';
 require_once 'abstracts/class-settings.php';
 
-require_once 'wpct-http-bridge/wpct-http-bridge.php';
-require_once 'wpct-i18n/wpct-i18n.php';
+require_once 'deps/http/http-bridge.php';
+require_once 'deps/i18n/wpct-i18n.php';
 
 require_once 'includes/abstract-integration.php';
 require_once 'includes/class-menu.php';
 require_once 'includes/class-settings.php';
 require_once 'includes/class-rest-controller.php';
 
+/**
+ * Forms Bridge plugin.
+ */
 class Forms_Bridge extends BasePlugin
 {
     /**
      * Handle plugin active integrations.
-     *
-     * @since 1.0.0
      *
      * @var array $_integrations
      */
@@ -58,16 +57,12 @@ class Forms_Bridge extends BasePlugin
     /**
      * Handle plugin name.
      *
-     * @since 1.0.0
-     *
      * @var string $name Plugin name.
      */
     public static $name = 'Forms Bridge';
 
     /**
      * Handle plugin textdomain.
-     *
-     * @since 1.0.0
      *
      * @var string $textdomain Plugin text domain.
      */
@@ -76,16 +71,12 @@ class Forms_Bridge extends BasePlugin
     /**
      * Handle plugin menu class name.
      *
-     * @since 1.0.0
-     *
      * @var string $menu_class Plugin menu class name.
      */
     protected static $menu_class = '\FORMS_BRIDGE\Menu';
 
     /**
      * Starts the plugin.
-     *
-     * @since 3.0.0
      */
     public static function start()
     {
@@ -94,8 +85,6 @@ class Forms_Bridge extends BasePlugin
 
     /**
      * Initialize integrations, REST Controller and setup plugin hooks.
-     *
-     * @since 1.0.0
      */
     protected function __construct()
     {
@@ -109,8 +98,6 @@ class Forms_Bridge extends BasePlugin
 
     /**
      * Load plugin integrations.
-     *
-     * @since 3.0.0
      */
     private function load_integrations()
     {
@@ -148,8 +135,6 @@ class Forms_Bridge extends BasePlugin
 
     /**
      * Bound plugin to wp hooks.
-     *
-     * @since 3.0.0
      */
     private function wp_hooks()
     {
@@ -219,8 +204,6 @@ class Forms_Bridge extends BasePlugin
 
     /**
      * Add plugin custom filters.
-     *
-     * @since 3.0.0
      */
     private function custom_hooks()
     {
@@ -297,8 +280,6 @@ class Forms_Bridge extends BasePlugin
 
     /**
      * Initialize the plugin on wp init.
-     *
-     * @since 1.0.0
      */
     public function init()
     {
@@ -306,8 +287,6 @@ class Forms_Bridge extends BasePlugin
 
     /**
      * Callback to activation hook.
-     *
-     * @since 1.0.0
      */
     public static function activate()
     {
@@ -315,8 +294,6 @@ class Forms_Bridge extends BasePlugin
 
     /**
      * Callback to deactivation hook.
-     *
-     * @since 1.0.0
      */
     public static function deactivate()
     {
@@ -324,8 +301,6 @@ class Forms_Bridge extends BasePlugin
 
     /**
      * Return the current integration.
-     *
-     * @since 3.0.0
      *
      * @return object $integration
      */
@@ -340,8 +315,6 @@ class Forms_Bridge extends BasePlugin
 
     /**
      * Return form API hooks.
-     *
-     * @since 3.0.0
      *
      * @return array $hooks Array with hooks.
      */
@@ -387,8 +360,6 @@ class Forms_Bridge extends BasePlugin
 
     /**
      * Enqueue admin client scripts
-     *
-     * @since 3.0.0
      *
      * @param string $admin_page Current admin page.
      */

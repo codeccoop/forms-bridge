@@ -7,10 +7,12 @@ use WP_Error;
 use Exception;
 use TypeError;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 /**
  * Integration abstract class.
- *
- * @since 1.0.0
  */
 abstract class Integration extends Singleton
 {
@@ -24,16 +26,12 @@ abstract class Integration extends Singleton
     /**
      * Retrive form by ID.
      *
-     * @since 3.0.0
-     *
      * @return array $form_data Form data.
      */
     abstract public function get_form_by_id($form_id);
 
     /**
      * Retrive available forms.
-     *
-     * @since 3.0.0
      *
      * @return array $forms Collection of form data.
      */
@@ -42,8 +40,6 @@ abstract class Integration extends Singleton
     /**
      * Retrive the current form submission.
      *
-     * @since 3.0.0
-     *
      * @return array $submission Submission data.
      */
     abstract public function get_submission();
@@ -51,16 +47,12 @@ abstract class Integration extends Singleton
     /**
      * Retrive the current submission uploaded files.
      *
-     * @since 3.0.0
-     *
      * @return array $files Collection of uploaded files.
      */
     abstract public function get_uploads();
 
     /**
      * Serialize the current form submission data.
-     *
-     * @since 1.0.0
      *
      * @param any $submission Pair plugin submission handle.
      * @param array $form_data Source form data.
@@ -71,8 +63,6 @@ abstract class Integration extends Singleton
     /**
      * Serialize the current form data.
      *
-     * @since 1.0.0
-     *
      * @param any $form Pair plugin form handle.
      * @return array $form_data Form data.
      */
@@ -80,8 +70,6 @@ abstract class Integration extends Singleton
 
     /**
      * Get uploads from pair submission handle.
-     *
-     * @since 1.0.0
      *
      * @param any $submission Pair plugin submission handle.
      * @param array $form_data Current form data.
@@ -91,15 +79,11 @@ abstract class Integration extends Singleton
 
     /**
      * Integration initializer to be fired on wp init.
-     *
-     * @since 0.0.1
      */
     abstract protected function init();
 
     /**
      * Bind integration initializer to wp init hook.
-     *
-     * @since 0.0.1
      */
     protected function __construct()
     {
@@ -110,8 +94,6 @@ abstract class Integration extends Singleton
 
     /**
      * Send error notifications to the email receiver.
-     *
-     * @since 3.0.0
      *
      * @param array $form_data Form data.
      * @param array $payload Submission data.
@@ -144,8 +126,6 @@ abstract class Integration extends Singleton
 
     /**
      * Proceed with the submission sub-routine.
-     *
-     * @since 1.0.0
      *
      * @param any $submission Pair plugin submission handle.
      * @param any $form Pair plugin form handle.
@@ -218,11 +198,24 @@ abstract class Integration extends Singleton
         }
     }
 
+    /**
+     * Before submission hook.
+     *
+     * @param array $request Request config.
+     * @param array $form_data Form data.
+     */
     private function before_submission($request, $form_data)
     {
         do_action('forms_bridge_before_submission', $request, $form_data);
     }
 
+    /**
+     * After submission hook.
+     *
+     * @param array $response Response data.
+     * @param array $payload Payload data.
+     * @param array $form_data Form data.
+     */
     private function after_submission($response, $payload, $form_data)
     {
         if (is_wp_error($response)) {
@@ -240,8 +233,6 @@ abstract class Integration extends Singleton
 
     /**
      * Apply cast pipes to the submission data.
-     *
-     * @since 3.0.0
      *
      * @param array $payload Submission data.
      * @param array $form_data Form data.
@@ -265,8 +256,6 @@ abstract class Integration extends Singleton
 
     /**
      * Cast value to type.
-     *
-     * @since 3.0.0
      *
      * @param string $type Target type to cast value.
      * @param any $value Original value.
@@ -299,8 +288,6 @@ abstract class Integration extends Singleton
     /**
      * Clean up submission empty fields.
      *
-     * @since 1.0.0
-     *
      * @param array $submission_data Submission data.
      * @return array $submission_data Submission data without empty fields.
      */
@@ -315,8 +302,6 @@ abstract class Integration extends Singleton
 
     /**
      * Transform collection of uploads to an attachments map.
-     *
-     * @since 3.0.0
      *
      * @param array $uploads Collection of uploaded files.
      * @return array $uploads Map of uploaded files.
@@ -343,8 +328,6 @@ abstract class Integration extends Singleton
 
     /**
      * Submit REST requests over HTTP methods.
-     *
-     * @since 3.0.4
      *
      * @param string $method HTTP method (GET, POST, PUT, DELETE).
      * @param string $url Target URL.
@@ -373,8 +356,6 @@ abstract class Integration extends Singleton
 
     /**
      * JSON RPC login request.
-     *
-     * @since 2.0.0
      *
      * @param string $endpoint Target endpoint.
      * @return array $credentials Tuple with $session_id and $user_id.
@@ -414,8 +395,6 @@ abstract class Integration extends Singleton
 
     /**
      * Submit submission over Odoo's JSON-RPC API.
-     *
-     * @since 2.0.0
      *
      * @param array $models Array of target models.
      * @param array $payload Submission data.
@@ -493,8 +472,6 @@ abstract class Integration extends Singleton
 
     /**
      * RPC payload decorator.
-     *
-     * @since 2.0.0
      *
      * @param int $session_id RPC session ID.
      * @param string $service RPC service name.

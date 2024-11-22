@@ -4,10 +4,12 @@ namespace FORMS_BRIDGE;
 
 use WPCT_ABSTRACT\Settings as BaseSettings;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 /**
  * Plugin settings.
- *
- * @since 1.0.0
  */
 class Settings extends BaseSettings
 {
@@ -15,8 +17,6 @@ class Settings extends BaseSettings
      * Return registered backends.
      *
      * @return object $instance Class instance.
-     *
-     * @since 3.0.0
      *
      * @return array $backends Collection of backend array representations.
      */
@@ -30,8 +30,6 @@ class Settings extends BaseSettings
 
     /**
      * Get form instances from database.
-     *
-     * @since 2.0.0
      *
      * @return array $forms Database record objects from form posts.
      */
@@ -63,8 +61,6 @@ class Settings extends BaseSettings
 
     /**
      * Register plugin settings.
-     *
-     * @since 2.0.0
      */
     public function register()
     {

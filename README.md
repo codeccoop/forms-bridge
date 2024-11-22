@@ -15,16 +15,16 @@ Else if form submission contains files, the default behavior is to send data as
 
 ## Installation
 
-Download the [latest release](https://git.coopdevs.org/codeccoop/wp/plugins/forms-bridge/-/releases/permalink/latest/downloads/plugins/forms-bridge.zip)
+Download the [latest release](https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge/-/releases/permalink/latest/downloads/plugins/forms-bridge.zip)
 as a zipfile. Once downloaded, go to your site plugins page and upload the zip file as a new plugin, WordPress
 will handle the rest.
 
-> Go to the [releases](https://git.coopdevs.org/codeccoop/wp/plugins/forms-bridge/-/releases) to find previous versions.
+> Go to the [releases](https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge/-/releases) to find previous versions.
 
 If you have access to a console on your server, you can install it with `wp-cli` with the next command:
 
 ```shell
-wp plugin install https://git.coopdevs.org/codeccoop/wp/plugins/forms-bridge/-/releases/permalink/latest/downloads/plugins/forms-bridge.zip
+wp plugin install https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge/-/releases/permalink/latest/downloads/plugins/forms-bridge.zip
 ```
 
 ## Getting started
@@ -57,15 +57,16 @@ more details about the hooks.
 
 ## Dependencies
 
-This plugin relays on [Wpct HTTP Bridge](https://git.coopdevs.org/codeccoop/wp/plugins/wpct-http-bridge/)
-and [Wpct i18n](https://git.coopdevs.org/codeccoop/wp/plugins/wpct-i18n/) as depenendencies,
-as well as the [Wpct Plugin Abstracts](https://git.coopdevs.org/codeccoop/wp/plugins/wpct-plugin-abstracts)
+This plugin relays on [HTTP Bridge](https://git.coopdevs.org/codeccoop/wp/plugins/bridges/http-bridge/)
+and [Wpct i18n](https://git.coopdevs.org/codeccoop/wp/plugins/wpct/i18n/) as depenendencies,
+as well as the [Wpct Plugin Abstracts](https://git.coopdevs.org/codeccoop/wp/plugins/wpct/plugin-abstracts)
 snippets. The plugin comes with its dependencies bundled in its releases, so you should not worry
 about its managment. You can see this plugins documentation to know more about its APIs.
 
 ## Roadmap
 
 1. [ ] More agonstic JSON-RPC support decoupled from Odoo JSON-RPC API.
-2. [ ] Rename plugin to Forms Bridge and publish it on wordpress.org repositories.
-3. [ ] Backend connectors as an opt-in list with Odoo JSON-RPC API suited integration.
-3. [ ] Backend connectors as an opt-in list with Dolibarr REST API suited integration.
+2. [X] Rename plugin to Forms Bridge.
+3. [ ] Publish on wordpress.org repositories.
+4. [ ] Backend connectors as an opt-in list with Odoo JSON-RPC API suited integration.
+5. [ ] Backend connectors as an opt-in list with Dolibarr REST API suited integration.

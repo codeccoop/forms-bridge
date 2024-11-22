@@ -1,9 +1,11 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 /**
  * Filter public attachments path and return privte if needed.
- *
- * @since 1.0.0
  *
  * @param array $path_info Attachments path info.
  * @param integer $form_id Source form ID.
@@ -43,8 +45,6 @@ add_filter('gform_upload_path', 'forms_bridge_upload_path', 90, 2);
 
 /**
  * Intercept GET requests with download query and send attachment file as response.
- *
- * @since 1.0.0
  */
 function forms_bridge_download_file()
 {
@@ -92,8 +92,6 @@ add_action('init', 'forms_bridge_download_file');
 /**
  * Get gravityforms attachment store base path.
  *
- * @since 1.0.0
- *
  * @return string $base_path Attachments store base path.
  */
 function forms_bridge_attachment_base_path()
@@ -113,8 +111,6 @@ function forms_bridge_attachment_base_path()
 /**
  * Get attachment absolute path.
  *
- * @since 1.0.0
- *
  * @param string $filepath Attachment file path.
  * @return string $fullpath Attachment file absolute path.
  */
@@ -126,8 +122,6 @@ function forms_bridge_attachment_fullpath($filepath)
 
 /**
  * Get attachment URL.
- *
- * @since 1.0.0
  *
  * @param string $filepath Attachment file path.
  * @return string $url Attachment public URL.
@@ -144,8 +138,6 @@ function forms_bridge_attachment_url($filepath)
 
 /**
  * Check if gravityforms should use private attachments store.
- *
- * @since 1.0.0
  *
  * @param integer $form_id Source form ID.
  * @return boolean $is_private Form uses private store.
