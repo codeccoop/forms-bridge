@@ -1,7 +1,7 @@
 {
   "translation-revision-date": "YEAR-MO-DA HO:MI+ZONE",
   "generator": "WP-CLI/2.11.0",
-  "source": "src/FormPipes/Table.js",
+  "source": "assets/plugin.bundle.js",
   "domain": "messages",
   "locale_data": {
     "messages": {
