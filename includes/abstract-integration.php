@@ -1,16 +1,18 @@
 <?php
 
-namespace WPCT_ERP_FORMS;
+namespace FORMS_BRIDGE;
 
 use WPCT_ABSTRACT\Singleton;
 use WP_Error;
 use Exception;
 use TypeError;
 
+if (!defined('ABSPATH')) {
+    exit();
+}
+
 /**
  * Integration abstract class.
- *
- * @since 1.0.0
  */
 abstract class Integration extends Singleton
 {
@@ -24,16 +26,12 @@ abstract class Integration extends Singleton
     /**
      * Retrive form by ID.
      *
-     * @since 3.0.0
-     *
      * @return array $form_data Form data.
      */
     abstract public function get_form_by_id($form_id);
 
     /**
      * Retrive available forms.
-     *
-     * @since 3.0.0
      *
      * @return array $forms Collection of form data.
      */
@@ -42,8 +40,6 @@ abstract class Integration extends Singleton
     /**
      * Retrive the current form submission.
      *
-     * @since 3.0.0
-     *
      * @return array $submission Submission data.
      */
     abstract public function get_submission();
@@ -51,16 +47,12 @@ abstract class Integration extends Singleton
     /**
      * Retrive the current submission uploaded files.
      *
-     * @since 3.0.0
-     *
      * @return array $files Collection of uploaded files.
      */
     abstract public function get_uploads();
 
     /**
      * Serialize the current form submission data.
-     *
-     * @since 1.0.0
      *
      * @param any $submission Pair plugin submission handle.
      * @param array $form_data Source form data.
@@ -71,8 +63,6 @@ abstract class Integration extends Singleton
     /**
      * Serialize the current form data.
      *
-     * @since 1.0.0
-     *
      * @param any $form Pair plugin form handle.
      * @return array $form_data Form data.
      */
@@ -80,8 +70,6 @@ abstract class Integration extends Singleton
 
     /**
      * Get uploads from pair submission handle.
-     *
-     * @since 1.0.0
      *
      * @param any $submission Pair plugin submission handle.
      * @param array $form_data Current form data.
@@ -91,15 +79,11 @@ abstract class Integration extends Singleton
 
     /**
      * Integration initializer to be fired on wp init.
-     *
-     * @since 0.0.1
      */
     abstract protected function init();
 
     /**
      * Bind integration initializer to wp init hook.
-     *
-     * @since 0.0.1
      */
     protected function __construct()
     {
@@ -111,8 +95,6 @@ abstract class Integration extends Singleton
     /**
      * Send error notifications to the email receiver.
      *
-     * @since 3.0.0
-     *
      * @param array $form_data Form data.
      * @param array $payload Submission data.
      * @param array $error_data Error data.
@@ -120,7 +102,7 @@ abstract class Integration extends Singleton
     private function notify_error($form_data, $payload, $error = '')
     {
         $email = Settings::get_setting(
-            'wpct-erp-forms',
+            'forms-bridge',
             'general',
             'notification_receiver'
         );
@@ -129,7 +111,7 @@ abstract class Integration extends Singleton
         }
 
         $to = $email;
-        $subject = 'Wpct ERP Forms Error';
+        $subject = 'Forms Bridge Error';
         $body = "Form ID: {$form_data['id']}\n";
         $body .= "Form title: {$form_data['title']}\n";
         $body .= 'Submission: ' . print_r($payload, true) . "\n";
@@ -145,8 +127,6 @@ abstract class Integration extends Singleton
     /**
      * Proceed with the submission sub-routine.
      *
-     * @since 1.0.0
-     *
      * @param any $submission Pair plugin submission handle.
      * @param any $form Pair plugin form handle.
      */
@@ -161,13 +141,13 @@ abstract class Integration extends Singleton
 
         $uploads = $this->submission_uploads($submission, $form_data);
         $attachments = apply_filters(
-            'wpct_erp_forms_attachments',
+            'forms_bridge_attachments',
             $this->attachments($uploads),
             $form_data
         );
 
         $payload = apply_filters(
-            'wpct_erp_forms_payload',
+            'forms_bridge_payload',
             $this->serialize_submission($submission, $form_data),
             $attachments,
             $form_data
@@ -176,7 +156,7 @@ abstract class Integration extends Singleton
 
         foreach (array_values($hooks) as $hook) {
             $backend = apply_filters(
-                'wpct_http_backend',
+                'http_bridge_backend',
                 null,
                 $hook['backend']
             );
@@ -198,7 +178,7 @@ abstract class Integration extends Singleton
                 $res = $this->submit_rest($hook['method'], $url, $args);
             } elseif (isset($hook['model'])) {
                 $endpoint = Settings::get_setting(
-                    'wpct-erp-forms',
+                    'forms-bridge',
                     'rpc-api',
                     'endpoint'
                 );
@@ -218,15 +198,28 @@ abstract class Integration extends Singleton
         }
     }
 
+    /**
+     * Before submission hook.
+     *
+     * @param array $request Request config.
+     * @param array $form_data Form data.
+     */
     private function before_submission($request, $form_data)
     {
-        do_action('wpct_erp_forms_before_submission', $request, $form_data);
+        do_action('forms_bridge_before_submission', $request, $form_data);
     }
 
+    /**
+     * After submission hook.
+     *
+     * @param array $response Response data.
+     * @param array $payload Payload data.
+     * @param array $form_data Form data.
+     */
     private function after_submission($response, $payload, $form_data)
     {
         if (is_wp_error($response)) {
-            do_action('wpct_erp_forms_on_failure', $response, $form_data);
+            do_action('forms_bridge_on_failure', $response, $form_data);
 
             $this->notify_error(
                 $form_data,
@@ -234,14 +227,12 @@ abstract class Integration extends Singleton
                 print_r($response->get_error_data(), true)
             );
         } else {
-            do_action('wpct_erp_forms_after_submission', $response, $form_data);
+            do_action('forms_bridge_after_submission', $response, $form_data);
         }
     }
 
     /**
      * Apply cast pipes to the submission data.
-     *
-     * @since 3.0.0
      *
      * @param array $payload Submission data.
      * @param array $form_data Form data.
@@ -265,8 +256,6 @@ abstract class Integration extends Singleton
 
     /**
      * Cast value to type.
-     *
-     * @since 3.0.0
      *
      * @param string $type Target type to cast value.
      * @param any $value Original value.
@@ -299,8 +288,6 @@ abstract class Integration extends Singleton
     /**
      * Clean up submission empty fields.
      *
-     * @since 1.0.0
-     *
      * @param array $submission_data Submission data.
      * @return array $submission_data Submission data without empty fields.
      */
@@ -315,8 +302,6 @@ abstract class Integration extends Singleton
 
     /**
      * Transform collection of uploads to an attachments map.
-     *
-     * @since 3.0.0
      *
      * @param array $uploads Collection of uploaded files.
      * @return array $uploads Map of uploaded files.
@@ -344,8 +329,6 @@ abstract class Integration extends Singleton
     /**
      * Submit REST requests over HTTP methods.
      *
-     * @since 3.0.4
-     *
      * @param string $method HTTP method (GET, POST, PUT, DELETE).
      * @param string $url Target URL.
      * @param array $args Request arguments.
@@ -354,11 +337,11 @@ abstract class Integration extends Singleton
     private function submit_rest($method, $url, $args)
     {
         $m = strtolower($method);
-        $func = "\WPCT_HTTP\wpct_http_{$m}";
+        $func = "\HTTP_BRIDGE\http_bridge_{$m}";
         if (!is_callable($func)) {
             return new WP_Error(
                 'http_method_not_allowed',
-                __("Unkown HTTP method: {$method}", 'wpct-erp-forms'),
+                __("Unkown HTTP method: {$method}", 'forms-bridge'),
                 ['status' => 405]
             );
         }
@@ -374,8 +357,6 @@ abstract class Integration extends Singleton
     /**
      * JSON RPC login request.
      *
-     * @since 2.0.0
-     *
      * @param string $endpoint Target endpoint.
      * @return array $credentials Tuple with $session_id and $user_id.
      */
@@ -386,10 +367,10 @@ abstract class Integration extends Singleton
             'database' => $database,
             'user' => $user,
             'password' => $password,
-        ] = Settings::get_setting('wpct-erp-forms', 'rpc-api');
+        ] = Settings::get_setting('forms-bridge', 'rpc-api');
 
         $payload = apply_filters(
-            'wpct_erp_forms_rpc_login',
+            'forms_bridge_rpc_login',
             $this->rpc_payload($session_id, 'common', 'login', [
                 $database,
                 $user,
@@ -397,7 +378,7 @@ abstract class Integration extends Singleton
             ])
         );
 
-        $res = wpct_http_post($url, ['data' => $payload]);
+        $res = \HTTP_BRIDGE\http_bridge_post($url, ['data' => $payload]);
 
         if (is_wp_error($res)) {
             throw new Exception('Error while establish RPC session');
@@ -414,8 +395,6 @@ abstract class Integration extends Singleton
 
     /**
      * Submit submission over Odoo's JSON-RPC API.
-     *
-     * @since 2.0.0
      *
      * @param array $models Array of target models.
      * @param array $payload Submission data.
@@ -444,12 +423,12 @@ abstract class Integration extends Singleton
         );
 
         $database = Settings::get_setting(
-            'wpct-erp-forms',
+            'forms-bridge',
             'rpc-api',
             'database'
         );
         $password = Settings::get_setting(
-            'wpct-erp-forms',
+            'forms-bridge',
             'rpc-api',
             'password'
         );
@@ -461,7 +440,7 @@ abstract class Integration extends Singleton
         }
 
         $payload = apply_filters(
-            'wpct_erp_forms_rpc_payload',
+            'forms_bridge_rpc_payload',
             $this->rpc_payload($session_id, 'object', 'execute', [
                 $database,
                 $user_id,
@@ -474,7 +453,7 @@ abstract class Integration extends Singleton
             $form_data
         );
 
-        $response = wpct_http_post($url, [
+        $response = \HTTP_BRIDGE\http_bridge_post($url, [
             'data' => $payload,
             'files' => $attachments,
             'headers' => $headers,
@@ -493,8 +472,6 @@ abstract class Integration extends Singleton
 
     /**
      * RPC payload decorator.
-     *
-     * @since 2.0.0
      *
      * @param int $session_id RPC session ID.
      * @param string $service RPC service name.

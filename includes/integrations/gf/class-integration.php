@@ -1,29 +1,28 @@
 <?php
 
-namespace WPCT_ERP_FORMS\GF;
+namespace FORMS_BRIDGE\GF;
 
+use FORMS_BRIDGE\Integration as BaseIntegration;
 use Exception;
 use TypeError;
-use WPCT_ERP_FORMS\Integration as BaseIntegration;
 use GFAPI;
 use GFCommon;
 use GFFormDisplay;
 use GFFormsModel;
 
+if (!defined('ABSPATH')) {
+    exit();
+}
+
 require_once 'attachments.php';
-require_once 'fields-population.php';
 
 /**
  * GravityForms integration.
- *
- * @since 1.0.0
  */
 class Integration extends BaseIntegration
 {
     /**
      * Inherit prent constructor and hooks submissions to gform_after_submission
-     *
-     * @since 0.0.1
      */
     protected function __construct()
     {
@@ -41,8 +40,6 @@ class Integration extends BaseIntegration
 
     /**
      * Integration initializer to be fired on wp init.
-     *
-     * @since 0.0.1
      */
     protected function init()
     {
@@ -76,8 +73,6 @@ class Integration extends BaseIntegration
     /**
      * Retrive form data by ID.
      *
-     * @since 3.0.0
-     *
      * @param int $form_id Form ID.
      * @return array $form_data Form data.
      */
@@ -93,8 +88,6 @@ class Integration extends BaseIntegration
 
     /**
      * Retrive available forms data.
-     *
-     * @since 3.0.0
      *
      * @return array $forms Collection of form data array representations.
      */
@@ -113,8 +106,6 @@ class Integration extends BaseIntegration
 
     /**
      * Retrive the current submission data.
-     *
-     * @since 3.0.0
      *
      * @return array $submission Submission data.
      */
@@ -138,8 +129,6 @@ class Integration extends BaseIntegration
     /**
      * Retrive the current submission uploaded files.
      *
-     * @since 3.0.0
-     *
      * @return array $files Collection of uploaded files.
      */
     public function get_uploads()
@@ -162,8 +151,6 @@ class Integration extends BaseIntegration
     /**
      * Serialize gf form data.
      *
-     * @since 1.0.0
-     *
      * @param array $form GF form data.
      * @return array $form_data Form data.
      */
@@ -173,7 +160,7 @@ class Integration extends BaseIntegration
             'id' => $form['id'],
             'title' => $form['title'],
             'hooks' => apply_filters(
-                'wpct_erp_forms_form_hooks',
+                'forms_bridge_form_hooks',
                 null,
                 $form['id']
             ),
@@ -187,8 +174,6 @@ class Integration extends BaseIntegration
 
     /**
      * Serialize GF form data field.
-     *
-     * @since 1.0.0
      *
      * @param object GFField instance.
      * @param array From data.
@@ -248,8 +233,6 @@ class Integration extends BaseIntegration
 
     /**
      * Serialize current form submission data.
-     *
-     * @since 1.0.0
      *
      * @param array $submission GF form lead.
      * @param array @form Form data.
@@ -331,8 +314,6 @@ class Integration extends BaseIntegration
     /**
      * Format field values with noop fallback.
      *
-     * @since 1.0.0
-     *
      * @param any $value Field value.
      * @param object $field GFField instance.
      * @param array $input GFField input data.
@@ -359,15 +340,13 @@ class Integration extends BaseIntegration
     /**
      * Get current submission uploaded files.
      *
-     * @since 1.0.0
-     *
      * @param array $submission GF lead data.
      * @param array $form_data Form data.
      * @return array $uploads Uploaded files data.
      */
     protected function submission_uploads($submission, $form_data)
     {
-        $private_upload = wpct_erp_forms_private_upload($form_data['id']);
+        $private_upload = forms_bridge_private_upload($form_data['id']);
 
         return array_reduce(
             array_filter($form_data['fields'], function ($field) {
@@ -385,8 +364,8 @@ class Integration extends BaseIntegration
                     if ($private_upload) {
                         $url = parse_url($path);
                         parse_str($url['query'], $query);
-                        $path = wpct_erp_forms_attachment_fullpath(
-                            $query['erp-forms-attachment']
+                        $path = forms_bridge_attachment_fullpath(
+                            $query['forms-bridge-attachment']
                         );
                     }
 

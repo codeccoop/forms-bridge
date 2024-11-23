@@ -8,7 +8,7 @@ import SettingsPage from "./SettingsPage/index.jsx";
 import ErrorBoundary from "./ErrorBoundary.jsx";
 
 domReady(() => {
-  const root = createRoot(document.getElementById("wpct-erp-forms"));
+  const root = createRoot(document.getElementById("forms-bridge"));
 
   root.render(
     <ErrorBoundary fallback={<h1>Error</h1>}>

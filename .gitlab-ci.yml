@@ -45,7 +45,7 @@ package:
   image: javieraviles/zip:latest
   stage: package
   script:
-    - 'zip -r $ZIP * -x "*CODE_OF_CONDUCT.md" -x "*node_modules*" -x "*bin/*" -x "*tests/*" -x "*.git/*" -x "*.gitignore" -x "*.gitlab-ci.yml" -x "*.gitmodules" -x "*.php-cs-fixer.cache" -x "*phpunit.xml.dist" -x "*.phpcs.xml.dist" -x "*Gruntfile.js" -x "*package.json" -x "*package-lock.json" -x "*.travis.yml" -x "*.editorconfig" -x "*.distignore" -x "*src/*" -x "*.husky*" -x ".lintstagedrc.js" -x ".pretierrc" -x ".prettierrc-php" -x ".prettierignore" -x "eslint.config.js" -x "*.nvimrc*"'
+    - 'zip -r $ZIP * -x "*CODE_OF_CONDUCT.md" -x "*node_modules*" -x "*bin/*" -x "*tests/*" -x "*.git*" -x "*.php-cs-fixer.cache" -x "*phpunit.xml.dist" -x "*.phpcs.xml.dist" -x "*package.json" -x "*package-lock.json" -x "*.editorconfig" -x "*.distignore" -x "*src/*" -x "*.husky*" -x "*.lintstagedrc.js" -x "*.prettie*" -x "*eslint.config.js" -x "*.nvimrc*"'
     - 'ls -lah'
   artifacts:
     paths:
@@ -66,4 +66,4 @@ release:
   script:
     - |
       release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
-        --assets-link "{\"name\":\"${ZIP}\",\"url\":\"${PACKAGE_REGISTRY_URL}\/${ZIP}\",\"link_type\":\"package\",\"filepath\":\"\/plugins\/${ZIP}\"}"
+        --assets-link "{\"name\":\"${ZIP}\",\"url\":\"${PACKAGE_REGISTRY_URL}\/${ZIP}\",\"link_type\":\"package\",\"filepath\":\"\/plugins\/bridges\/${ZIP}\"}"

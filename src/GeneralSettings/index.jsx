@@ -13,10 +13,10 @@ import {
 // source
 import { useGeneral } from "../providers/Settings";
 import Backends from "./Backends";
-import { useI18n } from "../providers/I18n";
 
 export default function GeneralSettings() {
-  const __ = useI18n();
+  const __ = wp.i18n.__;
+
   const [{ receiver, backends }, save] = useGeneral();
 
   const update = (field) => save({ receiver, backends, ...field });
@@ -24,12 +24,12 @@ export default function GeneralSettings() {
   return (
     <Card size="large" style={{ height: "fit-content" }}>
       <CardHeader>
-        <Heading level={3}>{__("General", "wpct-erp-forms")}</Heading>
+        <Heading level={3}>{__("General", "forms-bridge")}</Heading>
       </CardHeader>
       <CardBody>
         <PanelRow>
           <TextControl
-            label={__("Notification receiver", "wpct-erp-forms")}
+            label={__("Notification receiver", "forms-bridge")}
             onChange={(receiver) => update({ receiver })}
             value={receiver}
             style={{ width: "220px" }}

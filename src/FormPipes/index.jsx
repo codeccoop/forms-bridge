@@ -5,10 +5,9 @@ import { useState } from "@wordpress/element";
 
 // source
 import PipesTable from "./Table";
-import { useI18n } from "../providers/I18n";
 
 export default function FormPipes({ formId, pipes, setPipes }) {
-  const __ = useI18n();
+  const __ = wp.i18n.__;
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -17,11 +16,11 @@ export default function FormPipes({ formId, pipes, setPipes }) {
         onClick={() => setOpen(true)}
         style={{ width: "130px", justifyContent: "center", height: "32px" }}
       >
-        {__("Pipes", "wpct-erp-forms")}
+        {__("Pipes", "forms-bridge")}
       </Button>
       {open && (
         <Modal
-          title={__("Form pipes", "wpct-erp-forms")}
+          title={__("Form pipes", "forms-bridge")}
           onRequestClose={() => setOpen(false)}
         >
           <PipesTable formId={formId} pipes={pipes} setPipes={setPipes} />

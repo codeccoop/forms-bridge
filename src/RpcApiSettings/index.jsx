@@ -13,10 +13,9 @@ import {
 // source
 import { useRpcApi } from "../providers/Settings";
 import FormHooks from "./FormHooks";
-import { useI18n } from "../providers/I18n";
 
 export default function RpcApiSettings() {
-  const __ = useI18n();
+  const __ = wp.i18n.__;
   const [{ endpoint, user, password, database, form_hooks: hooks }, save] =
     useRpcApi();
 
@@ -26,12 +25,12 @@ export default function RpcApiSettings() {
   return (
     <Card size="large" style={{ height: "fit-content" }}>
       <CardHeader>
-        <Heading level={3}>{__("RPC API", "wpct-erp-forms")}</Heading>
+        <Heading level={3}>{__("RPC API", "forms-bridge")}</Heading>
       </CardHeader>
       <CardBody>
         <PanelRow>
           <TextControl
-            label={__("Endpoint", "wpct-erp-forms")}
+            label={__("Endpoint", "forms-bridge")}
             onChange={(endpoint) => update({ endpoint })}
             value={endpoint}
             __nextHasNoMarginBottom
@@ -39,7 +38,7 @@ export default function RpcApiSettings() {
         </PanelRow>
         <PanelRow>
           <TextControl
-            label={__("Database", "wpct-erp-forms")}
+            label={__("Database", "forms-bridge")}
             onChange={(database) => update({ database })}
             value={database}
             __nextHasNoMarginBottom
@@ -47,7 +46,7 @@ export default function RpcApiSettings() {
         </PanelRow>
         <PanelRow>
           <TextControl
-            label={__("User", "wpct-erp-forms")}
+            label={__("User", "forms-bridge")}
             onChange={(user) => update({ user })}
             value={user}
             __nextHasNoMarginBottom
@@ -55,7 +54,7 @@ export default function RpcApiSettings() {
         </PanelRow>
         <PanelRow>
           <TextControl
-            label={__("Password", "wpct-erp-forms")}
+            label={__("Password", "forms-bridge")}
             onChange={(password) => update({ password })}
             value={password}
             __nextHasNoMarginBottom

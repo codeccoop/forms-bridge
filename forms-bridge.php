@@ -1,21 +1,21 @@
 <?php
 
 /*
-Plugin Name:     Wpct ERP Forms
-Plugin URI:      https://git.coopdevs.org/codeccoop/wp/plugins/wpct-erp-forms
-Description:     Plugin to bridge WP forms submissions to a ERP backend
+Plugin Name:     Forms Bridge
+Plugin URI:      https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge
+Description:     Plugin to bridge WP forms submissions to any backend
 Author:          Còdec
 Author URI:      https://www.codeccoop.org
-Text Domain:     wpct-erp-forms
+Text Domain:     forms-bridge
 Domain Path:     /languages
-Version:         3.0.7
+Version:         1.0.0
 */
 
-namespace WPCT_ERP_FORMS;
+namespace FORMS_BRIDGE;
 
-use WPCT_ERP_FORMS\WPCF7\Integration as Wpcf7Integration;
-use WPCT_ERP_FORMS\GF\Integration as GFIntegration;
-use WPCT_ERP_FORMS\WPFORMS\Integration as WPFormsIntegration;
+use FORMS_BRIDGE\WPCF7\Integration as Wpcf7Integration;
+use FORMS_BRIDGE\GF\Integration as GFIntegration;
+use FORMS_BRIDGE\WPFORMS\Integration as WPFormsIntegration;
 use WPCT_ABSTRACT\Plugin as BasePlugin;
 
 if (!defined('ABSPATH')) {
@@ -23,69 +23,64 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Handle plugin version
+ * Handle plugin version.
  *
- * @since 0.0.1
- *
- * @var string WPCT_ERP_FORMS_VERSION Current plugin versio.
+ * @var string FORMS_BRIDGE_VERSION Current plugin version.
  */
-define('WPCT_ERP_FORMS_VERSION', '3.0.7');
+define('FORMS_BRIDGE_VERSION', '1.0.0');
 
 require_once 'abstracts/class-singleton.php';
 require_once 'abstracts/class-plugin.php';
 require_once 'abstracts/class-menu.php';
 require_once 'abstracts/class-settings.php';
 
-require_once 'wpct-http-bridge/wpct-http-bridge.php';
-require_once 'wpct-i18n/wpct-i18n.php';
+require_once 'deps/http/http-bridge.php';
+require_once 'deps/i18n/wpct-i18n.php';
 
 require_once 'includes/abstract-integration.php';
 require_once 'includes/class-menu.php';
 require_once 'includes/class-settings.php';
 require_once 'includes/class-rest-controller.php';
 
-class Wpct_Erp_Forms extends BasePlugin
+/**
+ * Forms Bridge plugin.
+ */
+class Forms_Bridge extends BasePlugin
 {
     /**
      * Handle plugin active integrations.
      *
-     * @since 1.0.0
-     *
      * @var array $_integrations
      */
-    private $_integrations = null;
+    private $_integrations = [
+        'gf' => null,
+        'wpforms' => null,
+        'wpcf7' => null,
+    ];
 
     /**
      * Handle plugin name.
      *
-     * @since 1.0.0
-     *
      * @var string $name Plugin name.
      */
-    public static $name = 'Wpct ERP Forms';
+    public static $name = 'Forms Bridge';
 
     /**
      * Handle plugin textdomain.
      *
-     * @since 1.0.0
-     *
      * @var string $textdomain Plugin text domain.
      */
-    public static $textdomain = 'wpct-erp-forms';
+    public static $textdomain = 'forms-bridge';
 
     /**
      * Handle plugin menu class name.
      *
-     * @since 1.0.0
-     *
      * @var string $menu_class Plugin menu class name.
      */
-    protected static $menu_class = '\WPCT_ERP_FORMS\Menu';
+    protected static $menu_class = '\FORMS_BRIDGE\Menu';
 
     /**
      * Starts the plugin.
-     *
-     * @since 3.0.0
      */
     public static function start()
     {
@@ -94,8 +89,6 @@ class Wpct_Erp_Forms extends BasePlugin
 
     /**
      * Initialize integrations, REST Controller and setup plugin hooks.
-     *
-     * @since 1.0.0
      */
     protected function __construct()
     {
@@ -109,8 +102,6 @@ class Wpct_Erp_Forms extends BasePlugin
 
     /**
      * Load plugin integrations.
-     *
-     * @since 3.0.0
      */
     private function load_integrations()
     {
@@ -147,9 +138,7 @@ class Wpct_Erp_Forms extends BasePlugin
     }
 
     /**
-     * Bound plugin to wp hooks.
-     *
-     * @since 3.0.0
+     * Bind plugin to wp hooks.
      */
     private function wp_hooks()
     {
@@ -161,7 +150,7 @@ class Wpct_Erp_Forms extends BasePlugin
                     return $links;
                 }
 
-                $url = admin_url('options-general.php?page=wpct-erp-forms');
+                $url = admin_url('options-general.php?page=forms-bridge');
                 $label = __('Settings');
                 $link = "<a href='{$url}'>{$label}</a>";
                 array_unshift($links, $link);
@@ -172,15 +161,12 @@ class Wpct_Erp_Forms extends BasePlugin
         );
 
         // Patch http bridge settings to erp forms settings
-        add_filter('option_wpct-erp-forms_general', function ($value) {
-            $http_setting = Settings::get_setting(
-                'wpct-http-bridge',
-                'general'
-            );
-            foreach ($http_setting as $key => $val) {
-                $value[$key] = $val;
-            }
+        add_filter('option_forms-bridge_general', function ($value) {
+            $http_setting = Settings::get_setting('http-bridge', 'general');
 
+            $value['backends'] = isset($http_setting['backends'])
+                ? (array) $http_setting['backends']
+                : [];
             return $value;
         });
 
@@ -188,16 +174,16 @@ class Wpct_Erp_Forms extends BasePlugin
         add_action(
             'updated_option',
             function ($option, $from, $to) {
-                if ($option !== 'wpct-erp-forms_general') {
+                if ($option !== 'forms-bridge_general') {
                     return;
                 }
 
-                $http_setting = Settings::get_setting(
-                    'wpct-http-bridge',
-                    'general'
-                );
-                $http_setting['backends'] = $to['backends'];
-                update_option('wpct-http-bridge_general', $http_setting);
+                $http_setting = Settings::get_setting('http-bridge', 'general');
+
+                $http_setting['backends'] = isset($to['backends'])
+                    ? (array) $to['backends']
+                    : [];
+                update_option('http-bridge_general', $http_setting);
             },
             10,
             3
@@ -219,14 +205,12 @@ class Wpct_Erp_Forms extends BasePlugin
 
     /**
      * Add plugin custom filters.
-     *
-     * @since 3.0.0
      */
     private function custom_hooks()
     {
         // Return registerd form hooks
         add_filter(
-            'wpct_erp_forms_form_hooks',
+            'forms_bridge_form_hooks',
             function ($default, $form_id) {
                 return $this->get_form_hooks($form_id);
             },
@@ -235,7 +219,7 @@ class Wpct_Erp_Forms extends BasePlugin
         );
 
         // Return pair plugin registered forms datums
-        add_filter('wpct_erp_forms_forms', function () {
+        add_filter('forms_bridge_forms', function () {
             $integration = $this->get_integration();
             if (!$integration) {
                 return [];
@@ -246,7 +230,7 @@ class Wpct_Erp_Forms extends BasePlugin
 
         // Return current pair plugin form representation
         // If $form_id is passed, retrives form by ID.
-        add_filter('wpct_erp_forms_form', function ($default, $form_id = null) {
+        add_filter('forms_bridge_form', function ($default, $form_id = null) {
             $integration = $this->get_integration();
             if (!$integration) {
                 return null;
@@ -260,7 +244,7 @@ class Wpct_Erp_Forms extends BasePlugin
         });
 
         // Check if current form is bound to certain hook
-        add_filter('wpct_erp_forms_is_hooked', function ($default, $hook_name) {
+        add_filter('forms_bridge_is_hooked', function ($default, $hook_name) {
             $integration = $this->get_integration();
             if (!$integration) {
                 return false;
@@ -275,7 +259,7 @@ class Wpct_Erp_Forms extends BasePlugin
         });
 
         // Return the current submission data
-        add_filter('wpct_erp_forms_submission', function () {
+        add_filter('forms_bridge_submission', function () {
             $integration = $this->get_integration();
             if (!$integration) {
                 return null;
@@ -285,7 +269,7 @@ class Wpct_Erp_Forms extends BasePlugin
         });
 
         // Return the current submission uploaded files
-        add_filter('wpct_erp_forms_uploads', function () {
+        add_filter('forms_bridge_uploads', function () {
             $integration = $this->get_integration();
             if (!$integration) {
                 return null;
@@ -297,8 +281,6 @@ class Wpct_Erp_Forms extends BasePlugin
 
     /**
      * Initialize the plugin on wp init.
-     *
-     * @since 1.0.0
      */
     public function init()
     {
@@ -306,8 +288,6 @@ class Wpct_Erp_Forms extends BasePlugin
 
     /**
      * Callback to activation hook.
-     *
-     * @since 1.0.0
      */
     public static function activate()
     {
@@ -315,8 +295,6 @@ class Wpct_Erp_Forms extends BasePlugin
 
     /**
      * Callback to deactivation hook.
-     *
-     * @since 1.0.0
      */
     public static function deactivate()
     {
@@ -325,13 +303,11 @@ class Wpct_Erp_Forms extends BasePlugin
     /**
      * Return the current integration.
      *
-     * @since 3.0.0
-     *
      * @return object $integration
      */
     private function get_integration()
     {
-        foreach ($this->_integrations as $key => $integration) {
+        foreach (array_values($this->_integrations) as $integration) {
             if ($integration) {
                 return $integration;
             }
@@ -340,8 +316,6 @@ class Wpct_Erp_Forms extends BasePlugin
 
     /**
      * Return form API hooks.
-     *
-     * @since 3.0.0
      *
      * @return array $hooks Array with hooks.
      */
@@ -362,12 +336,12 @@ class Wpct_Erp_Forms extends BasePlugin
         }
 
         $rest_hooks = Settings::get_setting(
-            'wpct-erp-forms',
+            'forms-bridge',
             'rest-api',
             'form_hooks'
         );
         $rpc_hooks = Settings::get_setting(
-            'wpct-erp-forms',
+            'forms-bridge',
             'rpc-api',
             'form_hooks'
         );
@@ -388,13 +362,11 @@ class Wpct_Erp_Forms extends BasePlugin
     /**
      * Enqueue admin client scripts
      *
-     * @since 3.0.0
-     *
      * @param string $admin_page Current admin page.
      */
     private function admin_enqueue_scripts($admin_page)
     {
-        if ('settings_page_wpct-erp-forms' !== $admin_page) {
+        if ('settings_page_forms-bridge' !== $admin_page) {
             return;
         }
 
@@ -411,8 +383,14 @@ class Wpct_Erp_Forms extends BasePlugin
                 'wp-i18n',
                 'wp-api',
             ],
-            WPCT_ERP_FORMS_VERSION,
+            FORMS_BRIDGE_VERSION,
             ['in_footer' => true]
+        );
+
+        wp_set_script_translations(
+            $this->get_textdomain(),
+            $this->get_textdomain(),
+            plugin_dir_path(__FILE__) . 'languages'
         );
 
         wp_enqueue_style('wp-components');
@@ -420,4 +398,4 @@ class Wpct_Erp_Forms extends BasePlugin
 }
 
 // Setup plugin on wp plugins_loaded hook
-add_action('plugins_loaded', ['\WPCT_ERP_FORMS\Wpct_Erp_Forms', 'start'], 9);
+add_action('plugins_loaded', ['\FORMS_BRIDGE\Forms_Bridge', 'start'], 9);

@@ -14,7 +14,7 @@ trim_trailing_whitespace = true
 indent_style = tab
 indent_size = 4
 
-[{.jshintrc,*.json,*.yml,*.js,*.jsx,*.ts,*.tsx}]
+[{.jshintrc,*.json,*.yml,*.js,*.jsx,*.ts,*.tsx,*.vue}]
 indent_style = space
 indent_size = 2
 

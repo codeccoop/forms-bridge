@@ -11,12 +11,11 @@ import { useState, useRef, useEffect } from "@wordpress/element";
 // source
 import { useForms } from "../../providers/Forms";
 import { useGeneral } from "../../providers/Settings";
-import { useI18n } from "../../providers/I18n";
 import useHookNames from "../../hooks/useHookNames";
 import FormPipes from "../../FormPipes";
 
 function NewFormHook({ add }) {
-  const __ = useI18n();
+  const __ = wp.i18n.__;
   const [{ backends }] = useGeneral();
   const backendOptions = backends.map(({ name }) => ({
     label: name,
@@ -31,17 +30,18 @@ function NewFormHook({ add }) {
   const hookNames = useHookNames();
 
   const [name, setName] = useState("");
-  const [backend, setBackend] = useState(backendOptions?.[0].value || "");
+  const [backend, setBackend] = useState(backendOptions[0]?.value || "");
   const [model, setModel] = useState("");
-  const [formId, setFormId] = useState(formOptions?.[0].value || "");
+  const [formId, setFormId] = useState(formOptions[0]?.value || "");
   const [nameConflict, setNameConflict] = useState(false);
 
   const handleSetName = (name) => {
     setNameConflict(hookNames.has(name));
-    setName(name.trim());
+    setName(name);
   };
 
-  const onClick = () => add({ name, backend, model, form_id: formId });
+  const onClick = () =>
+    add({ name: name.trim(), backend, model, form_id: formId });
 
   const disabled = !(name && backend && model && formId && !nameConflict);
 
@@ -62,10 +62,10 @@ function NewFormHook({ add }) {
       >
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <TextControl
-            label={__("Name", "wpct-erp-forms")}
+            label={__("Name", "forms-bridge")}
             help={
               nameConflict
-                ? __("This name is already in use", "wpct-erp-forms")
+                ? __("This name is already in use", "forms-bridge")
                 : ""
             }
             value={name}
@@ -75,7 +75,7 @@ function NewFormHook({ add }) {
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <SelectControl
-            label={__("Backend", "wpct-erp-forms")}
+            label={__("Backend", "forms-bridge")}
             value={backend}
             onChange={setBackend}
             options={backendOptions}
@@ -84,7 +84,7 @@ function NewFormHook({ add }) {
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <TextControl
-            label={__("Model", "wpct-erp-forms")}
+            label={__("Model", "forms-bridge")}
             value={model}
             onChange={setModel}
             __nextHasNoMarginBottom
@@ -92,7 +92,7 @@ function NewFormHook({ add }) {
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <SelectControl
-            label={__("Form", "wpct-erp-forms")}
+            label={__("Form", "forms-bridge")}
             value={formId}
             onChange={setFormId}
             options={formOptions}
@@ -120,7 +120,7 @@ function NewFormHook({ add }) {
               maxWidth: "100%",
             }}
           >
-            {__("Add form", "wpct-erp-forms")}
+            {__("Add form", "forms-bridge")}
           </label>
           <Button
             variant="primary"
@@ -128,7 +128,7 @@ function NewFormHook({ add }) {
             style={{ width: "130px", justifyContent: "center", height: "32px" }}
             disabled={disabled}
           >
-            {__("Add", "wpct-erp-forms")}
+            {__("Add", "forms-bridge")}
           </Button>
         </div>
       </div>
@@ -140,7 +140,7 @@ let focus;
 export default function FormHook({ update, remove, ...data }) {
   if (data.name === "add") return <NewFormHook add={update} />;
 
-  const __ = useI18n();
+  const __ = wp.i18n.__;
   const [{ backends }] = useGeneral();
   const backendOptions = backends.map(({ name }) => ({
     label: name,
@@ -160,7 +160,7 @@ export default function FormHook({ update, remove, ...data }) {
   const [nameConflict, setNameConflict] = useState(false);
   const handleSetName = (name) => {
     setNameConflict(name !== initialName.current && hookNames.has(name));
-    setName(name.trim());
+    setName(name);
   };
 
   useEffect(() => {
@@ -173,7 +173,10 @@ export default function FormHook({ update, remove, ...data }) {
   useEffect(() => {
     clearTimeout(timeout.current);
     if (!name || nameConflict) return;
-    timeout.current = setTimeout(() => update({ ...data, name }), 500);
+    timeout.current = setTimeout(
+      () => update({ ...data, name: name.trim() }),
+      500
+    );
   }, [name]);
 
   useEffect(() => setName(data.name), [data.name]);
@@ -196,10 +199,10 @@ export default function FormHook({ update, remove, ...data }) {
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <TextControl
             ref={nameInput}
-            label={__("Name", "wpct-erp-forms")}
+            label={__("Name", "forms-bridge")}
             help={
               nameConflict
-                ? __("This name is already in use", "wpct-erp-forms")
+                ? __("This name is already in use", "forms-bridge")
                 : ""
             }
             value={name}
@@ -211,7 +214,7 @@ export default function FormHook({ update, remove, ...data }) {
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <SelectControl
-            label={__("Backend", "wpct-erp-forms")}
+            label={__("Backend", "forms-bridge")}
             value={data.backend}
             onChange={(backend) => update({ ...data, backend })}
             options={backendOptions}
@@ -220,7 +223,7 @@ export default function FormHook({ update, remove, ...data }) {
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <TextControl
-            label={__("Model", "wpct-erp-forms")}
+            label={__("Model", "forms-bridge")}
             value={data.model}
             onChange={(model) => update({ ...data, model })}
             __nextHasNoMarginBottom
@@ -228,7 +231,7 @@ export default function FormHook({ update, remove, ...data }) {
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <SelectControl
-            label={__("Form", "wpct-erp-forms")}
+            label={__("Form", "forms-bridge")}
             value={data.form_id}
             onChange={(form_id) => update({ ...data, form_id })}
             options={formOptions}
@@ -254,7 +257,7 @@ export default function FormHook({ update, remove, ...data }) {
               marginBottom: "calc(4px)",
             }}
           >
-            {__("Edit pipes", "wpct-erp-forms")}
+            {__("Edit pipes", "forms-bridge")}
           </label>
           <FormPipes
             formId={data.form_id}
@@ -274,7 +277,7 @@ export default function FormHook({ update, remove, ...data }) {
               maxWidth: "100%",
             }}
           >
-            {__("Remove form", "wpct-erp-forms")}
+            {__("Remove form", "forms-bridge")}
           </label>
           <Button
             isDestructive
@@ -282,7 +285,7 @@ export default function FormHook({ update, remove, ...data }) {
             onClick={() => remove(data)}
             style={{ width: "130px", justifyContent: "center", height: "32px" }}
           >
-            {__("Remove", "wpct-erp-forms")}
+            {__("Remove", "forms-bridge")}
           </Button>
         </div>
       </div>

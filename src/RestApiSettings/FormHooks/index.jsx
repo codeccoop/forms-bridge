@@ -4,10 +4,9 @@ import { TabPanel } from "@wordpress/components";
 
 // source
 import FormHook from "./FormHook";
-import { useI18n } from "../../providers/I18n";
 
 export default function FormHooks({ hooks, setHooks }) {
-  const __ = useI18n();
+  const __ = wp.i18n.__;
   const tabs = hooks
     .map(({ backend, method, endpoint, form_id, name, pipes }) => ({
       name,
@@ -20,7 +19,7 @@ export default function FormHooks({ hooks, setHooks }) {
     }))
     .concat([
       {
-        title: __("Add Form", "wpct-erp-forms"),
+        title: __("Add Form", "forms-bridge"),
         name: "add",
       },
     ]);
@@ -51,7 +50,7 @@ export default function FormHooks({ hooks, setHooks }) {
           marginBottom: "calc(8px)",
         }}
       >
-        {__("Form Hooks", "wpct-erp-forms")}
+        {__("Form Hooks", "forms-bridge")}
       </label>
       <TabPanel tabs={tabs}>
         {(hook) => (

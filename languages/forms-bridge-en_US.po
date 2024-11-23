@@ -1,0 +1,233 @@
+# Copyright (C) 2024 Còdec
+# This file is distributed under the same license as the Forms Bridge plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Forms Bridge\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/forms-bridge\n"
+"Last-Translator: Lucas García <lucas@codeccoop.org>\n"
+"Language-Team: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-11-23T00:33:18+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Language: en_US\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: forms-bridge\n"
+
+#. Plugin Name of the plugin
+#: forms-bridge.php
+msgid "Forms Bridge"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: forms-bridge.php
+msgid "https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge"
+msgstr ""
+
+#. Description of the plugin
+#: forms-bridge.php
+msgid "Plugin to bridge WP forms submissions to any backend"
+msgstr ""
+
+#. Author of the plugin
+#: forms-bridge.php
+msgid "Còdec"
+msgstr ""
+
+#. Author URI of the plugin
+#: forms-bridge.php
+msgid "https://www.codeccoop.org"
+msgstr ""
+
+#: includes/class-menu.php:30
+msgid "Loading"
+msgstr ""
+
+#: src/FormPipes/index.jsx:19
+msgid "Pipes"
+msgstr ""
+
+#: src/FormPipes/index.jsx:23
+msgid "Form pipes"
+msgstr ""
+
+#: src/FormPipes/Table.jsx:45
+msgid "Submission ID"
+msgstr ""
+
+#: src/FormPipes/Table.jsx:94
+msgid "Form format pipes"
+msgstr ""
+
+#: src/FormPipes/Table.jsx:102
+msgid "From"
+msgstr ""
+
+#: src/FormPipes/Table.jsx:111
+msgid "To"
+msgstr ""
+
+#: src/FormPipes/Table.jsx:119
+msgid "Cast as"
+msgstr ""
+
+#: src/FormPipes/Table.jsx:136
+#: src/GeneralSettings/Backends/Headers.jsx:75
+msgid "Drop"
+msgstr ""
+
+#: src/FormPipes/Table.jsx:149
+#: src/GeneralSettings/Backends/Backend.jsx:69
+#: src/GeneralSettings/Backends/Headers.jsx:88
+#: src/RestApiSettings/FormHooks/FormHook.jsx:167
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:131
+msgid "Add"
+msgstr ""
+
+#: src/GeneralSettings/Backends/Backend.jsx:46
+#: src/GeneralSettings/Backends/Backend.jsx:125
+msgid "Backend name"
+msgstr ""
+
+#: src/GeneralSettings/Backends/Backend.jsx:49
+#: src/GeneralSettings/Backends/Backend.jsx:128
+#: src/RestApiSettings/FormHooks/FormHook.jsx:95
+#: src/RestApiSettings/FormHooks/FormHook.jsx:240
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:68
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:205
+msgid "This name is already in use"
+msgstr ""
+
+#: src/GeneralSettings/Backends/Backend.jsx:58
+#: src/GeneralSettings/Backends/Backend.jsx:139
+msgid "Backend base URL"
+msgstr ""
+
+#: src/GeneralSettings/Backends/Backend.jsx:154
+msgid "Remove backend"
+msgstr ""
+
+#: src/GeneralSettings/Backends/Backend.jsx:162
+#: src/RestApiSettings/FormHooks/FormHook.jsx:332
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:288
+msgid "Remove"
+msgstr ""
+
+#: src/GeneralSettings/Backends/Headers.jsx:46
+msgid "Backend HTTP Headers"
+msgstr ""
+
+#: src/GeneralSettings/Backends/Headers.jsx:54
+msgid "Header-Name"
+msgstr ""
+
+#: src/GeneralSettings/Backends/Headers.jsx:62
+msgid "Value"
+msgstr ""
+
+#: src/GeneralSettings/Backends/index.jsx:20
+msgid "Add Backend"
+msgstr ""
+
+#: src/GeneralSettings/Backends/index.jsx:53
+msgid "Backends"
+msgstr ""
+
+#: src/GeneralSettings/index.jsx:27
+msgid "General"
+msgstr ""
+
+#: src/GeneralSettings/index.jsx:32
+msgid "Notification receiver"
+msgstr ""
+
+#: src/RestApiSettings/FormHooks/FormHook.jsx:92
+#: src/RestApiSettings/FormHooks/FormHook.jsx:237
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:65
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:202
+msgid "Name"
+msgstr ""
+
+#: src/RestApiSettings/FormHooks/FormHook.jsx:105
+#: src/RestApiSettings/FormHooks/FormHook.jsx:252
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:78
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:217
+msgid "Backend"
+msgstr ""
+
+#: src/RestApiSettings/FormHooks/FormHook.jsx:114
+#: src/RestApiSettings/FormHooks/FormHook.jsx:261
+msgid "Method"
+msgstr ""
+
+#: src/RestApiSettings/FormHooks/FormHook.jsx:123
+#: src/RestApiSettings/FormHooks/FormHook.jsx:270
+#: src/RpcApiSettings/index.jsx:33
+msgid "Endpoint"
+msgstr ""
+
+#: src/RestApiSettings/FormHooks/FormHook.jsx:131
+#: src/RestApiSettings/FormHooks/FormHook.jsx:278
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:95
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:234
+msgid "Form"
+msgstr ""
+
+#: src/RestApiSettings/FormHooks/FormHook.jsx:159
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:123
+msgid "Add form"
+msgstr ""
+
+#: src/RestApiSettings/FormHooks/FormHook.jsx:304
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:260
+msgid "Edit pipes"
+msgstr ""
+
+#: src/RestApiSettings/FormHooks/FormHook.jsx:324
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:280
+msgid "Remove form"
+msgstr ""
+
+#: src/RestApiSettings/FormHooks/index.jsx:22
+#: src/RpcApiSettings/FormHooks/index.jsx:22
+msgid "Add Form"
+msgstr ""
+
+#: src/RestApiSettings/FormHooks/index.jsx:53
+#: src/RpcApiSettings/FormHooks/index.jsx:53
+msgid "Form Hooks"
+msgstr ""
+
+#: src/RestApiSettings/index.jsx:22
+msgid "REST API"
+msgstr ""
+
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:87
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:226
+msgid "Model"
+msgstr ""
+
+#: src/RpcApiSettings/index.jsx:28
+msgid "RPC API"
+msgstr ""
+
+#: src/RpcApiSettings/index.jsx:41
+msgid "Database"
+msgstr ""
+
+#: src/RpcApiSettings/index.jsx:49
+msgid "User"
+msgstr ""
+
+#: src/RpcApiSettings/index.jsx:57
+msgid "Password"
+msgstr ""
+
+#: src/SettingsPage/index.jsx:66
+msgid "Error"
+msgstr ""
+
+#: src/SettingsPage/index.jsx:66
+msgid "Save"
+msgstr ""

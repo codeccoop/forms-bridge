@@ -1,22 +1,22 @@
 <?php
 
-namespace WPCT_ERP_FORMS\WPCF7;
+namespace FORMS_BRIDGE\WPCF7;
 
-use WPCT_ERP_FORMS\Integration as BaseIntegration;
+use FORMS_BRIDGE\Integration as BaseIntegration;
 use WPCF7_ContactForm;
 use WPCF7_Submission;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 /**
  * ContactForm7 integration.
- *
- * @since 1.0.0
  */
 class Integration extends BaseIntegration
 {
     /**
      * Inherit parent constructor and hooks submissions to wpcf7_before_send_mail
-     *
-     * @since 0.0.1
      */
     protected function __construct()
     {
@@ -34,8 +34,6 @@ class Integration extends BaseIntegration
 
     /**
      * Integration initializer to be fired on wp init.
-     *
-     * @since 0.0.1
      */
     protected function init()
     {
@@ -59,8 +57,6 @@ class Integration extends BaseIntegration
     /**
      * Retrive form data by ID.
      *
-     * @since 3.0.0
-     *
      * @param int $form_id Form ID.
      * @return array $form_data Form data.
      */
@@ -77,8 +73,6 @@ class Integration extends BaseIntegration
     /**
      * Retrive available integration forms data.
      *
-     * @since 3.0.0
-     *
      * @return array $forms Collection of form data.
      */
     public function get_forms()
@@ -91,8 +85,6 @@ class Integration extends BaseIntegration
 
     /**
      * Retrive the current WPCF7_Submission data.
-     *
-     * @since 3.0.0
      *
      * @return array $submission Submission data.
      */
@@ -109,8 +101,6 @@ class Integration extends BaseIntegration
     /**
      * Retrive the current WPCF7_Submission uploaded files.
      *
-     * @since 3.0.0
-     *
      * @return array $files Uploaded files data.
      */
     public function get_uploads()
@@ -126,8 +116,6 @@ class Integration extends BaseIntegration
     /**
      * Serialize WPCF7_ContactForm data.
      *
-     * @since 1.0.0
-     *
      * @param object $form WPCF7_ContactForm instance.
      * @return array $form_data Form data.
      */
@@ -138,7 +126,7 @@ class Integration extends BaseIntegration
             'id' => $form_id,
             'title' => $form->title(),
             'hooks' => apply_filters(
-                'wpct_erp_forms_form_hooks',
+                'forms_bridge_form_hooks',
                 null,
                 $form_id
             ),
@@ -158,8 +146,6 @@ class Integration extends BaseIntegration
 
     /**
      * Serialize WPCF7_FormTag to array.
-     *
-     * @since 1.0.0
      *
      * @param object $field WPCF7_FormTag instance.
      * @param array $form_data Form data.
@@ -199,8 +185,6 @@ class Integration extends BaseIntegration
     /**
      * Serialize the WPCF7_Submission data.
      *
-     * @since 1.0.0
-     *
      * @param object $submission WPCF7_Submission instance.
      * @param array $form Form data.
      * @return array $submission_data Submission data.
@@ -236,8 +220,6 @@ class Integration extends BaseIntegration
 
     /**
      * Get WPCF7_Submission uploaded files.
-     *
-     * @since 1.0.0
      *
      * @param object $submission WPCF7_Submission instance.
      * @param array $form_data Form data.

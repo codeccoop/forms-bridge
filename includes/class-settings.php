@@ -1,13 +1,15 @@
 <?php
 
-namespace WPCT_ERP_FORMS;
+namespace FORMS_BRIDGE;
 
 use WPCT_ABSTRACT\Settings as BaseSettings;
 
+if (!defined('ABSPATH')) {
+    exit();
+}
+
 /**
  * Plugin settings.
- *
- * @since 1.0.0
  */
 class Settings extends BaseSettings
 {
@@ -16,13 +18,11 @@ class Settings extends BaseSettings
      *
      * @return object $instance Class instance.
      *
-     * @since 3.0.0
-     *
      * @return array $backends Collection of backend array representations.
      */
     public static function get_backends()
     {
-        $setting = Settings::get_setting('wpct-erp-forms', 'general');
+        $setting = Settings::get_setting('forms-bridge', 'general');
         return array_map(function ($backend) {
             return $backend['name'];
         }, $setting['backends']);
@@ -30,8 +30,6 @@ class Settings extends BaseSettings
 
     /**
      * Get form instances from database.
-     *
-     * @since 2.0.0
      *
      * @return array $forms Database record objects from form posts.
      */
@@ -63,13 +61,11 @@ class Settings extends BaseSettings
 
     /**
      * Register plugin settings.
-     *
-     * @since 2.0.0
      */
     public function register()
     {
         $host = parse_url(get_bloginfo('url'))['host'];
-        //
+
         // Register general setting
         $this->register_setting(
             'general',
@@ -166,18 +162,10 @@ class Settings extends BaseSettings
         $this->register_setting(
             'rpc-api',
             [
-                'endpoint' => [
-                    'type' => 'string',
-                ],
-                'user' => [
-                    'type' => 'string',
-                ],
-                'password' => [
-                    'type' => 'string',
-                ],
-                'database' => [
-                    'type' => 'string',
-                ],
+                'endpoint' => ['type' => 'string'],
+                'user' => ['type' => 'string'],
+                'password' => ['type' => 'string'],
+                'database' => ['type' => 'string'],
                 'form_hooks' => [
                     'type' => 'array',
                     'items' => [

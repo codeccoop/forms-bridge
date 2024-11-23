@@ -12,15 +12,14 @@ import {
 // source
 import { useRestApi } from "../providers/Settings";
 import FormHooks from "./FormHooks";
-import { useI18n } from "../providers/I18n";
 
 export default function RestApiSettings() {
-  const __ = useI18n();
+  const __ = wp.i18n.__;
   const [{ form_hooks: hooks }, save] = useRestApi();
   return (
     <Card size="large" style={{ height: "fit-content" }}>
       <CardHeader>
-        <Heading level={3}>{__("REST API", "wpct-erp-forms")}</Heading>
+        <Heading level={3}>{__("REST API", "forms-bridge")}</Heading>
       </CardHeader>
       <CardBody>
         <PanelRow>

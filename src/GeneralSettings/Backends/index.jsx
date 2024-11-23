@@ -5,20 +5,19 @@ import { TabPanel } from "@wordpress/components";
 
 // source
 import Backend from "./Backend";
-import { useI18n } from "../../providers/I18n";
 
 export default function Backends({ backends, setBackends }) {
-  const __ = useI18n();
+  const __ = wp.i18n.__;
   const tabs = backends
     .map(({ name, base_url, headers }) => ({
       name,
-      title: __(name, "wpct-erp-forms"),
+      title: __(name, "forms-bridge"),
       base_url,
       headers,
     }))
     .concat([
       {
-        title: __("Add Backend", "wpct-erp-forms"),
+        title: __("Add Backend", "forms-bridge"),
         name: "add",
       },
     ]);
@@ -51,7 +50,7 @@ export default function Backends({ backends, setBackends }) {
           marginBottom: "calc(8px)",
         }}
       >
-        {__("Backends", "wpct-erp-forms")}
+        {__("Backends", "forms-bridge")}
       </label>
       <TabPanel tabs={tabs}>
         {(backend) => (
