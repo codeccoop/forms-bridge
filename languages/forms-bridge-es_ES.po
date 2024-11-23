@@ -2,17 +2,17 @@
 # This file is distributed under the same license as the Forms Bridge plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Forms Bridge 1.0.0\n"
-"Report-Msgid-Bugs-To: https://git.coopdevs.org/codeccoop/wp/plugin/forms-bridge\n"
-"Last-Translator: Còdec Coop <hola@codeccoop.org>\n"
-"Language-Team: Español <hola@codeccoop.org>\n"
+"Project-Id-Version: Forms Bridge\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/forms-bridge\n"
+"Last-Translator: Lucas García <lucas@codeccoop.org>\n"
+"Language-Team: Español\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-11-11T01:41:33+00:00\n"
+"POT-Creation-Date: 2024-11-23T00:33:18+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Language: es_ES\n"
-"X-Generator: WP-CLI 2.10.0\n"
+"X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: forms-bridge\n"
 
 #. Plugin Name of the plugin
@@ -22,13 +22,13 @@ msgstr ""
 
 #. Plugin URI of the plugin
 #: forms-bridge.php
-msgid "https://git.coopdevs.org/codeccoop/wp/plugins/forms-bridge"
+msgid "https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge"
 msgstr ""
 
 #. Description of the plugin
 #: forms-bridge.php
-msgid "Plugin to bridge WP forms submissions to a any backend"
-msgstr "Extensión para conectar entradas de los formularios de WP con qualquier backend"
+msgid "Plugin to bridge WP forms submissions to any backend"
+msgstr "Extensión para conectar formularios de WP con qualquier backend"
 
 #. Author of the plugin
 #: forms-bridge.php
@@ -40,171 +40,194 @@ msgstr ""
 msgid "https://www.codeccoop.org"
 msgstr ""
 
-#: includes/class-menu.php:32
-#: assets/plugin.bundle.js:1
+#: includes/class-menu.php:30
 msgid "Loading"
 msgstr "Cargando"
 
-#: assets/plugin.bundle.js:1
+#: src/FormPipes/index.jsx:19
 msgid "Pipes"
-msgstr "Tubos"
+msgstr "Conversores"
 
-#: assets/plugin.bundle.js:1
+#: src/FormPipes/index.jsx:23
 msgid "Form pipes"
-msgstr "Tubos de formulario"
+msgstr "Conversores del formulario"
 
-#: assets/plugin.bundle.js:1
-msgid "String"
-msgstr "Texto"
-
-#: assets/plugin.bundle.js:1
-msgid "Integer"
-msgstr "Entero"
-
-#: assets/plugin.bundle.js:1
-msgid "Decimal"
-msgstr ""
-
-#: assets/plugin.bundle.js:1
-msgid "Boolean"
-msgstr "Booleano"
-
-#: assets/plugin.bundle.js:1
-msgid "JSON"
-msgstr ""
-
-#: assets/plugin.bundle.js:1
-msgid "Ignore"
-msgstr "Ignorar"
-
-#: assets/plugin.bundle.js:1
+#: src/FormPipes/Table.jsx:45
 msgid "Submission ID"
-msgstr "ID de la entrada"
+msgstr ""
 
-#: assets/plugin.bundle.js:1
+#: src/FormPipes/Table.jsx:94
 msgid "Form format pipes"
-msgstr "Tubos de formato"
+msgstr "Conversores de formato"
 
-#: assets/plugin.bundle.js:1
+#: src/FormPipes/Table.jsx:102
 msgid "From"
 msgstr "De"
 
-#: assets/plugin.bundle.js:1
+#: src/FormPipes/Table.jsx:111
 msgid "To"
 msgstr "A"
 
-#: assets/plugin.bundle.js:1
+#: src/FormPipes/Table.jsx:119
 msgid "Cast as"
 msgstr "Como"
 
-#: assets/plugin.bundle.js:1
+#: src/FormPipes/Table.jsx:136
+#: src/GeneralSettings/Backends/Headers.jsx:75
 msgid "Drop"
-msgstr "Borrar"
+msgstr "Descartar"
 
-#: assets/plugin.bundle.js:1
+#: src/FormPipes/Table.jsx:149
+#: src/GeneralSettings/Backends/Backend.jsx:69
+#: src/GeneralSettings/Backends/Headers.jsx:88
+#: src/RestApiSettings/FormHooks/FormHook.jsx:167
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:131
 msgid "Add"
 msgstr "Añadir"
 
-#: assets/plugin.bundle.js:1
+#: src/GeneralSettings/Backends/Backend.jsx:46
+#: src/GeneralSettings/Backends/Backend.jsx:125
 msgid "Backend name"
 msgstr "Nombre del backend"
 
-#: assets/plugin.bundle.js:1
+#: src/GeneralSettings/Backends/Backend.jsx:49
+#: src/GeneralSettings/Backends/Backend.jsx:128
+#: src/RestApiSettings/FormHooks/FormHook.jsx:95
+#: src/RestApiSettings/FormHooks/FormHook.jsx:240
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:68
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:205
 msgid "This name is already in use"
-msgstr "Este nombre ya está en uso"
+msgstr "Este nomre ya está en uso"
 
-#: assets/plugin.bundle.js:1
+#: src/GeneralSettings/Backends/Backend.jsx:58
+#: src/GeneralSettings/Backends/Backend.jsx:139
 msgid "Backend base URL"
 msgstr "URL base del backend"
 
-#: assets/plugin.bundle.js:1
+#: src/GeneralSettings/Backends/Backend.jsx:154
 msgid "Remove backend"
 msgstr "Eliminar backend"
 
-#: assets/plugin.bundle.js:1
+#: src/GeneralSettings/Backends/Backend.jsx:162
+#: src/RestApiSettings/FormHooks/FormHook.jsx:332
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:288
 msgid "Remove"
 msgstr "Eliminar"
 
-#: assets/plugin.bundle.js:1
+#: src/GeneralSettings/Backends/Headers.jsx:46
 msgid "Backend HTTP Headers"
-msgstr "Cabeceras HTTP del backend"
+msgstr "Cabeceras HTTP"
 
-#: assets/plugin.bundle.js:1
+#: src/GeneralSettings/Backends/Headers.jsx:54
 msgid "Header-Name"
-msgstr "Nombre-De-Cabecera"
+msgstr ""
 
-#: assets/plugin.bundle.js:1
+#: src/GeneralSettings/Backends/Headers.jsx:62
 msgid "Value"
-msgstr "Valor"
+msgstr ""
 
-#: assets/plugin.bundle.js:1
+#: src/GeneralSettings/Backends/index.jsx:20
 msgid "Add Backend"
 msgstr "Añadir Backend"
 
-#: assets/plugin.bundle.js:1
+#: src/GeneralSettings/Backends/index.jsx:53
 msgid "Backends"
 msgstr ""
 
-#: assets/plugin.bundle.js:1
+#: src/GeneralSettings/index.jsx:27
 msgid "General"
 msgstr ""
 
-#: assets/plugin.bundle.js:1
+#: src/GeneralSettings/index.jsx:32
 msgid "Notification receiver"
 msgstr "Receptor de notificaciones"
 
-#: assets/plugin.bundle.js:1
+#: src/RestApiSettings/FormHooks/FormHook.jsx:92
+#: src/RestApiSettings/FormHooks/FormHook.jsx:237
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:65
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:202
 msgid "Name"
 msgstr "Nombre"
 
-#: assets/plugin.bundle.js:1
+#: src/RestApiSettings/FormHooks/FormHook.jsx:105
+#: src/RestApiSettings/FormHooks/FormHook.jsx:252
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:78
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:217
 msgid "Backend"
-msgstr ""
+msgstr "Backend"
 
-#: assets/plugin.bundle.js:1
+#: src/RestApiSettings/FormHooks/FormHook.jsx:114
+#: src/RestApiSettings/FormHooks/FormHook.jsx:261
+msgid "Method"
+msgstr "Método"
+
+#: src/RestApiSettings/FormHooks/FormHook.jsx:123
+#: src/RestApiSettings/FormHooks/FormHook.jsx:270
+#: src/RpcApiSettings/index.jsx:33
 msgid "Endpoint"
 msgstr ""
 
-#: assets/plugin.bundle.js:1
+#: src/RestApiSettings/FormHooks/FormHook.jsx:131
+#: src/RestApiSettings/FormHooks/FormHook.jsx:278
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:95
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:234
 msgid "Form"
 msgstr "Formulario"
 
-#: assets/plugin.bundle.js:1
-msgid "Edit pipes"
-msgstr "Editar tubos"
+#: src/RestApiSettings/FormHooks/FormHook.jsx:159
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:123
+msgid "Add form"
+msgstr "Añadir formulario"
 
-#: assets/plugin.bundle.js:1
+#: src/RestApiSettings/FormHooks/FormHook.jsx:304
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:260
+msgid "Edit pipes"
+msgstr "Editar conversores"
+
+#: src/RestApiSettings/FormHooks/FormHook.jsx:324
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:280
 msgid "Remove form"
 msgstr "Eliminar formulario"
 
-#: assets/plugin.bundle.js:1
+#: src/RestApiSettings/FormHooks/index.jsx:22
+#: src/RpcApiSettings/FormHooks/index.jsx:22
 msgid "Add Form"
-msgstr "Añadir Formulario"
+msgstr "Añadir formulario"
 
-#: assets/plugin.bundle.js:1
+#: src/RestApiSettings/FormHooks/index.jsx:53
+#: src/RpcApiSettings/FormHooks/index.jsx:53
 msgid "Form Hooks"
-msgstr "Ganchos de Formulario"
+msgstr "Connectores de Formularios"
 
-#: assets/plugin.bundle.js:1
+#: src/RestApiSettings/index.jsx:22
 msgid "REST API"
 msgstr ""
 
-#: assets/plugin.bundle.js:1
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:87
+#: src/RpcApiSettings/FormHooks/FormHook.jsx:226
 msgid "Model"
 msgstr "Modelo"
 
-#: assets/plugin.bundle.js:1
+#: src/RpcApiSettings/index.jsx:28
 msgid "RPC API"
 msgstr ""
 
-#: assets/plugin.bundle.js:1
+#: src/RpcApiSettings/index.jsx:41
 msgid "Database"
 msgstr "Base de datos"
 
-#: assets/plugin.bundle.js:1
+#: src/RpcApiSettings/index.jsx:49
 msgid "User"
 msgstr "Usuario"
 
-#: assets/plugin.bundle.js:1
+#: src/RpcApiSettings/index.jsx:57
 msgid "Password"
 msgstr "Contraseña"
+
+#: src/SettingsPage/index.jsx:66
+msgid "Error"
+msgstr ""
+
+#: src/SettingsPage/index.jsx:66
+msgid "Save"
+msgstr "Guardar"
