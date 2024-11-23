@@ -11,7 +11,7 @@ use GFFormDisplay;
 use GFFormsModel;
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit();
 }
 
 require_once 'attachments.php';
@@ -365,7 +365,7 @@ class Integration extends BaseIntegration
                         $url = parse_url($path);
                         parse_str($url['query'], $query);
                         $path = forms_bridge_attachment_fullpath(
-                            $query['erp-forms-attachment']
+                            $query['forms-bridge-attachment']
                         );
                     }
 
