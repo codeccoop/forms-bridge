@@ -1,9 +1,9 @@
 [submodule "abstracts"]
 	path = abstracts
-	url = git@git.coopdevs.org:codeccoop/wp/plugins/wpct-plugin-abstracts.git
+	url = https://git.coopdevs.org/codeccoop/wp/plugins/wpct-plugin-abstracts.git
 [submodule "deps/http"]
 	path = deps/http
-	url = git@git.coopdevs.org:codeccoop/wp/plugins/bridges/http-bridge.git
+	url = https://git.coopdevs.org/codeccoop/wp/plugins/bridges/http-bridge.git
 [submodule "deps/i18n"]
 	path = deps/i18n
-	url = git@git.coopdevs.org:codeccoop/wp/plugins/wpct-i18n.git
+	url = https://git.coopdevs.org/codeccoop/wp/plugins/wpct-i18n.git
