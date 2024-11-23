@@ -378,7 +378,7 @@ abstract class Integration extends Singleton
             ])
         );
 
-        $res = http_bridge_post($url, ['data' => $payload]);
+        $res = \HTTP_BRIDGE\http_bridge_post($url, ['data' => $payload]);
 
         if (is_wp_error($res)) {
             throw new Exception('Error while establish RPC session');
@@ -453,7 +453,7 @@ abstract class Integration extends Singleton
             $form_data
         );
 
-        $response = http_bridge_post($url, [
+        $response = \HTTP_BRIDGE\http_bridge_post($url, [
             'data' => $payload,
             'files' => $attachments,
             'headers' => $headers,

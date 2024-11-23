@@ -4,10 +4,9 @@ namespace FORMS_BRIDGE\WPFORMS;
 
 use FORMS_BRIDGE\Integration as BaseIntegration;
 use WP_Post;
-use WPForms_Field_File_Upload;
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit();
 }
 
 /**
@@ -25,8 +24,6 @@ class Integration extends BaseIntegration
         add_action(
             'wpforms_process_complete',
             function ($fields, $entry, $form_data, $entry_id) {
-                // $submission = wpforms()->obj('submission');
-                // $submission->register($fields, $entry, $form_data['id'], $form_data);
                 $entry['fields'] = $fields;
                 $entry['entry_id'] = $entry_id;
                 $this->do_submission($entry, $form_data);
@@ -139,11 +136,7 @@ class Integration extends BaseIntegration
         return [
             'id' => $form_id,
             'title' => $data['settings']['form_title'],
-            'hooks' => apply_filters(
-                'forms_bridge_form_hooks',
-                null,
-                $form_id
-            ),
+            'hooks' => apply_filters('forms_bridge_form_hooks', null, $form_id),
             'fields' => array_values(
                 array_map(function ($field) {
                     return $this->serialize_field($field);
