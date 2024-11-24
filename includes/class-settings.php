@@ -14,50 +14,11 @@ if (!defined('ABSPATH')) {
 class Settings extends BaseSettings
 {
     /**
-     * Return registered backends.
+     * Handle plugin settings rest controller class name.
      *
-     * @return object $instance Class instance.
-     *
-     * @return array $backends Collection of backend array representations.
+     * @var string $rest_controller_class Settings REST Controller class name.
      */
-    public static function get_backends()
-    {
-        $setting = Settings::get_setting('forms-bridge', 'general');
-        return array_map(function ($backend) {
-            return $backend['name'];
-        }, $setting['backends']);
-    }
-
-    /**
-     * Get form instances from database.
-     *
-     * @return array $forms Database record objects from form posts.
-     */
-    public static function get_forms()
-    {
-        global $wpdb;
-        if (
-            apply_filters(
-                'wpct_is_plugin_active',
-                false,
-                'contact-form-7/wp-contact-form-7.php'
-            )
-        ) {
-            return $wpdb->get_results(
-                "SELECT id, post_title title FROM {$wpdb->prefix}posts WHERE post_type = 'wpcf7_contact_form' AND post_status = 'publish'"
-            );
-        } elseif (
-            apply_filters(
-                'wpct_is_plugin_active',
-                false,
-                'gravityforms/gravityforms.php'
-            )
-        ) {
-            return $wpdb->get_results(
-                "SELECT id, title FROM {$wpdb->prefix}gf_form WHERE is_active = 1 AND is_trash = 0"
-            );
-        }
-    }
+    protected static $rest_controller_class = '\FORMS_BRIDGE\REST_Settings_Controller';
 
     /**
      * Register plugin settings.

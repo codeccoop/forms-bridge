@@ -21,7 +21,7 @@ export default function FormsProvider({ children }) {
 
   useEffect(() => {
     apiFetch({
-      path: `${window.wpApiSettings.root}wp-bridges/v1/forms/forms`,
+      path: `${window.wpApiSettings.root}wp-bridges/v1/forms-bridge/forms`,
       headers: {
         "X-WP-Nonce": wpApiSettings.nonce,
       },

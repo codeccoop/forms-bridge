@@ -29,10 +29,7 @@ if (!defined('ABSPATH')) {
  */
 define('FORMS_BRIDGE_VERSION', '1.0.0');
 
-require_once 'abstracts/class-singleton.php';
 require_once 'abstracts/class-plugin.php';
-require_once 'abstracts/class-menu.php';
-require_once 'abstracts/class-settings.php';
 
 require_once 'deps/http/http-bridge.php';
 require_once 'deps/i18n/wpct-i18n.php';
@@ -40,7 +37,7 @@ require_once 'deps/i18n/wpct-i18n.php';
 require_once 'includes/abstract-integration.php';
 require_once 'includes/class-menu.php';
 require_once 'includes/class-settings.php';
-require_once 'includes/class-rest-controller.php';
+require_once 'includes/class-rest-settings-controller.php';
 
 /**
  * Forms Bridge plugin.
@@ -88,14 +85,35 @@ class Forms_Bridge extends BasePlugin
     }
 
     /**
-     * Initialize integrations, REST Controller and setup plugin hooks.
+     * Initialize the plugin on wp init.
+     */
+    public function init()
+    {
+    }
+
+    /**
+     * Callback to activation hook.
+     */
+    public static function activate()
+    {
+    }
+
+    /**
+     * Callback to deactivation hook.
+     */
+    public static function deactivate()
+    {
+    }
+
+    /**
+     * Initialize integrations and setup plugin hooks.
      */
     protected function __construct()
     {
         parent::__construct();
-        REST_Controller::setup();
 
         $this->load_integrations();
+        $this->sync_http_setting();
         $this->wp_hooks();
         $this->custom_hooks();
     }
@@ -138,28 +156,10 @@ class Forms_Bridge extends BasePlugin
     }
 
     /**
-     * Bind plugin to wp hooks.
+     * Synchronize plugin and http-bridge settings
      */
-    private function wp_hooks()
+    private function sync_http_setting()
     {
-        // Add link to submenu page on plugins page
-        add_filter(
-            'plugin_action_links',
-            function ($links, $file) {
-                if ($file !== plugin_basename(__FILE__)) {
-                    return $links;
-                }
-
-                $url = admin_url('options-general.php?page=forms-bridge');
-                $label = __('Settings');
-                $link = "<a href='{$url}'>{$label}</a>";
-                array_unshift($links, $link);
-                return $links;
-            },
-            5,
-            2
-        );
-
         // Patch http bridge settings to erp forms settings
         add_filter('option_forms-bridge_general', function ($value) {
             $http_setting = Settings::get_setting('http-bridge', 'general');
@@ -188,18 +188,34 @@ class Forms_Bridge extends BasePlugin
             10,
             3
         );
+    }
+
+    /**
+     * Bind plugin to wp hooks.
+     */
+    private function wp_hooks()
+    {
+        // Add link to submenu page on plugins page
+        add_filter(
+            'plugin_action_links',
+            function ($links, $file) {
+                if ($file !== plugin_basename(__FILE__)) {
+                    return $links;
+                }
+
+                $url = admin_url('options-general.php?page=forms-bridge');
+                $label = __('Settings');
+                $link = "<a href='{$url}'>{$label}</a>";
+                array_unshift($links, $link);
+                return $links;
+            },
+            5,
+            2
+        );
 
         // Enqueue plugin admin client scripts
         add_action('admin_enqueue_scripts', function ($admin_page) {
             $this->admin_enqueue_scripts($admin_page);
-        });
-
-        add_action('init', function () {
-            wp_set_script_translations(
-                $this->get_textdomain(),
-                $this->get_textdomain(),
-                plugin_dir_path(__FILE__) . 'languages'
-            );
         });
     }
 
@@ -277,27 +293,19 @@ class Forms_Bridge extends BasePlugin
 
             return $integration->get_uploads();
         });
-    }
 
-    /**
-     * Initialize the plugin on wp init.
-     */
-    public function init()
-    {
-    }
+        add_filter(
+            'forms_bridge_backend',
+            function ($default, $name) {
+                return apply_filters('http_bridge_backend', $default, $name);
+            },
+            10,
+            2
+        );
 
-    /**
-     * Callback to activation hook.
-     */
-    public static function activate()
-    {
-    }
-
-    /**
-     * Callback to deactivation hook.
-     */
-    public static function deactivate()
-    {
+        add_filter('forms_bridge_backends', function () {
+            return apply_filters('http_bridge_backends');
+        });
     }
 
     /**
