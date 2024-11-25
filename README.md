@@ -57,8 +57,10 @@ has three main sections:
 The plugin offers some hooks to expose its internal API. Go to [documentation](./docs/API.md)
 to see more details about the hooks.
 
-The repository handle dependencies as [git submodules](https://www.atlassian.com/git/tutorials/git-submodule).
-In order to work locally, you have to clone this repository and then, initialize its submodules with this
+### Local development
+
+The repository handles dependencies as [git submodules](https://www.atlassian.com/git/tutorials/git-submodule).
+In order to work local, you have to clone this repository and initialize its submodules with this
 command:
 
 ```bash
