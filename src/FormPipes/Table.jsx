@@ -82,17 +82,30 @@ export default function PipesTable({ formId, pipes, setPipes }) {
 
   return (
     <div className="components-base-control__label">
-      <label
-        className="components-base-control__label"
-        style={{
-          fontSize: "11px",
-          textTransform: "uppercase",
-          fontWeight: 500,
-          marginBottom: "calc(8px)",
-        }}
-      >
-        {__("Form format pipes", "forms-bridge")}
-      </label>
+      <div style={{ display: "flex" }}>
+        <label
+          className="components-base-control__label"
+          style={{
+            fontSize: "11px",
+            textTransform: "uppercase",
+            fontWeight: 500,
+            lineHeight: "32px",
+          }}
+        >
+          {__("Form format pipes", "forms-bridge")}
+        </label>
+        <Button
+          variant="secondary"
+          onClick={() => addPipe()}
+          style={{
+            marginLeft: "1em",
+            height: "32px",
+            marginBottom: "calc(8px)",
+          }}
+        >
+          {__("Add", "forms-bridge")}
+        </Button>
+      </div>
       <table style={{ width: "100%" }}>
         <tbody>
           {pipes.map(({ from, to, cast }, i) => (
@@ -142,11 +155,11 @@ export default function PipesTable({ formId, pipes, setPipes }) {
       </table>
       <Spacer paddingY="calc(3px)" />
       <Button
-        variant="secondary"
-        onClick={() => addPipe()}
+        variant="primary"
+        onClick={() => done()}
         style={{ height: "32px" }}
       >
-        {__("Add", "forms-bridge")}
+        {__("Done", "posts-bridge")}
       </Button>
     </div>
   );

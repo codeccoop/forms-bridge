@@ -67,6 +67,10 @@ export default function SettingsProvider({ children }) {
         "rest-api": restApi,
         "rpc-api": rpcApi,
       },
+    }).then((settings) => {
+      setGeneral(settings.general);
+      setRestApi(settings["rest-api"]);
+      setRpcApi(settings["rpc-api"]);
     });
   };
 
