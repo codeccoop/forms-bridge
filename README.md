@@ -57,6 +57,20 @@ has three main sections:
 The plugin offers some hooks to expose its internal API. Go to [documentation](./docs/API.md)
 to see more details about the hooks.
 
+The repository handle dependencies as [git submodules](https://www.atlassian.com/git/tutorials/git-submodule).
+In order to work locally, you have to clone this repository and then, initialize its submodules with this
+command:
+
+```bash
+git submodule update --init --recursive
+```
+
+Once done, you will need to install frontend dependencies with `npm install`. To build the admin's react client,
+run `npm run dev` for development, or `npm run build` for production builts.
+
+> We work WordPress with docker. See our [development setup](https://github.com/codeccoop/wp-development/)
+> if you are interested.
+
 ## Dependencies
 
 This plugin relays on [HTTP Bridge](https://git.coopdevs.org/codeccoop/wp/plugins/bridges/http-bridge/)
