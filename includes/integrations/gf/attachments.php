@@ -5,11 +5,12 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Filter public attachments path and return privte if needed.
+ * Filters public attachments path and return privte if needed.
  *
  * @param array $path_info Attachments path info.
  * @param integer $form_id Source form ID.
- * @return array $path_info Attachments path info.
+ * 
+ * @return array Attachments path info.
  */
 function forms_bridge_upload_path($path_info, $form_id)
 {
@@ -44,7 +45,7 @@ deny from all'
 add_filter('gform_upload_path', 'forms_bridge_upload_path', 90, 2);
 
 /**
- * Intercept GET requests with download query and send attachment file as response.
+ * Intercepts GET requests with download query and send attachment file as response.
  */
 function forms_bridge_download_file()
 {
@@ -90,7 +91,7 @@ function forms_bridge_download_file()
 add_action('init', 'forms_bridge_download_file');
 
 /**
- * Get gravityforms attachment store base path.
+ * Gets gravityforms attachment store base path.
  *
  * @return string $base_path Attachments store base path.
  */
@@ -109,10 +110,11 @@ function forms_bridge_attachment_base_path()
 }
 
 /**
- * Get attachment absolute path.
+ * Gets attachment absolute path.
  *
  * @param string $filepath Attachment file path.
- * @return string $fullpath Attachment file absolute path.
+ * 
+ * @return string Attachment file absolute path.
  */
 function forms_bridge_attachment_fullpath($filepath)
 {
@@ -124,7 +126,8 @@ function forms_bridge_attachment_fullpath($filepath)
  * Get attachment URL.
  *
  * @param string $filepath Attachment file path.
- * @return string $url Attachment public URL.
+ * 
+ * @return string Attachment public URL.
  */
 function forms_bridge_attachment_url($filepath)
 {
@@ -140,7 +143,8 @@ function forms_bridge_attachment_url($filepath)
  * Check if gravityforms should use private attachments store.
  *
  * @param integer $form_id Source form ID.
- * @return boolean $is_private Form uses private store.
+ * 
+ * @return boolean Form uses private store.
  */
 function forms_bridge_private_upload($form_id)
 {

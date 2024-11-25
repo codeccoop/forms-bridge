@@ -85,7 +85,7 @@ class Forms_Bridge extends BasePlugin
     }
 
     /**
-     * Initialize the plugin on wp init.
+     * Initializes the plugin on wp init.
      */
     public function init()
     {
@@ -106,7 +106,7 @@ class Forms_Bridge extends BasePlugin
     }
 
     /**
-     * Initialize integrations and setup plugin hooks.
+     * Initializes integrations and setup plugin hooks.
      */
     protected function __construct()
     {
@@ -160,7 +160,7 @@ class Forms_Bridge extends BasePlugin
      */
     private function sync_http_setting()
     {
-        // Patch http bridge settings to erp forms settings
+        // Patch http bridge settings to plugin settings
         add_filter('option_forms-bridge_general', function ($value) {
             $http_setting = Settings::get_setting('http-bridge', 'general');
 
@@ -170,7 +170,7 @@ class Forms_Bridge extends BasePlugin
             return $value;
         });
 
-        // Syncronize erp form settings with http bridge settings
+        // Syncronize plugin settings with http bridge settings
         add_action(
             'updated_option',
             function ($option, $from, $to) {
@@ -220,7 +220,7 @@ class Forms_Bridge extends BasePlugin
     }
 
     /**
-     * Add plugin custom filters.
+     * Adds plugin custom filters.
      */
     private function custom_hooks()
     {
@@ -309,7 +309,7 @@ class Forms_Bridge extends BasePlugin
     }
 
     /**
-     * Return the current integration.
+     * Current integration getter.
      *
      * @return object $integration
      */
@@ -323,7 +323,7 @@ class Forms_Bridge extends BasePlugin
     }
 
     /**
-     * Return form API hooks.
+     * Form hooks getter.
      *
      * @return array $hooks Array with hooks.
      */

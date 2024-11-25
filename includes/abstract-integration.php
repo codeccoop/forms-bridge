@@ -19,37 +19,37 @@ if (!defined('ABSPATH')) {
 abstract class Integration extends Singleton
 {
     /**
-     * Retrive the current form.
+     * Retrives the current form.
      *
-     * @return array $form_data Form data.
+     * @return array Form data.
      */
     abstract public function get_form();
 
     /**
-     * Retrive form by ID.
+     * Retrives form by ID.
      *
-     * @return array $form_data Form data.
+     * @return array Form data.
      */
     abstract public function get_form_by_id($form_id);
 
     /**
-     * Retrive available forms.
+     * Retrives available forms.
      *
-     * @return array $forms Collection of form data.
+     * @return array Collection of form data.
      */
     abstract public function get_forms();
 
     /**
-     * Retrive the current form submission.
+     * Retrives the current form submission.
      *
-     * @return array $submission Submission data.
+     * @return array Submission data.
      */
     abstract public function get_submission();
 
     /**
-     * Retrive the current submission uploaded files.
+     * Retrives the current submission uploaded files.
      *
-     * @return array $files Collection of uploaded files.
+     * @return array Collection of uploaded files.
      */
     abstract public function get_uploads();
 
@@ -58,7 +58,8 @@ abstract class Integration extends Singleton
      *
      * @param any $submission Pair plugin submission handle.
      * @param array $form_data Source form data.
-     * @return array $submission_data Submission data.
+     * 
+     * @return array Submission data.
      */
     abstract public function serialize_submission($submission, $form);
 
@@ -66,7 +67,8 @@ abstract class Integration extends Singleton
      * Serialize the current form data.
      *
      * @param any $form Pair plugin form handle.
-     * @return array $form_data Form data.
+     * 
+     * @return array Form data.
      */
     abstract public function serialize_form($form);
 
@@ -75,7 +77,8 @@ abstract class Integration extends Singleton
      *
      * @param any $submission Pair plugin submission handle.
      * @param array $form_data Current form data.
-     * @return array $uploads Collection of uploaded files.
+     * 
+     * @return array Collection of uploaded files.
      */
     abstract protected function submission_uploads($submission, $form_data);
 
@@ -85,7 +88,7 @@ abstract class Integration extends Singleton
     abstract protected function init();
 
     /**
-     * Bind integration initializer to wp init hook.
+     * Binds integration initializer to wp init hook.
      */
     protected function __construct()
     {
@@ -95,7 +98,7 @@ abstract class Integration extends Singleton
     }
 
     /**
-     * Send error notifications to the email receiver.
+     * Sends error notifications to the email receiver.
      *
      * @param array $form_data Form data.
      * @param array $payload Submission data.
@@ -201,7 +204,7 @@ abstract class Integration extends Singleton
     }
 
     /**
-     * Before submission hook.
+     * Fired before submission hook.
      *
      * @param array $request Request config.
      * @param array $form_data Form data.
@@ -212,7 +215,7 @@ abstract class Integration extends Singleton
     }
 
     /**
-     * After submission hook.
+     * Fired after submission hook.
      *
      * @param array|WP_Error $response Response data.
      * @param array $payload Payload data.
@@ -260,8 +263,9 @@ abstract class Integration extends Singleton
      * Cast value to type.
      *
      * @param string $type Target type to cast value.
-     * @param any $value Original value.
-     * @return any $value Casted value.
+     * @param mixed $value Original value.
+     * 
+     * @return mixed $value Casted value.
      */
     private function cast($type, $value)
     {
@@ -291,7 +295,8 @@ abstract class Integration extends Singleton
      * Clean up submission empty fields.
      *
      * @param array $submission_data Submission data.
-     * @return array $submission_data Submission data without empty fields.
+     * 
+     * @return array Submission data without empty fields.
      */
     private function cleanup_empties(&$submission_data)
     {
@@ -306,7 +311,8 @@ abstract class Integration extends Singleton
      * Transform collection of uploads to an attachments map.
      *
      * @param array $uploads Collection of uploaded files.
-     * @return array $uploads Map of uploaded files.
+     * 
+     * @return array Map of uploaded files.
      */
     private function attachments($uploads)
     {
@@ -334,6 +340,7 @@ abstract class Integration extends Singleton
      * @param string $method HTTP method (GET, POST, PUT, DELETE).
      * @param string $url Target URL.
      * @param array $args Request arguments.
+     * 
      * @return array|WP_Error Request response.
      */
     private function submit_rest($method, $url, $args)
@@ -360,7 +367,8 @@ abstract class Integration extends Singleton
      * JSON RPC login request.
      *
      * @param string $endpoint Target endpoint.
-     * @return array $credentials Tuple with $session_id and $user_id.
+     * 
+     * @return array Tuple with RPC session id and user id.
      */
     private function rpc_login($url)
     {
@@ -405,7 +413,8 @@ abstract class Integration extends Singleton
      * @param array $payload Submission data.
      * @param array $attachments Collection of attachment files.
      * @param array $form_data Source form data.
-     * @return array|WP_Error $response HTTP response.
+     * 
+     * @return array|WP_Error HTTP response or error.
      */
     private function submit_rpc(
         $url,
@@ -489,7 +498,8 @@ abstract class Integration extends Singleton
      * @param string $service RPC service name.
      * @param string $method RPC method name.
      * @param array $args RPC request arguments.
-     * @return array $payload RPC conformant payload.
+     * 
+     * @return array JSON-RPC conformant payload.
      */
     private function rpc_payload($session_id, $service, $method, $args)
     {

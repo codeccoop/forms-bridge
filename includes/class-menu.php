@@ -21,7 +21,7 @@ class Menu extends BaseMenu
     protected static $settings_class = '\FORMS_BRIDGE\Settings';
 
     /**
-     * Render plugin menu page.
+     * Renders the plugin menu page.
      */
     protected function render_page($echo = true)
     {

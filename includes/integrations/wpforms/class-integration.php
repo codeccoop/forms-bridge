@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 class Integration extends BaseIntegration
 {
     /**
-     * Inherit parent constructor and hooks submissions to wpcf7_before_send_mail
+     * Inherit parent constructor and hooks submissions to wpforms_process_complete
      */
     protected function __construct()
     {
@@ -41,9 +41,9 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Retrive the current WPForms_Form_Handler data.
+     * Retrives the current WPForms_Form_Handler data.
      *
-     * @return array $form_data Form data array representation.
+     * @return array Form data.
      */
     public function get_form()
     {
@@ -59,10 +59,11 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Retrive form data by ID.
+     * Retrives form data by ID.
      *
      * @param int $form_id Form ID.
-     * @return array $form_data Form data.
+     * 
+     * @return array Form data.
      */
     public function get_form_by_id($form_id)
     {
@@ -75,9 +76,9 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Retrive available forms data.
+     * Retrives available forms data.
      *
-     * @return array $forms Collection of form data.
+     * @return array Collection of form data.
      */
     public function get_forms()
     {
@@ -88,9 +89,9 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Retrive the current submission data.
+     * Retrives the current submission data.
      *
-     * @return array $submission Submission data.
+     * @return array Submission data.
      */
     public function get_submission()
     {
@@ -105,9 +106,9 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Retrive the current submission uploaded files.
+     * Retrives the current submission uploaded files.
      *
-     * @return array $files Uploaded files data.
+     * @return array Uploaded files data.
      */
     public function get_uploads()
     {
@@ -122,8 +123,9 @@ class Integration extends BaseIntegration
     /**
      * Serialize form data.
      *
-     * @param object $form WPCF7_ContactForm instance.
-     * @return array $form_data Form data.
+     * @param WP_Post $form Form post instance.
+     * 
+     * @return array Form data.
      */
     public function serialize_form($form)
     {
@@ -148,9 +150,10 @@ class Integration extends BaseIntegration
     /**
      * Serialize form field data.
      *
-     * @param object $field WPCF7_FormTag instance.
+     * @param array $field WPForms field data representation.
      * @param array $form_data Form data.
-     * @return array $field_data Field data.
+     * 
+     * @return array Field data.
      */
     private function serialize_field($field)
     {
@@ -168,9 +171,10 @@ class Integration extends BaseIntegration
     /**
      * Serialize form submission data.
      *
-     * @param object $submission Submission instance.
+     * @param array $submission WPForms submission data.
      * @param array $form Form data.
-     * @return array $submission_data Submission data.
+     * 
+     * @return array Submission data.
      */
     public function serialize_submission($submission, $form_data)
     {
@@ -188,9 +192,10 @@ class Integration extends BaseIntegration
     /**
      * Get form submission uploaded files.
      *
-     * @param object $submission WPCF7_Submission instance.
+     * @param object $submission WPForms submission data.
      * @param array $form_data Form data.
-     * @return array $uploads Uploaded files data.
+     * 
+     * @return array Uploaded files data.
      */
     protected function submission_uploads($submission, $form_data)
     {

@@ -65,7 +65,7 @@ class REST_Settings_Controller extends Base_Controller
     /**
      * GET requests forms endpoint callback.
      *
-     * @return array $forms Collection of array form representations.
+     * @return array Collection of array form representations.
      */
     private function forms()
     {

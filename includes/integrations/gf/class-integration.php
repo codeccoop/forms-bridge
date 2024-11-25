@@ -22,7 +22,7 @@ require_once 'attachments.php';
 class Integration extends BaseIntegration
 {
     /**
-     * Inherit prent constructor and hooks submissions to gform_after_submission
+     * Inherits prent constructor and hooks submissions to gform_after_submission
      */
     protected function __construct()
     {
@@ -46,9 +46,9 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Retrive the current form data.
+     * Retrives the current form data.
      *
-     * @return array $form_data Form data.
+     * @return array Form data.
      */
     public function get_form()
     {
@@ -71,10 +71,11 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Retrive form data by ID.
+     * Retrives form data by ID.
      *
      * @param int $form_id Form ID.
-     * @return array $form_data Form data.
+     * 
+     * @return array Form data.
      */
     public function get_form_by_id($form_id)
     {
@@ -87,9 +88,9 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Retrive available forms data.
+     * Retrives available forms data.
      *
-     * @return array $forms Collection of form data array representations.
+     * @return array Collection of form data array representations.
      */
     public function get_forms()
     {
@@ -105,9 +106,9 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Retrive the current submission data.
+     * Retrives the current submission data.
      *
-     * @return array $submission Submission data.
+     * @return array Submission data.
      */
     public function get_submission()
     {
@@ -127,9 +128,9 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Retrive the current submission uploaded files.
+     * Retrives the current submission uploaded files.
      *
-     * @return array $files Collection of uploaded files.
+     * @return array Collection of uploaded files.
      */
     public function get_uploads()
     {
@@ -149,10 +150,11 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Serialize gf form data.
+     * Serializes gf form data.
      *
      * @param array $form GF form data.
-     * @return array $form_data Form data.
+     * 
+     * @return array Form data.
      */
     public function serialize_form($form)
     {
@@ -173,11 +175,11 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Serialize GF form data field.
+     * Serializes GF form data field.
      *
-     * @param object GFField instance.
-     * @param array From data.
-     * @return array $field_data Field data.
+     * @param GFField $field Field object instance.
+     * 
+     * @return array Field data.
      */
     private function serialize_field($field)
     {
@@ -232,11 +234,12 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Serialize current form submission data.
+     * Serializes current form submission data.
      *
-     * @param array $submission GF form lead.
-     * @param array @form Form data.
-     * @return array $submission_data Submission data.
+     * @param array $submission GF form submission.
+     * @param array $form Form data.
+     * 
+     * @return array Submission data.
      */
     public function serialize_submission($submission, $form_data)
     {
@@ -312,12 +315,13 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Format field values with noop fallback.
+     * Formats field values with noop fallback.
      *
-     * @param any $value Field value.
-     * @param object $field GFField instance.
-     * @param array $input GFField input data.
-     * @return any $value Formatted value.
+     * @param mixed $value Field value.
+     * @param GFField $field Field object instance.
+     * @param array $input Field input data.
+     * 
+     * @return mixed Formatted value.
      */
     private function format_value($value, $field, $input = null)
     {
@@ -338,11 +342,12 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Get current submission uploaded files.
+     * Gets current submission uploaded files.
      *
-     * @param array $submission GF lead data.
+     * @param array $submission GF submission data.
      * @param array $form_data Form data.
-     * @return array $uploads Uploaded files data.
+     * 
+     * @return array Uploaded files data.
      */
     protected function submission_uploads($submission, $form_data)
     {

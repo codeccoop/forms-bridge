@@ -40,7 +40,7 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Retrive the current WPCF7_ContactForm data.
+     * Retrive the current form data.
      *
      * @return array $form_data Form data array representation.
      */
@@ -71,7 +71,7 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Retrive available integration forms data.
+     * Retrive available integration's forms data.
      *
      * @return array $forms Collection of form data.
      */
@@ -84,9 +84,9 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Retrive the current WPCF7_Submission data.
+     * Retrive the current submission data.
      *
-     * @return array $submission Submission data.
+     * @return array Submission data.
      */
     public function get_submission()
     {
@@ -99,9 +99,9 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Retrive the current WPCF7_Submission uploaded files.
+     * Retrive the current submission uploaded files.
      *
-     * @return array $files Uploaded files data.
+     * @return array Uploaded files data.
      */
     public function get_uploads()
     {
@@ -114,10 +114,11 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Serialize WPCF7_ContactForm data.
+     * Serialize form data.
      *
-     * @param object $form WPCF7_ContactForm instance.
-     * @return array $form_data Form data.
+     * @param WPCF7_ContactForm $form Form instance.
+     * 
+     * @return array Form data.
      */
     public function serialize_form($form)
     {
@@ -145,11 +146,12 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Serialize WPCF7_FormTag to array.
+     * Serialize form tags to array.
      *
-     * @param object $field WPCF7_FormTag instance.
+     * @param WPCF7_FormTag $field Form tag instance.
      * @param array $form_data Form data.
-     * @return array $field_data Field data.
+     * 
+     * @return array Field data.
      */
     private function serialize_field($field)
     {
@@ -183,11 +185,12 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Serialize the WPCF7_Submission data.
+     * Serialize the form's submission data.
      *
-     * @param object $submission WPCF7_Submission instance.
+     * @param WPCF7_Submission $submission Submission instance.
      * @param array $form Form data.
-     * @return array $submission_data Submission data.
+     * 
+     * @return array Submission data.
      */
     public function serialize_submission($submission, $form_data)
     {
@@ -219,11 +222,12 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Get WPCF7_Submission uploaded files.
+     * Gets submission uploaded files.
      *
-     * @param object $submission WPCF7_Submission instance.
+     * @param WPCF7_Submission $submission Submission instance.
      * @param array $form_data Form data.
-     * @return array $uploads Uploaded files data.
+     * 
+     * @return array Uploaded files data.
      */
     protected function submission_uploads($submission, $form_data)
     {

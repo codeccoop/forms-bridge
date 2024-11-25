@@ -21,7 +21,7 @@ class Settings extends BaseSettings
     protected static $rest_controller_class = '\FORMS_BRIDGE\REST_Settings_Controller';
 
     /**
-     * Register plugin settings.
+     * Registers plugin settings.
      */
     public function register()
     {
@@ -171,6 +171,14 @@ class Settings extends BaseSettings
         );
     }
 
+    /**
+     * Overwrites abstract sanitize callback and adds setting validation checks.
+     * 
+     * @param string $option Option name.
+     * @param array $value Setting data.
+     * 
+     * @return array Sanitized and validated setting data. 
+     */
     protected function sanitize_setting($option, $value)
     {
         [$group, $setting] = explode('_', $option);
@@ -187,6 +195,13 @@ class Settings extends BaseSettings
         return parent::sanitize_setting($option, $value);
     }
 
+    /**
+     * General setting validation. Remove inconsistencies with general and API settings.
+     * 
+     * @param array $setting General setting data.
+     * 
+     * @return array $setting General setting data.
+     */
     private function validate_general($setting)
     {
         $rest = self::get_setting($this->get_group_name(), 'rest-api');
@@ -213,6 +228,13 @@ class Settings extends BaseSettings
         return $setting;
     }
 
+    /**
+     * API settings validation. Filters API hooks with with inconsistencies with the general settings state.
+     * 
+     * @param array $setting Setting data.
+     * 
+     * @return array Validated setting data.
+     */
     private function validate_api($setting)
     {
         $backends = Settings::get_setting(
@@ -227,6 +249,14 @@ class Settings extends BaseSettings
         return $setting;
     }
 
+    /**
+     * Validate form hooks settings. Filters form hooks with inconsistencies with the existing backends.
+     * 
+     * @param array $form_hooks Array with form hooks configurations.
+     * @param array $backends Array with HTTP_Backend instances.
+     * 
+     * @return array Array with valid form hook configurations. 
+     */
     private function validate_form_hooks($form_hooks, $backends)
     {
         $form_ids = array_reduce(
