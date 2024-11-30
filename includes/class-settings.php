@@ -173,11 +173,11 @@ class Settings extends BaseSettings
 
     /**
      * Overwrites abstract sanitize callback and adds setting validation checks.
-     * 
+     *
      * @param string $option Option name.
      * @param array $value Setting data.
-     * 
-     * @return array Sanitized and validated setting data. 
+     *
+     * @return array Sanitized and validated setting data.
      */
     protected function sanitize_setting($option, $value)
     {
@@ -197,9 +197,9 @@ class Settings extends BaseSettings
 
     /**
      * General setting validation. Remove inconsistencies with general and API settings.
-     * 
+     *
      * @param array $setting General setting data.
-     * 
+     *
      * @return array $setting General setting data.
      */
     private function validate_general($setting)
@@ -230,9 +230,9 @@ class Settings extends BaseSettings
 
     /**
      * API settings validation. Filters API hooks with with inconsistencies with the general settings state.
-     * 
+     *
      * @param array $setting Setting data.
-     * 
+     *
      * @return array Validated setting data.
      */
     private function validate_api($setting)
@@ -251,34 +251,48 @@ class Settings extends BaseSettings
 
     /**
      * Validate form hooks settings. Filters form hooks with inconsistencies with the existing backends.
-     * 
+     *
      * @param array $form_hooks Array with form hooks configurations.
      * @param array $backends Array with HTTP_Backend instances.
-     * 
-     * @return array Array with valid form hook configurations. 
+     *
+     * @return array Array with valid form hook configurations.
      */
     private function validate_form_hooks($form_hooks, $backends)
     {
         $form_ids = array_reduce(
             apply_filters('forms_bridge_forms', []),
-            function ($form_ids, $form) {
+            static function ($form_ids, $form) {
                 return array_merge($form_ids, [$form['id']]);
             },
             []
         );
+
         $valid_hooks = [];
         for ($i = 0; $i < count($form_hooks); $i++) {
             $hook = $form_hooks[$i];
+
+            // Valid only if backend and form id exists
             $is_valid =
                 array_reduce(
                     $backends,
-                    function ($is_valid, $backend) use ($hook) {
+                    static function ($is_valid, $backend) use ($hook) {
                         return $hook['backend'] === $backend['name'] ||
                             $is_valid;
                     },
                     false
                 ) && in_array($hook['form_id'], $form_ids);
+
             if ($is_valid) {
+                // filter empty pipes
+                $hook['pipes'] = isset($hook['pipes'])
+                    ? (array) $hook['pipes']
+                    : [];
+                $hook['pipes'] = array_filter($hook['pipes'], static function (
+                    $pipe
+                ) {
+                    return $pipe['to'] && $pipe['from'] && $pipe['cast'];
+                });
+
                 $valid_hooks[] = $hook;
             }
         }

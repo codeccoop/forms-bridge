@@ -7,7 +7,7 @@ use WPCF7_ContactForm;
 use WPCF7_Submission;
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit();
 }
 
 /**
@@ -117,7 +117,7 @@ class Integration extends BaseIntegration
      * Serialize form data.
      *
      * @param WPCF7_ContactForm $form Form instance.
-     * 
+     *
      * @return array Form data.
      */
     public function serialize_form($form)
@@ -126,17 +126,15 @@ class Integration extends BaseIntegration
         return [
             'id' => $form_id,
             'title' => $form->title(),
-            'hooks' => apply_filters(
-                'forms_bridge_form_hooks',
-                null,
-                $form_id
-            ),
+            'hooks' => apply_filters('forms_bridge_form_hooks', null, $form_id),
             'fields' => array_map(
                 function ($field) {
                     return $this->serialize_field($field);
                 },
                 array_values(
-                    array_filter($form->scan_form_tags(), function ($tag) {
+                    array_filter($form->scan_form_tags(), static function (
+                        $tag
+                    ) {
                         return $tag->basetype !== 'response' &&
                             $tag->basetype !== 'submit';
                     })
@@ -150,7 +148,7 @@ class Integration extends BaseIntegration
      *
      * @param WPCF7_FormTag $field Form tag instance.
      * @param array $form_data Form data.
-     * 
+     *
      * @return array Field data.
      */
     private function serialize_field($field)
@@ -189,7 +187,7 @@ class Integration extends BaseIntegration
      *
      * @param WPCF7_Submission $submission Submission instance.
      * @param array $form Form data.
-     * 
+     *
      * @return array Submission data.
      */
     public function serialize_submission($submission, $form_data)
@@ -226,7 +224,7 @@ class Integration extends BaseIntegration
      *
      * @param WPCF7_Submission $submission Submission instance.
      * @param array $form_data Form data.
-     * 
+     *
      * @return array Uploaded files data.
      */
     protected function submission_uploads($submission, $form_data)

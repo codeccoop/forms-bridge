@@ -162,11 +162,12 @@ class Forms_Bridge extends BasePlugin
     {
         // Patch http bridge settings to plugin settings
         add_filter('option_forms-bridge_general', function ($value) {
-            $http_setting = Settings::get_setting('http-bridge', 'general');
-
-            $value['backends'] = isset($http_setting['backends'])
-                ? (array) $http_setting['backends']
-                : [];
+            $backends = Settings::get_setting(
+                'http-bridge',
+                'general',
+                'backends'
+            );
+            $value['backends'] = $backends;
             return $value;
         });
 
@@ -179,10 +180,7 @@ class Forms_Bridge extends BasePlugin
                 }
 
                 $http_setting = Settings::get_setting('http-bridge', 'general');
-
-                $http_setting['backends'] = isset($to['backends'])
-                    ? (array) $to['backends']
-                    : [];
+                $http_setting['backends'] = $to['backends'];
                 update_option('http-bridge_general', $http_setting);
             },
             10,
