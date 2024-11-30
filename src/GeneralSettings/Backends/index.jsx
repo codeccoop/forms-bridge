@@ -35,7 +35,7 @@ export default function Backends({ backends, setBackends }) {
     const index = backends.findIndex((b) => b.name === name);
     const newBackends = backends
       .slice(0, index)
-      .concat(backends.slice(index + 2));
+      .concat(backends.slice(index + 1));
     setBackends(newBackends);
   };
 

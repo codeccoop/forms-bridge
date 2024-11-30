@@ -35,7 +35,7 @@ export default function FormHooks({ hooks, setHooks }) {
 
   const removeHook = ({ name }) => {
     const index = hooks.findIndex((h) => h.name === name);
-    const newHooks = hooks.slice(0, index).concat(hooks.slice(index + 2));
+    const newHooks = hooks.slice(0, index).concat(hooks.slice(index + 1));
     setHooks(newHooks);
   };
 

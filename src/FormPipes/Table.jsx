@@ -66,7 +66,7 @@ export default function PipesTable({ formId, pipes, setPipes, done }) {
   };
 
   const addPipe = () => {
-    const newPipes = pipes.concat([{ from: "", to: "", cast: "" }]);
+    const newPipes = pipes.concat([{ from: "", to: "", cast: "string" }]);
     setPipes(newPipes);
   };
 
