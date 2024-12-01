@@ -48,7 +48,8 @@
       "Add Backend": ["Afegir Backend"],
       "Backends": [""],
       "General": [""],
-      "Notification receiver": ["Receptor de notificacions"]
+      "Notification receiver": ["Receptor de notificacions"],
+      "Done": ["Fet"]
     }
   }
 }

@@ -48,7 +48,8 @@
       "Add Backend": [""],
       "Backends": [""],
       "General": [""],
-      "Notification receiver": [""]
+      "Notification receiver": [""],
+      "Done": [""]
     }
   }
 }
