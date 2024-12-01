@@ -38,6 +38,7 @@ require_once 'includes/abstract-integration.php';
 require_once 'includes/class-menu.php';
 require_once 'includes/class-settings.php';
 require_once 'includes/class-rest-settings-controller.php';
+require_once 'includes/class-json-finger.php';
 
 /**
  * Forms Bridge plugin.

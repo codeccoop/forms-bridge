@@ -58,7 +58,7 @@ abstract class Integration extends Singleton
      *
      * @param any $submission Pair plugin submission handle.
      * @param array $form_data Source form data.
-     * 
+     *
      * @return array Submission data.
      */
     abstract public function serialize_submission($submission, $form);
@@ -67,7 +67,7 @@ abstract class Integration extends Singleton
      * Serialize the current form data.
      *
      * @param any $form Pair plugin form handle.
-     * 
+     *
      * @return array Form data.
      */
     abstract public function serialize_form($form);
@@ -77,7 +77,7 @@ abstract class Integration extends Singleton
      *
      * @param any $submission Pair plugin submission handle.
      * @param array $form_data Current form data.
-     * 
+     *
      * @return array Collection of uploaded files.
      */
     abstract protected function submission_uploads($submission, $form_data);
@@ -151,21 +151,27 @@ abstract class Integration extends Singleton
             $form_data
         );
 
-        $payload = apply_filters(
-            'forms_bridge_payload',
-            $this->serialize_submission($submission, $form_data),
-            $attachments,
-            $form_data
-        );
-        $this->cleanup_empties($payload);
-
         foreach (array_values($hooks) as $hook) {
+            $payload = $this->serialize_submission($submission, $form_data);
+            $payload = $this->apply_pipes($hook['pipes'], $payload);
+
+            $payload = apply_filters(
+                'forms_bridge_payload',
+                apply_filters(
+                    'forms_bridge_payload_' . $hook['name'],
+                    $payload,
+                    $attachments,
+                    $form_data
+                ),
+                $attachments,
+                $form_data
+            );
+
             $backend = apply_filters(
                 'http_bridge_backend',
                 null,
                 $hook['backend']
             );
-            $this->apply_pipes($hook['pipes'], $payload);
             $headers = $backend->get_headers();
 
             if (isset($hook['method'], $hook['endpoint'])) {
@@ -241,33 +247,33 @@ abstract class Integration extends Singleton
      *
      * @param array $payload Submission data.
      * @param array $form_data Form data.
+     *
+     * @return arra Submission data modified by hook pipes.
      */
-    private function apply_pipes($pipes, &$payload)
+    private function apply_pipes($pipes, $payload)
     {
-        foreach ($payload as $field => $value) {
-            foreach ($pipes as $pipe) {
-                if ($pipe['from'] === $field) {
-                    unset($payload[$field]);
-                    if ($pipe['cast'] !== 'null') {
-                        $payload[$pipe['to']] = $this->cast(
-                            $pipe['cast'],
-                            $value
-                        );
-                    }
-                }
+        $finger = new Forms_Bridge_JSON_Finger($payload);
+        foreach ($pipes as $pipe) {
+            extract($pipe);
+            $value = $finger->get($from);
+            $finger->unset($from);
+            if ($cast !== 'null') {
+                $finger->set($to, $this->cast($value, $cast));
             }
         }
+
+        return $finger->data();
     }
 
     /**
      * Cast value to type.
      *
-     * @param string $type Target type to cast value.
      * @param mixed $value Original value.
-     * 
+     * @param string $type Target type to cast value.
+     *
      * @return mixed $value Casted value.
      */
-    private function cast($type, $value)
+    private function cast($value, $type)
     {
         switch ($type) {
             case 'string':
@@ -292,26 +298,10 @@ abstract class Integration extends Singleton
     }
 
     /**
-     * Clean up submission empty fields.
-     *
-     * @param array $submission_data Submission data.
-     * 
-     * @return array Submission data without empty fields.
-     */
-    private function cleanup_empties(&$submission_data)
-    {
-        foreach ($submission_data as $key => $val) {
-            if ($val === '' || $val === null) {
-                unset($submission_data[$key]);
-            }
-        }
-    }
-
-    /**
      * Transform collection of uploads to an attachments map.
      *
      * @param array $uploads Collection of uploaded files.
-     * 
+     *
      * @return array Map of uploaded files.
      */
     private function attachments($uploads)
@@ -340,7 +330,7 @@ abstract class Integration extends Singleton
      * @param string $method HTTP method (GET, POST, PUT, DELETE).
      * @param string $url Target URL.
      * @param array $args Request arguments.
-     * 
+     *
      * @return array|WP_Error Request response.
      */
     private function submit_rest($method, $url, $args)
@@ -367,7 +357,7 @@ abstract class Integration extends Singleton
      * JSON RPC login request.
      *
      * @param string $endpoint Target endpoint.
-     * 
+     *
      * @return array Tuple with RPC session id and user id.
      */
     private function rpc_login($url)
@@ -413,7 +403,7 @@ abstract class Integration extends Singleton
      * @param array $payload Submission data.
      * @param array $attachments Collection of attachment files.
      * @param array $form_data Source form data.
-     * 
+     *
      * @return array|WP_Error HTTP response or error.
      */
     private function submit_rpc(
@@ -498,7 +488,7 @@ abstract class Integration extends Singleton
      * @param string $service RPC service name.
      * @param string $method RPC method name.
      * @param array $args RPC request arguments.
-     * 
+     *
      * @return array JSON-RPC conformant payload.
      */
     private function rpc_payload($session_id, $service, $method, $args)
