@@ -38,6 +38,7 @@ class Settings extends BaseSettings
                     'type' => 'array',
                     'items' => [
                         'type' => 'object',
+                        'additionalProperties' => false,
                         'properties' => [
                             'name' => ['type' => 'string'],
                             'base_url' => ['type' => 'string'],
@@ -45,6 +46,7 @@ class Settings extends BaseSettings
                                 'type' => 'array',
                                 'items' => [
                                     'type' => 'object',
+                                    'additionalProperties' => false,
                                     'properties' => [
                                         'name' => ['type' => 'string'],
                                         'value' => ['type' => 'string'],
@@ -80,6 +82,7 @@ class Settings extends BaseSettings
                     'type' => 'array',
                     'items' => [
                         'type' => 'object',
+                        'additionalProperties' => false,
                         'properties' => [
                             'name' => ['type' => 'string'],
                             'backend' => ['type' => 'string'],
@@ -93,6 +96,7 @@ class Settings extends BaseSettings
                                 'type' => 'array',
                                 'items' => [
                                     'type' => 'object',
+                                    'additionalProperties' => false,
                                     'properties' => [
                                         'from' => ['type' => 'string'],
                                         'to' => ['type' => 'string'],
@@ -131,6 +135,7 @@ class Settings extends BaseSettings
                     'type' => 'array',
                     'items' => [
                         'type' => 'object',
+                        'additionalProperties' => false,
                         'properties' => [
                             'name' => ['type' => 'string'],
                             'backend' => ['type' => 'string'],
@@ -140,6 +145,7 @@ class Settings extends BaseSettings
                                 'type' => 'array',
                                 'items' => [
                                     'type' => 'object',
+                                    'additionalProperties' => false,
                                     'properties' => [
                                         'from' => ['type' => 'string'],
                                         'to' => ['type' => 'string'],
