@@ -64,6 +64,7 @@ function TabTitle({ name, focus, setFocus, copy }) {
 export default function FormHooks({ hooks, setHooks }) {
   const __ = wp.i18n.__;
 
+  const [currentTab, setCurrentTab] = useState(hooks[0]?.name || "add");
   const [tabFocus, setTabFocus] = useState(null);
   const tabs = hooks
     .map(({ backend, model, form_id, name, pipes }) => ({
@@ -101,6 +102,14 @@ export default function FormHooks({ hooks, setHooks }) {
       delete hook.icon;
     });
     setHooks(newHooks);
+    setCurrentTab(newHooks[index].name);
+  };
+
+  const removeHook = ({ name }) => {
+    const index = hooks.findIndex((h) => h.name === name);
+    const newHooks = hooks.slice(0, index).concat(hooks.slice(index + 1));
+    setHooks(newHooks);
+    setCurrentTab(newHooks[index - 1]?.name || "add");
   };
 
   const copyHook = (name) => {
@@ -120,12 +129,7 @@ export default function FormHooks({ hooks, setHooks }) {
     }
 
     setHooks(hooks.concat(hook));
-  };
-
-  const removeHook = ({ name }) => {
-    const index = hooks.findIndex((h) => h.name === name);
-    const newHooks = hooks.slice(0, index).concat(hooks.slice(index + 1));
-    setHooks(newHooks);
+    setCurrentTab(hook.name);
   };
 
   return (
@@ -141,7 +145,11 @@ export default function FormHooks({ hooks, setHooks }) {
       >
         {__("Form Hooks", "forms-bridge")}
       </label>
-      <TabPanel tabs={tabs}>
+      <TabPanel
+        tabs={tabs}
+        onSelect={setCurrentTab}
+        initialTabName={currentTab}
+      >
         {(hook) => (
           <FormHook
             {...hook}
