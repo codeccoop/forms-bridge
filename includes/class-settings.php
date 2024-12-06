@@ -194,8 +194,8 @@ class Settings extends BaseSettings
     /**
      * Overwrites abstract sanitize callback and adds setting validation checks.
      *
-     * @param string $option Option name.
      * @param array $value Setting data.
+     * @param Setting $setting Setting instance.
      *
      * @return array Sanitized and validated setting data.
      */
@@ -260,7 +260,7 @@ class Settings extends BaseSettings
     /**
      * API settings validation. Filters API hooks with with inconsistencies with the general settings state.
      *
-     * @param array $setting Setting data.
+     * @param array $value Setting data.
      *
      * @return array Validated setting data.
      */
@@ -339,6 +339,23 @@ class Settings extends BaseSettings
                     }
                     $hook['endpoint'] = sanitize_text_field($hook['endpoint']);
                 }
+
+                $pipes = [];
+                foreach ($hook['pipes'] as $pipe) {
+                    $pipe['to'] = sanitize_text_field($pipe['to']);
+                    $pipe['from'] = sanitize_text_field($pipe['from']);
+                    $pipe['cast'] = in_array($pipe['cast'], [
+                        'boolean',
+                        'string',
+                        'integer',
+                        'float',
+                        'json',
+                        'null',
+                    ])
+                        ? $pipe['cast']
+                        : 'string';
+                }
+                $hook['pipes'] = $pipes;
 
                 $valid_hooks[] = $hook;
             }
