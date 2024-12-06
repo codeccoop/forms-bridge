@@ -233,7 +233,7 @@ export default function FormHook({ update, remove, ...data }) {
     timeout.current = setTimeout(() => {
       if (hookNames.has(name.trim())) return;
       update({ ...data, name: name.trim() });
-    }, 1000);
+    }, 500);
   }, [name]);
 
   useEffect(() => setName(data.name), [data.name]);

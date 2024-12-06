@@ -24,7 +24,7 @@ export default function BackendHeaders({ headers, setHeaders }) {
   };
 
   const dropHeader = (index) => {
-    const newHeaders = headers.slice(0, index).concat(headers.slice(index + 2));
+    const newHeaders = headers.slice(0, index).concat(headers.slice(index + 1));
     setHeaders(newHeaders);
   };
 
