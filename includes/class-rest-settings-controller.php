@@ -15,17 +15,23 @@ if (!defined('ABSPATH')) {
 class REST_Settings_Controller extends Base_Controller
 {
     /**
+     * Handle REST API controller namespace.
+     * 
      * @var string $namespace Handle wp rest api plugin namespace.
      */
     protected static $namespace = 'wp-bridges';
 
     /**
+     * Handle REST API controller namespace version.
+     * 
      * @var int $version Handle the API version.
      */
     protected static $version = 1;
 
     /**
-     * @var array $settings Handle the plugin settings names list.
+     * Handle plugin settings names.
+     * 
+     * @var array<string> $settings Handle the plugin settings names list.
      */
     protected static $settings = ['general', 'rest-api', 'rpc-api'];
 

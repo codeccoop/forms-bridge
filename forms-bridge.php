@@ -227,7 +227,7 @@ class Forms_Bridge extends BasePlugin
     }
 
     /**
-     * Current integration getter.
+     * Gets an array with the active integrations
      *
      * @return array Active integration instances.
      */
@@ -262,7 +262,7 @@ class Forms_Bridge extends BasePlugin
     /**
      * Gets form data, by context or by ID.
      *
-     * @param int $form_id Form ID.
+     * @param int $form_id Form ID, optional.
      *
      * @return array|null Form data or null;
      */
@@ -383,4 +383,5 @@ class Forms_Bridge extends BasePlugin
     }
 }
 
+// Start the plugin
 Forms_Bridge::setup();

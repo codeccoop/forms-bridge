@@ -95,8 +95,8 @@ abstract class Integration extends Singleton
     /**
      * Proceed with the submission sub-routine.
      *
-     * @param any $submission Pair plugin submission handle.
-     * @param any $form Pair plugin form handle.
+     * @param mixed $submission Pair plugin submission handle.
+     * @param mixed $form Pair plugin form handle.
      */
     public function do_submission($submission, $form)
     {

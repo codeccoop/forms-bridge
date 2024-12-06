@@ -44,12 +44,22 @@ class Form_Hook
         return $hooks;
     }
 
+    /**
+     * Binds the hook data and sets its protocol.
+     */
     public function __construct($data)
     {
         $this->data = $data;
         $this->proto = isset($this->data['endpoint']) ? 'rest' : 'rpc';
     }
 
+    /**
+     * Magic method to proxy public attributes to method getters.
+     * 
+     * @param string $name Attribute name.
+     * 
+     * @return mixed Attribute value or null.
+     */
     public function __get($name)
     {
         switch ($name) {
@@ -66,6 +76,11 @@ class Form_Hook
         }
     }
 
+    /**
+     * Retrives the hook's backend instance.
+     * 
+     * @return Http_Backend Backend instance.
+     */
     private function backend()
     {
         return apply_filters(
@@ -75,6 +90,11 @@ class Form_Hook
         );
     }
 
+    /**
+     * Retrives the hook's endpoint.
+     * 
+     * @return string API endpoint.
+     */
     private function endpoint()
     {
         if ($this->proto === 'rpc') {
@@ -92,11 +112,24 @@ class Form_Hook
         );
     }
 
+    /**
+     * Retrives the hook's form data.
+     * 
+     * @return arrray Form data.
+     */
     private function form()
     {
         return apply_filters('forms_bridge_form', null, $this->form_id);
     }
 
+    /**
+     * Submits submission to the backend.
+     * 
+     * @param array $submission Submission data.
+     * @param array $attachments Submission's attached files.
+     * 
+     * @return array|WP_Error Http request response.
+     */
     public function submit($submission, $attachments = [])
     {
         if ($this->proto === 'rest') {
@@ -106,6 +139,14 @@ class Form_Hook
         }
     }
 
+    /**
+     * Submits submission over the REST protocol.
+     * 
+     * @param array $submission Submission data.
+     * @param array $attachments Submission attachmeed files.
+     * 
+     * @return array|WP_Error Http request response.
+     */
     private function submit_rest($submission, $attachments)
     {
         $backend = $this->backend;
@@ -142,7 +183,7 @@ class Form_Hook
     }
 
     /**
-     * Submit submission over Odoo's JSON-RPC API.
+     * Submits submission data over Odoo's JSON-RPC API.
      *
      * @param array $submission Submission payload.
      *
@@ -273,9 +314,8 @@ class Form_Hook
      * Apply cast pipes to data.
      *
      * @param array $data Array of data.
-     * @param array $form_data Form data.
      *
-     * @return arra Submission data modified by hook pipes.
+     * @return array Data modified by the hook's pipes.
      */
     public function apply_pipes($data)
     {

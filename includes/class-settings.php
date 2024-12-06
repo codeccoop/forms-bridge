@@ -220,11 +220,11 @@ class Settings extends BaseSettings
     }
 
     /**
-     * General setting validation. Remove inconsistencies with general and API settings.
+     * General setting validation. Remove inconsistencies between general and API settings.
      *
      * @param array $value General setting data.
      *
-     * @return array $setting General setting data.
+     * @return array General setting validated data.
      */
     private function validate_general($value)
     {
@@ -258,7 +258,7 @@ class Settings extends BaseSettings
     }
 
     /**
-     * API settings validation. Filters API hooks with with inconsistencies with the general settings state.
+     * API settings validation. Filters inconsistent API hooks based on the general settings state.
      *
      * @param array $value Setting data.
      *
