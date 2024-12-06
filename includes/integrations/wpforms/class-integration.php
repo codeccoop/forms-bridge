@@ -17,9 +17,9 @@ class Integration extends BaseIntegration
     /**
      * Inherit parent constructor and hooks submissions to wpforms_process_complete
      */
-    protected function __construct()
+    protected function construct(...$args)
     {
-        parent::__construct();
+        parent::construct(...$args);
 
         add_action(
             'wpforms_process_complete',
@@ -45,7 +45,7 @@ class Integration extends BaseIntegration
      *
      * @return array Form data.
      */
-    public function get_form()
+    public function form()
     {
         $form_id = !empty($_POST['wpforms']['id'])
             ? absint($_POST['wpforms']['id'])
@@ -62,7 +62,7 @@ class Integration extends BaseIntegration
      * Retrives form data by ID.
      *
      * @param int $form_id Form ID.
-     * 
+     *
      * @return array Form data.
      */
     public function get_form_by_id($form_id)
@@ -80,7 +80,7 @@ class Integration extends BaseIntegration
      *
      * @return array Collection of form data.
      */
-    public function get_forms()
+    public function forms()
     {
         $forms = wpforms()->obj('form')->get();
         return array_map(function ($form) {
@@ -93,9 +93,9 @@ class Integration extends BaseIntegration
      *
      * @return array Submission data.
      */
-    public function get_submission()
+    public function submission()
     {
-        $form = $this->get_form();
+        $form = $this->form();
         if (!$form) {
             return null;
         }
@@ -110,21 +110,21 @@ class Integration extends BaseIntegration
      *
      * @return array Uploaded files data.
      */
-    public function get_uploads()
+    public function uploads()
     {
-        $submission = $this->get_submission();
+        $submission = $this->submission();
         if (!$submission) {
             return null;
         }
 
-        return $this->submission_uploads($submission, $this->get_form());
+        return $this->submission_uploads($submission, $this->form());
     }
 
     /**
      * Serialize form data.
      *
      * @param WP_Post $form Form post instance.
-     * 
+     *
      * @return array Form data.
      */
     public function serialize_form($form)
@@ -152,7 +152,7 @@ class Integration extends BaseIntegration
      *
      * @param array $field WPForms field data representation.
      * @param array $form_data Form data.
-     * 
+     *
      * @return array Field data.
      */
     private function serialize_field($field)
@@ -173,7 +173,7 @@ class Integration extends BaseIntegration
      *
      * @param array $submission WPForms submission data.
      * @param array $form Form data.
-     * 
+     *
      * @return array Submission data.
      */
     public function serialize_submission($submission, $form_data)
@@ -194,7 +194,7 @@ class Integration extends BaseIntegration
      *
      * @param object $submission WPForms submission data.
      * @param array $form_data Form data.
-     * 
+     *
      * @return array Uploaded files data.
      */
     protected function submission_uploads($submission, $form_data)

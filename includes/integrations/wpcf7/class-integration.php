@@ -18,9 +18,9 @@ class Integration extends BaseIntegration
     /**
      * Inherit parent constructor and hooks submissions to wpcf7_before_send_mail
      */
-    protected function __construct()
+    protected function construct(...$args)
     {
-        parent::__construct();
+        parent::construct(...$args);
 
         add_filter(
             'wpcf7_before_send_mail',
@@ -44,7 +44,7 @@ class Integration extends BaseIntegration
      *
      * @return array $form_data Form data array representation.
      */
-    public function get_form()
+    public function form()
     {
         $form = WPCF7_ContactForm::get_current();
         if (!$form) {
@@ -75,7 +75,7 @@ class Integration extends BaseIntegration
      *
      * @return array $forms Collection of form data.
      */
-    public function get_forms()
+    public function forms()
     {
         $forms = WPCF7_ContactForm::find(['post_status', 'publish']);
         return array_map(function ($form) {
@@ -88,14 +88,14 @@ class Integration extends BaseIntegration
      *
      * @return array Submission data.
      */
-    public function get_submission()
+    public function submission()
     {
         $submission = WPCF7_Submission::get_instance();
         if (!$submission) {
             return null;
         }
 
-        return $this->serialize_submission($submission, $this->get_form());
+        return $this->serialize_submission($submission, $this->form());
     }
 
     /**
@@ -103,14 +103,14 @@ class Integration extends BaseIntegration
      *
      * @return array Uploaded files data.
      */
-    public function get_uploads()
+    public function uploads()
     {
         $submission = WPCF7_Submission::get_instance();
         if (!$submission) {
             return null;
         }
 
-        return $this->submission_uploads($submission, $this->get_form());
+        return $this->submission_uploads($submission, $this->form());
     }
 
     /**
