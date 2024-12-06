@@ -71,7 +71,7 @@ export default function PipesTable({ formId, pipes, setPipes, done }) {
   };
 
   const dropPipe = (index) => {
-    const newPipes = pipes.slice(0, index).concat(pipes.slice(index + 2));
+    const newPipes = pipes.slice(0, index).concat(pipes.slice(index + 1));
     setPipes(newPipes);
   };
 

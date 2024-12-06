@@ -34,9 +34,9 @@ class REST_Settings_Controller extends Base_Controller
      *
      * @param string $group_name Plugin settings group name.
      */
-    public function __construct($group_name)
+    public function construct(...$args)
     {
-        parent::__construct($group_name);
+        parent::construct(...$args);
 
         add_action('rest_api_init', function () {
             $this->init_forms();

@@ -20,6 +20,20 @@ class Settings extends BaseSettings
      */
     protected static $rest_controller_class = '\FORMS_BRIDGE\REST_Settings_Controller';
 
+    protected function construct(...$args)
+    {
+        parent::construct(...$args);
+
+        add_filter(
+            'wpct_sanitize_setting',
+            function ($value, $setting) {
+                return $this->sanitize_setting($value, $setting);
+            },
+            10,
+            2
+        );
+    }
+
     /**
      * Registers plugin settings.
      */
@@ -185,10 +199,14 @@ class Settings extends BaseSettings
      *
      * @return array Sanitized and validated setting data.
      */
-    protected function sanitize_setting($option, $value)
+    protected function sanitize_setting($value, $setting)
     {
-        [$group, $setting] = explode('_', $option);
-        switch ($setting) {
+        if ($setting->group() !== $this->group()) {
+            return $value;
+        }
+
+        $name = $setting->name();
+        switch ($name) {
             case 'general':
                 $value = $this->validate_general($value);
                 break;
@@ -198,40 +216,45 @@ class Settings extends BaseSettings
                 break;
         }
 
-        return parent::sanitize_setting($option, $value);
+        return $value;
     }
 
     /**
      * General setting validation. Remove inconsistencies with general and API settings.
      *
-     * @param array $setting General setting data.
+     * @param array $value General setting data.
      *
      * @return array $setting General setting data.
      */
-    private function validate_general($setting)
+    private function validate_general($value)
     {
-        $rest = self::get_setting($this->get_group_name(), 'rest-api');
-        $rpc = self::get_setting($this->get_group_name(), 'rpc-api');
+        $value['notification_receiver'] = sanitize_text_field(
+            $value['notification_receiver']
+        );
+        $value['backends'] = \HTTP_BRIDGE\Settings::validate_backends(
+            $value['backends']
+        );
+
+        $rest = self::get_setting($this->group(), 'rest-api');
+        $rpc = self::get_setting($this->group(), 'rpc-api');
 
         $hooks = $this->validate_form_hooks(
-            $rest['form_hooks'],
-            $setting['backends']
+            $rest->form_hooks,
+            $value['backends']
         );
-        if (count($hooks) !== count($rest['form_hooks'])) {
-            $rest['form_hooks'] = $hooks;
-            update_option($this->get_group_name() . '_' . 'rest-api', $rest);
+        if (count($hooks) !== count($rest->form_hooks)) {
+            $rest->form_hooks = $hooks;
         }
 
         $hooks = $this->validate_form_hooks(
-            $rpc['form_hooks'],
-            $setting['backends']
+            $rpc->form_hooks,
+            $value['backends']
         );
-        if (count($hooks) !== count($rpc['form_hooks'])) {
-            $rpc['form_hooks'] = $hooks;
-            update_option($this->get_group_name() . '_' . 'rpc-api', $rpc);
+        if (count($hooks) !== count($rpc->form_hooks)) {
+            $rpc->form_hooks = $hooks;
         }
 
-        return $setting;
+        return $value;
     }
 
     /**
@@ -241,18 +264,16 @@ class Settings extends BaseSettings
      *
      * @return array Validated setting data.
      */
-    private function validate_api($setting)
+    private function validate_api($value)
     {
-        $backends = Settings::get_setting(
-            $this->get_group_name(),
-            'general',
-            'backends'
-        );
-        $setting['form_hooks'] = $this->validate_form_hooks(
-            $setting['form_hooks'],
+        $backends = Settings::get_setting($this->group(), 'general')->backends;
+
+        $value['form_hooks'] = $this->validate_form_hooks(
+            $value['form_hooks'],
             $backends
         );
-        return $setting;
+
+        return $value;
     }
 
     /**
@@ -298,6 +319,26 @@ class Settings extends BaseSettings
                 ) {
                     return $pipe['to'] && $pipe['from'] && $pipe['cast'];
                 });
+
+                $hook['name'] = sanitize_text_field($hook['name']);
+                $hook['backend'] = sanitize_text_field($hook['backend']);
+                $hook['form_id'] = (int) $hook['form_id'];
+
+                if (isset($hook['model'])) {
+                    $hook['model'] = sanitize_text_field($hook['model']);
+                } else {
+                    if (
+                        !in_array($hook['method'], [
+                            'GET',
+                            'POST',
+                            'PUT',
+                            'DELETE',
+                        ])
+                    ) {
+                        $hook['method'] = null;
+                    }
+                    $hook['endpoint'] = sanitize_text_field($hook['endpoint']);
+                }
 
                 $valid_hooks[] = $hook;
             }

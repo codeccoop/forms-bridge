@@ -146,31 +146,32 @@ Filters the submission data to be sent to the backend.
 #### Arguments
 
 1. `array $payload`: Submission payload.
-2. `array $attachments`: Submission attached files.
+2. `array $uploads`: Submission uploaded files.
 3. `array $form_data`: Form data.
+4. `array $hook`: Hook data.
 
 #### Example
 
 ```php
-add_filter('forms_bridge_payload', function ($payload, $attachments, $form_data) {
+add_filter('forms_bridge_payload', function ($payload, $uploads, $form_data, $form_hook) {
 	return $payload;
-}, 10, 3);
+}, 10, 4);
 ```
 
 ### `forms_bridge_payload_{$hook_name}`
 
-Filters the submission data to be sent to the backend for a given post type.
+Filters the submission data to be sent to the backend for a given form hook.
 
 #### Arguments
 
 1. `array $payload`: Submission payload.
-2. `array $attachments`: Submission attached files.
+2. `array $uploads`: Submission uploaded files.
 3. `array $form_data`: Form data.
 
 #### Example
 
 ```php
-add_filter('forms_bridge_payload', function ($payload, $attachments, $form_data) {
+add_filter('forms_bridge_payload_contact', function ($payload, $uploads, $form_data) {
 	return $payload;
 }, 10, 3);
 ```
@@ -181,15 +182,33 @@ Filters attached files to be sent to the backend.
 
 #### Arguments
 
-1. `array $attachments`: Submission attached files.
+1. `array $uploads`: Submission attached files.
+2. `array $form_data`: Form data.
+3. `array $form_hook`: Form hook data.
+
+#### Example
+
+```php
+add_filter('forms_bridge_attachments', function ($attachments, $form_data, $form_hook) {
+	return $attachments;
+}, 10, 3);
+```
+
+### `forms_bridge_attachments_{$hook_name}`
+
+Filters attached files to be sent to the backend for a given form hook.
+
+#### Arguments
+
+1. `array $uploads`: Submission attached files.
 2. `array $form_data`: Form data.
 
 #### Example
 
 ```php
-add_filter('forms_bridge_attachments', function ($attachments, $form_data) {
+add_filter('forms_bridge_attachments_contact', function ($attachments, $form_data) {
 	return $attachments;
-}, 10, 3);
+}, 10, 2);
 ```
 
 ### `forms_bridge_rpc_login`

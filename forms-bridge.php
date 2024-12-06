@@ -8,14 +8,12 @@ Author:          Còdec
 Author URI:      https://www.codeccoop.org
 Text Domain:     forms-bridge
 Domain Path:     /languages
-Version:         1.1.1
+Version:         1.2.0
 */
 
 namespace FORMS_BRIDGE;
 
-use FORMS_BRIDGE\WPCF7\Integration as Wpcf7Integration;
-use FORMS_BRIDGE\GF\Integration as GFIntegration;
-use FORMS_BRIDGE\WPFORMS\Integration as WPFormsIntegration;
+use Exception;
 use WPCT_ABSTRACT\Plugin as BasePlugin;
 
 if (!defined('ABSPATH')) {
@@ -27,7 +25,7 @@ if (!defined('ABSPATH')) {
  *
  * @var string FORMS_BRIDGE_VERSION Current plugin version.
  */
-define('FORMS_BRIDGE_VERSION', '1.1.1');
+define('FORMS_BRIDGE_VERSION', '1.2.0');
 
 require_once 'abstracts/class-plugin.php';
 
@@ -39,6 +37,7 @@ require_once 'includes/class-menu.php';
 require_once 'includes/class-settings.php';
 require_once 'includes/class-rest-settings-controller.php';
 require_once 'includes/class-json-finger.php';
+require_once 'includes/class-form-hook.php';
 
 /**
  * Forms Bridge plugin.
@@ -78,45 +77,25 @@ class Forms_Bridge extends BasePlugin
     protected static $menu_class = '\FORMS_BRIDGE\Menu';
 
     /**
-     * Starts the plugin.
-     */
-    public static function start()
-    {
-        return self::get_instance();
-    }
-
-    /**
-     * Initializes the plugin on wp init.
-     */
-    public function init()
-    {
-    }
-
-    /**
-     * Callback to activation hook.
-     */
-    public static function activate()
-    {
-    }
-
-    /**
-     * Callback to deactivation hook.
-     */
-    public static function deactivate()
-    {
-    }
-
-    /**
      * Initializes integrations and setup plugin hooks.
      */
-    protected function __construct()
+    protected function construct(...$args)
     {
-        parent::__construct();
+        parent::construct(...$args);
 
         $this->load_integrations();
         $this->sync_http_setting();
         $this->wp_hooks();
         $this->custom_hooks();
+
+        add_action(
+            'forms_bridge_on_failure',
+            function ($form_data, $submission, $error = '') {
+                $this->notify_error($form_data, $submission, $error);
+            },
+            90,
+            3
+        );
     }
 
     /**
@@ -124,35 +103,29 @@ class Forms_Bridge extends BasePlugin
      */
     private function load_integrations()
     {
-        if (
-            apply_filters(
-                'wpct_is_plugin_active',
-                false,
-                'contact-form-7/wp-contact-form-7.php'
-            )
-        ) {
-            require_once 'includes/integrations/wpcf7/class-integration.php';
-            $this->_integrations['wpcf7'] = Wpcf7Integration::get_instance();
-        } elseif (
-            apply_filters(
-                'wpct_is_plugin_active',
-                false,
-                'gravityforms/gravityforms.php'
-            )
-        ) {
-            require_once 'includes/integrations/gf/class-integration.php';
-            $this->_integrations['gf'] = GFIntegration::get_instance();
-        } elseif (
-            apply_filters(
-                'wpct_is_plugin_active',
-                false,
-                'wpforms-lite/wpforms.php'
-            )
-        ) {
-            require_once 'includes/integrations/wpforms/class-integration.php';
-            $this->_integrations[
-                'wpforms'
-            ] = WPFormsIntegration::get_instance();
+        foreach (array_keys($this->_integrations) as $slug) {
+            switch ($slug) {
+                case 'wpcf7':
+                    $plugin = 'contact-form-7/wp-contact-form-7.php';
+                    break;
+                case 'gf':
+                    $plugin = 'gravityforms/gravityforms.php';
+                    break;
+                case 'wpforms':
+                    $plugin = 'wpforms-lite/wpforms.php';
+                    break;
+            }
+
+            $is_active = self::is_plugin_active($plugin);
+            if ($is_active) {
+                $NS = strtoupper($slug);
+                require_once "includes/integrations/{$slug}/class-integration.php";
+                $this->_integrations[$slug] = (
+                    '\FORMS_BRIDGE\\' .
+                    $NS .
+                    '\Integration'
+                )::get_instance();
+            }
         }
     }
 
@@ -163,11 +136,8 @@ class Forms_Bridge extends BasePlugin
     {
         // Patch http bridge settings to plugin settings
         add_filter('option_forms-bridge_general', function ($value) {
-            $backends = Settings::get_setting(
-                'http-bridge',
-                'general',
-                'backends'
-            );
+            $backends = Settings::get_setting('http-bridge', 'general')
+                ->backends;
             $value['backends'] = $backends;
             return $value;
         });
@@ -179,9 +149,8 @@ class Forms_Bridge extends BasePlugin
                 return;
             }
 
-            $http_setting = Settings::get_setting('http-bridge', 'general');
-            $http_setting['backends'] = $to['backends'];
-            update_option('http-bridge_general', $http_setting);
+            $http = Settings::get_setting('http-bridge', 'general');
+            $http->backends = $to['backends'];
         }
 
         add_action(
@@ -208,24 +177,6 @@ class Forms_Bridge extends BasePlugin
      */
     private function wp_hooks()
     {
-        // Add link to submenu page on plugins page
-        add_filter(
-            'plugin_action_links',
-            function ($links, $file) {
-                if ($file !== plugin_basename(__FILE__)) {
-                    return $links;
-                }
-
-                $url = admin_url('options-general.php?page=forms-bridge');
-                $label = __('Settings');
-                $link = "<a href='{$url}'>{$label}</a>";
-                array_unshift($links, $link);
-                return $links;
-            },
-            5,
-            2
-        );
-
         // Enqueue plugin admin client scripts
         add_action('admin_enqueue_scripts', function ($admin_page) {
             $this->admin_enqueue_scripts($admin_page);
@@ -240,8 +191,8 @@ class Forms_Bridge extends BasePlugin
         // Return registerd form hooks
         add_filter(
             'forms_bridge_form_hooks',
-            function ($default, $form_id) {
-                return $this->get_form_hooks($form_id);
+            function ($hooks, $form_id) {
+                return Form_Hook::form_hooks($form_id);
             },
             10,
             2
@@ -249,135 +200,119 @@ class Forms_Bridge extends BasePlugin
 
         // Return pair plugin registered forms datums
         add_filter('forms_bridge_forms', function () {
-            $integration = $this->get_integration();
-            if (!$integration) {
-                return [];
-            }
-
-            return $integration->get_forms();
+            return $this->forms();
         });
 
         // Return current pair plugin form representation
         // If $form_id is passed, retrives form by ID.
         add_filter('forms_bridge_form', function ($default, $form_id = null) {
-            $integration = $this->get_integration();
-            if (!$integration) {
-                return null;
-            }
-
-            if ($form_id) {
-                return $integration->get_form_by_id($form_id);
-            } else {
-                return $integration->get_form();
-            }
+            return $this->form($form_id);
         });
 
         // Check if current form is bound to certain hook
-        add_filter('forms_bridge_is_hooked', function ($default, $hook_name) {
-            $integration = $this->get_integration();
-            if (!$integration) {
-                return false;
-            }
-
-            $form = $integration->get_form();
-            if (!$form) {
-                return false;
-            }
-
+        add_filter('forms_bridge_submitting', function ($default, $hook_name) {
+            $form = $this->form();
             return isset($form['hooks'][$hook_name]);
         });
 
         // Return the current submission data
         add_filter('forms_bridge_submission', function () {
-            $integration = $this->get_integration();
-            if (!$integration) {
-                return null;
-            }
-
-            return $integration->get_submission();
+            return $this->submission();
         });
 
         // Return the current submission uploaded files
         add_filter('forms_bridge_uploads', function () {
-            $integration = $this->get_integration();
-            if (!$integration) {
-                return null;
-            }
-
-            return $integration->get_uploads();
-        });
-
-        add_filter(
-            'forms_bridge_backend',
-            function ($default, $name) {
-                return apply_filters('http_bridge_backend', $default, $name);
-            },
-            10,
-            2
-        );
-
-        add_filter('forms_bridge_backends', function () {
-            return apply_filters('http_bridge_backends');
+            return $this->uploads();
         });
     }
 
     /**
      * Current integration getter.
      *
-     * @return object $integration
+     * @return array Active integration instances.
      */
-    private function get_integration()
+    private function integrations()
     {
-        foreach (array_values($this->_integrations) as $integration) {
-            if ($integration) {
+        return array_values(
+            array_filter(array_values($this->_integrations), function (
+                $integration
+            ) {
                 return $integration;
+            })
+        );
+    }
+
+    /**
+     * Gets available forms' data.
+     *
+     * @return array Available forms' data.
+     */
+    private function forms()
+    {
+        $integrations = $this->integrations();
+
+        $forms = [];
+        foreach (array_values($integrations) as $integration) {
+            $forms = array_merge($forms, $integration->forms());
+        }
+
+        return $forms;
+    }
+
+    /**
+     * Gets form data, by context or by ID.
+     *
+     * @param int $form_id Form ID.
+     *
+     * @return array|null Form data or null;
+     */
+    private function form($form_id = null)
+    {
+        $integrations = $this->integrations();
+
+        foreach ($integrations as $integration) {
+            if ($form_id) {
+                $form = $integration->get_form_by_id($form_id);
+            } else {
+                $form = $integration->form();
+            }
+
+            if ($form) {
+                return $form;
             }
         }
     }
 
     /**
-     * Form hooks getter.
+     * Gets current submission data.
      *
-     * @return array $hooks Array with hooks.
+     * @return array|null Submission data or null.
      */
-    private function get_form_hooks($form_id)
+    private function submission()
     {
-        if (empty($form_id)) {
-            $integration = $this->get_integration();
-            if (!$integration) {
-                return [];
+        $integrations = $this->integrations();
+        foreach ($integrations as $integration) {
+            $submission = $integration->submission();
+            if ($submission) {
+                return $submission;
             }
-
-            $form = $integration->get_form();
-            if (!$form) {
-                return [];
-            }
-
-            $form_id = $form['id'];
         }
+    }
 
-        $rest_hooks = Settings::get_setting(
-            'forms-bridge',
-            'rest-api',
-            'form_hooks'
-        );
-        $rpc_hooks = Settings::get_setting(
-            'forms-bridge',
-            'rpc-api',
-            'form_hooks'
-        );
-
-        return array_reduce(
-            array_merge($rest_hooks, $rpc_hooks),
-            function ($hooks, $hook) use ($form_id) {
-                if ((int) $hook['form_id'] === (int) $form_id) {
-                    $hooks[$hook['name']] = $hook;
-                }
-
-                return $hooks;
-            },
-            []
-        );
+    /**
+     * Gets current submission uploads.
+     *
+     * @return array|null Uploaded files or null.
+     */
+    private function uploads()
+    {
+        $integrations = $this->integrations();
+        foreach ($integrations as $integration) {
+            $uploads = $integration->uploads();
+            if ($uploads) {
+                return $uploads;
+            }
+        }
     }
 
     /**
@@ -392,7 +327,7 @@ class Forms_Bridge extends BasePlugin
         }
 
         wp_enqueue_script(
-            $this->get_textdomain(),
+            $this->textdomain(),
             plugins_url('assets/plugin.bundle.js', __FILE__),
             [
                 'react',
@@ -409,14 +344,43 @@ class Forms_Bridge extends BasePlugin
         );
 
         wp_set_script_translations(
-            $this->get_textdomain(),
-            $this->get_textdomain(),
+            $this->textdomain(),
+            $this->textdomain(),
             plugin_dir_path(__FILE__) . 'languages'
         );
 
         wp_enqueue_style('wp-components');
     }
+
+    /**
+     * Sends error notifications to the email receiver.
+     *
+     * @param array $form_data Form data.
+     * @param array $payload Submission data.
+     * @param array $error_data Error data.
+     */
+    private function notify_error($form_data, $payload, $error = '')
+    {
+        $email = Settings::get_setting('forms-bridge', 'general')
+            ->notification_receiver;
+
+        if (empty($email)) {
+            return;
+        }
+
+        $to = $email;
+        $subject = 'Forms Bridge Error';
+        $body = "Form ID: {$form_data['id']}\n";
+        $body .= "Form title: {$form_data['title']}\n";
+        $body .= 'Submission: ' . print_r($payload, true) . "\n";
+        $body .= "Error: {$error}\n";
+        $success = wp_mail($to, $subject, $body);
+        if (!$success) {
+            throw new Exception(
+                'Error while submitting form ' . $form_data['id']
+            );
+        }
+    }
 }
 
-// Setup plugin on wp plugins_loaded hook
-add_action('plugins_loaded', ['\FORMS_BRIDGE\Forms_Bridge', 'start'], 9);
+Forms_Bridge::setup();

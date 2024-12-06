@@ -173,7 +173,7 @@ export default function FormHook({ update, remove, ...data }) {
   const hookNames = useHookNames();
   const [nameConflict, setNameConflict] = useState(false);
   const handleSetName = (name) => {
-    setNameConflict(name !== initialName.current && hookNames.has(name));
+    setNameConflict(name !== initialName.current && hookNames.has(name.trim()));
     setName(name);
   };
 
@@ -187,10 +187,10 @@ export default function FormHook({ update, remove, ...data }) {
   useEffect(() => {
     clearTimeout(timeout.current);
     if (!name || nameConflict) return;
-    timeout.current = setTimeout(
-      () => update({ ...data, name: name.trim() }),
-      500
-    );
+    timeout.current = setTimeout(() => {
+      if (hookNames.has(name.trim())) return;
+      update({ ...data, name: name.trim() });
+    }, 500);
   }, [name]);
 
   useEffect(() => setName(data.name), [data.name]);

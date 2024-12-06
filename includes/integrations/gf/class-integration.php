@@ -24,7 +24,7 @@ class Integration extends BaseIntegration
     /**
      * Inherits prent constructor and hooks submissions to gform_after_submission
      */
-    protected function __construct()
+    protected function construct(...$args)
     {
         add_action(
             'gform_after_submission',
@@ -35,7 +35,7 @@ class Integration extends BaseIntegration
             2
         );
 
-        parent::__construct();
+        parent::construct(...$args);
     }
 
     /**
@@ -50,7 +50,7 @@ class Integration extends BaseIntegration
      *
      * @return array Form data.
      */
-    public function get_form()
+    public function form()
     {
         $form_id = null;
         if (isset($_POST['gform_submit'])) {
@@ -74,7 +74,7 @@ class Integration extends BaseIntegration
      * Retrives form data by ID.
      *
      * @param int $form_id Form ID.
-     * 
+     *
      * @return array Form data.
      */
     public function get_form_by_id($form_id)
@@ -92,7 +92,7 @@ class Integration extends BaseIntegration
      *
      * @return array Collection of form data array representations.
      */
-    public function get_forms()
+    public function forms()
     {
         $forms = GFAPI::get_forms();
         return array_map(
@@ -110,9 +110,9 @@ class Integration extends BaseIntegration
      *
      * @return array Submission data.
      */
-    public function get_submission()
+    public function submission()
     {
-        $form_data = $this->get_form();
+        $form_data = $this->form();
         if (!$form_data) {
             return null;
         }
@@ -124,7 +124,7 @@ class Integration extends BaseIntegration
             return null;
         }
 
-        return $this->serialize_submission($submission, $this->get_form());
+        return $this->serialize_submission($submission, $this->form());
     }
 
     /**
@@ -132,9 +132,9 @@ class Integration extends BaseIntegration
      *
      * @return array Collection of uploaded files.
      */
-    public function get_uploads()
+    public function uploads()
     {
-        $form_data = $this->get_form();
+        $form_data = $this->form();
         if (!$form_data) {
             return null;
         }
@@ -146,14 +146,14 @@ class Integration extends BaseIntegration
             return null;
         }
 
-        return $this->submission_uploads($submission, $this->get_form());
+        return $this->submission_uploads($submission, $this->form());
     }
 
     /**
      * Serializes gf form data.
      *
      * @param array $form GF form data.
-     * 
+     *
      * @return array Form data.
      */
     public function serialize_form($form)
@@ -178,7 +178,7 @@ class Integration extends BaseIntegration
      * Serializes GF form data field.
      *
      * @param GFField $field Field object instance.
-     * 
+     *
      * @return array Field data.
      */
     private function serialize_field($field)
@@ -238,7 +238,7 @@ class Integration extends BaseIntegration
      *
      * @param array $submission GF form submission.
      * @param array $form Form data.
-     * 
+     *
      * @return array Submission data.
      */
     public function serialize_submission($submission, $form_data)
@@ -320,7 +320,7 @@ class Integration extends BaseIntegration
      * @param mixed $value Field value.
      * @param GFField $field Field object instance.
      * @param array $input Field input data.
-     * 
+     *
      * @return mixed Formatted value.
      */
     private function format_value($value, $field, $input = null)
@@ -346,7 +346,7 @@ class Integration extends BaseIntegration
      *
      * @param array $submission GF submission data.
      * @param array $form_data Form data.
-     * 
+     *
      * @return array Uploaded files data.
      */
     protected function submission_uploads($submission, $form_data)
