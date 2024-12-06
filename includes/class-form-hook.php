@@ -100,9 +100,9 @@ class Form_Hook
     public function submit($submission, $attachments = [])
     {
         if ($this->proto === 'rest') {
-            $this->submit_rest($submission, $attachments);
+            return $this->submit_rest($submission, $attachments);
         } else {
-            $this->submit_rpc($submission);
+            return $this->submit_rpc($submission);
         }
     }
 
@@ -138,6 +138,7 @@ class Form_Hook
             $this->name,
             $this
         );
+        return $response;
     }
 
     /**
