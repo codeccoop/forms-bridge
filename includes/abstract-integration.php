@@ -113,18 +113,16 @@ abstract class Integration extends Singleton
             $payload = $this->serialize_submission($submission, $form_data);
             $payload = $hook->apply_pipes($payload);
 
-            $payload = apply_filters(
-                'forms_bridge_payload',
-                apply_filters(
-                    'forms_bridge_payload_' . $hook->name,
-                    $payload,
-                    $uploads,
-                    $form_data
-                ),
-                $uploads,
-                $form_data,
-                $hook
+            $prune_empties = apply_filters(
+                'forms_bridge_prune_empties',
+                false,
+                $hook->name,
+                $hook,
+                $form_data
             );
+            if ($prune_empties) {
+                $payload = $this->prune_empties($payload);
+            }
 
             $attachments = apply_filters(
                 'forms_bridge_attachments',
@@ -138,16 +136,25 @@ abstract class Integration extends Singleton
                 $hook
             );
 
-            $prune_empties = apply_filters(
-                'forms_bridge_prune_empties',
-                false,
-                $hook->name,
-                $hook,
-                $form_data
-            );
-            if ($prune_empties) {
-                $payload = $this->prune_empties($payload);
+            if ($hook->proto === 'rpc') {
+                $attachments = $this->stringify_attachments($attachments);
+                foreach ($attachments as $name => $value) {
+                    $payload[$name] = $value;
+                }
             }
+
+            $payload = apply_filters(
+                'forms_bridge_payload',
+                apply_filters(
+                    'forms_bridge_payload_' . $hook->name,
+                    $payload,
+                    $uploads,
+                    $form_data
+                ),
+                $uploads,
+                $form_data,
+                $hook
+            );
 
             do_action(
                 'forms_bridge_before_submission',
@@ -219,5 +226,30 @@ abstract class Integration extends Singleton
             },
             []
         );
+    }
+
+    /**
+     * Returns the attachments array with each attachment path replaced with its
+     * content as a base64 encoded string. For each file on the list, adds an
+     * additonal field with the file name on the response.
+     *
+     * @param array $attachments Submission attachments data.
+     *
+     * @return array Array with base64 encoded file contents and file names.
+     */
+    private function stringify_attachments($attachments)
+    {
+        foreach ($attachments as $name => $path) {
+            if (!is_file($path) || !is_readable($path)) {
+                continue;
+            }
+
+            $filename = basename($path);
+            $content = file_get_contents($path);
+            $attachments[$name] = base64_encode($content);
+            $attachments[$name . '_filename'] = $filename;
+        }
+
+        return $attachments;
     }
 }
