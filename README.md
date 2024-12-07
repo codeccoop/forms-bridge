@@ -52,7 +52,8 @@ has three main sections:
 	Each relation needs a unique name, a from ID, a backend, and a model. Submission will
 	be sent encoded as JSON-RPC payloads.
 
-Once configured, try to submit data with one of your hooked forms and watch the magic happen 🛹!
+Once configured, try to submit data with one of your hooked forms and watch the magic
+happen 🙌!
 
 ## Backends
 
@@ -82,18 +83,29 @@ types of form hooks:
    backend and use some credentials: The target database, the username and the password.
    Data will be sent as POST requests encoded as JSON data.
 
-On REST form hooks, submission data will be sent with data encoded as `application/json` by default
-if there is no uploads. Else if form submission contains files, the default behavior is to send data
-as `multipart/formdata` encodec content type. You can modify this behavior using backend's HTTP headers.
-Supported content types are `application/json`, `application/x-www-form-urlencoded` and
-`multipart/form-data`. If you needs any other encoding schema, you have to use `forms_bridge_payload`
-to encode your submission as string.
+On REST form hooks, submission data will be sent encoded as `application/json` by default
+if there is no uploads. You can modify this behavior using backend's HTTP headers. Supported
+content types are `application/json`, `application/x-www-form-urlencoded` and `multipart/form-data`.
+If you needs any other encoding schema, you have to use `forms_bridge_payload` to encode your
+submission as string.
 
-> 🚩 For REST HTTP methods GET and DELETE, the request has no body and your data will be sent as
-> URL query params.
+> 🚩 For REST HTTP methods GET and DELETE, the request has no body and your data will be sent
+> as URL query params.
 
-> 🚩 On JSON-RPC hooks attachments will be encoded as base64 content and included to your submission
-> data. This is needed because JSON-RPC API does not support `multipart/form-data` content types.
+## Attachments
+
+In Forms Bridge, attachments are files that has to be sent with your submission data to a
+backend.
+
+By default, Forms Bridge will send this files as binary data using the `multipart/form-data`
+encoding schema unless your backend connexions has a different `Content-Type` HTTP header.
+Forms Bridge will check to the form hook's backend for this header.  If it exists and is
+not `multipart/form-data`, Forms Bridge will include this files as base64 encoded strings to
+your payload.
+
+> 🚩 On JSON-RPC hooks attachments will always be encoded as base64 content and included to
+> your submission data. This is needed because JSON-RPC API does not support `multipart/form-data`
+> content types.
 
 ## Form Pipes
 
