@@ -19,7 +19,9 @@ export default function BackendHeaders({ headers, setHeaders }) {
   };
 
   const addHeader = () => {
-    const newHeaders = headers.concat([{ name: "", value: "" }]);
+    const newHeaders = headers.concat([
+      { name: "Content-Type", value: "application/json" },
+    ]);
     setHeaders(newHeaders);
   };
 

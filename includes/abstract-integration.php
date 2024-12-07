@@ -136,10 +136,19 @@ abstract class Integration extends Singleton
                 $hook
             );
 
-            if ($hook->proto === 'rpc') {
-                $attachments = $this->stringify_attachments($attachments);
-                foreach ($attachments as $name => $value) {
-                    $payload[$name] = $value;
+            if (!empty($attachments)) {
+                $content_type = $hook->content_type;
+                if (
+                    in_array($content_type, [
+                        'application/json',
+                        'application/x-www-form-urlencoded',
+                    ])
+                ) {
+                    $attachments = $this->stringify_attachments($attachments);
+                    foreach ($attachments as $name => $value) {
+                        $payload[$name] = $value;
+                    }
+                    $attachments = [];
                 }
             }
 

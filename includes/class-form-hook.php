@@ -55,9 +55,9 @@ class Form_Hook
 
     /**
      * Magic method to proxy public attributes to method getters.
-     * 
+     *
      * @param string $name Attribute name.
-     * 
+     *
      * @return mixed Attribute value or null.
      */
     public function __get($name)
@@ -71,6 +71,8 @@ class Form_Hook
                 return $this->form();
             case 'backend':
                 return $this->backend();
+            case 'content_type':
+                return $this->content_type();
             default:
                 return isset($this->data[$name]) ? $this->data[$name] : null;
         }
@@ -78,7 +80,7 @@ class Form_Hook
 
     /**
      * Retrives the hook's backend instance.
-     * 
+     *
      * @return Http_Backend Backend instance.
      */
     private function backend()
@@ -92,7 +94,7 @@ class Form_Hook
 
     /**
      * Retrives the hook's endpoint.
-     * 
+     *
      * @return string API endpoint.
      */
     private function endpoint()
@@ -114,7 +116,7 @@ class Form_Hook
 
     /**
      * Retrives the hook's form data.
-     * 
+     *
      * @return arrray Form data.
      */
     private function form()
@@ -123,11 +125,25 @@ class Form_Hook
     }
 
     /**
+     * Gets form hook's default body encoding schema.
+     *
+     * @return string|null Encoding schema.
+     */
+    private function content_type()
+    {
+        if ($this->proto === 'rpc') {
+            return 'application/json';
+        }
+
+        return $this->backend()->content_type();
+    }
+
+    /**
      * Submits submission to the backend.
-     * 
+     *
      * @param array $submission Submission data.
      * @param array $attachments Submission's attached files.
-     * 
+     *
      * @return array|WP_Error Http request response.
      */
     public function submit($submission, $attachments = [])
@@ -141,10 +157,10 @@ class Form_Hook
 
     /**
      * Submits submission over the REST protocol.
-     * 
+     *
      * @param array $submission Submission data.
      * @param array $attachments Submission attachmeed files.
-     * 
+     *
      * @return array|WP_Error Http request response.
      */
     private function submit_rest($submission, $attachments)
