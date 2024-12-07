@@ -67,9 +67,16 @@ prepended to your form hook endpoints to build the URLs from the backend HTTP AP
 To each backend you can set a collection of HTTP headers be sent on each request. In addition,
 Http Bridge will add some default headers to the request.
 
-> With the `Content-Type` header you can modify how Forms Bridge encode your submission data
-> before is sent. Supported content types are: `application/json`, `application/x-www-form-urlencoded`
-> and `multipart/form-data`.
+### Content type
+
+With the `Content-Type` header you can modify how Forms Bridge encode your submission data
+before is sent. Supported content types are: `application/json`, `application/x-www-form-urlencoded`
+and `multipart/form-data`. **JSON is the default encoding schema if there is no** `Content-Type`
+**header on the backend configuration**.
+
+If you needs any other encoding schema, you have to use `forms_bridge_payload` to encode your
+submission as string. When data comes as string, Forms Bridge skips the encoding step and sets
+the unmodified payload as the body of the request.  
 
 ## Form Hooks
 
@@ -82,12 +89,6 @@ types of form hooks:
    allow this kind of communication, Forms Bridge needs to establish a session with the
    backend and use some credentials: The target database, the username and the password.
    Data will be sent as POST requests encoded as JSON data.
-
-On REST form hooks, submission data will be sent encoded as `application/json` by default
-if there is no uploads. You can modify this behavior using backend's HTTP headers. Supported
-content types are `application/json`, `application/x-www-form-urlencoded` and `multipart/form-data`.
-If you needs any other encoding schema, you have to use `forms_bridge_payload` to encode your
-submission as string.
 
 > 🚩 For REST HTTP methods GET and DELETE, the request has no body and your data will be sent
 > as URL query params.
