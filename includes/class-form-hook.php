@@ -361,7 +361,7 @@ class Form_Hook
         switch ($type) {
             case 'string':
                 return (string) $value;
-            case 'int':
+            case 'integer':
                 return (int) $value;
             case 'float':
                 return (float) $value;

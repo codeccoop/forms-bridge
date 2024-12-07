@@ -354,6 +354,7 @@ class Settings extends BaseSettings
                     ])
                         ? $pipe['cast']
                         : 'string';
+                    $pipes[] = $pipe;
                 }
                 $hook['pipes'] = $pipes;
 

@@ -17,7 +17,7 @@ const castOptions = [
     label: "String",
   },
   {
-    value: "int",
+    value: "integer",
     label: "Integer",
   },
   {
