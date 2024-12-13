@@ -2,8 +2,9 @@
 
 namespace FORMS_BRIDGE;
 
-use WPCT_ABSTRACT\REST_Settings_Controller as Base_Controller;
 use WP_REST_Server;
+use WPCT_ABSTRACT\REST_Settings_Controller as Base_Controller;
+use function WPCT_ABSTRACT\is_list;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -16,24 +17,24 @@ class REST_Settings_Controller extends Base_Controller
 {
     /**
      * Handle REST API controller namespace.
-     * 
+     *
      * @var string $namespace Handle wp rest api plugin namespace.
      */
     protected static $namespace = 'wp-bridges';
 
     /**
      * Handle REST API controller namespace version.
-     * 
+     *
      * @var int $version Handle the API version.
      */
     protected static $version = 1;
 
-    /**
-     * Handle plugin settings names.
-     * 
-     * @var array<string> $settings Handle the plugin settings names list.
-     */
-    protected static $settings = ['general', 'rest-api', 'rpc-api'];
+    // /**
+    //  * Handle plugin settings names.
+    //  *
+    //  * @var array<string> $settings Handle the plugin settings names list.
+    //  */
+    // protected static $settings = ['general', 'rest-api', 'rpc-api'];
 
     /**
      * Overwrite parent's contructor to register forms routes
@@ -47,6 +48,23 @@ class REST_Settings_Controller extends Base_Controller
         add_action('rest_api_init', function () {
             $this->init_forms();
         });
+
+        add_filter(
+            'wpct_rest_settings',
+            function ($settings, $group) {
+                if ($group !== $this->group) {
+                    return $settings;
+                }
+
+                if (!is_list($settings)) {
+                    $settings = [];
+                }
+
+                return array_merge($settings, ['rest-api']);
+            },
+            10,
+            2
+        );
     }
 
     /**

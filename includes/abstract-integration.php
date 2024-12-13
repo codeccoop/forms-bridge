@@ -96,11 +96,14 @@ abstract class Integration extends Singleton
      * Proceed with the submission sub-routine.
      *
      * @param mixed $submission Pair plugin submission handle.
-     * @param mixed $form Pair plugin form handle.
      */
-    public function do_submission($submission, $form)
+    public function do_submission($submission)
     {
-        $form_data = $this->serialize_form($form);
+        $form_data = $this->form();
+        if (!$form_data) {
+            return;
+        }
+
         if (empty($form_data['hooks'])) {
             return;
         }
@@ -117,8 +120,7 @@ abstract class Integration extends Singleton
                 'forms_bridge_prune_empties',
                 false,
                 $hook->name,
-                $hook,
-                $form_data
+                $hook
             );
             if ($prune_empties) {
                 $payload = $this->prune_empties($payload);
@@ -129,10 +131,9 @@ abstract class Integration extends Singleton
                 apply_filters(
                     'forms_bridge_attachments_' . $hook->name,
                     $this->attachments($uploads),
-                    $form_data
+                    $hook
                 ),
                 $uploads,
-                $form_data,
                 $hook
             );
 
@@ -158,12 +159,15 @@ abstract class Integration extends Singleton
                     'forms_bridge_payload_' . $hook->name,
                     $payload,
                     $uploads,
-                    $form_data
+                    $hook
                 ),
                 $uploads,
-                $form_data,
                 $hook
             );
+
+            if (empty($payload)) {
+                continue;
+            }
 
             do_action(
                 'forms_bridge_before_submission',
