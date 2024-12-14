@@ -8,6 +8,10 @@ import NewFormHook from "../../../components/FormHooks/NewFormHook";
 
 const methodOptions = [
   {
+    label: "",
+    value: "",
+  },
+  {
     label: "GET",
     value: "GET",
   },
@@ -35,7 +39,7 @@ export default function NewRestFormHook({ add, schema }) {
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
             <SelectControl
               label={__("Method", "forms-bridge")}
-              value={data.method || "POST"}
+              value={data.method || ""}
               onChange={(method) => update({ ...data, method })}
               options={methodOptions}
               __nextHasNoMarginBottom

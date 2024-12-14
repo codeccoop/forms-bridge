@@ -40,10 +40,7 @@ export default function NewOdooFormHook({ add, schema }) {
                   : ""
               }
               value={data.database}
-              onChange={(name) => {
-                const db = databases.find((db) => db.name === name);
-                update({ ...data, database: name, backend: db.backend });
-              }}
+              onChange={(database) => update({ ...data, database })}
               options={dbOptions}
               __nextHasNoMarginBottom
             />
