@@ -15,14 +15,16 @@ import useHookNames from "../../hooks/useHookNames";
 import FormPipes from "../FormPipes";
 import NewFormHook from "./NewFormHook";
 
+let focus = false;
 export default function FormHook({
   data,
   update,
   remove,
+  schema = ["name", "backend", "form_id"],
+  template = ({ add, schema }) => <NewFormHook add={add} schema={schema} />,
   children = () => {},
-  template = (add) => <NewFormHook add={add} />,
 }) {
-  if (data.name === "add") return template(update);
+  if (data.name === "add") return template({ add: update, schema });
 
   const __ = wp.i18n.__;
   const [{ backends }] = useGeneral();
@@ -47,6 +49,7 @@ export default function FormHook({
 
   const [name, setName] = useState(data.name);
   const initialName = useRef(data.name);
+  const nameInput = useRef();
 
   const formHooks = useFormHooks();
   const hookNames = useHookNames(formHooks);
@@ -55,6 +58,10 @@ export default function FormHook({
     setNameConflict(name !== initialName.current && hookNames.has(name.trim()));
     setName(name);
   };
+
+  useEffect(() => {
+    if (focus) nameInput.current.focus();
+  }, []);
 
   const timeout = useRef();
   useEffect(() => {
@@ -85,6 +92,7 @@ export default function FormHook({
       >
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <TextControl
+            ref={nameInput}
             label={__("Name", "forms-bridge")}
             help={
               nameConflict
@@ -98,7 +106,7 @@ export default function FormHook({
             __nextHasNoMarginBottom
           />
         </div>
-        {data.backend !== undefined && (
+        {schema.includes("backend") && (
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
             <SelectControl
               label={__("Backend", "forms-bridge")}
@@ -109,15 +117,17 @@ export default function FormHook({
             />
           </div>
         )}
-        <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
-          <SelectControl
-            label={__("Form", "forms-bridge")}
-            value={data.form_id}
-            onChange={(form_id) => update({ ...data, form_id })}
-            options={formOptions}
-            __nextHasNoMarginBottom
-          />
-        </div>
+        {schema.includes("form_id") && (
+          <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
+            <SelectControl
+              label={__("Form", "forms-bridge")}
+              value={data.form_id}
+              onChange={(form_id) => update({ ...data, form_id })}
+              options={formOptions}
+              __nextHasNoMarginBottom
+            />
+          </div>
+        )}
         {children({ data, update })}
       </div>
       <Spacer paddingY="calc(8px)" />

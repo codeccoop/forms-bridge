@@ -33,7 +33,13 @@ export default function RestFormHook({ data, update, remove }) {
       data={data}
       update={update}
       remove={remove}
-      template={(add) => <NewRestFormHook add={add} />}
+      schema={["name", "backend", "form_id", "method", "endpoint"]}
+      template={({ add, schema }) => (
+        <NewRestFormHook
+          add={(data) => add({ method: "POST", ...data })}
+          schema={schema}
+        />
+      )}
     >
       {({ data, update }) => (
         <>

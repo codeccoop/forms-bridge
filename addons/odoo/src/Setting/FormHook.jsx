@@ -24,7 +24,10 @@ export default function OdooFormHook({ data, update, remove }) {
       data={data}
       update={update}
       remove={remove}
-      template={(add) => <NewOdooFormHook add={add} />}
+      template={({ add, schema }) => (
+        <NewOdooFormHook add={add} schema={schema} />
+      )}
+      schema={["name", "form_id", "model", "database"]}
     >
       {({ data, update }) => (
         <>

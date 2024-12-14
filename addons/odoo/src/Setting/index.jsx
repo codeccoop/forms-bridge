@@ -36,7 +36,10 @@ export default function OdooSetting() {
           />
         </PanelRow>
         <Spacer paddingY="calc(8px)" />
-        <PanelBody title={__("Databases", "posts-bridge")} initialOpen={false}>
+        <PanelBody
+          title={__("Databases", "posts-bridge")}
+          initialOpen={databases.length === 0}
+        >
           <Databases
             databases={databases}
             setDatabases={(databases) => update({ databases })}

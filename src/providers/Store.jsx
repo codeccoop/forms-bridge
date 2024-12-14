@@ -43,9 +43,7 @@ export default function StoreProvider({ children, setLoading }) {
   const submit = () => {
     setLoading(true);
 
-    console.log("submit");
     const settings = wpfb.bus("submit", {});
-    console.log({ settings });
     return apiFetch({
       path: `${window.wpApiSettings.root}wp-bridges/v1/forms-bridge/settings`,
       method: "POST",

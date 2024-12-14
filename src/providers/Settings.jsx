@@ -41,15 +41,12 @@ export default function SettingsProvider({ children, handle = ["general"] }) {
     bus.data.general = state.general;
     Object.entries(state.apis).forEach(([name, value]) => {
       if (handle.indexOf(name) === -1) return;
-      console.log({ [name]: value });
       bus.data[name] = value;
     });
-    console.log({ bus: bus.data });
   }).current;
 
   const beforeUnload = useRef((ev) => {
     const state = currentState.current;
-    console.log(initialState.current, JSON.stringify(state));
     if (JSON.stringify(state) !== initialState.current) {
       ev.preventDefault();
       ev.returnValue = true;

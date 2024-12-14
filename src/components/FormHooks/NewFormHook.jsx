@@ -6,14 +6,14 @@ import {
   Button,
   __experimentalSpacer as Spacer,
 } from "@wordpress/components";
-import { useState } from "@wordpress/element";
+import { useState, useMemo } from "@wordpress/element";
 
 // source
 import { useForms } from "../../providers/Forms";
 import { useGeneral } from "../../providers/Settings";
 import useHookNames from "../../hooks/useHookNames";
 
-export default function NewFormHook({ add, children = () => {} }) {
+export default function NewFormHook({ add, schema, children = () => {} }) {
   const __ = wp.i18n.__;
 
   const [{ backends }] = useGeneral();
@@ -39,6 +39,11 @@ export default function NewFormHook({ add, children = () => {} }) {
   const [formId, setFormId] = useState("");
   const [nameConflict, setNameConflict] = useState(false);
   const [customFields, setCustomFields] = useState({});
+  const customFieldsSchema = useMemo(
+    () =>
+      schema.filter((field) => !["name", "backend", "form_id"].includes(field)),
+    [schema]
+  );
 
   const handleSetName = (name) => {
     setNameConflict(hookNames.has(name.trim()));
@@ -60,7 +65,19 @@ export default function NewFormHook({ add, children = () => {} }) {
     setCustomFields({});
   };
 
-  const disabled = !(name && backend && formId && !nameConflict);
+  const disabled = useMemo(
+    () =>
+      !(
+        name &&
+        !nameConflict &&
+        (backend || !schema.includes("backend")) &&
+        (formId || !schema.includes("form_id")) &&
+        customFieldsSchema.reduce(
+          (valid, field) => valid && customFields[field]
+        )
+      ),
+    [name, backend, formId, customFields, customFieldsSchema]
+  );
 
   return (
     <div
@@ -90,24 +107,28 @@ export default function NewFormHook({ add, children = () => {} }) {
             __nextHasNoMarginBottom
           />
         </div>
-        <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
-          <SelectControl
-            label={__("Backend", "forms-bridge")}
-            value={backend}
-            onChange={setBackend}
-            options={backendOptions}
-            __nextHasNoMarginBottom
-          />
-        </div>
-        <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
-          <SelectControl
-            label={__("Form", "forms-bridge")}
-            value={formId}
-            onChange={setFormId}
-            options={formOptions}
-            __nextHasNoMarginBottom
-          />
-        </div>
+        {schema.includes("backend") && (
+          <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
+            <SelectControl
+              label={__("Backend", "forms-bridge")}
+              value={backend}
+              onChange={setBackend}
+              options={backendOptions}
+              __nextHasNoMarginBottom
+            />
+          </div>
+        )}
+        {schema.includes("form_id") && (
+          <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
+            <SelectControl
+              label={__("Form", "forms-bridge")}
+              value={formId}
+              onChange={setFormId}
+              options={formOptions}
+              __nextHasNoMarginBottom
+            />
+          </div>
+        )}
         {children({
           data: customFields,
           update: (customFields) => setCustomFields(customFields),

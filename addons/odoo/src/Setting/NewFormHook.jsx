@@ -6,7 +6,7 @@ import { TextControl, SelectControl } from "@wordpress/components";
 import NewFormHook from "../../../../src/components/FormHooks/NewFormHook";
 import useOdooApi from "../hooks/useOdooSetting";
 
-export default function NewOdooFormHook({ add }) {
+export default function NewOdooFormHook({ add, schema }) {
   const __ = wp.i18n.__;
 
   const [{ databases }] = useOdooApi();
@@ -18,7 +18,7 @@ export default function NewOdooFormHook({ add }) {
   );
 
   return (
-    <NewFormHook add={add}>
+    <NewFormHook add={add} schema={schema}>
       {({ data, update }) => (
         <>
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
@@ -32,6 +32,13 @@ export default function NewOdooFormHook({ add }) {
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
             <SelectControl
               label={__("Database", "forms-bridge")}
+              help={
+                databases.length === 0
+                  ? __(
+                      "Configure, at least, one database access on the panel below"
+                    )
+                  : ""
+              }
               value={data.database}
               onChange={(name) => {
                 const db = databases.find((db) => db.name === name);

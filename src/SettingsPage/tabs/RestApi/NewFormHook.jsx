@@ -1,6 +1,7 @@
 // vendor
 import React from "react";
 import { TextControl, SelectControl } from "@wordpress/components";
+import { useEffect } from "@wordpress/element";
 
 // source
 import NewFormHook from "../../../components/FormHooks/NewFormHook";
@@ -24,11 +25,11 @@ const methodOptions = [
   },
 ];
 
-export default function NewRestFormHook({ add }) {
+export default function NewRestFormHook({ add, schema }) {
   const __ = wp.i18n.__;
 
   return (
-    <NewFormHook add={add}>
+    <NewFormHook add={add} schema={schema}>
       {({ data, update }) => (
         <>
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>

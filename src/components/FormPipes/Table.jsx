@@ -39,7 +39,6 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
   const __ = wp.i18n.__;
 
   const fields = useMemo(() => {
-    console.log(form);
     if (!form) return [];
     return form.fields.map(({ name, label }) => ({ name, label }));
   }, [form]);
