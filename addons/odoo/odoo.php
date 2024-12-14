@@ -75,11 +75,12 @@ class Odoo_Plugin extends Addon
     /**
      * JSON RPC login request.
      *
-     * @param Form_Hook Current hook instance.
+     * @param Odoo_DB $db Current db instance.
+     * @param string $ednpoint JSON-RPC API endpoint.
      *
      * @return array Tuple with RPC session id and user id.
      */
-    private static function rpc_login($db)
+    private static function rpc_login($db, $endpoint)
     {
         $session_id = 'forms-bridge-' . time();
         $backend = $db->backend;
@@ -91,7 +92,7 @@ class Odoo_Plugin extends Addon
         ]);
 
         do_action('forms_bridge_before_odoo_rpc_login', $payload, $db);
-        $response = $backend->post($backend->endpoint, $payload);
+        $response = $backend->post($endpoint, $payload);
         do_action(
             'forms_bridge_after_odoo_rpc_login',
             $response,
@@ -116,15 +117,6 @@ class Odoo_Plugin extends Addon
 
     private function interceptors()
     {
-        add_filter(
-            'http_bridge_backend_headers',
-            function ($headers, $backend) {
-                return $this->headers_interceptor($headers, $backend);
-            },
-            9,
-            2
-        );
-
         add_filter(
             'forms_bridge_payload',
             function ($payload, $uploads, $hook) {
@@ -276,41 +268,6 @@ class Odoo_Plugin extends Addon
         );
     }
 
-    /**
-     *
-     */
-    private function headers_interceptor($headers, $backend)
-    {
-        $form_data = apply_filters('forms_bridge_form', null);
-        if (empty($form_data)) {
-            return $headers;
-        }
-
-        $form_hooks = $form_data['hooks'];
-
-        // TODO: Warning!! If two or more hooks points to the same backend with different
-        // api schemas and odoo is included, this will force all requests to be
-        // done as json. [Edge case]
-        $is_rpc = false;
-        foreach ($form_hooks as $form_hook) {
-            if (
-                $form_hook->backend->name === $backend->name &&
-                $form_hook->api === 'odoo'
-            ) {
-                $is_rpc = true;
-                break;
-            }
-        }
-
-        if (!$is_rpc) {
-            return $headers;
-        }
-
-        $headers['Content-Type'] = 'application/json';
-        $headers['Accept'] = 'application/json';
-        return $headers;
-    }
-
     private function payload_interceptor($payload, $form_hook)
     {
         if (empty($payload)) {
@@ -322,7 +279,8 @@ class Odoo_Plugin extends Addon
         }
 
         $db = $form_hook->database;
-        $login = self::rpc_login($db);
+        $endpoint = $form_hook->endpoint;
+        $login = self::rpc_login($db, $endpoint);
         if (is_wp_error($login)) {
             return null;
         }
@@ -333,7 +291,7 @@ class Odoo_Plugin extends Addon
         return self::rpc_payload($sid, 'object', 'execute', [
             $form_hook->database->name,
             $uid,
-            $form_hook->password,
+            $form_hook->database->password,
             $form_hook->model,
             'create',
             $payload,

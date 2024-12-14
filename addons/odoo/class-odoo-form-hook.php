@@ -8,27 +8,49 @@ if (!defined('ABSPATH')) {
 
 class Odoo_Form_Hook extends Form_Hook
 {
-    public function __get($name)
+    public function __construct($data)
     {
-        switch ($name) {
-            case 'api':
-                return 'odoo';
-            case 'method':
-                return 'POST';
-            case 'backend':
-                return $this->backend();
-            case 'database':
-                return $this->database();
-            case 'endpoint':
-                return $this->endpoint();
-            default:
-                return parent::__get($name);
+        parent::__construct($data);
+        $this->api = 'odoo';
+        $this->data['backend'] = $this->database()->backend->name;
+        $this->data['endpoint'] = $this->endpoint();
+        $this->data['method'] = 'POST';
+
+        add_filter(
+            'forms_bridge_hook_database',
+            function ($db, $hook) {
+                return $this->db_interceptor($db, $hook);
+            },
+            9,
+            2
+        );
+
+        add_filter(
+            'forms_bridge_hook_content_type',
+            function ($content_type, $hook) {
+                return $this->content_type_interceptor($content_type, $hook);
+            },
+            9,
+            2
+        );
+    }
+
+    private function db_interceptor($db, $hook)
+    {
+        if ($hook->name !== $this->name) {
+            return $db;
+        } else {
+            return $this->database();
         }
     }
 
-    protected function backend()
+    private function content_type_interceptor($content_type, $hook)
     {
-        return $this->database()->backend;
+        if ($hook->name !== $this->name) {
+            return $content_type;
+        } else {
+            return 'application/json';
+        }
     }
 
     private function database()
@@ -41,9 +63,9 @@ class Odoo_Form_Hook extends Form_Hook
         }
     }
 
-    protected function endpoint()
+    private function endpoint()
     {
-        $base_url = $this->backend()->base_url;
+        $base_url = $this->database()->backend->base_url;
         if (preg_match('/\/jsonrpc\/?$/', $base_url)) {
             return '';
         } else {

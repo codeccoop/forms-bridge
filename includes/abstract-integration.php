@@ -114,6 +114,7 @@ abstract class Integration extends Singleton
 
         foreach (array_values($hooks) as $hook) {
             $payload = $this->serialize_submission($submission, $form_data);
+            // TODO: Exclude attachments from payload finger mangling
             $payload = $hook->apply_pipes($payload);
 
             $prune_empties = apply_filters(
@@ -180,8 +181,8 @@ abstract class Integration extends Singleton
             if (is_wp_error($response)) {
                 do_action(
                     'forms_bridge_on_failure',
-                    $response,
                     $form_data,
+                    $payload,
                     print_r($response->get_error_data(), true)
                 );
             } else {

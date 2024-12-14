@@ -2,8 +2,6 @@
 
 namespace FORMS_BRIDGE;
 
-use Exception;
-use stdClass;
 use TypeError;
 use WP_Error;
 
@@ -67,18 +65,22 @@ class Form_Hook
     {
         switch ($name) {
             case 'api':
-                return $this->api;
-            case 'endpoint':
-                return $this->endpoint();
+                $value = $this->api;
+                break;
             case 'form':
-                return $this->form();
+                $value = $this->form();
+                break;
             case 'backend':
-                return $this->backend();
+                $value = $this->backend();
+                break;
             case 'content_type':
-                return $this->content_type();
+                $value = $this->content_type();
+                break;
             default:
-                return isset($this->data[$name]) ? $this->data[$name] : null;
+                $value = isset($this->data[$name]) ? $this->data[$name] : null;
         }
+
+        return apply_filters("forms_bridge_hook_{$name}", $value, $this);
     }
 
     /**
@@ -86,28 +88,12 @@ class Form_Hook
      *
      * @return Http_Backend Backend instance.
      */
-    protected function backend()
+    private function backend()
     {
         return apply_filters(
             'http_bridge_backend',
             null,
-            $this->data['backend']
-        );
-    }
-
-    /**
-     * Retrives the hook's endpoint.
-     *
-     * @return string API endpoint.
-     */
-    protected function endpoint()
-    {
-        $endpoint = $this->data['endpoint'];
-        return apply_filters(
-            'forms_bridge_endpoint',
-            $endpoint,
-            $this->data['name'],
-            $this
+            isset($this->data['backend']) ? $this->data['backend'] : null
         );
     }
 
