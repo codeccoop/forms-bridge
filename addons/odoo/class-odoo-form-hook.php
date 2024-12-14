@@ -24,7 +24,7 @@ class Odoo_Form_Hook extends Form_Hook
         }
     }
 
-    private function backend()
+    protected function backend()
     {
         return $this->database()->backend;
     }

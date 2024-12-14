@@ -6,6 +6,9 @@ use WP_Error;
 
 use function WPCT_ABSTRACT\is_list;
 
+require_once 'class-odoo-db.php';
+require_once 'class-odoo-form-hook.php';
+
 class Odoo_Plugin extends Addon
 {
     public static $name = 'Odoo JSON-RPC';
@@ -283,11 +286,17 @@ class Odoo_Plugin extends Addon
             return $headers;
         }
 
-        $form_hooks = $form_data['form_hooks'];
+        $form_hooks = $form_data['hooks'];
 
+        // TODO: Warning!! If two or more hooks points to the same backend with different
+        // api schemas and odoo is included, this will force all requests to be
+        // done as json. [Edge case]
         $is_rpc = false;
         foreach ($form_hooks as $form_hook) {
-            if ($form_hook->backend->name === $backend->name) {
+            if (
+                $form_hook->backend->name === $backend->name &&
+                $form_hook->api === 'odoo'
+            ) {
                 $is_rpc = true;
                 break;
             }
@@ -432,9 +441,9 @@ class Odoo_Plugin extends Addon
                 });
 
                 $hook['name'] = sanitize_text_field($hook['name']);
-                $hook['backend'] = sanitize_text_field($hook['backend']);
                 $hook['form_id'] = (int) $hook['form_id'];
                 $hook['model'] = sanitize_text_field($hook['model']);
+                $hook['database'] = sanitize_text_field($hook['database']);
 
                 $pipes = [];
                 foreach ($hook['pipes'] as $pipe) {
