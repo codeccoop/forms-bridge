@@ -6,6 +6,10 @@ use WP_Error;
 
 use function WPCT_ABSTRACT\is_list;
 
+if (!defined('ABSPATH')) {
+    exit();
+}
+
 require_once 'class-odoo-db.php';
 require_once 'class-odoo-form-hook.php';
 
@@ -147,22 +151,18 @@ class Odoo_Plugin extends Addon
 
     private function custom_hooks()
     {
-        add_filter(
-            'forms_bridge_odoo_dbs',
-            function ($dbs) {
-                if (!is_list($dbs)) {
-                    $dbs = [];
-                }
+        add_filter('forms_bridge_odoo_dbs', function ($dbs) {
+            if (!is_list($dbs)) {
+                $dbs = [];
+            }
 
-                return array_merge($dbs, $this->databases());
-            },
-            10
-        );
+            return array_merge($dbs, $this->databases());
+        });
 
         add_filter(
             'forms_bridge_odoo_db',
             function ($db, $name) {
-                if (is_array($db)) {
+                if ($db instanceof Odoo_DB) {
                     return $db;
                 }
 
