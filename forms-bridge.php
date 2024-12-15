@@ -104,16 +104,11 @@ class Forms_Bridge extends BasePlugin
             3
         );
 
-        $addons_dir = plugin_dir_path(__FILE__) . 'addons/';
-        $addons = scandir($addons_dir);
-        foreach ($addons as $plugin) {
-            if (in_array($plugin, ['.', '..'])) {
-                continue;
-            }
-
-            $addon = $addons_dir . $plugin . '/' . $plugin . '.php';
-            if (is_file($addon)) {
-                require_once $addons_dir . $plugin . '/' . $plugin . '.php';
+        $addons = $this->addons();
+        foreach ($addons as $addon => $enabled) {
+            if ($enabled) {
+                require_once plugin_dir_path(__FILE__) .
+                    "addons/{$addon}/{$addon}.php";
             }
         }
     }
@@ -159,6 +154,7 @@ class Forms_Bridge extends BasePlugin
             $backends = Settings::get_setting('http-bridge', 'general')
                 ->backends;
             $value['backends'] = $backends;
+            $value['addons'] = $this->addons();
             return $value;
         });
 
@@ -229,7 +225,7 @@ class Forms_Bridge extends BasePlugin
         add_filter(
             'forms_bridge_forms',
             function ($forms) {
-                if (!is_list($forms)) {
+                if (!is_array($forms)) {
                     $forms = [];
                 }
 
@@ -316,6 +312,28 @@ class Forms_Bridge extends BasePlugin
                 return $integration;
             })
         );
+    }
+
+    private function addons()
+    {
+        $addons_dir = plugin_dir_path(__FILE__) . 'addons';
+        $enableds = "{$addons_dir}/enabled";
+        $addons = scandir($addons_dir);
+        $registry = [];
+
+        foreach ($addons as $addon) {
+            if (in_array($addon, ['.', '..'])) {
+                continue;
+            }
+
+            $addon_dir = "{$addons_dir}/{$addon}";
+            $index = "{$addon_dir}/{$addon}.php";
+            if (is_file($index)) {
+                $registry[$addon] = is_file("{$enableds}/{$addon}");
+            }
+        }
+
+        return $registry;
     }
 
     /**

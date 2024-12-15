@@ -21,3 +21,4 @@ addon.bundle.*
 
 # composer
 vendor
+addons/enabled/*

@@ -156,6 +156,7 @@ class Settings extends BaseSettings
         switch ($name) {
             case 'general':
                 $value = $this->validate_general($value);
+                $this->update_addons($value);
                 break;
             case 'rest-api':
                 $value = $this->validate_api($value);
@@ -294,5 +295,22 @@ class Settings extends BaseSettings
             }
         }
         return $valid_hooks;
+    }
+
+    private function update_addons($value)
+    {
+        $addons = isset($value['addons']) ? $value['addons'] : [];
+        $addons_dir = dirname(__FILE__, 2) . '/addons';
+        $enableds = "{$addons_dir}/enabled";
+
+        foreach ($addons as $addon => $enabled) {
+            $index = "{$enableds}/{$addon}";
+            if ($enabled && !is_file($index)) {
+                $fp = fopen($index, 'w');
+                fclose($fp);
+            } elseif (!$enabled && is_file($index)) {
+                unlink($index);
+            }
+        }
     }
 }
