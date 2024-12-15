@@ -6,7 +6,7 @@ import {
   Button,
   __experimentalSpacer as Spacer,
 } from "@wordpress/components";
-import { useState } from "@wordpress/element";
+import { useState, useEffect } from "@wordpress/element";
 
 // source
 import StoreProvider, { useStoreSubmit } from "../providers/Store";
@@ -71,6 +71,17 @@ export default function SettingsPage({ addons }) {
       title: addons[addon],
     }))
   );
+
+  // redirect to google sheets if comes from oauth redirection
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    const oauthRedirection = query.has("code") && query.has("scope");
+    if (oauthRedirection) {
+      setTimeout(() => {
+        document.querySelector("#tab-panel-0-google-sheets-api")?.click();
+      }, 500);
+    }
+  }, []);
 
   return (
     <StoreProvider setLoading={setLoading}>
