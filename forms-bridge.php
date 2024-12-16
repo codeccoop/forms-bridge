@@ -8,7 +8,7 @@ Author:          Còdec
 Author URI:      https://www.codeccoop.org
 Text Domain:     forms-bridge
 Domain Path:     /languages
-Version:         2.0.0
+Version:         2.0.1
 */
 
 namespace FORMS_BRIDGE;
@@ -28,7 +28,7 @@ if (!defined('ABSPATH')) {
  *
  * @var string FORMS_BRIDGE_VERSION Current plugin version.
  */
-define('FORMS_BRIDGE_VERSION', '2.0.0');
+define('FORMS_BRIDGE_VERSION', '2.0.1');
 
 require_once 'abstracts/class-plugin.php';
 
