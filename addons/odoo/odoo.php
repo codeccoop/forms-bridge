@@ -15,8 +15,9 @@ require_once 'class-odoo-form-hook.php';
 
 class Odoo_Plugin extends Addon
 {
-    public static $name = 'Odoo JSON-RPC';
-    public static $slug = 'odoo-api';
+    protected static $name = 'Odoo JSON-RPC';
+    protected static $slug = 'odoo-api';
+    protected static $hook_class = '\FORMS_BRIDGE\Odoo_Form_Hook';
 
     /**
      * Handle is waiting for request response state.
@@ -178,33 +179,11 @@ class Odoo_Plugin extends Addon
         );
     }
 
-    private function setting()
-    {
-        return apply_filters('forms_bridge_setting', null, 'odoo-api');
-    }
-
     private function databases()
     {
         return array_map(function ($db_data) {
             return new Odoo_DB($db_data);
         }, $this->setting()->databases);
-    }
-
-    private function form_hooks($form_id = null)
-    {
-        $form_hooks = array_map(function ($hook_data) {
-            return new Odoo_Form_Hook($hook_data);
-        }, $this->setting()->form_hooks);
-
-        if ($form_id) {
-            $form_hooks = array_values(
-                array_filter($form_hooks, function ($hook) use ($form_id) {
-                    return (int) $hook->form_id === (int) $form_id;
-                })
-            );
-        }
-
-        return $form_hooks;
     }
 
     protected function register_setting($settings)
@@ -319,10 +298,6 @@ class Odoo_Plugin extends Addon
 
     protected function sanitize_setting($value, $setting)
     {
-        if ($setting->full_name() !== 'forms-bridge_odoo-api') {
-            return $value;
-        }
-
         $value['databases'] = $this->validate_databases($value['databases']);
         $value['form_hooks'] = $this->validate_form_hooks(
             $value['form_hooks'],
