@@ -6,8 +6,8 @@
   "license": "GPL-2.0-or-later",
   "scripts": {
     "start": "npm run dev",
-    "dev": "npx esbuild ./src/index.jsx --bundle --sourcemap --outfile=./assets/plugin.bundle.js --watch",
-    "build": "npx esbuild ./src/index.jsx --bundle --minify --outfile=./assets/plugin.bundle.js",
+    "dev": "node esbuild/dev.cjs",
+    "build": "node esbuild/build.cjs",
     "prepare": "husky"
   },
   "devDependencies": {

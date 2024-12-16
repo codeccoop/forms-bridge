@@ -1,10 +1,6 @@
 // vendor
 import React from "react";
 import {
-  Card,
-  CardHeader,
-  CardBody,
-  __experimentalHeading as Heading,
   PanelBody,
   PanelRow,
   __experimentalSpacer as Spacer,
@@ -16,9 +12,6 @@ import OdooFormHook from "./FormHook";
 import useOdooApi from "../hooks/useOdooSetting";
 import Databases from "../components/Databases";
 
-// assets
-import logo from "../../assets/logo.png";
-
 export default function OdooSetting() {
   const __ = wp.i18n.__;
   const [{ databases, form_hooks: hooks }, save] = useOdooApi();
@@ -26,30 +19,24 @@ export default function OdooSetting() {
   const update = (field) => save({ databases, form_hooks: hooks, ...field });
 
   return (
-    <Card size="large" style={{ height: "fit-content" }}>
-      <CardHeader>
-        <Heading level={3}>{__("Odoo JSON-RPC", "forms-bridge")}</Heading>
-        <img src={"data:image/png;base64," + logo} style={{ width: "70px" }} />
-      </CardHeader>
-      <CardBody>
-        <PanelRow>
-          <FormHooks
-            hooks={hooks}
-            setHooks={(form_hooks) => update({ form_hooks })}
-            FormHook={OdooFormHook}
-          />
-        </PanelRow>
-        <Spacer paddingY="calc(8px)" />
-        <PanelBody
-          title={__("Databases", "posts-bridge")}
-          initialOpen={databases.length === 0}
-        >
-          <Databases
-            databases={databases}
-            setDatabases={(databases) => update({ databases })}
-          />
-        </PanelBody>
-      </CardBody>
-    </Card>
+    <>
+      <PanelRow>
+        <FormHooks
+          hooks={hooks}
+          setHooks={(form_hooks) => update({ form_hooks })}
+          FormHook={OdooFormHook}
+        />
+      </PanelRow>
+      <Spacer paddingY="calc(8px)" />
+      <PanelBody
+        title={__("Databases", "posts-bridge")}
+        initialOpen={databases.length === 0}
+      >
+        <Databases
+          databases={databases}
+          setDatabases={(databases) => update({ databases })}
+        />
+      </PanelBody>
+    </>
   );
 }

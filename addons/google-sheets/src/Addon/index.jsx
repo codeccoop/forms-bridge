@@ -5,6 +5,7 @@ import { useEffect, useState, useRef, createPortal } from "@wordpress/element";
 // source
 import SettingsProvider from "../../../../src/providers/Settings";
 import FormsProvider from "../../../../src/providers/Forms";
+import SpreadsheetProvider from "../providers/Spreadsheets";
 import Setting from "../Setting";
 
 // assets
@@ -14,7 +15,7 @@ export default function Addon() {
   const [root, setRoot] = useState(null);
 
   const onShowTab = useRef((setting) => {
-    if (setting === "odoo-api") {
+    if (setting === "google-sheets-api") {
       setRoot(document.getElementById(setting).querySelector(".root"));
     } else {
       setRoot(null);
@@ -27,16 +28,18 @@ export default function Addon() {
 
   useEffect(() => {
     if (!root) return;
-    const img = document.querySelector("#odoo-api .addon-logo");
+    const img = document.querySelector("#google-sheets-api .addon-logo");
     if (!img) return;
     img.setAttribute("src", "data:image/png;base64," + logo);
-    img.style.width = "70px";
+    img.style.width = "21px";
   }, [root]);
 
   return (
-    <SettingsProvider handle={["odoo-api"]}>
+    <SettingsProvider handle={["google-sheets-api"]}>
       <FormsProvider>
-        <div>{root && createPortal(<Setting />, root)}</div>
+        <SpreadsheetProvider>
+          <div>{root && createPortal(<Setting />, root)}</div>
+        </SpreadsheetProvider>
       </FormsProvider>
     </SettingsProvider>
   );

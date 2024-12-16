@@ -14,8 +14,9 @@ if (!defined('ABSPATH')) {
 
 abstract class Addon extends Singleton
 {
-    public static $name;
-    public static $slug;
+    protected static $name;
+    protected static $slug;
+    protected static $hook_class;
 
     public static function setup(...$args)
     {
@@ -31,11 +32,33 @@ abstract class Addon extends Singleton
             throw new Exception('Invalid addon registration');
         }
 
-        $this->settings();
+        $this->handle_settings();
         $this->admin_scripts();
     }
 
-    protected function settings()
+    protected function setting()
+    {
+        return apply_filters('forms_bridge_setting', null, static::$slug);
+    }
+
+    protected function form_hooks($form_id = null)
+    {
+        $form_hooks = array_map(function ($hook_data) {
+            return new static::$hook_class($hook_data);
+        }, $this->setting()->form_hooks);
+
+        if ($form_id) {
+            $form_hooks = array_values(
+                array_filter($form_hooks, function ($hook) use ($form_id) {
+                    return (int) $hook->form_id === (int) $form_id;
+                })
+            );
+        }
+
+        return $form_hooks;
+    }
+
+    private function handle_settings()
     {
         add_filter(
             'wpct_rest_settings',
@@ -68,7 +91,7 @@ abstract class Addon extends Singleton
         add_filter(
             'wpct_sanitize_setting',
             function ($value, $setting) {
-                return $this->sanitize_setting($value, $setting);
+                return $this->_sanitize_setting($value, $setting);
             },
             10,
             2
@@ -107,5 +130,14 @@ abstract class Addon extends Singleton
             },
             9
         );
+    }
+
+    private function _sanitize_setting($value, $setting)
+    {
+        if ($setting->full_name() !== 'forms-bridge_' . self::$slug) {
+            return $value;
+        }
+
+        return $this->sanitize_setting($value, $setting);
     }
 }

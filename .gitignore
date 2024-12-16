@@ -18,3 +18,8 @@ node_modules/
 # build
 plugin.bundle.*
 addon.bundle.*
+
+# composer
+vendor
+addons/enabled/*
+.store

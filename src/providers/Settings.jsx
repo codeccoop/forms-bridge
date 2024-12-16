@@ -10,7 +10,9 @@ import {
 
 const defaults = {
   general: {
+    notification_receiver: "",
     backends: [],
+    addons: {},
   },
   apis: {
     "rest-api": {
@@ -22,9 +24,10 @@ const defaults = {
 const SettingsContext = createContext([defaults, () => {}]);
 
 export default function SettingsProvider({ children, handle = ["general"] }) {
-  const initialState = useRef(JSON.stringify(defaults));
+  const initialState = useRef(null);
   const currentState = useRef(defaults);
   const [state, setState] = useState(defaults);
+  const [reload, setReload] = useState(false);
   currentState.current = state;
 
   const onFetch = useRef((settings) => {
@@ -33,21 +36,37 @@ export default function SettingsProvider({ children, handle = ["general"] }) {
       Object.entries(settings).filter(([key]) => key !== "general")
     );
     setState(newState);
-    initialState.current = JSON.stringify(newState);
+    const previousState = initialState.current;
+    initialState.current = { ...newState };
+    if (previousState === null) return;
+
+    const reload = Object.keys(newState.general.addons).reduce(
+      (changed, addon) => {
+        return (
+          changed ||
+          newState.general.addons[addon] !== previousState.general.addons[addon]
+        );
+      },
+      false
+    );
+    setReload(reload);
   }).current;
 
   const onSubmit = useRef((bus) => {
     const state = currentState.current;
-    bus.data.general = state.general;
+    if (handle.indexOf("general") !== -1) {
+      bus.data.general = state.general;
+    }
     Object.entries(state.apis).forEach(([name, value]) => {
-      if (handle.indexOf(name) === -1) return;
-      bus.data[name] = value;
+      if (handle.indexOf(name) !== -1) {
+        bus.data[name] = value;
+      }
     });
   }).current;
 
   const beforeUnload = useRef((ev) => {
     const state = currentState.current;
-    if (JSON.stringify(state) !== initialState.current) {
+    if (JSON.stringify(state) !== JSON.stringify(initialState.current)) {
       ev.preventDefault();
       ev.returnValue = true;
     }
@@ -65,6 +84,10 @@ export default function SettingsProvider({ children, handle = ["general"] }) {
       window.removeEventListener("beforeunload", beforeUnload);
     };
   }, []);
+
+  useEffect(() => {
+    if (reload) window.location.reload();
+  }, [reload]);
 
   const patchState = (partial) => setState({ ...state, ...partial });
 

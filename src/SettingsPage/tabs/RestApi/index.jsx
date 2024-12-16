@@ -1,37 +1,34 @@
 // vendor
 import React from "react";
 import { __ } from "@wordpress/i18n";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  __experimentalHeading as Heading,
-  PanelRow,
-} from "@wordpress/components";
+import { PanelRow } from "@wordpress/components";
+import { useEffect } from "@wordpress/element";
 
 // source
 import FormHooks from "../../../components/FormHooks";
 import RestFormHook from "./FormHook";
 import useRestApi from "./useRestApi";
 
+// assets
+import logo from "../../../../assets/rest.png";
+
 export default function RestApiSetting() {
-  const __ = wp.i18n.__;
   const [{ form_hooks: hooks }, save] = useRestApi();
 
+  useEffect(() => {
+    const img = document.querySelector("#rest-api .addon-logo");
+    if (!img) return;
+    img.setAttribute("src", "data:image/png;base64," + logo);
+    img.style.width = "65px";
+  }, []);
+
   return (
-    <Card size="large" style={{ height: "fit-content" }}>
-      <CardHeader>
-        <Heading level={3}>{__("REST API", "forms-bridge")}</Heading>
-      </CardHeader>
-      <CardBody>
-        <PanelRow>
-          <FormHooks
-            hooks={hooks}
-            setHooks={(form_hooks) => save({ form_hooks })}
-            FormHook={RestFormHook}
-          />
-        </PanelRow>
-      </CardBody>
-    </Card>
+    <PanelRow>
+      <FormHooks
+        hooks={hooks}
+        setHooks={(form_hooks) => save({ form_hooks })}
+        FormHook={RestFormHook}
+      />
+    </PanelRow>
   );
 }
