@@ -97,22 +97,26 @@ export default function SettingsPage({ addons }) {
     }))
   );
 
-  // redirect to google sheets if comes from oauth redirection
-  useEffect(() => {
-    const query = new URLSearchParams(window.location.search);
-    const oauthRedirection = query.has("code") && query.has("scope");
-    if (oauthRedirection) {
-      setTimeout(() => {
-        document.querySelector("#tab-panel-0-google-sheets-api")?.click();
-      }, 500);
-    }
-  }, []);
+  const initalTab =
+    new URLSearchParams(window.location.search).get("tab") || "general";
+
+  const setTab = (tab) => {
+    const from = new URLSearchParams(window.location.search);
+    const to = new URLSearchParams(from.toString());
+    to.set("tab", tab);
+    window.history.replaceState(
+      { from: `${window.location.pathname}?${from.toString()}` },
+      "",
+      `${window.location.pathname}?${to.toString()}`
+    );
+  };
 
   return (
     <StoreProvider setLoading={setLoading}>
       <Heading level={1}>Forms Bridge</Heading>
       <TabPanel
-        initialTabName="general"
+        initialTabName={initalTab}
+        onSelect={setTab}
         tabs={tabs.map(({ name, title }) => ({
           name,
           title: __(title, "forms-bridge"),
