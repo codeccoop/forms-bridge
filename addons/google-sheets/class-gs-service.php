@@ -36,6 +36,28 @@ class Google_Sheets_Service extends Singleton
         }
     }
 
+    private static function add_sheet($service, $spreadsheet_id, $tab_name)
+    {
+        $requests = new \Google\Service\Sheets\BatchUpdateSpreadsheetRequest();
+        $requests->setRequests([
+            [
+                'addSheet' => [
+                    'properties' => [
+                        'title' => $tab_name,
+                    ],
+                ],
+            ],
+        ]);
+        $service->spreadsheets->batchUpdate($spreadsheet_id, $requests);
+        $sheets = $service->spreadsheets->get($spreadsheet_id);
+
+        foreach ($sheets as $sheet) {
+            if ($sheet->getProperties()['title'] === $tab_name) {
+                return $sheet;
+            }
+        }
+    }
+
     public static function write_row($spreadsheet_id, $tab_name, $data)
     {
         if (empty($data)) {
@@ -48,83 +70,79 @@ class Google_Sheets_Service extends Singleton
             $sheets = $service->spreadsheets->get($spreadsheet_id);
         } catch (Exception $e) {
             return new WP_Error(
-                'spreadsheets_api_error',
-                __('Can\'t connect to the spreadsheets API', 'forms-bridge'),
+                'spreadsheets_not_found_error',
+                __('Can\'t find the spreadsheets by id', 'forms-bridge'),
                 ['error' => $e]
             );
         } finally {
             self::service()->client()->flush_credentials();
         }
 
-        if (empty($sheets)) {
-            return new WP_Error(
-                'spreadsheet_not_sheets',
-                __(
-                    'You have to manully create sheets on your spreadsheet',
-                    'forms-bridge'
-                ),
-                ['spreadsheet_id' => $spreadsheet_id]
-            );
-        }
-
-        $sheet = null;
-        foreach ($sheets as $_sheet) {
-            if ($_sheet->getProperties()['title'] === $tab_name) {
-                $sheet = $_sheet;
-                break;
-            }
-        }
-
-        if (!$sheet) {
-            return new WP_Error(
-                'spreadhseet_unkown_sheet',
-                __(
-                    'There is no tab on the spreadsheet that matches this name',
-                    'forms-bridge'
-                ),
-                ['tab_name' => $tab_name, 'spreadsheet' => $spreadsheet_id]
-            );
-        }
-
-        $row = $service->spreadsheets_values->get(
-            $spreadsheet_id,
-            $tab_name . '!1:1'
-        );
-        if (!isset($row->values[0])) {
-            $value_range = new \Google\Service\Sheets\ValueRange();
-            $value_range->setValues(['values' => array_keys($data)]);
-
-            $result = $service->spreadsheets_values->append(
-                $spreadsheet_id,
-                "{$tab_name}!1:Z",
-                $value_range,
-                ['valueInputOption' => 'USER_ENTERED']
-            );
-        }
-
-        $headers = array_map(function ($value) {
-            return $value;
-        }, array_values($row->values[0]));
-
-        $values = array_map(function ($header) use ($data) {
-            return isset($data[$header]) ? $data[$header] : '';
-        }, $headers);
-
-        $response = $service->spreadsheets_values->get(
-            $spreadsheet_id,
-            $tab_name . '!A1:Z'
-        );
-        $rows = $response->getValues();
-
-        if ($rows) {
-            $row = count($rows) + 1;
-        } else {
-            $row = 1;
-        }
-
-        $range = $tab_name . '!A' . $row . ':Z';
-
+        self::service()->client()->use_credentials();
         try {
+            if (empty($sheets)) {
+                $sheet = self::add_sheet($service, $spreadsheet_id, $tab_name);
+            } else {
+                $sheet = null;
+                foreach ($sheets as $_sheet) {
+                    if ($_sheet->getProperties()['title'] === $tab_name) {
+                        $sheet = $_sheet;
+                        break;
+                    }
+                }
+
+                if (!$sheet) {
+                    $sheet = self::add_sheet(
+                        $service,
+                        $spreadsheet_id,
+                        $tab_name
+                    );
+                }
+            }
+
+            $row = $service->spreadsheets_values->get(
+                $spreadsheet_id,
+                $tab_name . '!1:1'
+            );
+            if (!isset($row->values[0])) {
+                $value_range = new \Google\Service\Sheets\ValueRange();
+                $value_range->setValues(['values' => array_keys($data)]);
+
+                $result = $service->spreadsheets_values->append(
+                    $spreadsheet_id,
+                    "{$tab_name}!A1:Z",
+                    $value_range,
+                    ['valueInputOption' => 'USER_ENTERED']
+                );
+
+                $row = $service->spreadsheets_values->get(
+                    $spreadsheet_id,
+                    $tab_name . '!1:1'
+                );
+            }
+
+            $headers = array_map(function ($value) {
+                return $value;
+            }, array_values($row->values[0]));
+
+            $values = array_map(function ($header) use ($data) {
+                return isset($data[$header]) ? $data[$header] : '';
+            }, $headers);
+
+            $response = $service->spreadsheets_values->get(
+                $spreadsheet_id,
+                $tab_name . '!A1:Z'
+            );
+            $rows = $response->getValues();
+
+            if ($rows) {
+                $row = count($rows) + 1;
+            } else {
+                $row = 1;
+            }
+
+            $range = $tab_name . '!A' . $row . ':Z';
+
             $range = new \Google\Service\Sheets\ValueRange();
             $range->setValues(['values' => $values]);
 
