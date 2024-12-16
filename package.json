@@ -8,6 +8,7 @@
     "start": "npm run dev",
     "dev": "node esbuild/dev.cjs",
     "build": "node esbuild/build.cjs",
+    "postbuild": "sh ./.postbuild",
     "prepare": "husky"
   },
   "devDependencies": {

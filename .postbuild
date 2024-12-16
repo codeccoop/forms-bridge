@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd addons
+
+for addon in *; do
+  if [ -d $addon ] && [ -f "$addon/$addon.php" ]; then
+    cd $addon && npm run build && cd -
+  fi
+done

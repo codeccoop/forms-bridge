@@ -41,6 +41,17 @@ build:
   artifacts:
     paths:
       - assets
+      - addons
+
+vendor:
+  stage: build
+  image: composer:latest
+  script:
+    - cd addons/google-sheets && composer install
+  artifacts:
+    paths:
+      - assets
+      - addons
 
 package:
   image: javieraviles/zip:latest
