@@ -3,65 +3,37 @@
 namespace FORMS_BRIDGE;
 
 use Exception;
+use TypeError;
 use WP_Error;
 use WPCT_ABSTRACT\Singleton;
 
+if (!defined('ABSPATH')) {
+    exit();
+}
+
 class Google_Sheets_Service extends Singleton
 {
-    private const access_token_option = 'forms_bridge_gs_access_token';
-
     private $client;
-    private $token;
 
-    public static function get_token()
+    public static function service()
     {
-        return self::get_instance()->token();
-    }
-
-    public static function fetch_token($access_code)
-    {
-        $token = self::get_instance()->client()->fetch_token($access_code);
-        return self::update_token($token);
-    }
-
-    private static function update_token($token)
-    {
-        $expires_in = isset($token['expires_in'])
-            ? (int) $token['expires_in']
-            : 0;
-        $token['expire'] = time() + $expires_in;
-        return self::get_instance()->set_token($token);
-    }
-
-    public static function refresh_token()
-    {
-        $token = self::get_instance()->token();
-        self::get_instance()
-            ->client()
-            ->refreshToken($token['access_token']);
-    }
-
-    public static function revoke_token()
-    {
-        $token = self::get_instance()->token();
-        if ($token) {
-            self::get_instance()->client()->revoke_token($token);
-            self::get_instance()->set_token(null);
-        }
+        return self::get_instance();
     }
 
     public static function is_authorized()
     {
-        return self::get_instance()->is_valid();
-    }
+        $credentials = Google_Sheets_Store::get('credentials');
+        if (!$credentials) {
+            return false;
+        }
 
-    public static function auth_url()
-    {
-        return self::get_instance()->client()->auth_url();
-    }
-
-    public static function auth()
-    {
+        try {
+            $secrets = json_decode($credentials, true);
+            return isset($secrets['type']) &&
+                $secrets['type'] === 'service_account';
+        } catch (TypeError) {
+            return false;
+        }
     }
 
     public static function write_row($spreadsheet_id, $tab_name, $data)
@@ -70,19 +42,23 @@ class Google_Sheets_Service extends Singleton
             return;
         }
 
+        self::service()->client()->use_credentials();
         try {
-            $service = self::get_instance()->client()->get_sheets_service();
+            $service = self::service()->client()->get_sheets_service();
             $sheets = $service->spreadsheets->get($spreadsheet_id);
         } catch (Exception $e) {
             return new WP_Error(
                 'spreadsheets_api_error',
-                __('Can\'t connect to the spreadsheets API', 'forms-bridge')
+                __('Can\'t connect to the spreadsheets API', 'forms-bridge'),
+                ['error' => $e]
             );
+        } finally {
+            self::service()->client()->flush_credentials();
         }
 
         if (empty($sheets)) {
             return new WP_Error(
-                'no_workbook_sheets',
+                'spreadsheet_not_sheets',
                 __(
                     'You have to manully create sheets on your spreadsheet',
                     'forms-bridge'
@@ -101,7 +77,7 @@ class Google_Sheets_Service extends Singleton
 
         if (!$sheet) {
             return new WP_Error(
-                'unkown_sheet',
+                'spreadhseet_unkown_sheet',
                 __(
                     'There is no tab on the spreadsheet that matches this name',
                     'forms-bridge'
@@ -148,21 +124,35 @@ class Google_Sheets_Service extends Singleton
 
         $range = $tab_name . '!A' . $row . ':Z';
 
-        $range = new \Google\Service\Sheets\ValueRange();
-        $range->setValues(['values' => $values]);
+        try {
+            $range = new \Google\Service\Sheets\ValueRange();
+            $range->setValues(['values' => $values]);
 
-        $result = $service->spreadsheets_values->append(
-            $spreadsheet_id,
-            "{$tab_name}!A{$row}:Z",
-            $range,
-            ['valueInputOption' => 'USER_ENTERED']
-        );
+            $result = $service->spreadsheets_values->append(
+                $spreadsheet_id,
+                "{$tab_name}!A{$row}:Z",
+                $range,
+                ['valueInputOption' => 'USER_ENTERED']
+            );
+        } catch (Exception $e) {
+            return new WP_Error(
+                'spreadhseet_write_error',
+                __(
+                    'Can\'t write new values to the spreadhseet',
+                    'forms-bridge'
+                ),
+                ['error' => $e]
+            );
+        } finally {
+            self::service()->client()->flush_credentials();
+        }
 
         return $result;
     }
 
     public static function get_spreadsheets()
     {
+        self::service()->client()->use_credentials();
         try {
             $service = self::get_instance()->client()->get_drive_service();
             $results = $service->files->listFiles([
@@ -183,13 +173,16 @@ class Google_Sheets_Service extends Singleton
             );
         } catch (Exception $e) {
             return [];
+        } finally {
+            self::service()->client()->flush_credentials();
         }
     }
 
     public static function get_sheets($spreadsheet_id)
     {
+        self::service()->client()->use_credentials();
         try {
-            $service = self::get_instance()->client()->get_sheets_service();
+            $service = self::service()->client()->get_sheets_service();
             $sheets = $service->spreadsheets->get($spreadsheet_id);
 
             return array_map(function ($sheet) {
@@ -201,6 +194,8 @@ class Google_Sheets_Service extends Singleton
             }, $sheets);
         } catch (Exception) {
             return [];
+        } finally {
+            self::service()->client()->flush_credentials();
         }
     }
 
@@ -212,71 +207,11 @@ class Google_Sheets_Service extends Singleton
     protected function construct(...$args)
     {
         $this->client = new Google_Sheets_Client();
-        $this->token = get_option(self::access_token_option);
-        if ($this->is_valid($this->token)) {
-            $this->client->set_token($this->token);
-        }
     }
 
     public function client()
     {
         return $this->client;
-    }
-
-    public function token()
-    {
-        return $this->token;
-    }
-
-    public function set_token($token)
-    {
-        $from = $this->token;
-
-        if ($token && $this->is_valid($token)) {
-            $success = update_option(self::access_token_option, $token);
-        } elseif (empty($token)) {
-            $success = delete_option(self::access_token_option);
-        } else {
-            $success = false;
-        }
-
-        if ($this->is_valid($from) && !$token) {
-            Google_Sheets_Service::revoke_token($from);
-        }
-
-        if ($success) {
-            $this->token = $token;
-        } else {
-            $this->token = get_option(self::access_token_option);
-        }
-
-        return $this->token;
-    }
-
-    public function is_valid($token = null)
-    {
-        if (!is_array($token)) {
-            return false;
-        }
-
-        $token = $token ?? $this->token();
-        if (!isset($token['scope'])) {
-            return false;
-        }
-
-        $permissions = explode(' ', $token['scope']);
-        $requirements = [
-            'https://www.googleapis.com/auth/spreadsheets',
-            'https://www.googleapis.com/auth/drive.metadata.readonly',
-        ];
-
-        foreach ($requirements as $requirement) {
-            if (!in_array($requirement, $permissions)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }
 

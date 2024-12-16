@@ -9,17 +9,18 @@ if (!defined('ABSPATH')) {
 }
 
 require_once 'vendor/autoload.php';
+require_once 'class-gs-store.php';
 require_once 'class-gs-client.php';
 require_once 'class-gs-rest-controller.php';
+require_once 'class-gs-ajax-controller.php';
 require_once 'class-gs-service.php';
 require_once 'class-gs-form-hook.php';
 
 class Google_Sheets extends Addon
 {
-    public static $name = 'Google Sheets';
-    public static $slug = 'google-sheets-api';
-
-    public const access_token_option = 'forms_bridge_google_access_token';
+    protected static $name = 'Google Sheets';
+    protected static $slug = 'google-sheets-api';
+    protected static $hook_class = '\FORMS_BRIDGE\Google_Sheets_Form_Hook';
 
     protected function construct(...$args)
     {
@@ -66,32 +67,8 @@ class Google_Sheets extends Addon
     {
         add_filter('option_forms-bridge_google-sheets-api', function ($value) {
             $value['authorized'] = Google_Sheets_Service::is_authorized();
-            $value['configured'] =
-                $value['client_id'] && $value['client_secret'];
             return $value;
         });
-    }
-
-    private function setting()
-    {
-        return apply_filters('forms_bridge_setting', null, 'google-sheets-api');
-    }
-
-    private function form_hooks($form_id = null)
-    {
-        $form_hooks = array_map(function ($hook_data) {
-            return new Google_Sheets_Form_Hook($hook_data);
-        }, $this->setting()->form_hooks);
-
-        if ($form_id) {
-            $form_hooks = array_values(
-                array_filter($form_hooks, function ($hook) use ($form_id) {
-                    return (int) $hook->form_id === (int) $form_id;
-                })
-            );
-        }
-
-        return $form_hooks;
     }
 
     protected function register_setting($settings)
@@ -99,8 +76,6 @@ class Google_Sheets extends Addon
         $settings->register_setting(
             'google-sheets-api',
             [
-                'client_id' => ['type' => 'string'],
-                'client_secret' => ['type' => 'string'],
                 'form_hooks' => [
                     'type' => 'array',
                     'items' => [
@@ -138,8 +113,6 @@ class Google_Sheets extends Addon
                 ],
             ],
             [
-                'client_id' => '',
-                'client_secret' => '',
                 'form_hooks' => [],
             ]
         );
@@ -163,7 +136,7 @@ class Google_Sheets extends Addon
         );
 
         if (is_wp_error($result)) {
-            $form_data = apply_filters('forms_bridge_form');
+            $form_data = apply_filters('forms_bridge_form', null);
             do_action(
                 'forms_bridge_on_failure',
                 $form_data,
@@ -201,12 +174,7 @@ class Google_Sheets extends Addon
 
     protected function sanitize_setting($value, $setting)
     {
-        if ($setting->full_name() !== 'forms_bridge-google-sheets-api') {
-            return $value;
-        }
-
         $value['form_hooks'] = $this->validate_form_hooks($value['form_hooks']);
-
         return $value;
     }
 

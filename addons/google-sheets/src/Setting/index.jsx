@@ -4,23 +4,38 @@ import {
   PanelBody,
   PanelRow,
   ToggleControl,
-  TextControl,
+  FormFileUpload,
   __experimentalSpacer as Spacer,
 } from "@wordpress/components";
+import { useState, useEffect } from "@wordpress/element";
 
 // source
 import FormHooks from "../../../../src/components/FormHooks";
 import GSFormHook from "./FormHook";
 import useGSApi from "../hooks/useGSApi";
-import useOath from "../hooks/useOauth";
+import useAjaxGrant from "../hooks/useAjaxGrant";
 
 export default function GoogleSheetSetting() {
   const __ = wp.i18n.__;
-  const [{ configured, spreadsheets, form_hooks: hooks }, save] = useGSApi();
+  const [{ authorized, spreadsheets, form_hooks: hooks }, save] = useGSApi();
 
-  const [oauth, connect] = useOath();
+  const { grant, revoke, loading, result } = useAjaxGrant();
+
+  const [file, setFile] = useState(null);
 
   const update = (field) => save({ spreadsheets, form_hooks: hooks, ...field });
+
+  const onGrant = () => {
+    if (file) grant(file);
+    else revoke();
+  };
+
+  useEffect(() => {
+    if (loading || result === null) return;
+    if (result) {
+      window.location.reload();
+    }
+  }, [loading]);
 
   return (
     <>
@@ -33,40 +48,43 @@ export default function GoogleSheetSetting() {
       </PanelRow>
       <Spacer paddingY="calc(8px)" />
       <PanelBody
-        title={__("Google OAuth", "posts-bridge")}
-        initialOpen={!oauth.authorized}
+        title={__("Google Service Credentials", "posts-bridge")}
+        initialOpen={!authorized}
       >
-        <TextControl
-          __next40pxDefaultSize
-          __nextHasNoMarginBottom
-          label={__("OAuth client id", "forms-bridge")}
-          value={oauth.client_id}
-          onChange={(client_id) => update({ client_id })}
-        />
-        <Spacer paddingY="calc(8px)" />
-        <TextControl
-          __next40pxDefaultSize
-          __nextHasNoMarginBottom
-          label={__("OAuth client secret", "forms-bridge")}
-          value={oauth.client_secret}
-          onChange={(client_secret) => update({ client_secret })}
-        />
         <Spacer paddingY="calc(8px)" />
         <ToggleControl
-          __next40pxDefaultSize
-          __nextHasNoMarginBottom
-          label={__("Connect", "forms-bridge")}
-          checked={oauth.authorized}
-          onChange={() => connect(!oauth.authorized)}
-          disabled={!configured}
-          help={
-            !configured
-              ? __(
-                  "Disabled until you set a the client id and secret and save settings",
-                  "forms-bridge"
-                )
-              : ""
+          disabled={!(authorized || file)}
+          checked={authorized}
+          onChange={onGrant}
+          label={
+            authorized
+              ? __("Revoke access", "forms-bridge")
+              : __("Grant access", "forms-bridge")
           }
+          help={__(
+            "You have to create a service account credentials to grant Forms Bridge access to your spreadhseets",
+            "forms-bridge"
+          )}
+          __nextHasNoMarginBottom
+          __next40pxDefaultSize
+        />
+        <Spacer paddingY="calc(8px)" />
+        {!authorized && (
+          <FormFileUpload
+            __next40pxDefaultSize
+            accept="application/json"
+            onChange={({ target }) => setFile(target.files[0])}
+          >
+            {__("Upload credentials", "forms-bridge")}
+          </FormFileUpload>
+        )}
+        <p
+          dangerouslySetInnerHTML={{
+            __html: __(
+              "Follow <a href='https://github.com/juampynr/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>example</a> if do you need help with the process.",
+              "forms-bridge"
+            ),
+          }}
         />
       </PanelBody>
     </>

@@ -6,9 +6,6 @@ export default function useGSApi() {
     {
       "google-sheets-api": api = {
         authorized: false,
-        client_id: "",
-        client_secret: "",
-        configured: false,
         form_hooks: [],
       },
     },

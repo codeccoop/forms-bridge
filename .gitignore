@@ -22,3 +22,4 @@ addon.bundle.*
 # composer
 vendor
 addons/enabled/*
+.store
