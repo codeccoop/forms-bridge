@@ -165,19 +165,10 @@ class Settings extends BaseSettings
         $value['notification_receiver'] = sanitize_text_field(
             $value['notification_receiver']
         );
+
         $value['backends'] = \HTTP_BRIDGE\Settings::validate_backends(
             $value['backends']
         );
-
-        $rest = self::get_setting($this->group(), 'rest-api');
-
-        $hooks = $this->validate_form_hooks(
-            $rest->form_hooks,
-            $value['backends']
-        );
-        if (count($hooks) !== count($rest->form_hooks)) {
-            $rest->form_hooks = $hooks;
-        }
 
         return $value;
     }
