@@ -275,6 +275,13 @@ class Settings extends BaseSettings
         return $valid_hooks;
     }
 
+    /**
+     * Update addons state on file system.
+     *
+     * @todo Move this state to the database to prevent state looses on updates.
+     *
+     * @param array $value General setting data.
+     */
     private function update_addons($value)
     {
         $addons = isset($value['addons']) ? $value['addons'] : [];

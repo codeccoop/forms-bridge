@@ -37,6 +37,7 @@ class JSON_Finger
         $closured = false;
         $index = 0;
 
+        // Parse finger as a charstring iteration
         for ($i = 0; $i < $len; $i++) {
             $char = $finger[$i];
             if ($closured) {
@@ -193,7 +194,9 @@ class JSON_Finger
             $partial = &$data;
             for ($i = 0; $i < count($keys) - 1; $i++) {
                 if (!is_array($partial)) {
-                    throw new TypeError('Finger points to a non traversable value');
+                    throw new TypeError(
+                        'Finger points to a non traversable value'
+                    );
                 }
 
                 $key = $keys[$i];

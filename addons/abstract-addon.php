@@ -12,20 +12,62 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
+/**
+ * Abstract addon class to be used by addons.
+ */
 abstract class Addon extends Singleton
 {
+    /**
+     * Handles addon public name.
+     *
+     * @var string $name
+     */
     protected static $name;
+
+    /**
+     * Handles addon unique slug.
+     *
+     * @var string $slug
+     */
     protected static $slug;
+
+    /**
+     * Handles addon custom hook class name.
+     *
+     * @var string $hook_class Class name.
+     */
     protected static $hook_class;
 
+    /**
+     * Public singleton initializer.
+     */
     public static function setup(...$args)
     {
         return self::get_instance(...$args);
     }
 
+    /**
+     * Abstract setting registration method to be overwriten by its descendants.
+     *
+     * @param Settings $settings Plugin's settings store instance
+     */
     abstract protected function register_setting($settings);
+
+    /**
+     * Abstract setting sanitization method to be overwriten by its descendants.
+     * This method will be executed before each database update on the options table.
+     *
+     * @param array $value Setting value.
+     * @param Setting $setting Setting instance.
+     *
+     * @return array Validated value.
+     */
     abstract protected function sanitize_setting($value, $setting);
 
+    /**
+     * Private class constructor. Add addons scripts as dependency to the
+     * plugin's scripts and setup settings hooks.
+     */
     protected function construct(...$args)
     {
         if (!(static::$name && static::$slug)) {
@@ -36,11 +78,21 @@ abstract class Addon extends Singleton
         $this->admin_scripts();
     }
 
+    /**
+     * Addon setting getter.
+     */
     protected function setting()
     {
         return apply_filters('forms_bridge_setting', null, static::$slug);
     }
 
+    /**
+     * Addon's custom form hooks getter.
+     *
+     * @param int|null $form_id Target form ID.
+     *
+     * @return array Addon custom form hooks filtereds by form id.
+     */
     protected function form_hooks($form_id = null)
     {
         $form_hooks = array_map(function ($hook_data) {
@@ -58,8 +110,13 @@ abstract class Addon extends Singleton
         return $form_hooks;
     }
 
+    /**
+     * Settings hooks interceptors to register on the plugin's settings store
+     * the addon setting.
+     */
     private function handle_settings()
     {
+        // Add addon setting name on the settings store.
         add_filter(
             'wpct_rest_settings',
             function ($settings, $group) {
@@ -77,6 +134,7 @@ abstract class Addon extends Singleton
             2
         );
 
+        // Register the addon setting
         add_action(
             'wpct_register_settings',
             function ($group, $settings) {
@@ -88,6 +146,7 @@ abstract class Addon extends Singleton
             2
         );
 
+        // Sanitize the addon setting before updates
         add_filter(
             'wpct_sanitize_setting',
             function ($value, $setting) {
@@ -98,6 +157,10 @@ abstract class Addon extends Singleton
         );
     }
 
+    /**
+     * Enqueue addon scripts as wordpress scripts and shifts it
+     * as dependency to the forms bridge admin script.
+     */
     private function admin_scripts()
     {
         add_action(
@@ -129,6 +192,10 @@ abstract class Addon extends Singleton
         );
     }
 
+    /**
+     * Middelware to the addon sanitization method to filter out of domain
+     * setting updates.
+     */
     private function _sanitize_setting($value, $setting)
     {
         if (

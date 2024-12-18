@@ -9,9 +9,23 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
+/**
+ * Form hook object.
+ */
 class Form_Hook
 {
+    /**
+     * Handles form hook settings data.
+     *
+     * @var array $data.
+     */
     protected $data;
+
+    /**
+     * Handles form hook's api slug.
+     *
+     * @var string $api;
+     */
     protected $api;
 
     /**
@@ -21,6 +35,7 @@ class Form_Hook
      */
     public static function form_hooks($form_id = null)
     {
+        // If no form id, check if there is a current form, otherwise returns an empty string.
         if (empty($form_id)) {
             $form = apply_filters('forms_bridge_form', null, $form_id);
             if (!$form) {
@@ -30,9 +45,11 @@ class Form_Hook
             $form_id = $form['id'];
         }
 
+        // Get available form hooks
         $form_hooks = apply_filters('forms_bridge_setting', null, 'rest-api')
             ->form_hooks;
 
+        // Filter form hooks by form id and returns the resulting array
         return array_map(
             static function ($hook_data) {
                 return new Form_Hook($hook_data);
@@ -130,6 +147,7 @@ class Form_Hook
         $backend = $this->backend;
         $method = strtolower($this->method);
 
+        // Exists if http method is unkown
         if (!in_array($method, ['get', 'post', 'put', 'delete'])) {
             return new WP_Error(
                 'method_not_allowed',
