@@ -1,6 +1,5 @@
 // vendor
 import React from "react";
-import { __ } from "@wordpress/i18n";
 import { PanelRow } from "@wordpress/components";
 import { useEffect } from "@wordpress/element";
 

@@ -9,7 +9,7 @@ import {
   Button,
   __experimentalSpacer as Spacer,
 } from "@wordpress/components";
-import { useState, useEffect } from "@wordpress/element";
+import { useState } from "@wordpress/element";
 
 // source
 import StoreProvider, { useStoreSubmit } from "../providers/Store";
@@ -17,6 +17,7 @@ import SettingsProvider from "../providers/Settings";
 import FormsProvider from "../providers/Forms";
 import GeneralSettings from "./tabs/General";
 import RestApiSettings from "./tabs/RestApi";
+import Spinner from "../components/Spinner";
 
 const defaultTabs = [
   {
@@ -134,6 +135,7 @@ export default function SettingsPage({ addons }) {
         )}
       </TabPanel>
       <Spacer show={loading} />
+      <Spinner show={loading} />
     </StoreProvider>
   );
 }

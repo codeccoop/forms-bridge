@@ -77,7 +77,7 @@ export default function SettingsProvider({ children, handle = ["general"] }) {
   }).current;
 
   useEffect(() => {
-    wpfb.off("fetch", onFetch);
+    // wpfb.off("fetch", onFetch);
     wpfb.on("fetch", onFetch);
     wpfb.join("submit", onSubmit);
     window.addEventListener("beforeunload", beforeUnload);

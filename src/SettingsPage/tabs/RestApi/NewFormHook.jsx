@@ -1,7 +1,6 @@
 // vendor
 import React from "react";
 import { TextControl, SelectControl } from "@wordpress/components";
-import { useEffect } from "@wordpress/element";
 
 // source
 import NewFormHook from "../../../components/FormHooks/NewFormHook";
