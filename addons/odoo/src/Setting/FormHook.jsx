@@ -5,7 +5,7 @@ import { TextControl, SelectControl } from "@wordpress/components";
 // source
 import FormHook from "../../../../src/components/FormHooks/FormHook";
 import NewOdooFormHook from "./NewFormHook";
-import useOdooApi from "../hooks/useOdooSetting";
+import useOdooApi from "../hooks/useOdooApi";
 
 let focus;
 export default function OdooFormHook({ data, update, remove }) {

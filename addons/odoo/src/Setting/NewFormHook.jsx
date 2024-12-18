@@ -4,7 +4,7 @@ import { TextControl, SelectControl } from "@wordpress/components";
 
 // source
 import NewFormHook from "../../../../src/components/FormHooks/NewFormHook";
-import useOdooApi from "../hooks/useOdooSetting";
+import useOdooApi from "../hooks/useOdooApi";
 
 export default function NewOdooFormHook({ add, schema }) {
   const __ = wp.i18n.__;

@@ -9,7 +9,7 @@ import {
 // source
 import FormHooks from "../../../../src/components/FormHooks";
 import OdooFormHook from "./FormHook";
-import useOdooApi from "../hooks/useOdooSetting";
+import useOdooApi from "../hooks/useOdooApi";
 import Databases from "../components/Databases";
 
 export default function OdooSetting() {
