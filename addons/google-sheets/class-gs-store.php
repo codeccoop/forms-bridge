@@ -8,8 +8,8 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-if (!defined('FORMS_BRIDGE_GS_STORE_SECRET')) {
-    define('FORMS_BRIDGE_GS_STORE_SECRET', 'forms-bridge-store-secret');
+if (!defined('WP_BRIDGE_GS_STORE_SECRET')) {
+    define('WP_BRIDGE_GS_STORE_SECRET', 'wp-bridge-store-secret');
 }
 
 class Google_Sheets_Store extends Singleton
@@ -52,7 +52,7 @@ class Google_Sheets_Store extends Singleton
 
     protected function construct(...$args)
     {
-        $this->path = wp_upload_dir()['basedir'] . '/.forms-bridge-gs-store';
+        $this->path = wp_upload_dir()['basedir'] . '/.wp-bridge-gs-store';
 
         if (!is_dir($this->path)) {
             mkdir($this->path, 0700);
@@ -66,13 +66,13 @@ class Google_Sheets_Store extends Singleton
 
     private function secret($len)
     {
-        $secret = substr(FORMS_BRIDGE_GS_STORE_SECRET, 0, $len);
+        $secret = substr(WP_BRIDGE_GS_STORE_SECRET, 0, $len);
 
         while (strlen($secret) < $len) {
             $secret .= substr(
-                FORMS_BRIDGE_GS_STORE_SECRET,
+                WP_BRIDGE_GS_STORE_SECRET,
                 0,
-                $len - strlen(FORMS_BRIDGE_GS_STORE_SECRET)
+                $len - strlen(WP_BRIDGE_GS_STORE_SECRET)
             );
         }
 

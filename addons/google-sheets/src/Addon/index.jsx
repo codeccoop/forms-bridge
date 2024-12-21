@@ -5,7 +5,7 @@ import { useEffect, useState, useRef, createPortal } from "@wordpress/element";
 // source
 import SettingsProvider from "../../../../src/providers/Settings";
 import FormsProvider from "../../../../src/providers/Forms";
-import SpreadsheetProvider from "../providers/Spreadsheets";
+import SpreadsheetsProvider from "../providers/Spreadsheets";
 import Setting from "../Setting";
 
 // assets
@@ -37,9 +37,9 @@ export default function Addon() {
   return (
     <SettingsProvider handle={["google-sheets-api"]}>
       <FormsProvider>
-        <SpreadsheetProvider>
+        <SpreadsheetsProvider>
           <div>{root && createPortal(<Setting />, root)}</div>
-        </SpreadsheetProvider>
+        </SpreadsheetsProvider>
       </FormsProvider>
     </SettingsProvider>
   );
