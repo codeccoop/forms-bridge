@@ -8,13 +8,16 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-require_once 'vendor/autoload.php';
 require_once 'class-gs-store.php';
 require_once 'class-gs-client.php';
 require_once 'class-gs-rest-controller.php';
 require_once 'class-gs-ajax-controller.php';
 require_once 'class-gs-service.php';
 require_once 'class-gs-form-hook.php';
+
+if (!class_exists('\POSTS_BRIDGE\Posts_Bridge')) {
+    require_once 'vendor/autoload.php';
+}
 
 class Google_Sheets_Addon extends Addon
 {
