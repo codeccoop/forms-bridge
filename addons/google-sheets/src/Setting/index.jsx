@@ -15,15 +15,15 @@ import GSFormHook from "./FormHook";
 import useGSApi from "../hooks/useGSApi";
 import useAjaxGrant from "../hooks/useAjaxGrant";
 
-export default function GoogleSheetSetting() {
+export default function GoogleSheetsSetting() {
   const __ = wp.i18n.__;
-  const [{ authorized, spreadsheets, form_hooks: hooks }, save] = useGSApi();
+  const [{ authorized, form_hooks }, save] = useGSApi();
 
   const { grant, revoke, loading, result } = useAjaxGrant();
 
   const [file, setFile] = useState(null);
 
-  const update = (field) => save({ spreadsheets, form_hooks: hooks, ...field });
+  const update = (field) => save({ authorized, form_hooks, ...field });
 
   const onGrant = () => {
     if (file) grant(file);
@@ -41,7 +41,7 @@ export default function GoogleSheetSetting() {
     <>
       <PanelRow>
         <FormHooks
-          hooks={hooks}
+          hooks={form_hooks}
           setHooks={(form_hooks) => update({ form_hooks })}
           FormHook={GSFormHook}
         />

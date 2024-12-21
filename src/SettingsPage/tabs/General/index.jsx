@@ -1,6 +1,7 @@
 // vendor
 import React from "react";
 import {
+  PanelBody,
   PanelRow,
   TextControl,
   __experimentalSpacer as Spacer,
@@ -12,14 +13,16 @@ import { useGeneral } from "../../../providers/Settings";
 import Backends from "../../../components/Backends";
 import Backend from "../../../components/Backends/Backend";
 import Addons from "../../../components/Addons";
+import Logger from "./Logger";
 
 export default function GeneralSettings() {
   const __ = wp.i18n.__;
 
-  const [{ notification_receiver, backends, addons }, save] = useGeneral();
+  const [{ notification_receiver, backends, addons, debug }, save] =
+    useGeneral();
 
   const update = (field) =>
-    save({ notification_receiver, backends, addons, ...field });
+    save({ notification_receiver, backends, addons, debug, ...field });
 
   useEffect(() => {
     const img = document.querySelector("#general .addon-logo");
@@ -50,6 +53,9 @@ export default function GeneralSettings() {
       </PanelRow>
       <Spacer paddingY="calc(8px)" />
       <Addons />
+      <PanelBody title={__("Debug", "forms-bridge")} initialOpen={!!debug}>
+        <Logger />
+      </PanelBody>
     </>
   );
 }

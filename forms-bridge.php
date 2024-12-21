@@ -8,7 +8,7 @@ Author:          Còdec
 Author URI:      https://www.codeccoop.org
 Text Domain:     forms-bridge
 Domain Path:     /languages
-Version:         2.0.5
+Version:         2.1.0
 */
 
 namespace FORMS_BRIDGE;
@@ -37,6 +37,7 @@ require_once 'deps/i18n/wpct-i18n.php';
 
 require_once 'includes/abstract-integration.php';
 
+require_once 'includes/class-logger.php';
 require_once 'includes/class-menu.php';
 require_once 'includes/class-settings.php';
 require_once 'includes/class-rest-settings-controller.php';

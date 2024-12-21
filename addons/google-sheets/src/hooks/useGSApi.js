@@ -12,8 +12,7 @@ export default function useGSApi() {
     patch,
   ] = useApis();
 
-  const setApi = (field) =>
-    patch({ "google-sheets-api": { ...api, ...field } });
+  const setApi = (api) => patch({ "google-sheets-api": api });
 
   return [api, setApi];
 }

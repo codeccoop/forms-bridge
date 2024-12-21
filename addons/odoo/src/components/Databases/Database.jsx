@@ -99,6 +99,7 @@ export default function Database({ data, update, remove, databases }) {
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <TextControl
+            type="password"
             label={__("Password", "forms-bridge")}
             value={data.password}
             onChange={(password) => update({ ...data, password })}

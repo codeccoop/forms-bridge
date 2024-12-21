@@ -144,6 +144,7 @@ class Settings extends BaseSettings
             case 'general':
                 $value = $this->validate_general($value);
                 $this->update_addons($value);
+                $this->toggle_debug($value);
                 break;
             case 'rest-api':
                 $value = $this->validate_api($value);
@@ -296,6 +297,15 @@ class Settings extends BaseSettings
             } elseif (!$enabled && is_file($index)) {
                 unlink($index);
             }
+        }
+    }
+
+    private function toggle_debug($value)
+    {
+        if (isset($value['debug']) && $value['debug'] === true) {
+            Logger::activate();
+        } else {
+            Logger::deactivate();
         }
     }
 }

@@ -274,13 +274,6 @@ class Google_Sheets_Addon extends Addon
 
             // Valid only if database and form id exists
             $is_valid = in_array($hook['form_id'], $form_ids);
-            // array_reduce(
-            //     $spreadsheets,
-            //     static function ($is_valid, $spreadsheet) use ($hook) {
-            //         return $hook['spreadsheet'] === $spreadsheet['id'] || $is_valid;
-            //     },
-            //     false
-            // ) && in_array($hook['form_id'], $form_ids);
 
             if ($is_valid) {
                 // filter empty pipes

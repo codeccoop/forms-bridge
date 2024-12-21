@@ -100,6 +100,7 @@ export default function NewDatabase({ add, databases }) {
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <TextControl
+            type="password"
             label={__("Password", "forms-bridge")}
             value={password}
             onChange={setPassword}
