@@ -30,6 +30,14 @@ const castOptions = [
     label: "JSON",
   },
   {
+    value: "csv",
+    label: "CSV",
+  },
+  {
+    value: "concat",
+    label: "Concatenate",
+  },
+  {
     value: "null",
     label: "Ignore",
   },

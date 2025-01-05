@@ -147,35 +147,26 @@ class Odoo_Addon extends Addon
             9,
             2
         );
-
-        add_filter(
-            'forms_bridge_form_hooks',
-            function ($form_hooks, $form_id) {
-                return $this->form_hooks_interceptor($form_hooks, $form_id);
-            },
-            9,
-            2
-        );
     }
 
     private function custom_hooks()
     {
-        add_filter('forms_bridge_odoo_dbs', function ($dbs) {
+        add_filter('forms_bridge_odoo_dbs', static function ($dbs) {
             if (!is_list($dbs)) {
                 $dbs = [];
             }
 
-            return array_merge($dbs, $this->databases());
+            return array_merge($dbs, self::databases());
         });
 
         add_filter(
             'forms_bridge_odoo_db',
-            function ($db, $name) {
+            static function ($db, $name) {
                 if ($db instanceof Odoo_DB) {
                     return $db;
                 }
 
-                $dbs = $this->databases();
+                $dbs = self::databases();
                 foreach ($dbs as $db) {
                     if ($db->name === $name) {
                         return $db;
@@ -187,14 +178,14 @@ class Odoo_Addon extends Addon
         );
     }
 
-    private function databases()
+    private static function databases()
     {
-        return array_map(function ($db_data) {
+        return array_map(static function ($db_data) {
             return new Odoo_DB($db_data);
-        }, $this->setting()->databases);
+        }, self::setting()->databases);
     }
 
-    protected function register_setting($settings)
+    protected static function register_setting($settings)
     {
         $settings->register_setting(
             self::$slug,
@@ -295,19 +286,10 @@ class Odoo_Addon extends Addon
         return self::rpc_response($response);
     }
 
-    private function form_hooks_interceptor($form_hooks, $form_id)
+    protected static function sanitize_setting($value, $setting)
     {
-        if (!is_list($form_hooks)) {
-            $form_hooks = [];
-        }
-
-        return array_merge($form_hooks, $this->form_hooks($form_id));
-    }
-
-    protected function sanitize_setting($value, $setting)
-    {
-        $value['databases'] = $this->validate_databases($value['databases']);
-        $value['form_hooks'] = $this->validate_form_hooks(
+        $value['databases'] = self::validate_databases($value['databases']);
+        $value['form_hooks'] = self::validate_form_hooks(
             $value['form_hooks'],
             $value['databases']
         );
@@ -315,7 +297,7 @@ class Odoo_Addon extends Addon
         return $value;
     }
 
-    private function validate_databases($dbs)
+    private static function validate_databases($dbs)
     {
         if (!is_list($dbs)) {
             return [];
@@ -323,7 +305,7 @@ class Odoo_Addon extends Addon
 
         $backends = array_map(function ($backend) {
             return $backend['name'];
-        }, apply_filters('forms_bridge_setting', null, 'general')->backends);
+        }, Forms_Bridge::setting('general')->backends);
 
         return array_map(
             function ($db_data) {
@@ -346,7 +328,7 @@ class Odoo_Addon extends Addon
         );
     }
 
-    private function validate_form_hooks($form_hooks, $dbs)
+    private static function validate_form_hooks($form_hooks, $dbs)
     {
         if (!is_list($form_hooks)) {
             return [];

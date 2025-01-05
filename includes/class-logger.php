@@ -151,13 +151,33 @@ class Logger extends Singleton
             2
         );
 
-        add_action('init', function () {
+        add_action('plugins_loaded', function () {
             $plugin_slug = Forms_Bridge::slug();
             add_filter("option_{$plugin_slug}_general", function ($value) {
                 $value['debug'] = self::is_active();
                 return $value;
             });
         });
+
+        add_filter(
+            'pre_update_option',
+            function ($value, $option) {
+                if ($option !== Forms_Bridge::slug() . '_general') {
+                    return $value;
+                }
+
+                if (isset($value['debug']) && $value['debug'] === true) {
+                    self::activate();
+                } else {
+                    self::deactivate();
+                }
+
+                unset($value['debug']);
+                return $value;
+            },
+            5,
+            2
+        );
     }
 
     private function register_log_route()

@@ -46,8 +46,7 @@ class Form_Hook
         }
 
         // Get available form hooks
-        $form_hooks = apply_filters('forms_bridge_setting', null, 'rest-api')
-            ->form_hooks;
+        $form_hooks = Forms_Bridge::setting('rest-api')->form_hooks;
 
         // Filter form hooks by form id and returns the resulting array
         return array_map(
@@ -220,6 +219,10 @@ class Form_Hook
                 } catch (TypeError) {
                     return '';
                 }
+            case 'csv':
+                return implode(',', (array) $value);
+            case 'concat':
+                return implode(' ', (array) $value);
             case 'null':
                 return null;
             default:

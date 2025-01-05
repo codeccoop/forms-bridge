@@ -31,9 +31,10 @@ class Google_Sheets_Addon extends Addon
     protected function construct(...$args)
     {
         parent::construct(...$args);
-        $this->interceptors();
-        $this->wp_hooks();
-        $this->custom_hooks();
+
+        self::interceptors();
+        self::wp_hooks();
+        self::custom_hooks();
     }
 
     private function interceptors()
@@ -41,8 +42,8 @@ class Google_Sheets_Addon extends Addon
         // Intercepts submission payload and catch google sheets hooks
         add_filter(
             'forms_bridge_payload',
-            function ($payload, $uploads, $hook) {
-                return $this->payload_interceptor($payload, $hook);
+            static function ($payload, $uploads, $hook) {
+                return self::payload_interceptor($payload, $hook);
             },
             9,
             3
@@ -51,7 +52,7 @@ class Google_Sheets_Addon extends Addon
         // Discard attachments for google sheets submissions
         add_filter(
             'forms_bridge_attachments',
-            function ($attachments, $uploads, $hook) {
+            static function ($attachments, $uploads, $hook) {
                 if ($hook->api === self::$slug) {
                     return [];
                 }
@@ -61,28 +62,18 @@ class Google_Sheets_Addon extends Addon
             90,
             3
         );
-
-        // Add google sheets hooks to plugin hooks
-        add_filter(
-            'forms_bridge_form_hooks',
-            function ($form_hooks, $form_id) {
-                return $this->form_hooks_interceptor($form_hooks, $form_id);
-            },
-            9,
-            2
-        );
     }
 
     /**
      * Binds plugin custom hooks.
      */
-    private function custom_hooks()
+    private static function custom_hooks()
     {
         // Patch authorized state on the setting default value
         add_filter(
             'wpct_setting_default',
-            function ($value, $name) {
-                if ($name !== Forms_Bridge::slug() . '_' . self::$slug) {
+            static function ($value, $name) {
+                if ($name !== self::setting_name()) {
                     return $value;
                 }
 
@@ -98,15 +89,27 @@ class Google_Sheets_Addon extends Addon
     /**
      * Binds wp standard hooks.
      */
-    private function wp_hooks()
+    private static function wp_hooks()
     {
         // Patch authorized state on the setting value
-        $plugin_slug = Forms_Bridge::slug();
-        $addon_slug = self::$slug;
-        add_filter("option_{$plugin_slug}_{$addon_slug}", function ($value) {
+        add_filter('option_' . self::setting_name(), static function ($value) {
             $value['authorized'] = Google_Sheets_Service::is_authorized();
             return $value;
         });
+
+        // Unset authorized from setting data before updates
+        add_filter(
+            'pre_update_option',
+            static function ($value, $option) {
+                if ($option === self::setting_name()) {
+                    unset($value['authorized']);
+                }
+
+                return $value;
+            },
+            9,
+            2
+        );
     }
 
     /**
@@ -114,7 +117,7 @@ class Google_Sheets_Addon extends Addon
      *
      * @param Settings $settings Plugin settings instance.
      */
-    protected function register_setting($settings)
+    protected static function register_setting($settings)
     {
         $settings->register_setting(
             self::$slug,
@@ -167,7 +170,7 @@ class Google_Sheets_Addon extends Addon
      * @param array $payload Submission payload.
      * @param Form_Hook $form_hook Instance of the current form hook.
      */
-    private function payload_interceptor($payload, $form_hook)
+    private static function payload_interceptor($payload, $form_hook)
     {
         if (empty($payload)) {
             return $payload;
@@ -181,8 +184,8 @@ class Google_Sheets_Addon extends Addon
         if (!$form_data) {
             return;
         }
-        
-        $payload = $this->flatten_payload($payload);
+
+        $payload = self::flatten_payload($payload);
         $result = Google_Sheets_Service::write_row(
             $form_hook->spreadsheet,
             $form_hook->tab,
@@ -202,7 +205,7 @@ class Google_Sheets_Addon extends Addon
                 'forms_bridge_after_submission',
                 $result,
                 $payload,
-                $attachments,
+                [],
                 $form_data
             );
         }
@@ -217,14 +220,14 @@ class Google_Sheets_Addon extends Addon
      *
      * @return array Flattened payload.
      */
-    private function flatten_payload($payload, $path = '')
+    private static function flatten_payload($payload, $path = '')
     {
         $flat = [];
         foreach ($payload as $field => $value) {
             if (is_array($value)) {
                 $payload = array_merge(
                     $payload,
-                    $this->flatten_payload($value, $field . '.')
+                    self::flatten_payload($value, $field . '.')
                 );
             } else {
                 $flat[$path . $field] = $value;
@@ -235,23 +238,6 @@ class Google_Sheets_Addon extends Addon
     }
 
     /**
-     * Adds google sheets hooks to the available hooks.
-     *
-     * @param array $form_hooks List with available form hooks.
-     * @param int|null $form_id Target form ID.
-     *
-     * @return array List with available form hooks.
-     */
-    private function form_hooks_interceptor($form_hooks, $form_id)
-    {
-        if (!is_list($form_hooks)) {
-            $form_hooks = [];
-        }
-
-        return array_merge($form_hooks, $this->form_hooks($form_id));
-    }
-
-    /**
      * Sanitizes the setting value before updates.
      *
      * @param array $value Setting value.
@@ -259,9 +245,9 @@ class Google_Sheets_Addon extends Addon
      *
      * @return array Sanitized value.
      */
-    protected function sanitize_setting($value, $setting)
+    protected static function sanitize_setting($value, $setting)
     {
-        $value['form_hooks'] = $this->validate_form_hooks($value['form_hooks']);
+        $value['form_hooks'] = self::validate_form_hooks($value['form_hooks']);
         return $value;
     }
 
@@ -272,7 +258,7 @@ class Google_Sheets_Addon extends Addon
      *
      * @return array Validated list with form hooks data.
      */
-    private function validate_form_hooks($form_hooks)
+    private static function validate_form_hooks($form_hooks)
     {
         if (!is_list($form_hooks)) {
             return [];

@@ -13,6 +13,70 @@ if (!defined('ABSPATH')) {
  */
 abstract class Integration extends Singleton
 {
+    private static $integrations = [
+        'gf' => null,
+        'wpforms' => null,
+        'wpcf7' => null,
+        'ninja' => null,
+        'formidable' => null,
+        'forminator' => null,
+    ];
+
+    /**
+     * Gets the active integrations registry.
+     *
+     * @return array<Integration> Integration instances.
+     */
+    public static function integrations()
+    {
+        return array_values(
+            array_filter(array_values(self::$integrations), function (
+                $integration
+            ) {
+                return $integration;
+            })
+        );
+    }
+
+    public static function load()
+    {
+        foreach (array_keys(self::$integrations) as $slug) {
+            switch ($slug) {
+                case 'wpcf7':
+                    $plugin = 'contact-form-7/wp-contact-form-7.php';
+                    break;
+                case 'gf':
+                    $plugin = 'gravityforms/gravityforms.php';
+                    break;
+                case 'wpforms':
+                    $plugin = 'wpforms-lite/wpforms.php';
+                    break;
+                case 'ninja':
+                    $plugin = 'ninja-forms/ninja-forms.php';
+                    break;
+                // case 'formidable':
+                //     $plugin = 'formidable/formidable.php';
+                //     break;
+                // case 'forminator':
+                //     $plugin = 'forminator/forminator.php';
+                //     break;
+                default:
+                    $plugin = null;
+            }
+
+            $is_active = $plugin && Forms_Bridge::is_plugin_active($plugin);
+            if ($is_active) {
+                $NS = strtoupper($slug);
+                require_once "integrations/{$slug}/class-integration.php";
+                self::$integrations[$slug] = (
+                    '\FORMS_BRIDGE\\' .
+                    $NS .
+                    '\Integration'
+                )::get_instance();
+            }
+        }
+    }
+
     /**
      * Retrives the current form.
      *

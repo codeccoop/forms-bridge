@@ -138,11 +138,13 @@ class Integration extends BaseIntegration
         return [
             'id' => $form_id,
             'title' => $data['settings']['form_title'],
-            'hooks' => apply_filters('forms_bridge_form_hooks', null, $form_id),
+            'hooks' => apply_filters('forms_bridge_form_hooks', [], $form_id),
             'fields' => array_values(
-                array_map(function ($field) {
-                    return $this->serialize_field($field);
-                }, $data['fields'])
+                array_filter(
+                    array_map(function ($field) {
+                        return $this->serialize_field($field);
+                    }, $data['fields'])
+                )
             ),
         ];
     }
@@ -157,16 +159,49 @@ class Integration extends BaseIntegration
      */
     private function serialize_field($field)
     {
+        $type = $this->norm_field_type($field['type']);
+        if (in_array($type, ['submit'])) {
+            return;
+        }
+
         return [
             'id' => (int) $field['id'],
-            'type' => $field['type'],
+            'type' => $type,
             'name' => $field['label'],
             'label' => $field['label'],
-            'required' => $field['required'] == '1',
+            'required' =>
+                isset($field['required']) && $field['required'] === '1',
             'options' => isset($field['choices']) ? $field['choices'] : [],
-            'is_file' => in_array($field['type'], ['files', 'file']),
+            'is_file' => $type === 'file',
+            'is_multi' =>
+                strstr($field['type'], 'checkbox') ||
+                $field['type'] === 'select',
             'conditional' => false,
         ];
+    }
+
+    private function norm_field_type($type)
+    {
+        switch ($type) {
+            case 'name':
+            case 'email':
+            case 'textarea':
+            case 'payment-total':
+            case 'payment-single':
+                return 'text';
+            case 'number-slider':
+            case 'numbers':
+                return 'number';
+            case 'payment-select':
+            case 'payment-multiple':
+            case 'payment-checkbox':
+            case 'select':
+            case 'radio':
+            case 'checkbox':
+                return 'options';
+            default:
+                return $type;
+        }
     }
 
     /**
@@ -184,7 +219,49 @@ class Integration extends BaseIntegration
         ];
 
         foreach ($submission['fields'] as $field) {
-            $data[$field['name']] = $field['value'];
+            $i = array_search(
+                $field['name'],
+                array_column($form_data['fields'], 'name')
+            );
+            $field_data = $form_data['fields'][$i];
+
+            if ($field_data['type'] === 'file') {
+                continue;
+            }
+
+            if (strstr($field['type'], 'payment')) {
+                $field['value'] = html_entity_decode($field['value']);
+            }
+
+            if ($field_data['type'] === 'hidden') {
+                $number_val = (float) $field['value'];
+                if ((string) $number_val === $field['value']) {
+                    $data[$field_data['name']] = $number_val;
+                }
+            } elseif ($field_data['type'] === 'number') {
+                if (isset($field['amount'])) {
+                    $data[$field_data['name']] = (float) $field['amount'];
+                    if (isset($field['currency'])) {
+                        $data[$field_data['name']] .= ' ' . $field['currency'];
+                    }
+                } else {
+                    $data[$field_data['name']] = (float) preg_replace(
+                        '/[^0-9\.,]/',
+                        '',
+                        $field['value']
+                    );
+                }
+            } elseif ($field_data['type'] === 'options') {
+                if ($field_data['is_multi']) {
+                    $data[$field_data['name']] = array_map(function ($value) {
+                        return trim($value);
+                    }, explode("\n", $field['value']));
+                } else {
+                    $data[$field_data['name']] = $field['value'];
+                }
+            } else {
+                $data[$field_data['name']] = $field['value'];
+            }
         }
 
         return $data;

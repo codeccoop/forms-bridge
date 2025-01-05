@@ -44,17 +44,6 @@ require_once 'addons/abstract-addon.php';
  */
 class Forms_Bridge extends BasePlugin
 {
-    /**
-     * Handle plugin active integrations.
-     *
-     * @var array $_integrations
-     */
-    private $_integrations = [
-        'gf' => null,
-        'wpforms' => null,
-        'wpcf7' => null,
-    ];
-
     protected static $settings_class = '\FORMS_BRIDGE\Settings';
 
     /**
@@ -64,6 +53,11 @@ class Forms_Bridge extends BasePlugin
      */
     protected static $menu_class = '\FORMS_BRIDGE\Menu';
 
+    public static function setting($name)
+    {
+        return apply_filters('forms_bridge_setting', null, $name);
+    }
+
     /**
      * Initializes integrations and setup plugin hooks.
      */
@@ -71,15 +65,22 @@ class Forms_Bridge extends BasePlugin
     {
         parent::construct(...$args);
 
-        $this->load_integrations();
-        $this->sync_http_setting();
-        $this->wp_hooks();
-        $this->custom_hooks();
+        Addon::load();
+        Integration::load();
+
+        self::sync_http_setting();
+        self::wp_hooks();
+        self::custom_hooks();
 
         add_action(
             'forms_bridge_on_failure',
-            function ($payload, $attachments, $form_data, $error_data = []) {
-                $this->notify_error(
+            static function (
+                $payload,
+                $attachments,
+                $form_data,
+                $error_data = []
+            ) {
+                self::notify_error(
                     $payload,
                     $attachments,
                     $form_data,
@@ -89,80 +90,27 @@ class Forms_Bridge extends BasePlugin
             90,
             4
         );
-
-        $addons = $this->addons();
-        foreach ($addons as $addon => $enabled) {
-            if ($enabled) {
-                require_once plugin_dir_path(__FILE__) .
-                    "addons/{$addon}/{$addon}.php";
-            }
-        }
-    }
-
-    /**
-     * Loads plugin integrations.
-     */
-    private function load_integrations()
-    {
-        foreach (array_keys($this->_integrations) as $slug) {
-            switch ($slug) {
-                case 'wpcf7':
-                    $plugin = 'contact-form-7/wp-contact-form-7.php';
-                    break;
-                case 'gf':
-                    $plugin = 'gravityforms/gravityforms.php';
-                    break;
-                case 'wpforms':
-                    $plugin = 'wpforms-lite/wpforms.php';
-                    break;
-            }
-
-            $is_active = self::is_plugin_active($plugin);
-            if ($is_active) {
-                $NS = strtoupper($slug);
-                require_once "includes/integrations/{$slug}/class-integration.php";
-                $this->_integrations[$slug] = (
-                    '\FORMS_BRIDGE\\' .
-                    $NS .
-                    '\Integration'
-                )::get_instance();
-            }
-        }
     }
 
     /**
      * Synchronize plugin and http-bridge settings
      */
-    private function sync_http_setting()
+    private static function sync_http_setting()
     {
-        // Patch addons to the general setting default value
-        add_filter(
-            'wpct_setting_default',
-            function ($default, $name) {
-                if ($name !== $this->slug() . '_general') {
-                    return $default;
-                }
-
-                return array_merge($default, ['addons' => $this->addons()]);
-            },
-            10,
-            2
-        );
-
+        $slug = self::slug();
         // Patch http bridge settings to plugin settings
-        add_filter("option_{$this->slug()}_general", function ($value) {
+        add_filter("option_{$slug}_general", static function ($value) {
             $backends = Settings::get_setting('http-bridge', 'general')
                 ->backends;
-            $value['backends'] = $backends;
-            $value['addons'] = $this->addons();
-            return $value;
+
+            return array_merge($value, ['backends' => $backends]);
         });
 
         // Syncronize plugin settings with http bridge settings
         add_action(
             'updated_option',
-            function ($option, $from, $to) {
-                if ($option !== $this->slug() . '_general') {
+            static function ($option, $from, $to) use ($slug) {
+                if ($option !== $slug . '_general') {
                     return;
                 }
 
@@ -177,23 +125,23 @@ class Forms_Bridge extends BasePlugin
     /**
      * Binds plugin to wp hooks.
      */
-    private function wp_hooks()
+    private static function wp_hooks()
     {
         // Enqueue plugin admin client scripts
-        add_action('admin_enqueue_scripts', function ($admin_page) {
-            $this->admin_enqueue_scripts($admin_page);
+        add_action('admin_enqueue_scripts', static function ($admin_page) {
+            self::admin_enqueue_scripts($admin_page);
         });
     }
 
     /**
      * Adds plugin custom filters.
      */
-    private function custom_hooks()
+    private static function custom_hooks()
     {
         // Return registerd form hooks
         add_filter(
             'forms_bridge_form_hooks',
-            function ($form_hooks, $form_id) {
+            static function ($form_hooks, $form_id) {
                 if (!is_list($form_hooks)) {
                     $form_hooks = [];
                 }
@@ -210,12 +158,12 @@ class Forms_Bridge extends BasePlugin
         // Return pair plugin registered forms datums
         add_filter(
             'forms_bridge_forms',
-            function ($forms) {
+            static function ($forms) {
                 if (!is_array($forms)) {
                     $forms = [];
                 }
 
-                return array_merge($forms, $this->forms());
+                return array_merge($forms, self::forms());
             },
             5
         );
@@ -224,12 +172,12 @@ class Forms_Bridge extends BasePlugin
         // If $form_id is passed, retrives form by ID.
         add_filter(
             'forms_bridge_form',
-            function ($form_data, $form_id = null) {
+            static function ($form_data, $form_id = null) {
                 if (!is_array($form_data)) {
                     $form_data = [];
                 }
 
-                return array_merge($form_data, $this->form($form_id));
+                return array_merge($form_data, self::form($form_id));
             },
             5
         );
@@ -237,12 +185,12 @@ class Forms_Bridge extends BasePlugin
         // Return the current submission data
         add_filter(
             'forms_bridge_submission',
-            function ($submission) {
+            static function ($submission) {
                 if (!is_array($submission)) {
                     $submission = [];
                 }
 
-                return array_merge($submission, $this->submission());
+                return array_merge($submission, self::submission());
             },
             5
         );
@@ -250,12 +198,12 @@ class Forms_Bridge extends BasePlugin
         // Return the current submission uploaded files
         add_filter(
             'forms_bridge_uploads',
-            function ($uploads) {
+            static function ($uploads) {
                 if (!is_array($uploads)) {
                     $uploads = [];
                 }
 
-                return array_merge($uploads, $this->uploads());
+                return array_merge($uploads, self::uploads());
             },
             5
         );
@@ -275,52 +223,13 @@ class Forms_Bridge extends BasePlugin
     }
 
     /**
-     * Gets an array with the active integrations
-     *
-     * @return array Active integration instances.
-     */
-    private function integrations()
-    {
-        return array_values(
-            array_filter(array_values($this->_integrations), function (
-                $integration
-            ) {
-                return $integration;
-            })
-        );
-    }
-
-    /**
-     * Gets plugin's available addons at its activation state.
-     *
-     * @return array $addons Array with addons name and its activation state.
-     */
-    private function addons()
-    {
-        $addons_dir = plugin_dir_path(__FILE__) . 'addons';
-        $enableds = "{$addons_dir}/enabled";
-        $addons = array_diff(scandir($addons_dir), ['.', '..']);
-        $registry = [];
-
-        foreach ($addons as $addon) {
-            $addon_dir = "{$addons_dir}/{$addon}";
-            $index = "{$addon_dir}/{$addon}.php";
-            if (is_file($index)) {
-                $registry[$addon] = is_file("{$enableds}/{$addon}");
-            }
-        }
-
-        return $registry;
-    }
-
-    /**
      * Gets available forms' data.
      *
      * @return array Available forms' data.
      */
-    private function forms()
+    private static function forms()
     {
-        $integrations = $this->integrations();
+        $integrations = Integration::integrations();
 
         $forms = [];
         foreach (array_values($integrations) as $integration) {
@@ -337,9 +246,9 @@ class Forms_Bridge extends BasePlugin
      *
      * @return array|null Form data or null;
      */
-    private function form($form_id = null)
+    private static function form($form_id = null)
     {
-        $integrations = $this->integrations();
+        $integrations = Integration::integrations();
 
         foreach ($integrations as $integration) {
             if ($form_id) {
@@ -359,9 +268,9 @@ class Forms_Bridge extends BasePlugin
      *
      * @return array|null Submission data or null.
      */
-    private function submission()
+    private static function submission()
     {
-        $integrations = $this->integrations();
+        $integrations = Integration::integrations();
         foreach ($integrations as $integration) {
             $submission = $integration->submission();
             if ($submission) {
@@ -375,9 +284,9 @@ class Forms_Bridge extends BasePlugin
      *
      * @return array|null Uploaded files or null.
      */
-    private function uploads()
+    private static function uploads()
     {
-        $integrations = $this->integrations();
+        $integrations = Integration::integrations();
         foreach ($integrations as $integration) {
             $uploads = $integration->uploads();
             if ($uploads) {
@@ -391,9 +300,9 @@ class Forms_Bridge extends BasePlugin
      *
      * @param string $admin_page Current admin page.
      */
-    private function admin_enqueue_scripts($admin_page)
+    private static function admin_enqueue_scripts($admin_page)
     {
-        if ('settings_page_' . $this->slug() !== $admin_page) {
+        if ('settings_page_' . self::slug() !== $admin_page) {
             return;
         }
 
@@ -409,24 +318,24 @@ class Forms_Bridge extends BasePlugin
         ]);
 
         wp_enqueue_script(
-            $this->slug(),
+            self::slug(),
             plugins_url('assets/wpfb.js', __FILE__),
             [],
-            $this->version(),
+            self::version(),
             ['in_footer' => false]
         );
 
         wp_enqueue_script(
-            $this->slug() . '-admin',
+            self::slug() . '-admin',
             plugins_url('assets/plugin.bundle.js', __FILE__),
             $dependencies,
-            $this->version(),
+            self::version(),
             ['in_footer' => true]
         );
 
         wp_set_script_translations(
-            $this->slug(),
-            $this->slug(),
+            self::slug(),
+            self::slug(),
             plugin_dir_path(__FILE__) . 'languages'
         );
 
@@ -441,13 +350,13 @@ class Forms_Bridge extends BasePlugin
      * @param array $form_data Form data.
      * @param array $error_data Error data.
      */
-    private function notify_error(
+    private static function notify_error(
         $payload,
         $attachments,
         $form_data,
         $error_data = []
     ) {
-        $email = Settings::get_setting($this->slug(), 'general')
+        $email = Settings::get_setting(self::slug(), 'general')
             ->notification_receiver;
 
         if (empty($email)) {

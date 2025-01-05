@@ -25,6 +25,19 @@ class Settings extends BaseSettings
         parent::construct(...$args);
 
         add_filter(
+            'pre_update_option',
+            function ($value, $option) {
+                if ($option !== $this->group() . '_general') {
+                    return $value;
+                }
+
+                return Addon::update_registry($value);
+            },
+            9,
+            2
+        );
+
+        add_filter(
             'wpct_sanitize_setting',
             function ($value, $setting) {
                 return $this->sanitize_setting($value, $setting);
@@ -143,8 +156,6 @@ class Settings extends BaseSettings
         switch ($name) {
             case 'general':
                 $value = $this->validate_general($value);
-                $this->update_addons($value);
-                $this->toggle_debug($value);
                 break;
             case 'rest-api':
                 $value = $this->validate_api($value);
@@ -274,38 +285,5 @@ class Settings extends BaseSettings
             }
         }
         return $valid_hooks;
-    }
-
-    /**
-     * Update addons state on file system.
-     *
-     * @todo Move this state to the database to prevent state looses on updates.
-     *
-     * @param array $value General setting data.
-     */
-    private function update_addons($value)
-    {
-        $addons = isset($value['addons']) ? $value['addons'] : [];
-        $addons_dir = dirname(__FILE__, 2) . '/addons';
-        $enableds = "{$addons_dir}/enabled";
-
-        foreach ($addons as $addon => $enabled) {
-            $index = "{$enableds}/{$addon}";
-            if ($enabled && !is_file($index)) {
-                $fp = fopen($index, 'w');
-                fclose($fp);
-            } elseif (!$enabled && is_file($index)) {
-                unlink($index);
-            }
-        }
-    }
-
-    private function toggle_debug($value)
-    {
-        if (isset($value['debug']) && $value['debug'] === true) {
-            Logger::activate();
-        } else {
-            Logger::deactivate();
-        }
     }
 }

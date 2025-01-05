@@ -167,9 +167,13 @@ class Integration extends BaseIntegration
                 $form['id']
             ),
             'description' => $form['description'],
-            'fields' => array_map(function ($field) {
-                return $this->serialize_field($field);
-            }, $form['fields']),
+            'fields' => array_values(
+                array_filter(
+                    array_map(function ($field) {
+                        return $this->serialize_field($field);
+                    }, $form['fields'])
+                )
+            ),
         ];
         return $form;
     }
@@ -183,15 +187,15 @@ class Integration extends BaseIntegration
      */
     private function serialize_field($field)
     {
-        switch ($field->type) {
-            case 'post_image':
-            case 'fileupload':
-                $type = $field->multipleFiles ? 'files' : 'file';
-                break;
-            default:
-                $type = $field->type;
-                break;
+        if (in_array($field->type, ['page', 'section', 'html', 'submit'])) {
+            return;
         }
+
+        if (strstr($field->type, 'post_')) {
+            return;
+        }
+
+        $type = $this->norm_field_type($field->type);
 
         $name = $field->inputName
             ? $field->inputName
@@ -227,11 +231,40 @@ class Integration extends BaseIntegration
             'required' => $field->isRequired,
             'options' => $options,
             'inputs' => $inputs,
-            'is_file' => in_array($type, ['files', 'file']),
+            'is_file' => $type === 'file',
+            'is_multi' =>
+                $type === 'file'
+                    ? $field->multipleFiles
+                    : $field->storageType === 'json',
             'conditional' =>
                 is_array($field->conditionalLogic) &&
                 $field->conditionalLogic['enabled'],
         ];
+    }
+
+    private function norm_field_type($type)
+    {
+        switch ($type) {
+            case 'multi_choice':
+            case 'image_choice':
+            case 'multiselect':
+            case 'list':
+                return 'options';
+            case 'address':
+            case 'website':
+            case 'product':
+            case 'email':
+            case 'textarea':
+                return 'text';
+            case 'total':
+            case 'shipping':
+            case 'quantity':
+                return 'number';
+            case 'fileupload':
+                return 'file';
+            default:
+                return $type;
+        }
     }
 
     /**
@@ -249,12 +282,7 @@ class Integration extends BaseIntegration
         ];
 
         foreach ($form_data['fields'] as $field) {
-            if (
-                $field['type'] === 'section' ||
-                $field['type'] === 'file' ||
-                $field['type'] === 'files' ||
-                $field['type'] === 'html'
-            ) {
+            if ($field['is_file']) {
                 continue;
             }
 
@@ -294,16 +322,16 @@ class Integration extends BaseIntegration
                         }
                     }
 
-                    $data[$input_name] = implode(',', $values);
+                    if ($field['type'] === 'consent') {
+                        $data[$input_name] = $values[0];
+                    } else {
+                        $data[$input_name] = $values;
+                    }
                 }
             } else {
                 // simple fields
                 if ($input_name) {
-                    if ($field['type'] === 'consent') {
-                        $raw_value = rgar($submission, $field['id'] . '.1');
-                    } else {
-                        $raw_value = rgar($submission, (string) $field['id']);
-                    }
+                    $raw_value = rgar($submission, (string) $field['id']);
                     $data[$input_name] = $this->format_value(
                         $raw_value,
                         $field
@@ -327,11 +355,34 @@ class Integration extends BaseIntegration
     private function format_value($value, $field, $input = null)
     {
         try {
-            if ($field['type'] === 'consent') {
-                if (isset($input['isHidden']) && $input['isHidden']) {
+            switch ($field['type']) {
+                case 'consent':
+                    if (preg_match('/\.1$/', $input['id'])) {
+                        return $value === '1';
+                    }
+
                     return null;
-                }
-                return $value;
+                case 'hidden':
+                    $number_val = (float) $value;
+                    if ((string) $number_val === $value) {
+                        return $number_val;
+                    }
+                    break;
+                case 'number':
+                    return (float) preg_replace('/[^0-9\.,]/', '', $value);
+                case 'text':
+                    return (string) $value;
+                case 'options':
+                    if ($field['is_multi']) {
+                        return json_decode($value, true);
+                    }
+
+                    $unserlialized = maybe_unserialize($value);
+                    if ($unserlialized !== $value) {
+                        return $unserlialized;
+                    }
+
+                    return $value;
             }
         } catch (TypeError $e) {
             // do nothing
