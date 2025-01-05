@@ -175,7 +175,7 @@ class Integration extends BaseIntegration
             'is_file' => $type === 'file',
             'is_multi' =>
                 strstr($field['type'], 'checkbox') ||
-                $field['type'] === 'select',
+                ($field['type'] === 'select' && $field['multiple'] === '1'),
             'conditional' => false,
         ];
     }

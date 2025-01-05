@@ -93,7 +93,7 @@ export default function Integrations() {
       {hasMulti && (
         <p>
           {__(
-            "⚠️ This panel allow you to activate integrations. Working with multiple integrations at the same time can lead Forms Bridge to buggy behaviors. If it isn't required, please activate only once.",
+            "⚠️ This panel allow you to activate integrations. Work with multiple integrations at the same time can lead Forms Bridge to buggy behaviors. If it isn't required, please activate only once.",
             "forms-bridge"
           )}
         </p>

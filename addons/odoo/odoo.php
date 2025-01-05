@@ -115,7 +115,7 @@ class Odoo_Addon extends Addon
 
         $user_id = self::rpc_response($response);
         if (is_wp_error($user_id)) {
-            $user_id;
+            return $user_id;
         }
 
         return [$session_id, $user_id];
