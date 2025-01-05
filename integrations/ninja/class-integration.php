@@ -13,6 +13,8 @@ if (!defined('ABSPATH')) {
  */
 class Integration extends BaseIntegration
 {
+    private static $submission = null;
+
     protected function construct(...$args)
     {
         parent::construct(...$args);
@@ -21,6 +23,7 @@ class Integration extends BaseIntegration
     protected function init()
     {
         add_action('ninja_forms_after_submission', function ($submission) {
+            self::$submission = $submission;
             $this->do_submission($submission);
         });
     }
@@ -55,10 +58,16 @@ class Integration extends BaseIntegration
 
     public function submission()
     {
+        if (empty(self::$submission)) {
+            return null;
+        }
+
+        return $this->serialize_submission(self::$submission, $this->form());
     }
 
     public function uploads()
     {
+        return [];
     }
 
     public function serialize_form($form_factory)
