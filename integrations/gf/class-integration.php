@@ -235,7 +235,10 @@ class Integration extends BaseIntegration
             'is_multi' =>
                 $type === 'file'
                     ? $field->multipleFiles
-                    : $field->storageType === 'json',
+                    : $field->storageType === 'json' ||
+                        $field->choiceLimit === 'unlimited' ||
+                        $field->inputType === 'list' ||
+                        $field->inputType === 'checkbox',
             'conditional' =>
                 is_array($field->conditionalLogic) &&
                 $field->conditionalLogic['enabled'],
@@ -249,15 +252,20 @@ class Integration extends BaseIntegration
             case 'image_choice':
             case 'multiselect':
             case 'list':
+            case 'option':
+            case 'select':
+            case 'radio':
+            case 'checkbox':
                 return 'options';
             case 'address':
             case 'website':
             case 'product':
             case 'email':
             case 'textarea':
+            case 'name':
+            case 'shipping':
                 return 'text';
             case 'total':
-            case 'shipping':
             case 'quantity':
                 return 'number';
             case 'fileupload':
@@ -374,12 +382,15 @@ class Integration extends BaseIntegration
                     return (string) $value;
                 case 'options':
                     if ($field['is_multi']) {
-                        return json_decode($value, true);
-                    }
+                        $unserlialized = maybe_unserialize($value);
+                        if ($unserlialized !== $value) {
+                            return $unserlialized;
+                        }
 
-                    $unserlialized = maybe_unserialize($value);
-                    if ($unserlialized !== $value) {
-                        return $unserlialized;
+                        $decoded = json_decode($value);
+                        if (is_array($decoded)) {
+                            return $decoded;
+                        }
                     }
 
                     return $value;
