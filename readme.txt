@@ -4,7 +4,7 @@ Tags: forms, bridge, api, http, backend
 License: GPLv2 or later
 License URI: https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge/-/raw/main/license.txt
 Requires PHP: 8.0
-Stable Tag: 2.1.1
+Stable Tag: 2.2.0
 Requires at least: 6.7
 Tested up to: 6.7
 
@@ -12,7 +12,7 @@ Bridge WP form builder plugins to any backend over HTTP requests.
 
 == Integrations ==
 
-Forms Bridge has integrations for [GravityForms](https://www.gravityforms.com), [Contact Form 7](https://wordpress.org/plugins/contact-form-7/) and [WP Forms Lite](https://wordpress.org/plugins/wpforms-lite/).
+Forms Bridge has integrations for [GravityForms](https://www.gravityforms.com), [Contact Form 7](https://wordpress.org/plugins/contact-form-7/), [WP Forms Lite](https://wordpress.org/plugins/wpforms-lite/) and [Ninja Forms](https://wordpress.org/plugins/ninja-forms/).
 
 == Addons ==
 
