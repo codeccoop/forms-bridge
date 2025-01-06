@@ -228,13 +228,22 @@ class Google_Sheets_Addon extends Addon
     {
         $flat = [];
         foreach ($payload as $field => $value) {
-            if (is_list($value)) {
-                $flat[$path . $field] = implode(',', $value);
-            } elseif (is_array($value)) {
-                $payload = array_merge(
-                    $payload,
-                    self::flatten_payload($value, $field . '.')
-                );
+            if (is_array($value)) {
+                $is_flat =
+                    is_list($value) &&
+                    count(
+                        array_filter($value, static function ($d) {
+                            return !is_array($d);
+                        })
+                    ) === count($value);
+                if ($is_flat) {
+                    $flat[$path . $field] = implode(',', $value);
+                } else {
+                    $flat = array_merge(
+                        $flat,
+                        self::flatten_payload($value, $path . $field . '.')
+                    );
+                }
             } else {
                 $flat[$path . $field] = $value;
             }

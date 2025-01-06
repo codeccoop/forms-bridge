@@ -170,6 +170,10 @@ class Google_Sheets_Service extends Singleton
 
     public static function get_spreadsheets()
     {
+        if (!self::is_authorized()) {
+            return [];
+        }
+
         self::service()->client()->use_credentials();
         try {
             $service = self::get_instance()->client()->get_drive_service();
@@ -198,6 +202,10 @@ class Google_Sheets_Service extends Singleton
 
     public static function get_sheets($spreadsheet_id)
     {
+        if (!self::is_authorized()) {
+            return [];
+        }
+
         self::service()->client()->use_credentials();
         try {
             $service = self::service()->client()->get_sheets_service();

@@ -8,13 +8,15 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-if (!defined('WP_BRIDGE_GS_STORE_SECRET')) {
-    define('WP_BRIDGE_GS_STORE_SECRET', 'wp-bridge-store-secret');
+if (!defined('FORMS_BRIDGE_GS_STORE_SECRET')) {
+    define('FORMS_BRIDGE_GS_STORE_SECRET', 'wp-bridge-store-secret');
 }
 
 class Google_Sheets_Store extends Singleton
 {
-    public $path;
+    private const store_name = 'forms_bridge_gs_store';
+
+    private static $cache = null;
 
     public static function setup()
     {
@@ -26,64 +28,95 @@ class Google_Sheets_Store extends Singleton
         return self::get_instance();
     }
 
-    public static function get($path)
+    public static function get($name)
     {
-        $path = self::store()->store_path($path);
-        if (!is_file($path)) {
-            return null;
-        }
-
-        return self::store()->decrypt(file_get_contents($path));
+        return self::store()->load($name);
     }
 
-    public static function set($path, $content)
+    public static function set($name, $content)
     {
-        $path = self::store()->store_path($path);
-        file_put_contents($path, self::store()->encrypt($content));
+        self::store()->save($name, $content);
     }
 
-    public static function delete($path)
+    public static function delete($name)
     {
-        $path = self::store()->store_path($path);
-        if (is_file($path)) {
-            unlink($path);
-        }
+        self::store()->forget($name);
     }
 
     protected function construct(...$args)
     {
-        $this->path = wp_upload_dir()['basedir'] . '/.wp-bridge-gs-store';
+        add_action(
+            'updated_option',
+            static function ($opt, $from, $to) {
+                if ($opt === self::store_name) {
+                    self::$cache = $to;
+                }
+            },
+            5,
+            3
+        );
 
-        if (!is_dir($this->path)) {
-            mkdir($this->path, 0700);
-        }
-
-        $htaccess = "{$this->path}/.htaccess";
-        if (!is_file($htaccess)) {
-            file_put_contents($htaccess, 'Deny from all');
-        }
+        add_action(
+            'deleted_option',
+            static function ($opt) {
+                if ($opt === self::store_name) {
+                    self::$cache = null;
+                }
+            },
+            5
+        );
     }
 
     private function secret($len)
     {
-        $secret = substr(WP_BRIDGE_GS_STORE_SECRET, 0, $len);
+        $secret = substr(FORMS_BRIDGE_GS_STORE_SECRET, 0, $len);
 
         while (strlen($secret) < $len) {
             $secret .= substr(
-                WP_BRIDGE_GS_STORE_SECRET,
+                FORMS_BRIDGE_GS_STORE_SECRET,
                 0,
-                $len - strlen(WP_BRIDGE_GS_STORE_SECRET)
+                $len - strlen(FORMS_BRIDGE_GS_STORE_SECRET)
             );
         }
 
         return $secret;
     }
 
-    public function store_path($file)
+    private function data()
     {
-        $store_path = self::store()->path;
-        $file = preg_replace('/^\//', '', $file);
-        return "{$store_path}/{$file}";
+        if (empty(self::$cache)) {
+            self::$cache = (array) get_option(self::store_name, []);
+        }
+
+        return self::$cache;
+    }
+
+    public function load($name)
+    {
+        $_name = $this->encrypt($name);
+        $data = $this->data();
+        return isset($data[$_name]) ? $this->decrypt($data[$_name]) : null;
+    }
+
+    public function save($name, $content)
+    {
+        $_name = $this->encrypt($name);
+        $_content = $this->encrypt((string) $content);
+        $data = $this->data();
+        update_option(
+            self::store_name,
+            array_merge($data, [$_name => $_content])
+        );
+    }
+
+    public function forget($name)
+    {
+        $_name = $this->encrypt($name);
+        $data = $this->data();
+        if (isset($data[$_name])) {
+            unset($data[$_name]);
+            update_option(self::store_name, $data);
+        }
     }
 
     public function encrypt($value)
