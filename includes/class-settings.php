@@ -109,6 +109,8 @@ class Settings extends BaseSettings
                                                 'integer',
                                                 'float',
                                                 'json',
+                                                'csv',
+                                                'concat',
                                                 'null',
                                             ],
                                         ],
@@ -143,8 +145,6 @@ class Settings extends BaseSettings
         switch ($name) {
             case 'general':
                 $value = $this->validate_general($value);
-                $this->update_addons($value);
-                $this->toggle_debug($value);
                 break;
             case 'rest-api':
                 $value = $this->validate_api($value);
@@ -207,10 +207,10 @@ class Settings extends BaseSettings
             return [];
         }
 
-        $form_ids = array_reduce(
+        $_ids = array_reduce(
             apply_filters('forms_bridge_forms', []),
             static function ($form_ids, $form) {
-                return array_merge($form_ids, [$form['id']]);
+                return array_merge($form_ids, [$form['_id']]);
             },
             []
         );
@@ -228,7 +228,7 @@ class Settings extends BaseSettings
                             $is_valid;
                     },
                     false
-                ) && in_array($hook['form_id'], $form_ids);
+                ) && in_array($hook['form_id'], $_ids);
 
             if ($is_valid) {
                 // filter empty pipes
@@ -243,7 +243,7 @@ class Settings extends BaseSettings
 
                 $hook['name'] = sanitize_text_field($hook['name']);
                 $hook['backend'] = sanitize_text_field($hook['backend']);
-                $hook['form_id'] = (int) $hook['form_id'];
+                $hook['form_id'] = sanitize_text_field($hook['form_id']);
 
                 if (
                     !in_array($hook['method'], ['GET', 'POST', 'PUT', 'DELETE'])
@@ -262,6 +262,8 @@ class Settings extends BaseSettings
                         'integer',
                         'float',
                         'json',
+                        'csv',
+                        'concat',
                         'null',
                     ])
                         ? $pipe['cast']
@@ -273,39 +275,7 @@ class Settings extends BaseSettings
                 $valid_hooks[] = $hook;
             }
         }
+
         return $valid_hooks;
-    }
-
-    /**
-     * Update addons state on file system.
-     *
-     * @todo Move this state to the database to prevent state looses on updates.
-     *
-     * @param array $value General setting data.
-     */
-    private function update_addons($value)
-    {
-        $addons = isset($value['addons']) ? $value['addons'] : [];
-        $addons_dir = dirname(__FILE__, 2) . '/addons';
-        $enableds = "{$addons_dir}/enabled";
-
-        foreach ($addons as $addon => $enabled) {
-            $index = "{$enableds}/{$addon}";
-            if ($enabled && !is_file($index)) {
-                $fp = fopen($index, 'w');
-                fclose($fp);
-            } elseif (!$enabled && is_file($index)) {
-                unlink($index);
-            }
-        }
-    }
-
-    private function toggle_debug($value)
-    {
-        if (isset($value['debug']) && $value['debug'] === true) {
-            Logger::activate();
-        } else {
-            Logger::deactivate();
-        }
     }
 }

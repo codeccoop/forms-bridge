@@ -12,17 +12,18 @@ import { useEffect } from "@wordpress/element";
 import { useGeneral } from "../../../providers/Settings";
 import Backends from "../../../components/Backends";
 import Backend from "../../../components/Backends/Backend";
+import Integrations from "../../../components/Integrations";
 import Addons from "../../../components/Addons";
 import Logger from "./Logger";
 
 export default function GeneralSettings() {
   const __ = wp.i18n.__;
 
-  const [{ notification_receiver, backends, addons, debug }, save] =
+  const [{ notification_receiver, backends, debug, ...general }, save] =
     useGeneral();
 
   const update = (field) =>
-    save({ notification_receiver, backends, addons, debug, ...field });
+    save({ notification_receiver, backends, debug, ...general, ...field });
 
   useEffect(() => {
     const img = document.querySelector("#general .addon-logo");
@@ -52,6 +53,7 @@ export default function GeneralSettings() {
         />
       </PanelRow>
       <Spacer paddingY="calc(8px)" />
+      <Integrations />
       <Addons />
       <PanelBody title={__("Debug", "forms-bridge")} initialOpen={!!debug}>
         <Logger />

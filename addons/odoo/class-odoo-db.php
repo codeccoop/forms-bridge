@@ -20,8 +20,6 @@ class Odoo_DB
         switch ($name) {
             case 'backend':
                 return $this->backend();
-            case 'form_hooks':
-                return $this->form_hooks();
             default:
                 return isset($this->data[$name]) ? $this->data[$name] : null;
         }
@@ -33,17 +31,6 @@ class Odoo_DB
             'http_bridge_backend',
             null,
             $this->data['backend']
-        );
-    }
-
-    private function form_hooks()
-    {
-        $form_hooks = apply_filter('forms_bridge_form_hooks', []);
-        return array_values(
-            array_filter($form_hooks, function ($form_hook) {
-                return $form_hook->api === 'odoo' &&
-                    $form_hook->database === $this->data['name'];
-            })
         );
     }
 }

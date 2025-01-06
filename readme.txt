@@ -1,6 +1,6 @@
 === Forms Bridge ===
 Contributors: codeccoop
-Tags: forms, bridge, http, api, backend
+Tags: forms, bridge, api, http, backend
 License: GPLv2 or later
 License URI: https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge/-/raw/main/license.txt
 Requires PHP: 8.0

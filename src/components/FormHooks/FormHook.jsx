@@ -37,14 +37,14 @@ export default function FormHook({
 
   const forms = useForms();
   const formOptions = [{ label: "", value: "" }].concat(
-    forms.map(({ id, title }) => ({
+    forms.map(({ _id, title }) => ({
       label: title,
-      value: id,
+      value: _id,
     }))
   );
 
   const form = useMemo(() => {
-    return forms.find((form) => form.id == data.form_id);
+    return forms.find((form) => form._id == data.form_id);
   }, [data.form_id]);
 
   const [name, setName] = useState(data.name);

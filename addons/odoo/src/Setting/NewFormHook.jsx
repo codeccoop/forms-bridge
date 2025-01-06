@@ -39,7 +39,7 @@ export default function NewOdooFormHook({ add, schema }) {
                     )
                   : ""
               }
-              value={data.database}
+              value={data.database || ""}
               onChange={(database) => update({ ...data, database })}
               options={dbOptions}
               __nextHasNoMarginBottom

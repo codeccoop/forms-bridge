@@ -13,6 +13,7 @@ const defaults = {
     notification_receiver: "",
     backends: [],
     addons: {},
+    integrations: {},
   },
   apis: {
     "rest-api": {

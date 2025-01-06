@@ -31,13 +31,21 @@ class Form_Hook
     /**
      * Form hooks getter.
      *
+     * @param string $integration Integration slug.
+     * @param int $form_id Optional, ID of the target form. Current form is used if not especified.
+     *
      * @return array $hooks Array with hooks.
      */
-    public static function form_hooks($form_id = null)
+    public static function form_hooks($integration, $form_id = null)
     {
         // If no form id, check if there is a current form, otherwise returns an empty string.
         if (empty($form_id)) {
-            $form = apply_filters('forms_bridge_form', null, $form_id);
+            $form = apply_filters(
+                'forms_bridge_form',
+                null,
+                $integration,
+                $form_id
+            );
             if (!$form) {
                 return [];
             }
@@ -45,19 +53,18 @@ class Form_Hook
             $form_id = $form['id'];
         }
 
+        $_id = "{$integration}:{$form_id}";
+
         // Get available form hooks
-        $form_hooks = apply_filters('forms_bridge_setting', null, 'rest-api')
-            ->form_hooks;
+        $form_hooks = Forms_Bridge::setting('rest-api')->form_hooks;
 
         // Filter form hooks by form id and returns the resulting array
         return array_map(
             static function ($hook_data) {
                 return new Form_Hook($hook_data);
             },
-            array_filter($form_hooks, static function ($hook_data) use (
-                $form_id
-            ) {
-                return (int) $hook_data['form_id'] === (int) $form_id;
+            array_filter($form_hooks, static function ($hook_data) use ($_id) {
+                return $hook_data['form_id'] === $_id;
             })
         );
     }
@@ -86,6 +93,9 @@ class Form_Hook
                 break;
             case 'form':
                 $value = $this->form();
+                break;
+            case 'integration':
+                $value = $this->integration();
                 break;
             case 'backend':
                 $value = $this->backend();
@@ -117,11 +127,23 @@ class Form_Hook
     /**
      * Retrives the hook's form data.
      *
-     * @return arrray Form data.
+     * @return array Form data.
      */
     protected function form()
     {
-        return apply_filters('forms_bridge_form', null, $this->form_id);
+        [$integration, $form_id] = explode(':', $this->form_id);
+        return apply_filters('forms_bridge_form', null, $integration, $form_id);
+    }
+
+    /**
+     * Retrives the hook's integration.
+     *
+     * @return string Integration slug.
+     */
+    protected function integration()
+    {
+        [$integration] = explode(':', $this->form_id);
+        return $integration;
     }
 
     /**
@@ -220,6 +242,10 @@ class Form_Hook
                 } catch (TypeError) {
                     return '';
                 }
+            case 'csv':
+                return implode(',', (array) $value);
+            case 'concat':
+                return implode(' ', (array) $value);
             case 'null':
                 return null;
             default:

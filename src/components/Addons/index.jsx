@@ -26,7 +26,7 @@ export default function Addons() {
           <PanelRow key={addon}>
             <ToggleControl
               __nextHasNoMarginBottom
-              label={addon}
+              label={__(addon, "forms-bridge")}
               checked={enabled}
               onChange={() => toggle(addon)}
             />

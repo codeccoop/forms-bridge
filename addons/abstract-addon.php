@@ -18,6 +18,13 @@ if (!defined('ABSPATH')) {
 abstract class Addon extends Singleton
 {
     /**
+     * Handles addon's registry option name.
+     *
+     * @var string registry
+     */
+    private const registry = 'forms_bridge_addons';
+
+    /**
      * Handles addon public name.
      *
      * @var string $name
@@ -43,7 +50,97 @@ abstract class Addon extends Singleton
      */
     public static function setup(...$args)
     {
-        return self::get_instance(...$args);
+        return static::get_instance(...$args);
+    }
+
+    /**
+     * Public addons registry getter.
+     *
+     * @return array Addons registry state.
+     */
+    public static function registry()
+    {
+        $state = (array) get_option(self::registry, []);
+        $addons_dir = dirname(__FILE__);
+        $addons = array_diff(scandir($addons_dir), ['.', '..']);
+        $registry = [];
+        foreach ($addons as $addon) {
+            $addon_dir = "{$addons_dir}/{$addon}";
+            $index = "{$addon_dir}/{$addon}.php";
+            if (is_file($index)) {
+                $registry[$addon] = isset($state[$addon])
+                    ? (bool) $state[$addon]
+                    : false;
+            }
+        }
+
+        return $registry;
+    }
+
+    /**
+     * Updates the addons' registry state.
+     *
+     * @param array $value Plugin's general setting data.
+     */
+    private static function update_registry($addons = [])
+    {
+        $registry = self::registry();
+        foreach ($addons as $addon => $enabled) {
+            if (!isset($registry[$addon])) {
+                continue;
+            }
+
+            $registry[$addon] = (bool) $enabled;
+        }
+
+        update_option(self::registry, $registry);
+    }
+
+    /**
+     * Public addons loader.
+     */
+    public static function load()
+    {
+        $registry = self::registry();
+        foreach ($registry as $addon => $enabled) {
+            if ($enabled) {
+                require_once dirname(__FILE__) . "/{$addon}/{$addon}.php";
+            }
+        }
+
+        $general_setting = Forms_Bridge::slug() . '_general';
+        add_filter(
+            'wpct_setting_default',
+            static function ($default, $name) use ($general_setting) {
+                if ($name !== $general_setting) {
+                    return $default;
+                }
+
+                return array_merge($default, ['addons' => self::registry()]);
+            },
+            10,
+            2
+        );
+
+        add_filter("option_{$general_setting}", static function ($value) {
+            return array_merge($value, ['addons' => self::registry()]);
+        });
+
+        add_filter(
+            'pre_update_option',
+            function ($value, $option) use ($general_setting) {
+                if ($option !== $general_setting) {
+                    return $value;
+                }
+
+                self::update_registry((array) $value['addons']);
+                unset($value['addons']);
+
+                return $value;
+            },
+            9,
+            2
+        );
     }
 
     /**
@@ -51,7 +148,7 @@ abstract class Addon extends Singleton
      *
      * @param Settings $settings Plugin's settings store instance
      */
-    abstract protected function register_setting($settings);
+    abstract protected static function register_setting($settings);
 
     /**
      * Abstract setting sanitization method to be overwriten by its descendants.
@@ -62,7 +159,7 @@ abstract class Addon extends Singleton
      *
      * @return array Validated value.
      */
-    abstract protected function sanitize_setting($value, $setting);
+    abstract protected static function sanitize_setting($value, $setting);
 
     /**
      * Private class constructor. Add addons scripts as dependency to the
@@ -74,47 +171,97 @@ abstract class Addon extends Singleton
             throw new Exception('Invalid addon registration');
         }
 
-        $this->handle_settings();
-        $this->admin_scripts();
+        self::load_templates();
+        self::handle_settings();
+        self::admin_scripts();
+
+        // Add addon templates to the plugin's form hooks registry.
+        add_filter(
+            'forms_bridge_form_hooks',
+            function ($form_hooks, $integration, $form_id = null) {
+                return self::form_hooks($form_hooks, $integration, $form_id);
+            },
+            9,
+            3
+        );
+    }
+
+    /**
+     * Addon templates getter.
+     *
+     * @todo Define abstract template and implementations.
+     *
+     * @return array List with addon template instances.
+     */
+    protected static function templates()
+    {
+        return apply_filters('forms_bridge_addon_templates', [], static::$slug);
+    }
+
+    protected static function setting_name()
+    {
+        return Forms_Bridge::slug() . '_' . static::$slug;
     }
 
     /**
      * Addon setting getter.
      */
-    protected function setting()
+    protected static function setting()
     {
-        return apply_filters('forms_bridge_setting', null, static::$slug);
+        return Forms_Bridge::setting(static::$slug);
     }
 
     /**
-     * Addon's custom form hooks getter.
+     * Adds addons' form hooks to the available hooks.
      *
+     * @param array $form_hooks List with available form hooks.
+     * @param string $integration Integration slug.
      * @param int|null $form_id Target form ID.
      *
-     * @return array Addon custom form hooks filtereds by form id.
+     * @return array List with available form hooks.
      */
-    protected function form_hooks($form_id = null)
+    private static function form_hooks($form_hooks, $integration, $form_id)
     {
-        $form_hooks = array_map(function ($hook_data) {
-            return new static::$hook_class($hook_data);
-        }, $this->setting()->form_hooks);
-
-        if ($form_id) {
-            $form_hooks = array_values(
-                array_filter($form_hooks, function ($hook) use ($form_id) {
-                    return (int) $hook->form_id === (int) $form_id;
-                })
+        if (empty($form_id)) {
+            $form = apply_filters(
+                'forms_bridge_form',
+                null,
+                $integration,
+                $form_id
             );
+            if (!$form) {
+                return [];
+            }
+
+            $form_id = $form['id'];
         }
 
-        return $form_hooks;
+        $_id = "{$integration}:{$form_id}";
+
+        if (!is_list($form_hooks)) {
+            $form_hooks = [];
+        }
+
+        return array_merge(
+            $form_hooks,
+            array_map(
+                static function ($hook_data) {
+                    return new static::$hook_class($hook_data);
+                },
+                array_filter(static::setting()->form_hooks, static function (
+                    $hook_data
+                ) use ($_id) {
+                    return $hook_data['form_id'] === $_id;
+                })
+            )
+        );
     }
 
     /**
      * Settings hooks interceptors to register on the plugin's settings store
      * the addon setting.
      */
-    private function handle_settings()
+    private static function handle_settings()
     {
         // Add addon setting name on the settings store.
         add_filter(
@@ -137,9 +284,9 @@ abstract class Addon extends Singleton
         // Register the addon setting
         add_action(
             'wpct_register_settings',
-            function ($group, $settings) {
+            static function ($group, $settings) {
                 if ($group === Forms_Bridge::slug()) {
-                    $this->register_setting($settings);
+                    static::register_setting($settings);
                 }
             },
             10,
@@ -150,10 +297,37 @@ abstract class Addon extends Singleton
         add_filter(
             'wpct_sanitize_setting',
             function ($value, $setting) {
-                return $this->_sanitize_setting($value, $setting);
+                return self::do_sanitize($value, $setting);
             },
             10,
             2
+        );
+
+        $plugin_slug = Forms_Bridge::slug();
+        $addon_slug = static::$slug;
+        add_filter(
+            'wpct_setting_default',
+            static function ($default, $name) use ($plugin_slug, $addon_slug) {
+                if ($name !== $plugin_slug . '_' . $addon_slug) {
+                    return $default;
+                }
+
+                return array_merge($default, [
+                    'templates' => static::templates(),
+                ]);
+            },
+            10,
+            2
+        );
+
+        add_filter(
+            "option_{$plugin_slug}_{$addon_slug}",
+            static function ($value) {
+                return array_merge($value, [
+                    'templates' => static::templates(),
+                ]);
+            },
+            10
         );
     }
 
@@ -161,11 +335,11 @@ abstract class Addon extends Singleton
      * Enqueue addon scripts as wordpress scripts and shifts it
      * as dependency to the forms bridge admin script.
      */
-    private function admin_scripts()
+    private static function admin_scripts()
     {
         add_action(
             'admin_enqueue_scripts',
-            function ($admin_page) {
+            static function ($admin_page) {
                 if ('settings_page_' . Forms_Bridge::slug() !== $admin_page) {
                     return;
                 }
@@ -178,7 +352,7 @@ abstract class Addon extends Singleton
                     $script_name,
                     plugins_url('assets/addon.bundle.js', $__FILE__),
                     [],
-                    FORMS_BRIDGE_VERSION,
+                    Forms_Bridge::version(),
                     ['in_footer' => true]
                 );
 
@@ -196,7 +370,7 @@ abstract class Addon extends Singleton
      * Middelware to the addon sanitization method to filter out of domain
      * setting updates.
      */
-    private function _sanitize_setting($value, $setting)
+    private static function do_sanitize($value, $setting)
     {
         if (
             $setting->full_name() !==
@@ -205,6 +379,23 @@ abstract class Addon extends Singleton
             return $value;
         }
 
-        return $this->sanitize_setting($value, $setting);
+        unset($value['templates']);
+        return static::sanitize_setting($value, $setting);
+    }
+
+    /**
+     * Loads addon templates.
+     */
+    private static function load_templates()
+    {
+        $__FILE__ = (new ReflectionClass(static::class))->getFileName();
+        $dir = dirname($__FILE__) . '/templates';
+        if (!is_dir($dir)) {
+            mkdir($dir);
+        }
+
+        foreach (array_diff(scandir($dir), ['.', '..']) as $file) {
+            include_once $file;
+        }
     }
 }

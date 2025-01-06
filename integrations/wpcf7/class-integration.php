@@ -122,22 +122,22 @@ class Integration extends BaseIntegration
      */
     public function serialize_form($form)
     {
-        $form_id = $form->id();
+        $form_id = (int) $form->id();
         return [
+            '_id' => 'wpcf7:' . $form_id,
             'id' => $form_id,
             'title' => $form->title(),
-            'hooks' => apply_filters('forms_bridge_form_hooks', null, $form_id),
-            'fields' => array_map(
-                function ($field) {
-                    return $this->serialize_field($field);
-                },
-                array_values(
-                    array_filter($form->scan_form_tags(), static function (
-                        $tag
-                    ) {
-                        return $tag->basetype !== 'response' &&
-                            $tag->basetype !== 'submit';
-                    })
+            'hooks' => apply_filters(
+                'forms_bridge_form_hooks',
+                [],
+                'wpcf7',
+                $form_id
+            ),
+            'fields' => array_values(
+                array_filter(
+                    array_map(function ($field) {
+                        return $this->serialize_field($field);
+                    }, $form->scan_form_tags())
                 )
             ),
         ];
@@ -153,10 +153,16 @@ class Integration extends BaseIntegration
      */
     private function serialize_field($field)
     {
+        if (in_array($field->basetype, ['response', 'submit'])) {
+            return;
+        }
+
         $type = $field->basetype;
         if ($type === 'conditional') {
             $type = $field->get_option('type')[0];
         }
+
+        $type = $this->norm_field_type($type);
 
         $options = [];
         if (is_array($field->values)) {
@@ -176,11 +182,39 @@ class Integration extends BaseIntegration
             'label' => $field->name,
             'required' => $field->is_required(),
             'options' => $options,
-            'is_file' => in_array($type, ['file', 'files']),
+            'is_file' => $type === 'file',
+            'is_multi' =>
+                ($field->basetype === 'checkbox' &&
+                    !$field->has_option('exclusive')) ||
+                ($field->basetype === 'select' &&
+                    $field->has_option('multiple')),
             'conditional' =>
                 $field->basetype === 'conditional' ||
                 $field->basetype === 'fileconditional',
         ];
+    }
+
+    private function norm_field_type($type)
+    {
+        switch ($type) {
+            case 'iban':
+            case 'vat':
+            case 'email':
+            case 'url':
+            case 'textarea':
+            case 'quiz':
+                return 'text';
+            case 'select':
+            case 'checkbox':
+            case 'radio':
+                return 'options';
+            case 'files':
+                return 'file';
+            case 'acceptance':
+                return 'consent';
+            default:
+                return $type;
+        }
     }
 
     /**
@@ -206,13 +240,9 @@ class Integration extends BaseIntegration
                 }
             } elseif ($field['type'] === 'number') {
                 $data[$key] = (float) $val;
-                // } elseif (!in_array($field['type'], ['checkbox', 'select']) && is_array($val)) {
-            } elseif (is_array($val) && !is_array($_POST[$key])) {
+            } elseif (is_array($val) && !$field['is_multi']) {
                 $data[$key] = $val[0];
-            } elseif (
-                $field['type'] === 'file' ||
-                $field['type'] === 'submit'
-            ) {
+            } elseif ($field['type'] === 'file') {
                 unset($data[$key]);
             }
         }

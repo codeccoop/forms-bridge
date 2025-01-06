@@ -50,7 +50,13 @@
       "Backends": [""],
       "General": [""],
       "Notification receiver": ["Receptor de notificaciones"],
-      "Done": "Hecho"
+      "Done": ["Hecho"],
+      "gf": ["GravityForms"],
+      "wpcf7": ["Contact Form 7"],
+      "wpforms": ["WP Forms Lite"],
+      "ninja": ["Ninja Forms"],
+      "google-sheets": ["Google Sheets"],
+      "odoo": ["Odoo"]
     }
   }
 }

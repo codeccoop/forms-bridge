@@ -14,6 +14,185 @@ if (!defined('ABSPATH')) {
 abstract class Integration extends Singleton
 {
     /**
+     * Handles integration's registry option name.
+     *
+     * @var string registry
+     */
+    private const registry = 'forms_bridge_integrations';
+
+    /**
+     * Handles available integrations state.
+     *
+     * @var array $integrations.
+     */
+    private static $integrations = [
+        'gf' => null,
+        'wpforms' => null,
+        'wpcf7' => null,
+        'ninja' => null,
+        // 'formidable' => null,
+        // 'forminator' => null,
+    ];
+
+    private static function check_dependencies($integration)
+    {
+        switch ($integration) {
+            case 'wpcf7':
+                $plugin = 'contact-form-7/wp-contact-form-7.php';
+                break;
+            case 'gf':
+                $plugin = 'gravityforms/gravityforms.php';
+                break;
+            case 'wpforms':
+                $plugin = 'wpforms-lite/wpforms.php';
+                break;
+            case 'ninja':
+                $plugin = 'ninja-forms/ninja-forms.php';
+                break;
+            // case 'formidable':
+            //     $plugin = 'formidable/formidable.php';
+            //     break;
+            // case 'forminator':
+            //     $plugin = 'forminator/forminator.php';
+            //     break;
+            default:
+                $plugin = null;
+        }
+
+        return Forms_Bridge::is_plugin_active($plugin);
+    }
+
+    /**
+     * Public integrations registry getter.
+     *
+     * @return array Integration registry state.
+     */
+    public static function registry()
+    {
+        $state = (array) get_option(self::registry, []);
+        $integrations_dir = dirname(__FILE__);
+        $integrations = array_diff(scandir($integrations_dir), ['.', '..']);
+        $registry = [];
+        foreach ($integrations as $integration) {
+            $integration_dir = "{$integrations_dir}/{$integration}";
+            $index = "{$integration_dir}/class-integration.php";
+            $has_dependencies = self::check_dependencies($integration);
+            if (is_file($index) && $has_dependencies) {
+                $registry[$integration] = isset($state[$integration])
+                    ? (bool) $state[$integration]
+                    : false;
+            }
+        }
+
+        $is_single = count(array_keys($registry)) === 1;
+        if ($is_single) {
+            foreach (array_keys($registry) as $integration) {
+                $registry[$integration] = true;
+            }
+        }
+
+        return $registry;
+    }
+
+    /**
+     * Updates the integration's registry state.
+     *
+     * @param array $integrations New integrations' registry state.
+     */
+    public static function update_registry($integrations = [])
+    {
+        $registry = self::registry();
+        foreach ($integrations as $integration => $enabled) {
+            if (
+                !(
+                    isset($registry[$integration]) &&
+                    self::check_dependencies($integration)
+                )
+            ) {
+                continue;
+            }
+
+            $registry[$integration] = (bool) $enabled;
+        }
+
+        update_option(self::registry, $registry);
+    }
+
+    /**
+     * Public active integration instances getter.
+     *
+     * @return array List with integration instances.
+     */
+    public static function integrations()
+    {
+        $actives = [];
+        foreach (self::$integrations as $integration => $instance) {
+            if ($instance) {
+                $actives[$integration] = $instance;
+            }
+        }
+
+        return $actives;
+    }
+
+    /**
+     * Public integrations loader.
+     */
+    public static function load()
+    {
+        $integrations_dir = dirname(__FILE__);
+        $registry = self::registry();
+        foreach ($registry as $integration => $enabled) {
+            $has_dependencies = self::check_dependencies($integration);
+            if ($enabled && $has_dependencies) {
+                $NS = strtoupper($integration);
+                require_once "{$integrations_dir}/{$integration}/class-integration.php";
+                self::$integrations[$integration] = (
+                    '\FORMS_BRIDGE\\' .
+                    $NS .
+                    '\Integration'
+                )::get_instance();
+            }
+        }
+
+        $general_setting = Forms_Bridge::slug() . '_general';
+        add_filter(
+            'wpct_setting_default',
+            static function ($default, $name) use ($general_setting) {
+                if ($name !== $general_setting) {
+                    return $default;
+                }
+
+                return array_merge($default, [
+                    'integrations' => self::registry(),
+                ]);
+            },
+            10,
+            2
+        );
+
+        add_filter("option_{$general_setting}", static function ($value) {
+            return array_merge($value, ['integrations' => self::registry()]);
+        });
+
+        add_filter(
+            'pre_update_option',
+            function ($value, $option) use ($general_setting) {
+                if ($option !== $general_setting) {
+                    return $value;
+                }
+
+                self::update_registry((array) $value['integrations']);
+                unset($value['integrations']);
+
+                return $value;
+            },
+            9,
+            2
+        );
+    }
+
+    /**
      * Retrives the current form.
      *
      * @return array Form data.

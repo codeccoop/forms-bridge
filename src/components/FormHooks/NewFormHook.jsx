@@ -26,9 +26,9 @@ export default function NewFormHook({ add, schema, children = () => {} }) {
 
   const forms = useForms();
   const formOptions = [{ label: "", value: "" }].concat(
-    forms.map(({ id, title }) => ({
+    forms.map(({ _id, title }) => ({
       label: title,
-      value: id,
+      value: _id,
     }))
   );
 
@@ -65,18 +65,20 @@ export default function NewFormHook({ add, schema, children = () => {} }) {
     setCustomFields({});
   };
 
-  const disabled = useMemo(() => {
-    return !(
-      name &&
-      !nameConflict &&
-      (backend || !schema.includes("backend")) &&
-      (formId || !schema.includes("form_id")) &&
-      customFieldsSchema.reduce(
-        (valid, field) => valid && customFields[field],
-        true
-      )
-    );
-  }, [name, backend, formId, customFields, customFieldsSchema]);
+  const disabled = useMemo(
+    () =>
+      !(
+        name &&
+        !nameConflict &&
+        (backend || !schema.includes("backend")) &&
+        (formId || !schema.includes("form_id")) &&
+        customFieldsSchema.reduce(
+          (valid, field) => valid && customFields[field],
+          true
+        )
+      ),
+    [name, backend, formId, customFields, customFieldsSchema]
+  );
 
   return (
     <div

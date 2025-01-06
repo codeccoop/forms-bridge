@@ -92,6 +92,10 @@ class REST_Settings_Controller extends Base_Controller
      */
     private function forms()
     {
-        return apply_filters('forms_bridge_forms', []);
+        $forms = apply_filters('forms_bridge_forms', []);
+        return array_map(function ($form) {
+            unset($form['hooks']);
+            return $form;
+        }, $forms);
     }
 }

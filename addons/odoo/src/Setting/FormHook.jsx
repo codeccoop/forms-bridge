@@ -34,7 +34,7 @@ export default function OdooFormHook({ data, update, remove }) {
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
             <TextControl
               label={__("Model", "forms-bridge")}
-              value={data.model}
+              value={data.model || ""}
               onChange={(model) => update({ ...data, model })}
               __nextHasNoMarginBottom
             />
@@ -42,7 +42,7 @@ export default function OdooFormHook({ data, update, remove }) {
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
             <SelectControl
               label={__("Database", "forms-bridge")}
-              value={data.database}
+              value={data.database || ""}
               onChange={(database) => update({ ...data, database })}
               options={dbOptions}
               __nextHasNoMarginBottom

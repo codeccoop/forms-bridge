@@ -1,7 +1,7 @@
 <?php
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit();
 }
 
 /**
@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
  *
  * @param array $path_info Attachments path info.
  * @param integer $form_id Source form ID.
- * 
+ *
  * @return array Attachments path info.
  */
 function forms_bridge_upload_path($path_info, $form_id)
@@ -113,7 +113,7 @@ function forms_bridge_attachment_base_path()
  * Gets attachment absolute path.
  *
  * @param string $filepath Attachment file path.
- * 
+ *
  * @return string Attachment file absolute path.
  */
 function forms_bridge_attachment_fullpath($filepath)
@@ -126,7 +126,7 @@ function forms_bridge_attachment_fullpath($filepath)
  * Get attachment URL.
  *
  * @param string $filepath Attachment file path.
- * 
+ *
  * @return string Attachment public URL.
  */
 function forms_bridge_attachment_url($filepath)
@@ -143,7 +143,7 @@ function forms_bridge_attachment_url($filepath)
  * Check if gravityforms should use private attachments store.
  *
  * @param integer $form_id Source form ID.
- * 
+ *
  * @return boolean Form uses private store.
  */
 function forms_bridge_private_upload($form_id)
