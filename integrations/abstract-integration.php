@@ -176,16 +176,16 @@ abstract class Integration extends Singleton
         });
 
         add_filter(
-            'pre_update_option',
-            function ($value, $option) use ($general_setting) {
-                if ($option !== $general_setting) {
-                    return $value;
+            'wpct_validate_setting',
+            function ($data, $setting) use ($general_setting) {
+                if ($setting->full_name() !== $general_setting) {
+                    return $data;
                 }
 
-                self::update_registry((array) $value['integrations']);
-                unset($value['integrations']);
+                self::update_registry((array) $data['integrations']);
+                unset($data['integrations']);
 
-                return $value;
+                return $data;
             },
             9,
             2

@@ -127,16 +127,16 @@ abstract class Addon extends Singleton
         });
 
         add_filter(
-            'pre_update_option',
-            function ($value, $option) use ($general_setting) {
-                if ($option !== $general_setting) {
-                    return $value;
+            'wpct_validate_setting',
+            function ($data, $setting) use ($general_setting) {
+                if ($setting->full_name() !== $general_setting) {
+                    return $data;
                 }
 
-                self::update_registry((array) $value['addons']);
-                unset($value['addons']);
+                self::update_registry((array) $data['addons']);
+                unset($data['addons']);
 
-                return $value;
+                return $data;
             },
             9,
             2
@@ -248,11 +248,12 @@ abstract class Addon extends Singleton
                 static function ($hook_data) {
                     return new static::$hook_class($hook_data);
                 },
-                array_filter(static::setting()->form_hooks, static function (
-                    $hook_data
-                ) use ($_id) {
-                    return $hook_data['form_id'] === $_id;
-                })
+                array_filter(
+                    (array) static::setting()->form_hooks,
+                    static function ($hook_data) use ($_id) {
+                        return $hook_data['form_id'] === $_id;
+                    }
+                )
             )
         );
     }
@@ -295,7 +296,7 @@ abstract class Addon extends Singleton
 
         // Sanitize the addon setting before updates
         add_filter(
-            'wpct_sanitize_setting',
+            'wpct_validate_setting',
             function ($value, $setting) {
                 return self::do_sanitize($value, $setting);
             },
@@ -369,18 +370,23 @@ abstract class Addon extends Singleton
     /**
      * Middelware to the addon sanitization method to filter out of domain
      * setting updates.
+     *
+     * @param array $data Setting data.
+     * @param Setting $setting Setting instance.
+     *
+     * @return array Sanitized setting data.
      */
-    private static function do_sanitize($value, $setting)
+    private static function do_sanitize($data, $setting)
     {
         if (
             $setting->full_name() !==
             Forms_Bridge::slug() . '_' . static::$slug
         ) {
-            return $value;
+            return $data;
         }
 
         unset($value['templates']);
-        return static::sanitize_setting($value, $setting);
+        return static::sanitize_setting($data, $setting);
     }
 
     /**
@@ -389,7 +395,7 @@ abstract class Addon extends Singleton
     private static function load_templates()
     {
         $__FILE__ = (new ReflectionClass(static::class))->getFileName();
-        $dir = dirname($__FILE__) . '/templates';
+        $dir = dirname($__FILE__) . 'templates';
         if (!is_dir($dir)) {
             mkdir($dir);
         }

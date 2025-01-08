@@ -319,25 +319,14 @@ class Odoo_Addon extends Addon
             return $backend['name'];
         }, Forms_Bridge::setting('general')->backends);
 
-        return array_map(
-            function ($db_data) {
-                $db_data['name'] = sanitize_text_field($db_data['name']);
-                $db_data['user'] = sanitize_text_field($db_data['user']);
-                $db_data['password'] = sanitize_text_field(
-                    $db_data['password']
-                );
-                $db_data['backend'] = sanitize_text_field($db_data['backend']);
-                return $db_data;
-            },
-            array_filter($dbs, function ($db_data) use ($backends) {
-                return isset(
-                    $db_data['name'],
-                    $db_data['user'],
-                    $db_data['password'],
-                    $db_data['backend']
-                ) && in_array($db_data['backend'], $backends);
-            })
-        );
+        return array_filter($dbs, function ($db_data) use ($backends) {
+            return isset(
+                $db_data['name'],
+                $db_data['user'],
+                $db_data['password'],
+                $db_data['backend']
+            ) && in_array($db_data['backend'], $backends);
+        });
     }
 
     private static function validate_form_hooks($form_hooks, $dbs)
@@ -378,28 +367,6 @@ class Odoo_Addon extends Addon
                 ) {
                     return $pipe['to'] && $pipe['from'] && $pipe['cast'];
                 });
-
-                $hook['name'] = sanitize_text_field($hook['name']);
-                $hook['form_id'] = sanitize_text_field($hook['form_id']);
-                $hook['model'] = sanitize_text_field($hook['model']);
-
-                $pipes = [];
-                foreach ($hook['pipes'] as $pipe) {
-                    $pipe['to'] = sanitize_text_field($pipe['to']);
-                    $pipe['from'] = sanitize_text_field($pipe['from']);
-                    $pipe['cast'] = in_array($pipe['cast'], [
-                        'boolean',
-                        'string',
-                        'integer',
-                        'float',
-                        'json',
-                        'null',
-                    ])
-                        ? $pipe['cast']
-                        : 'string';
-                    $pipes[] = $pipe;
-                }
-                $hook['pipes'] = $pipes;
 
                 $valid_hooks[] = $hook;
             }

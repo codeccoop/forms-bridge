@@ -301,31 +301,6 @@ class Google_Sheets_Addon extends Addon
                     return $pipe['to'] && $pipe['from'] && $pipe['cast'];
                 });
 
-                $hook['name'] = sanitize_text_field($hook['name']);
-                $hook['form_id'] = sanitize_text_field($hook['form_id']);
-                $hook['spreadsheet'] = sanitize_text_field(
-                    $hook['spreadsheet']
-                );
-                $hook['tab'] = sanitize_text_field($hook['tab']);
-
-                $pipes = [];
-                foreach ($hook['pipes'] as $pipe) {
-                    $pipe['to'] = sanitize_text_field($pipe['to']);
-                    $pipe['from'] = sanitize_text_field($pipe['from']);
-                    $pipe['cast'] = in_array($pipe['cast'], [
-                        'boolean',
-                        'string',
-                        'integer',
-                        'float',
-                        'json',
-                        'null',
-                    ])
-                        ? $pipe['cast']
-                        : 'string';
-                    $pipes[] = $pipe;
-                }
-                $hook['pipes'] = $pipes;
-
                 $valid_hooks[] = $hook;
             }
         }

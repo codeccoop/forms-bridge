@@ -160,22 +160,25 @@ class Logger extends Singleton
         });
 
         add_filter(
-            'pre_update_option',
-            function ($value, $option) {
-                if ($option !== Forms_Bridge::slug() . '_general') {
-                    return $value;
+            'wpct_validate_setting',
+            function ($data, $setting) {
+                if (
+                    $setting->full_name() !==
+                    Forms_Bridge::slug() . '_general'
+                ) {
+                    return $data;
                 }
 
-                if (isset($value['debug']) && $value['debug'] === true) {
+                if (isset($data['debug']) && $data['debug'] === true) {
                     self::activate();
                 } else {
                     self::deactivate();
                 }
 
-                unset($value['debug']);
-                return $value;
+                unset($data['debug']);
+                return $data;
             },
-            5,
+            9,
             2
         );
     }

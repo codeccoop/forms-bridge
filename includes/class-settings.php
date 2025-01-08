@@ -25,9 +25,9 @@ class Settings extends BaseSettings
         parent::construct(...$args);
 
         add_filter(
-            'wpct_sanitize_setting',
-            function ($value, $setting) {
-                return $this->sanitize_setting($value, $setting);
+            'wpct_validate_setting',
+            function ($data, $setting) {
+                return $this->validate_setting($data, $setting);
             },
             10,
             2
@@ -128,26 +128,26 @@ class Settings extends BaseSettings
     }
 
     /**
-     * Overwrites abstract sanitize callback and adds setting validation checks.
+     * Validate setting data callback.
      *
-     * @param array $value Setting data.
+     * @param array $data Setting data.
      * @param Setting $setting Setting instance.
      *
-     * @return array Sanitized and validated setting data.
+     * @return array Validated setting data.
      */
-    protected function sanitize_setting($value, $setting)
+    protected function validate_setting($data, $setting)
     {
         if ($setting->group() !== $this->group()) {
-            return $value;
+            return $data;
         }
 
         $name = $setting->name();
         switch ($name) {
             case 'general':
-                $value = $this->validate_general($value);
+                $value = $this->validate_general($data);
                 break;
             case 'rest-api':
-                $value = $this->validate_api($value);
+                $value = $this->validate_api($data);
                 break;
         }
 
@@ -157,40 +157,36 @@ class Settings extends BaseSettings
     /**
      * General setting validation. Remove inconsistencies between general and API settings.
      *
-     * @param array $value General setting data.
+     * @param array $data General setting data.
      *
      * @return array General setting validated data.
      */
-    private function validate_general($value)
+    private function validate_general($data)
     {
-        $value['notification_receiver'] = sanitize_text_field(
-            $value['notification_receiver']
+        $data['backends'] = \HTTP_BRIDGE\Settings::validate_backends(
+            $data['backends']
         );
 
-        $value['backends'] = \HTTP_BRIDGE\Settings::validate_backends(
-            $value['backends']
-        );
-
-        return $value;
+        return $data;
     }
 
     /**
      * API settings validation. Filters inconsistent API hooks based on the general settings state.
      *
-     * @param array $value Setting data.
+     * @param array $data Setting data.
      *
      * @return array Validated setting data.
      */
-    private function validate_api($value)
+    private function validate_api($data)
     {
         $backends = Settings::get_setting($this->group(), 'general')->backends;
 
-        $value['form_hooks'] = $this->validate_form_hooks(
-            $value['form_hooks'],
+        $data['form_hooks'] = $this->validate_form_hooks(
+            $data['form_hooks'],
             $backends
         );
 
-        return $value;
+        return $data;
     }
 
     /**
@@ -240,37 +236,6 @@ class Settings extends BaseSettings
                 ) {
                     return $pipe['to'] && $pipe['from'] && $pipe['cast'];
                 });
-
-                $hook['name'] = sanitize_text_field($hook['name']);
-                $hook['backend'] = sanitize_text_field($hook['backend']);
-                $hook['form_id'] = sanitize_text_field($hook['form_id']);
-
-                if (
-                    !in_array($hook['method'], ['GET', 'POST', 'PUT', 'DELETE'])
-                ) {
-                    $hook['method'] = null;
-                }
-                $hook['endpoint'] = sanitize_text_field($hook['endpoint']);
-
-                $pipes = [];
-                foreach ($hook['pipes'] as $pipe) {
-                    $pipe['to'] = sanitize_text_field($pipe['to']);
-                    $pipe['from'] = sanitize_text_field($pipe['from']);
-                    $pipe['cast'] = in_array($pipe['cast'], [
-                        'boolean',
-                        'string',
-                        'integer',
-                        'float',
-                        'json',
-                        'csv',
-                        'concat',
-                        'null',
-                    ])
-                        ? $pipe['cast']
-                        : 'string';
-                    $pipes[] = $pipe;
-                }
-                $hook['pipes'] = $pipes;
 
                 $valid_hooks[] = $hook;
             }
