@@ -60,7 +60,7 @@ package:
     - find deps/http -name '*.php' -exec sed -i "s/'http-bridge'/'forms-bridge'/g" {} \;
     - find deps/i18n -name '*.php' -exec sed -i "s/'wpct-i18n'/'forms-bridge'/g" {} \;
     - wp dist-archive . ./$ZIP
-    - mkdir forms-bridge && mv addons forms-bridge && zip -r $ZIP forms-bridge/addons/**/vendor -x "*.sh"
+    - mkdir forms-bridge && mv addons forms-bridge && zip -r $ZIP forms-bridge/addons/**/vendor -x "*.sh" -x "*.asc" -x "*.phar*" -x "*.cnf" -x "*.pubkey"
   artifacts:
     paths:
       - $ZIP
