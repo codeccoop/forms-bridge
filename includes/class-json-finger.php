@@ -64,7 +64,9 @@ class JSON_Finger
                     }
 
                     if (!((int) $index == $index)) {
-                        throw new ValueError('Invalid array index at ' . $from);
+                        throw new ValueError(
+                            'Invalid array index at ' . esc_attr($from)
+                        );
                     }
 
                     $index = (int) $index;
@@ -73,7 +75,7 @@ class JSON_Finger
                     if (strlen($finger) > $i) {
                         if ($finger[$i] !== '.') {
                             throw new ValueError(
-                                'Invalid finger syntax at ' . $i
+                                'Invalid finger syntax at ' . (int) $i
                             );
                         }
                     }

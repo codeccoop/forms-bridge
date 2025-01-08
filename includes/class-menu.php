@@ -26,9 +26,8 @@ class Menu extends BaseMenu
     protected function render_page($echo = true)
     {
         printf(
-            '<div class="wrap" id="%s">%s</div>',
-            esc_attr($this->slug()),
-            esc_html__('Loading', 'forms-bridge')
+            '<div class="wrap" id="forms-bridge">%s</div>',
+            esc_html__('Loading')
         );
     }
 }
