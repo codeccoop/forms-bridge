@@ -20,6 +20,10 @@ class Settings extends BaseSettings
      */
     protected static $rest_controller_class = '\FORMS_BRIDGE\REST_Settings_Controller';
 
+    /**
+     * Class constructor. Inherits the parent constructor and setup settings validation
+     * callbacks.
+     */
     protected function construct(...$args)
     {
         parent::construct(...$args);
@@ -193,7 +197,7 @@ class Settings extends BaseSettings
      * Validate form hooks settings. Filters form hooks with inconsistencies with the existing backends.
      *
      * @param array $form_hooks Array with form hooks configurations.
-     * @param array $backends Array with HTTP_Backend instances.
+     * @param array $backends Array with backends data.
      *
      * @return array Array with valid form hook configurations.
      */

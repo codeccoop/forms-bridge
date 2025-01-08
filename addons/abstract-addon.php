@@ -395,7 +395,7 @@ abstract class Addon extends Singleton
     private static function load_templates()
     {
         $__FILE__ = (new ReflectionClass(static::class))->getFileName();
-        $dir = dirname($__FILE__) . 'templates';
+        $dir = dirname($__FILE__) . '/templates';
         if (!is_dir($dir)) {
             mkdir($dir);
         }

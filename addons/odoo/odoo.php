@@ -13,10 +13,30 @@ if (!defined('ABSPATH')) {
 require_once 'class-odoo-db.php';
 require_once 'class-odoo-form-hook.php';
 
+/**
+ * Odoo Addon class.
+ */
 class Odoo_Addon extends Addon
 {
+    /**
+     * Handles the addon name.
+     *
+     * @var string
+     */
     protected static $name = 'Odoo JSON-RPC';
+
+    /**
+     * Handles the addon slug.
+     *
+     * @var string
+     */
     protected static $slug = 'odoo-api';
+
+    /**
+     * Handles the addom's custom form hook class.
+     *
+     * @var string
+     */
     protected static $hook_class = '\FORMS_BRIDGE\Odoo_Form_Hook';
 
     /**
@@ -121,6 +141,10 @@ class Odoo_Addon extends Addon
         return [$session_id, $user_id];
     }
 
+    /**
+     * Addon constructor. Inherits from the abstract addon and initialize interceptos
+     * and custom hooks.
+     */
     protected function construct(...$args)
     {
         parent::construct(...$args);
@@ -128,8 +152,12 @@ class Odoo_Addon extends Addon
         $this->custom_hooks();
     }
 
+    /**
+     * Addon interceptors
+     */
     private function interceptors()
     {
+        // Submission payload interceptor
         add_filter(
             'forms_bridge_payload',
             function ($payload, $uploads, $hook) {
@@ -139,6 +167,7 @@ class Odoo_Addon extends Addon
             3
         );
 
+        // Submission response interceptor
         add_filter(
             'http_bridge_response',
             function ($res, $req) {
@@ -149,6 +178,9 @@ class Odoo_Addon extends Addon
         );
     }
 
+    /**
+     * Addon custom hooks.
+     */
     private function custom_hooks()
     {
         add_filter('forms_bridge_odoo_dbs', static function ($dbs) {
@@ -178,6 +210,11 @@ class Odoo_Addon extends Addon
         );
     }
 
+    /**
+     * Addon databases instances getter.
+     *
+     * @return array List with available databases instances.
+     */
     private static function databases()
     {
         return array_map(static function ($db_data) {
@@ -185,6 +222,11 @@ class Odoo_Addon extends Addon
         }, self::setting()->databases);
     }
 
+    /**
+     * Registers addon settings.
+     *
+     * @param Setting $setting Setting instance.
+     */
     protected static function register_setting($settings)
     {
         $settings->register_setting(
@@ -246,6 +288,14 @@ class Odoo_Addon extends Addon
         );
     }
 
+    /**
+     * Intercepts submission payloads and decorates them as RPC calls.
+     *
+     * @param array $payload Submission payload.
+     * @param Form_Hook $form_hook Current form hook instance.
+     *
+     * @return array Decorated payload.
+     */
     private function payload_interceptor($payload, $form_hook)
     {
         if (empty($payload)) {
@@ -288,6 +338,13 @@ class Odoo_Addon extends Addon
         ]);
     }
 
+    /**
+     * Intercepts responses after a RPC request and checks for RPC errors on the response.
+     *
+     * @param array $response HTTP response.
+     *
+     * @return array|WP_Error Response result.
+     */
     private function response_interceptor($response)
     {
         if (!$this->submitting) {
@@ -298,17 +355,32 @@ class Odoo_Addon extends Addon
         return self::rpc_response($response);
     }
 
-    protected static function sanitize_setting($value, $setting)
+    /**
+     * Validate setting data callback.
+     *
+     * @param array $data Setting data.
+     * @param Setting $setting Setting instance.
+     *
+     * @return array Validated setting data.
+     */
+    protected static function validate_setting($data, $setting)
     {
-        $value['databases'] = self::validate_databases($value['databases']);
-        $value['form_hooks'] = self::validate_form_hooks(
-            $value['form_hooks'],
-            $value['databases']
+        $data['databases'] = self::validate_databases($data['databases']);
+        $data['form_hooks'] = self::validate_form_hooks(
+            $data['form_hooks'],
+            $data['databases']
         );
 
-        return $value;
+        return $data;
     }
 
+    /**
+     * Database setting field validation.
+     *
+     * @param array $dbs Databases data.
+     *
+     * @return array Validated databases data.
+     */
     private static function validate_databases($dbs)
     {
         if (!is_list($dbs)) {
@@ -329,6 +401,14 @@ class Odoo_Addon extends Addon
         });
     }
 
+    /**
+     * Validate form hooks settings. Filters form hooks with inconsistencies with the existing backends.
+     *
+     * @param array $form_hooks Array with form hooks configurations.
+     * @param array $dbs Array with databases data.
+     *
+     * @return array Array with valid form hook configurations.
+     */
     private static function validate_form_hooks($form_hooks, $dbs)
     {
         if (!is_list($form_hooks)) {

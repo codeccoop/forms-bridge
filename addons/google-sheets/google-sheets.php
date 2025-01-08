@@ -19,10 +19,31 @@ require_once 'class-gs-form-hook.php';
 
 class Google_Sheets_Addon extends Addon
 {
+    /**
+     * Handles the addon name.
+     *
+     * @var string
+     */
     protected static $name = 'Google Sheets';
+
+    /**
+     * Handles the addon slug.
+     *
+     * @var string
+     */
     protected static $slug = 'google-sheets-api';
+
+    /**
+     * Handles the addom's custom form hook class.
+     *
+     * @var string
+     */
     protected static $hook_class = '\FORMS_BRIDGE\Google_Sheets_Form_Hook';
 
+    /**
+     * Addon constructor. Inherits from the abstract addon and initialize interceptos
+     * and custom hooks.
+     */
     protected function construct(...$args)
     {
         parent::construct(...$args);
@@ -32,6 +53,9 @@ class Google_Sheets_Addon extends Addon
         self::custom_hooks();
     }
 
+    /**
+     * Addon interceptors
+     */
     private function interceptors()
     {
         // Intercepts submission payload and catch google sheets hooks
