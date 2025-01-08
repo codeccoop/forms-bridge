@@ -23,12 +23,12 @@ behat.yml
 bitbucket-pipelines.yml
 bin
 .circleci/config.yml
-composer.json
+# composer.json
 composer.lock
 dependencies.yml
 Gruntfile.js
 package.json
-package-lock.json
+# package-lock.json
 phpunit.xml
 phpunit.xml.dist
 multisite.xml
@@ -51,7 +51,11 @@ node_modules
 *.tar.gz
 *.zip
 *.sh
+*.phar
+*.pubkey
+*.asc
+*.cnf
 .nvimrc
 .vscode
 .postbuild
-src
+# src
