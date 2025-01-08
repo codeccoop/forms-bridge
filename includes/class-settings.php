@@ -148,14 +148,14 @@ class Settings extends BaseSettings
         $name = $setting->name();
         switch ($name) {
             case 'general':
-                $value = $this->validate_general($data);
+                $data = $this->validate_general($data);
                 break;
             case 'rest-api':
-                $value = $this->validate_api($data);
+                $data = $this->validate_api($data);
                 break;
         }
 
-        return $value;
+        return $data;
     }
 
     /**

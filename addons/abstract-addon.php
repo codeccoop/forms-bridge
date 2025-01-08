@@ -151,15 +151,15 @@ abstract class Addon extends Singleton
     abstract protected static function register_setting($settings);
 
     /**
-     * Abstract setting sanitization method to be overwriten by its descendants.
+     * Abstract setting validation method to be overwriten by its descendants.
      * This method will be executed before each database update on the options table.
      *
-     * @param array $value Setting value.
+     * @param array $data Setting value.
      * @param Setting $setting Setting instance.
      *
      * @return array Validated value.
      */
-    abstract protected static function sanitize_setting($value, $setting);
+    abstract protected static function validate_setting($data, $setting);
 
     /**
      * Private class constructor. Add addons scripts as dependency to the
@@ -294,11 +294,11 @@ abstract class Addon extends Singleton
             2
         );
 
-        // Sanitize the addon setting before updates
+        // Validate the addon setting before updates
         add_filter(
             'wpct_validate_setting',
-            function ($value, $setting) {
-                return self::do_sanitize($value, $setting);
+            function ($data, $setting) {
+                return self::do_validation($data, $setting);
             },
             10,
             2
@@ -368,15 +368,15 @@ abstract class Addon extends Singleton
     }
 
     /**
-     * Middelware to the addon sanitization method to filter out of domain
+     * Middelware to the addon settings validation method to filter out of domain
      * setting updates.
      *
      * @param array $data Setting data.
      * @param Setting $setting Setting instance.
      *
-     * @return array Sanitized setting data.
+     * @return array Validated setting data.
      */
-    private static function do_sanitize($data, $setting)
+    private static function do_validation($data, $setting)
     {
         if (
             $setting->full_name() !==
@@ -385,8 +385,8 @@ abstract class Addon extends Singleton
             return $data;
         }
 
-        unset($value['templates']);
-        return static::sanitize_setting($data, $setting);
+        unset($data['templates']);
+        return static::validate_setting($data, $setting);
     }
 
     /**

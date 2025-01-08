@@ -274,15 +274,15 @@ class Google_Sheets_Addon extends Addon
     /**
      * Sanitizes the setting value before updates.
      *
-     * @param array $value Setting value.
+     * @param array $data Setting data.
      * @param Setting $setting Setting instance.
      *
-     * @return array Sanitized value.
+     * @return array Sanitized data.
      */
-    protected static function sanitize_setting($value, $setting)
+    protected static function validate_setting($data, $setting)
     {
-        $value['form_hooks'] = self::validate_form_hooks($value['form_hooks']);
-        return $value;
+        $data['form_hooks'] = self::validate_form_hooks($data['form_hooks']);
+        return $data;
     }
 
     /**
@@ -306,7 +306,6 @@ class Google_Sheets_Addon extends Addon
             []
         );
 
-        // $spreadsheets = Google_Sheets_Service::get_spreadsheets();
         $valid_hooks = [];
         for ($i = 0; $i < count($form_hooks); $i++) {
             $hook = $form_hooks[$i];
