@@ -27,8 +27,8 @@ bin
 composer.lock
 dependencies.yml
 Gruntfile.js
-package.json
-# package-lock.json
+# package.json
+package-lock.json
 phpunit.xml
 phpunit.xml.dist
 multisite.xml
