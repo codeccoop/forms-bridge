@@ -60,7 +60,7 @@ class Logger extends Singleton
         if (self::is_active()) {
             $log_path = self::log_path();
             if (is_file($log_path)) {
-                unlink($log_path);
+                wp_delete_file($log_path);
             }
         }
     }
