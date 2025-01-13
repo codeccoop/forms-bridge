@@ -1,13 +1,9 @@
 === Forms Bridge ===
 Contributors: codeccoop
 Tags: forms, contact forms, bridge, api, http
-Author: codeccoop
-Author URL: https://www.codeccoop.org
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Requires PHP: 8.0
-Stable Tag: 2.2.0
-Requires at least: 6.7
+Stable Tag: 2.2.1
 Tested up to: 6.7
 
 Bridge WP form builder plugins to any backend over HTTP requests.

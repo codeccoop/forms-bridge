@@ -1,16 +1,18 @@
 <?php
 
 /*
- * Plugin Name:    Forms Bridge
- * Plugin URI:     https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge
- * Description:    Plugin to bridge WP forms submissions to any backend
- * Author:         codeccoop
- * Author URI:     https://www.codeccoop.org
- * License:        GPLv2 or later
- * License URI:    http://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:    forms-bridge
- * Domain Path:    /languages
- * Version:        2.2.0
+ * Plugin Name:         Forms Bridge
+ * Plugin URI:          https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge
+ * Description:         Plugin to bridge WP forms submissions to any backend
+ * Author:              codeccoop
+ * Author URI:          https://www.codeccoop.org
+ * License:             GPLv2 or later
+ * License URI:         http://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:         forms-bridge
+ * Domain Path:         /languages
+ * Version:             2.2.0
+ * Requires PHP:        8.0
+ * Requires at least:   6.7
  */
 
 namespace FORMS_BRIDGE;
