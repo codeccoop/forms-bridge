@@ -56,12 +56,12 @@ package:
   image: codeccoop/wp-cli:latest
   stage: package
   script:
-    - find . -name '*.php' -exec sed -i "s/'wpct-plugin-abstracts'/'forms-bridge'/g" {} \;
+    - find abstracts -name '*.php' -exec sed -i "s/'wpct-plugin-abstracts'/'forms-bridge'/g" {} \;
     - find . -name "*.php" -exec sed -i 's/WPCT_ABSTRACT/FORMS_BRIDGE\\Abstracts/g' {} \;
-    - find . -name '*.php' -exec sed -i "s/'http-bridge'/'forms-bridge'/g" {} \;
+    - find deps/http -name '*.php' -exec sed -i "s/'http-bridge'/'forms-bridge'/g" {} \;
     - find . -name "*.php" -exec sed -i 's/HTTP_BRIDGE_/FORMS_BRIDGE_/g' {} \;
     - find . -name '*.php' -exec sed -i 's/HTTP_BRIDGE/FORMS_BRIDGE\\Http/g' {} \;
-    - find . -name '*.php' -exec sed -i "s/'wpct-i18n'/'forms-bridge'/g" {} \;
+    - find deps/i18n -name '*.php' -exec sed -i "s/'wpct-i18n'/'forms-bridge'/g" {} \;
     - find . -name '*.php' -exec sed -i 's/WPCT_I18N/FORMS_BRIDGE\\I18n/g' {} \;
     - wp dist-archive . ./$ZIP
     - mkdir forms-bridge && mv addons forms-bridge && zip -r $ZIP forms-bridge/addons/**/vendor -x "*.sh" -x "*.asc" -x "*.phar*" -x "*.cnf" -x "*.pubkey"
