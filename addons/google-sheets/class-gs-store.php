@@ -30,17 +30,17 @@ class Google_Sheets_Store extends Singleton
 
     public static function get($name)
     {
-        return self::store()->load($name);
+        return self::load($name);
     }
 
     public static function set($name, $content)
     {
-        self::store()->save($name, $content);
+        self::save($name, $content);
     }
 
     public static function delete($name)
     {
-        self::store()->forget($name);
+        self::forget($name);
     }
 
     protected function construct(...$args)
@@ -67,7 +67,7 @@ class Google_Sheets_Store extends Singleton
         );
     }
 
-    private function secret($len)
+    private static function secret($len)
     {
         $secret = substr(FORMS_BRIDGE_GS_STORE_SECRET, 0, $len);
 
@@ -82,7 +82,7 @@ class Google_Sheets_Store extends Singleton
         return $secret;
     }
 
-    private function data()
+    private static function data()
     {
         if (empty(self::$cache)) {
             self::$cache = (array) get_option(self::store_name, []);
@@ -91,41 +91,41 @@ class Google_Sheets_Store extends Singleton
         return self::$cache;
     }
 
-    public function load($name)
+    private static function load($name)
     {
-        $_name = $this->encrypt($name);
-        $data = $this->data();
-        return isset($data[$_name]) ? $this->decrypt($data[$_name]) : null;
+        $_name = self::encrypt($name);
+        $data = self::data();
+        return isset($data[$_name]) ? self::decrypt($data[$_name]) : null;
     }
 
-    public function save($name, $content)
+    private static function save($name, $content)
     {
-        $_name = $this->encrypt($name);
-        $_content = $this->encrypt((string) $content);
-        $data = $this->data();
+        $_name = self::encrypt($name);
+        $_content = self::encrypt((string) $content);
+        $data = self::data();
         update_option(
             self::store_name,
             array_merge($data, [$_name => $_content])
         );
     }
 
-    public function forget($name)
+    private static function forget($name)
     {
-        $_name = $this->encrypt($name);
-        $data = $this->data();
+        $_name = self::encrypt($name);
+        $data = self::data();
         if (isset($data[$_name])) {
             unset($data[$_name]);
             update_option(self::store_name, $data);
         }
     }
 
-    public function encrypt($value)
+    private static function encrypt($value)
     {
-        $secret = $this->secret(strlen($value));
+        $secret = self::secret(strlen($value));
         return $value ^ $secret;
     }
 
-    public function decrypt($value)
+    private static function decrypt($value)
     {
         return self::encrypt($value);
     }

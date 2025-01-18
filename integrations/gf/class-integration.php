@@ -165,9 +165,8 @@ class Integration extends BaseIntegration
             'title' => $form['title'],
             'hooks' => apply_filters(
                 'forms_bridge_form_hooks',
-                null,
-                'gf',
-                $form_id
+                [],
+                'gf:' . $form_id
             ),
             'description' => $form['description'],
             'fields' => array_values(

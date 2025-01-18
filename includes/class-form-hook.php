@@ -36,25 +36,8 @@ class Form_Hook
      *
      * @return array $hooks Array with hooks.
      */
-    public static function form_hooks($integration, $form_id = null)
+    public static function form_hooks($form_id = null)
     {
-        // If no form id, check if there is a current form, otherwise returns an empty string.
-        if (empty($form_id)) {
-            $form = apply_filters(
-                'forms_bridge_form',
-                null,
-                $integration,
-                $form_id
-            );
-            if (!$form) {
-                return [];
-            }
-
-            $form_id = $form['id'];
-        }
-
-        $_id = "{$integration}:{$form_id}";
-
         // Get available form hooks
         $form_hooks = Forms_Bridge::setting('rest-api')->form_hooks;
 
@@ -63,8 +46,12 @@ class Form_Hook
             static function ($hook_data) {
                 return new Form_Hook($hook_data);
             },
-            array_filter($form_hooks, static function ($hook_data) use ($_id) {
-                return $hook_data['form_id'] === $_id;
+            array_filter($form_hooks, static function ($hook_data) use (
+                $form_id
+            ) {
+                return $form_id !== null
+                    ? $hook_data['form_id'] === $form_id
+                    : true;
             })
         );
     }
@@ -75,7 +62,7 @@ class Form_Hook
     public function __construct($data)
     {
         $this->data = $data;
-        $this->api = 'rest';
+        $this->api = 'rest-api';
     }
 
     /**
@@ -104,7 +91,7 @@ class Form_Hook
                 $value = $this->content_type();
                 break;
             default:
-                $value = isset($this->data[$name]) ? $this->data[$name] : null;
+                $value = $this->data[$name] ?? null;
         }
 
         return apply_filters("forms_bridge_hook_{$name}", $value, $this);
@@ -117,11 +104,12 @@ class Form_Hook
      */
     private function backend()
     {
-        return apply_filters(
-            'http_bridge_backend',
-            null,
-            isset($this->data['backend']) ? $this->data['backend'] : null
-        );
+        $backend_name = $this->data['backend'] ?? null;
+        if (!$backend_name) {
+            return $backend_name;
+        }
+
+        return apply_filters('http_bridge_backend', null, $backend_name);
     }
 
     /**

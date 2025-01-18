@@ -15,7 +15,7 @@ export default function SpreadsheetsProvider({ children }) {
 
   useEffect(() => {
     apiFetch({
-      path: `${window.wpApiSettings.root}wp-bridges/v1/forms-bridge/spreadsheets`,
+      path: `${window.wpApiSettings.root}forms-bridge/v1/spreadsheets`,
       headers: {
         "X-WP-Nonce": wpApiSettings.nonce,
       },

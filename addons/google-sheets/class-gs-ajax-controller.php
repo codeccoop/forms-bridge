@@ -20,16 +20,16 @@ class Google_Sheets_Ajax_Controller extends Singleton
 
     protected function construct(...$args)
     {
-        add_action('wp_ajax_' . self::action, function () {
-            $this->ajax_handler();
+        add_action('wp_ajax_' . self::action, static function () {
+            self::ajax_handler();
         });
 
-        add_action('admin_enqueue_scripts', function () {
-            $this->localize_script();
+        add_action('admin_enqueue_scripts', static function () {
+            self::localize_script();
         });
     }
 
-    private function localize_script()
+    private static function localize_script()
     {
         wp_localize_script(
             'forms-bridge-google-sheets-api',
@@ -42,7 +42,7 @@ class Google_Sheets_Ajax_Controller extends Singleton
         );
     }
 
-    private function ajax_handler()
+    private static function ajax_handler()
     {
         check_ajax_referer(self::nonce, 'nonce');
 
@@ -52,10 +52,10 @@ class Google_Sheets_Ajax_Controller extends Singleton
             : 'GET';
         switch ($_SERVER['REQUEST_METHOD']) {
             case 'DELETE':
-                $success = $this->revoke_credentials($status);
+                $success = self::revoke_credentials($status);
                 break;
             case 'POST':
-                $success = $this->add_credentials($status);
+                $success = self::add_credentials($status);
                 break;
             default:
                 $success = false;
@@ -64,7 +64,7 @@ class Google_Sheets_Ajax_Controller extends Singleton
         wp_send_json(['success' => $success], $status);
     }
 
-    private function add_credentials(&$status)
+    private static function add_credentials(&$status)
     {
         if (!isset($_FILES['credentials'])) {
             $status = 400;
@@ -88,7 +88,7 @@ class Google_Sheets_Ajax_Controller extends Singleton
         return true;
     }
 
-    private function revoke_credentials(&$status)
+    private static function revoke_credentials(&$status)
     {
         Google_Sheets_Store::delete('credentials');
         return true;

@@ -134,7 +134,7 @@ export default function SettingsPage({ addons }) {
           </FormsProvider>
         )}
       </TabPanel>
-      <Spacer show={loading} />
+      <Spacer />
       <Spinner show={loading} />
     </StoreProvider>
   );

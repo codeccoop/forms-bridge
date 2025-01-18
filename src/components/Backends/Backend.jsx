@@ -23,12 +23,12 @@ function NewBackend({ add }) {
   const [nameConflict, setNameConflict] = useState(false);
 
   const handleSetName = (name) => {
-    setNameConflict(backendNames.has(name));
-    setName(name.trim());
+    setNameConflict(backendNames.has(name.trim()));
+    setName(name);
   };
 
   const onClick = () => {
-    add({ name, base_url: baseUrl, headers: [] });
+    add({ name: name.trim(), base_url: baseUrl, headers: [] });
     setName("");
     setBaseUrl("https://");
     setNameConflict(false);
@@ -94,8 +94,10 @@ export default function Backend({ update, remove, ...data }) {
   const backendNames = useBackendNames(backends);
   const [nameConflict, setNameConflict] = useState(false);
   const handleSetName = (name) => {
-    setNameConflict(name !== initialName.current && backendNames.has(name));
-    setName(name.trim());
+    setNameConflict(
+      name.trim() !== initialName.current && backendNames.has(name.trim())
+    );
+    setName(name);
   };
 
   const setHeaders = (headers) => update({ ...data, headers });
@@ -110,7 +112,10 @@ export default function Backend({ update, remove, ...data }) {
   useEffect(() => {
     clearTimeout(timeout.current);
     if (!name || nameConflict) return;
-    timeout.current = setTimeout(() => update({ ...data, name }), 500);
+    timeout.current = setTimeout(
+      () => update({ ...data, name: name.trim() }),
+      500
+    );
   }, [name]);
 
   useEffect(() => setName(data.name), [data.name]);

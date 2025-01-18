@@ -10,7 +10,7 @@
  * License URI:         http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:         forms-bridge
  * Domain Path:         /languages
- * Version:             2.2
+ * Version:             2.3.0
  * Requires PHP:        8.0
  * Requires at least:   6.7
  */
@@ -19,7 +19,6 @@ namespace FORMS_BRIDGE;
 
 use Exception;
 use WPCT_ABSTRACT\Plugin as BasePlugin;
-use WPCT_ABSTRACT\Setting;
 
 use function WPCT_ABSTRACT\is_list;
 
@@ -34,7 +33,7 @@ require_once 'deps/i18n/wpct-i18n.php';
 
 require_once 'includes/class-logger.php';
 require_once 'includes/class-menu.php';
-require_once 'includes/class-settings.php';
+require_once 'includes/class-settings-store.php';
 require_once 'includes/class-rest-settings-controller.php';
 require_once 'includes/class-json-finger.php';
 require_once 'includes/class-form-hook.php';
@@ -52,7 +51,7 @@ class Forms_Bridge extends BasePlugin
      *
      * @var string
      */
-    protected static $settings_class = '\FORMS_BRIDGE\Settings';
+    protected static $settings_class = '\FORMS_BRIDGE\SettingsStore';
 
     /**
      * Handle plugin menu class name.
@@ -61,13 +60,8 @@ class Forms_Bridge extends BasePlugin
      */
     protected static $menu_class = '\FORMS_BRIDGE\Menu';
 
-    public static function setting($name)
-    {
-        return apply_filters('forms_bridge_setting', null, $name);
-    }
-
     /**
-     * Initializes integrations and setup plugin hooks.
+     * Initializes integrations, addons and setup plugin hooks.
      */
     protected function construct(...$args)
     {
@@ -108,7 +102,7 @@ class Forms_Bridge extends BasePlugin
         $slug = self::slug();
         // Patch http bridge settings to plugin settings
         add_filter("option_{$slug}_general", static function ($value) {
-            $backends = Settings::get_setting('http-bridge', 'general')
+            $backends = \HTTP_BRIDGE\SettingsStore::setting('general')
                 ->backends;
 
             return array_merge($value, ['backends' => $backends]);
@@ -122,7 +116,7 @@ class Forms_Bridge extends BasePlugin
                     return;
                 }
 
-                $http = Settings::get_setting('http-bridge', 'general');
+                $http = \HTTP_BRIDGE\SettingsStore::setting('general');
                 $http->backends = $to['backends'];
             },
             10,
@@ -149,18 +143,32 @@ class Forms_Bridge extends BasePlugin
         // Return registerd form hooks
         add_filter(
             'forms_bridge_form_hooks',
-            static function ($form_hooks, $integration, $form_id) {
+            static function ($form_hooks, $form_id = null) {
                 if (!is_list($form_hooks)) {
                     $form_hooks = [];
                 }
 
                 return array_merge(
                     $form_hooks,
-                    Form_Hook::form_hooks($integration, $form_id)
+                    Form_Hook::form_hooks($form_id)
                 );
             },
             5,
-            3
+            2
+        );
+
+        add_filter(
+            'forms_bridge_form_hook',
+            static function ($form_hook, $hook_name) {
+                $form_hooks = apply_filters('forms_bridge_form_hooks', []);
+                foreach ($form_hooks as $form_hook) {
+                    if ($form_hook->name === $hook_name) {
+                        return $form_hook;
+                    }
+                }
+            },
+            10,
+            2
         );
 
         // Return pair plugin registered forms datums
@@ -180,15 +188,8 @@ class Forms_Bridge extends BasePlugin
         // Return current pair plugin form representation
         add_filter(
             'forms_bridge_form',
-            static function ($form_data, $integration = null, $form_id = null) {
-                if (!is_array($form_data)) {
-                    $form_data = [];
-                }
-
-                return array_merge(
-                    $form_data,
-                    self::form($integration, $form_id)
-                );
+            static function ($default, $integration = null, $form_id = null) {
+                return self::form($integration, $form_id);
             },
             5,
             3
@@ -197,12 +198,8 @@ class Forms_Bridge extends BasePlugin
         // Return the current submission data
         add_filter(
             'forms_bridge_submission',
-            static function ($submission) {
-                if (!is_array($submission)) {
-                    $submission = [];
-                }
-
-                return array_merge($submission, self::submission());
+            static function () {
+                return self::submission();
             },
             5
         );
@@ -210,28 +207,10 @@ class Forms_Bridge extends BasePlugin
         // Return the current submission uploaded files
         add_filter(
             'forms_bridge_uploads',
-            static function ($uploads) {
-                if (!is_array($uploads)) {
-                    $uploads = [];
-                }
-
-                return array_merge($uploads, self::uploads());
+            static function () {
+                return self::uploads();
             },
             5
-        );
-
-        // Expose plugin settings with a filter by name.
-        add_filter(
-            'forms_bridge_setting',
-            static function ($setting, $name) {
-                if ($setting instanceof Setting) {
-                    return $setting;
-                }
-
-                return Settings::get_setting(self::slug(), $name);
-            },
-            5,
-            2
         );
     }
 
@@ -247,7 +226,9 @@ class Forms_Bridge extends BasePlugin
         $integrations = Integration::integrations();
 
         if ($integration) {
-            return $integrations[$integration]->forms();
+            return isset($integrations[$integration])
+                ? $integrations[$integration]->forms()
+                : [];
         }
 
         $forms = [];
@@ -271,7 +252,11 @@ class Forms_Bridge extends BasePlugin
         $integrations = Integration::integrations();
 
         if ($integration) {
-            $integrations = [$integration => $integrations[$integration]];
+            if (isset($integrations[$integration])) {
+                $integrations = [$integration => $integrations[$integration]];
+            } else {
+                $integrations = [];
+            }
         } elseif ($form_id) {
             // Form id without integration is ambiguous, discard.
             return;
@@ -329,7 +314,9 @@ class Forms_Bridge extends BasePlugin
      */
     private static function admin_enqueue_scripts($admin_page)
     {
-        if ('settings_page_' . self::slug() !== $admin_page) {
+        $slug = self::slug();
+        $version = self::version();
+        if ('settings_page_' . $slug !== $admin_page) {
             return;
         }
 
@@ -345,24 +332,24 @@ class Forms_Bridge extends BasePlugin
         ]);
 
         wp_enqueue_script(
-            self::slug(),
+            $slug,
             plugins_url('assets/wpfb.js', __FILE__),
             [],
-            self::version(),
+            $version,
             ['in_footer' => false]
         );
 
         wp_enqueue_script(
-            self::slug() . '-admin',
+            $slug . '-admin',
             plugins_url('assets/plugin.bundle.js', __FILE__),
             $dependencies,
-            self::version(),
+            $version,
             ['in_footer' => true]
         );
 
         wp_set_script_translations(
-            self::slug(),
-            self::slug(),
+            $slug . '-admin',
+            $slug,
             plugin_dir_path(__FILE__) . 'languages'
         );
 
@@ -383,8 +370,7 @@ class Forms_Bridge extends BasePlugin
         $form_data,
         $error_data = []
     ) {
-        $email = Settings::get_setting(self::slug(), 'general')
-            ->notification_receiver;
+        $email = SettingsStore::setting('general')->notification_receiver;
 
         if (empty($email)) {
             return;

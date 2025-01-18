@@ -147,8 +147,7 @@ class Integration extends BaseIntegration
             'hooks' => apply_filters(
                 'forms_bridge_form_hooks',
                 [],
-                'wpforms',
-                $form_id
+                'wpforms:' . $form_id
             ),
             'fields' => array_values(
                 array_filter(

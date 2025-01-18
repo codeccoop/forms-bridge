@@ -20,35 +20,35 @@ abstract class Addon extends Singleton
     /**
      * Handles addon's registry option name.
      *
-     * @var string registry
+     * @var string
      */
     private const registry = 'forms_bridge_addons';
 
     /**
      * Handles addon public name.
      *
-     * @var string $name
+     * @var string
      */
     protected static $name;
 
     /**
      * Handles addon unique slug.
      *
-     * @var string $slug
+     * @var string
      */
     protected static $slug;
 
     /**
      * Handles addon custom hook class name.
      *
-     * @var string $hook_class Class name.
+     * @var string
      */
     protected static $hook_class;
 
     /**
      * Public singleton initializer.
      */
-    public static function setup(...$args)
+    final public static function setup(...$args)
     {
         return static::get_instance(...$args);
     }
@@ -58,7 +58,7 @@ abstract class Addon extends Singleton
      *
      * @return array Addons registry state.
      */
-    public static function registry()
+    final public static function registry()
     {
         $state = (array) get_option(self::registry, []);
         $addons_dir = dirname(__FILE__);
@@ -99,7 +99,7 @@ abstract class Addon extends Singleton
     /**
      * Public addons loader.
      */
-    public static function load()
+    final public static function load()
     {
         $registry = self::registry();
         foreach ($registry as $addon => $enabled) {
@@ -128,7 +128,7 @@ abstract class Addon extends Singleton
 
         add_filter(
             'wpct_validate_setting',
-            function ($data, $setting) use ($general_setting) {
+            static function ($data, $setting) use ($general_setting) {
                 if ($setting->full_name() !== $general_setting) {
                     return $data;
                 }
@@ -145,10 +145,8 @@ abstract class Addon extends Singleton
 
     /**
      * Abstract setting registration method to be overwriten by its descendants.
-     *
-     * @param Settings $settings Plugin's settings store instance
      */
-    abstract protected static function register_setting($settings);
+    abstract protected static function setting_config();
 
     /**
      * Abstract setting validation method to be overwriten by its descendants.
@@ -175,11 +173,10 @@ abstract class Addon extends Singleton
         self::handle_settings();
         self::admin_scripts();
 
-        // Add addon templates to the plugin's form hooks registry.
         add_filter(
             'forms_bridge_form_hooks',
-            function ($form_hooks, $integration, $form_id = null) {
-                return self::form_hooks($form_hooks, $integration, $form_id);
+            static function ($form_hooks, $form_id = null) {
+                return self::form_hooks($form_hooks, $form_id);
             },
             9,
             3
@@ -198,6 +195,11 @@ abstract class Addon extends Singleton
         return apply_filters('forms_bridge_addon_templates', [], static::$slug);
     }
 
+    /**
+     * Addon's setting name getter.
+     *
+     * @return string Setting name.
+     */
     protected static function setting_name()
     {
         return Forms_Bridge::slug() . '_' . static::$slug;
@@ -215,29 +217,12 @@ abstract class Addon extends Singleton
      * Adds addons' form hooks to the available hooks.
      *
      * @param array $form_hooks List with available form hooks.
-     * @param string $integration Integration slug.
      * @param int|null $form_id Target form ID.
      *
      * @return array List with available form hooks.
      */
-    private static function form_hooks($form_hooks, $integration, $form_id)
+    private static function form_hooks($form_hooks, $form_id = null)
     {
-        if (empty($form_id)) {
-            $form = apply_filters(
-                'forms_bridge_form',
-                null,
-                $integration,
-                $form_id
-            );
-            if (!$form) {
-                return [];
-            }
-
-            $form_id = $form['id'];
-        }
-
-        $_id = "{$integration}:{$form_id}";
-
         if (!is_list($form_hooks)) {
             $form_hooks = [];
         }
@@ -250,8 +235,10 @@ abstract class Addon extends Singleton
                 },
                 array_filter(
                     (array) static::setting()->form_hooks,
-                    static function ($hook_data) use ($_id) {
-                        return $hook_data['form_id'] === $_id;
+                    static function ($hook_data) use ($form_id) {
+                        return $form_id !== null
+                            ? $hook_data['form_id'] === $form_id
+                            : true;
                     }
                 )
             )
@@ -264,31 +251,14 @@ abstract class Addon extends Singleton
      */
     private static function handle_settings()
     {
-        // Add addon setting name on the settings store.
         add_filter(
-            'wpct_rest_settings',
-            function ($settings, $group) {
+            'wpct_settings_config',
+            static function ($config, $group) {
                 if ($group !== Forms_Bridge::slug()) {
-                    return $settings;
+                    return $config;
                 }
 
-                if (!is_list($settings)) {
-                    $settings = [];
-                }
-
-                return array_merge($settings, [static::$slug]);
-            },
-            20,
-            2
-        );
-
-        // Register the addon setting
-        add_action(
-            'wpct_register_settings',
-            static function ($group, $settings) {
-                if ($group === Forms_Bridge::slug()) {
-                    static::register_setting($settings);
-                }
+                return array_merge($config, [static::setting_config()]);
             },
             10,
             2
@@ -297,19 +267,17 @@ abstract class Addon extends Singleton
         // Validate the addon setting before updates
         add_filter(
             'wpct_validate_setting',
-            function ($data, $setting) {
+            static function ($data, $setting) {
                 return self::do_validation($data, $setting);
             },
             10,
             2
         );
 
-        $plugin_slug = Forms_Bridge::slug();
-        $addon_slug = static::$slug;
         add_filter(
             'wpct_setting_default',
-            static function ($default, $name) use ($plugin_slug, $addon_slug) {
-                if ($name !== $plugin_slug . '_' . $addon_slug) {
+            static function ($default, $name) {
+                if ($name !== self::setting_name()) {
                     return $default;
                 }
 
@@ -322,7 +290,7 @@ abstract class Addon extends Singleton
         );
 
         add_filter(
-            "option_{$plugin_slug}_{$addon_slug}",
+            'option_' . self::setting_name(),
             static function ($value) {
                 return array_merge($value, [
                     'templates' => static::templates(),
@@ -378,10 +346,7 @@ abstract class Addon extends Singleton
      */
     private static function do_validation($data, $setting)
     {
-        if (
-            $setting->full_name() !==
-            Forms_Bridge::slug() . '_' . static::$slug
-        ) {
+        if ($setting->full_name() !== self::setting_name()) {
             return $data;
         }
 

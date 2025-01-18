@@ -9,7 +9,7 @@ export default function StoreProvider({ children, setLoading }) {
   const fetchSettings = () => {
     setLoading(true);
     return apiFetch({
-      path: `${window.wpApiSettings.root}wp-bridges/v1/forms-bridge/settings`,
+      path: `${window.wpApiSettings.root}forms-bridge/v1/settings`,
       headers: {
         "X-WP-Nonce": wpApiSettings.nonce,
       },
@@ -25,7 +25,7 @@ export default function StoreProvider({ children, setLoading }) {
   const fetchForms = () => {
     setLoading(true);
     return apiFetch({
-      path: `${window.wpApiSettings.root}wp-bridges/v1/forms-bridge/forms`,
+      path: `${window.wpApiSettings.root}forms-bridge/v1/forms`,
       headers: {
         "X-WP-Nonce": wpApiSettings.nonce,
       },
@@ -45,7 +45,7 @@ export default function StoreProvider({ children, setLoading }) {
 
     const settings = wpfb.bus("submit", {});
     return apiFetch({
-      path: `${window.wpApiSettings.root}wp-bridges/v1/forms-bridge/settings`,
+      path: `${window.wpApiSettings.root}forms-bridge/v1/settings`,
       method: "POST",
       headers: {
         "X-WP-Nonce": wpApiSettings.nonce,

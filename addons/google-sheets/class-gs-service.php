@@ -121,11 +121,11 @@ class Google_Sheets_Service extends Singleton
                 );
             }
 
-            $headers = array_map(function ($value) {
+            $headers = array_map(static function ($value) {
                 return $value;
             }, array_values($row->values[0]));
 
-            $values = array_map(function ($header) use ($data) {
+            $values = array_map(static function ($header) use ($data) {
                 return isset($data[$header]) ? $data[$header] : '';
             }, $headers);
 
@@ -182,13 +182,13 @@ class Google_Sheets_Service extends Singleton
             ]);
 
             return array_map(
-                function ($spreadhseet) {
+                static function ($spreadhseet) {
                     return [
                         'id' => $spreadhseet['id'],
                         'title' => $spreadhseet['name'],
                     ];
                 },
-                array_filter($results->files, function ($file) {
+                array_filter($results->files, static function ($file) {
                     return isset($file['kind']) &&
                         $file['kind'] === 'drive#file';
                 })
@@ -211,7 +211,7 @@ class Google_Sheets_Service extends Singleton
             $service = self::service()->client()->get_sheets_service();
             $sheets = $service->spreadsheets->get($spreadsheet_id);
 
-            return array_map(function ($sheet) {
+            return array_map(static function ($sheet) {
                 $props = $sheet->getProperties();
                 return [
                     'id' => $props->getSheetId(),

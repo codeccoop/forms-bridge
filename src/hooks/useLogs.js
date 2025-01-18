@@ -12,7 +12,7 @@ export default function useLogs({ debug }) {
   const fetch = () => {
     setLoading(true);
     return apiFetch({
-      path: `${window.wpApiSettings.root}wp-bridges/v1/forms-bridge/logs`,
+      path: `${window.wpApiSettings.root}forms-bridge/v1/logs`,
       headers: {
         "X-WP-Nonce": wpApiSettings.nonce,
       },

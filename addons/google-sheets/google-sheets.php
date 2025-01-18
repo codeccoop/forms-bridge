@@ -91,16 +91,30 @@ class Google_Sheets_Addon extends Addon
         // Patch authorized state on the setting default value
         add_filter(
             'wpct_setting_default',
-            static function ($value, $name) {
+            static function ($data, $name) {
                 if ($name !== self::setting_name()) {
-                    return $value;
+                    return $data;
                 }
 
-                return array_merge($value, [
+                return array_merge($data, [
                     'authorized' => Google_Sheets_Service::is_authorized(),
                 ]);
             },
             10,
+            2
+        );
+
+        add_filter(
+            'wpct_validate_setting',
+            static function ($data, $setting) {
+                if ($setting->full_name() !== self::setting_name()) {
+                    return $data;
+                }
+
+                unset($data['authorized']);
+                return $data;
+            },
+            9,
             2
         );
     }
@@ -111,34 +125,20 @@ class Google_Sheets_Addon extends Addon
     private static function wp_hooks()
     {
         // Patch authorized state on the setting value
-        add_filter('option_' . self::setting_name(), static function ($value) {
-            $value['authorized'] = Google_Sheets_Service::is_authorized();
-            return $value;
+        add_filter('option_' . self::setting_name(), static function ($data) {
+            $data['authorized'] = Google_Sheets_Service::is_authorized();
+            return $data;
         });
-
-        // Unset authorized from setting data before updates
-        add_filter(
-            'pre_update_option',
-            static function ($value, $option) {
-                if ($option === self::setting_name()) {
-                    unset($value['authorized']);
-                }
-
-                return $value;
-            },
-            9,
-            2
-        );
     }
 
     /**
      * Registers the setting and its fields.
      *
-     * @param Settings $settings Plugin settings instance.
+     * @return array Addon's settings configuration.
      */
-    protected static function register_setting($settings)
+    protected static function setting_config()
     {
-        $settings->register_setting(
+        return [
             self::$slug,
             [
                 'form_hooks' => [
@@ -179,8 +179,8 @@ class Google_Sheets_Addon extends Addon
             ],
             [
                 'form_hooks' => [],
-            ]
-        );
+            ],
+        ];
     }
 
     /**
@@ -315,14 +315,12 @@ class Google_Sheets_Addon extends Addon
 
             if ($is_valid) {
                 // filter empty pipes
-                $hook['pipes'] = isset($hook['pipes'])
-                    ? (array) $hook['pipes']
-                    : [];
-                $hook['pipes'] = array_filter($hook['pipes'], static function (
-                    $pipe
-                ) {
-                    return $pipe['to'] && $pipe['from'] && $pipe['cast'];
-                });
+                $hook['pipes'] = array_filter(
+                    (array) $hook['pipes'],
+                    static function ($pipe) {
+                        return $pipe['to'] && $pipe['from'] && $pipe['cast'];
+                    }
+                );
 
                 $valid_hooks[] = $hook;
             }

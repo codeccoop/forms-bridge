@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 class Google_Sheet_REST_Controller extends Singleton
 {
-    private static $namespace = 'wp-bridges';
+    private static $namespace = 'forms-bridge';
     private static $version = 1;
 
     public static function setup()
@@ -22,32 +22,28 @@ class Google_Sheet_REST_Controller extends Singleton
 
     protected function construct(...$args)
     {
-        add_action('rest_api_init', function () {
-            $this->init();
+        add_action('rest_api_init', static function () {
+            self::init();
         });
     }
 
-    private function init()
+    private static function init()
     {
         $namespace = self::$namespace;
         $version = self::$version;
 
-        register_rest_route(
-            "{$namespace}/v{$version}",
-            '/forms-bridge/spreadsheets',
-            [
-                'methods' => WP_REST_Server::READABLE,
-                'callback' => function () {
-                    return $this->spreadsheets();
-                },
-                'permission_callback' => function () {
-                    return $this->permission_callback();
-                },
-            ]
-        );
+        register_rest_route("{$namespace}/v{$version}", '/spreadsheets', [
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => static function () {
+                return self::spreadsheets();
+            },
+            'permission_callback' => static function () {
+                return self::permission_callback();
+            },
+        ]);
     }
 
-    private function spreadsheets()
+    private static function spreadsheets()
     {
         return Google_Sheets_Service::get_spreadsheets();
     }
@@ -57,11 +53,10 @@ class Google_Sheet_REST_Controller extends Singleton
      *
      * @return boolean $allowed
      */
-    protected function permission_callback()
+    protected static function permission_callback()
     {
-        return current_user_can('manage_options')
-            ? true
-            : new WP_Error(
+        return current_user_can('manage_options') ?:
+            new WP_Error(
                 'rest_unauthorized',
                 __('You can\'t manage wp options', 'forms-bridge'),
                 ['code' => 403]

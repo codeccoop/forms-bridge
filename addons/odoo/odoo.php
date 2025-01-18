@@ -44,7 +44,7 @@ class Odoo_Addon extends Addon
      *
      * @var boolean $submitting True if is waiting for a request response, else false.
      */
-    private $submitting = false;
+    private static $submitting = false;
 
     /**
      * RPC payload decorator.
@@ -148,20 +148,20 @@ class Odoo_Addon extends Addon
     protected function construct(...$args)
     {
         parent::construct(...$args);
-        $this->interceptors();
-        $this->custom_hooks();
+        self::interceptors();
+        self::custom_hooks();
     }
 
     /**
      * Addon interceptors
      */
-    private function interceptors()
+    private static function interceptors()
     {
         // Submission payload interceptor
         add_filter(
             'forms_bridge_payload',
-            function ($payload, $uploads, $hook) {
-                return $this->payload_interceptor($payload, $hook);
+            static function ($payload, $uploads, $hook) {
+                return self::payload_interceptor($payload, $hook);
             },
             9,
             3
@@ -170,8 +170,8 @@ class Odoo_Addon extends Addon
         // Submission response interceptor
         add_filter(
             'http_bridge_response',
-            function ($res, $req) {
-                return $this->response_interceptor($res);
+            static function ($res, $req) {
+                return self::response_interceptor($res);
             },
             9,
             2
@@ -181,7 +181,7 @@ class Odoo_Addon extends Addon
     /**
      * Addon custom hooks.
      */
-    private function custom_hooks()
+    private static function custom_hooks()
     {
         add_filter('forms_bridge_odoo_dbs', static function ($dbs) {
             if (!is_list($dbs)) {
@@ -223,13 +223,13 @@ class Odoo_Addon extends Addon
     }
 
     /**
-     * Registers addon settings.
+     * Registers the setting and its fields.
      *
-     * @param Setting $setting Setting instance.
+     * @return array Addon's settings configuration.
      */
-    protected static function register_setting($settings)
+    protected static function setting_config()
     {
-        $settings->register_setting(
+        return [
             self::$slug,
             [
                 'databases' => [
@@ -284,8 +284,8 @@ class Odoo_Addon extends Addon
             [
                 'databases' => [],
                 'form_hooks' => [],
-            ]
-        );
+            ],
+        ];
     }
 
     /**
@@ -296,7 +296,7 @@ class Odoo_Addon extends Addon
      *
      * @return array Decorated payload.
      */
-    private function payload_interceptor($payload, $form_hook)
+    private static function payload_interceptor($payload, $form_hook)
     {
         if (empty($payload)) {
             return $payload;
@@ -327,7 +327,7 @@ class Odoo_Addon extends Addon
 
         [$sid, $uid] = $login;
 
-        $this->submitting = true;
+        self::$submitting = true;
         return self::rpc_payload($sid, 'object', 'execute', [
             $form_hook->database->name,
             $uid,
@@ -345,13 +345,13 @@ class Odoo_Addon extends Addon
      *
      * @return array|WP_Error Response result.
      */
-    private function response_interceptor($response)
+    private static function response_interceptor($response)
     {
-        if (!$this->submitting) {
+        if (!self::$submitting) {
             return $response;
         }
 
-        $this->submitting = false;
+        self::$submitting = false;
         return self::rpc_response($response);
     }
 
@@ -402,7 +402,8 @@ class Odoo_Addon extends Addon
     }
 
     /**
-     * Validate form hooks settings. Filters form hooks with inconsistencies with the existing backends.
+     * Validate form hooks settings. Filters form hooks with inconsistencies with the
+     * existing databases.
      *
      * @param array $form_hooks Array with form hooks configurations.
      * @param array $dbs Array with databases data.
@@ -439,14 +440,12 @@ class Odoo_Addon extends Addon
 
             if ($is_valid) {
                 // filter empty pipes
-                $hook['pipes'] = isset($hook['pipes'])
-                    ? (array) $hook['pipes']
-                    : [];
-                $hook['pipes'] = array_filter($hook['pipes'], static function (
-                    $pipe
-                ) {
-                    return $pipe['to'] && $pipe['from'] && $pipe['cast'];
-                });
+                $hook['pipes'] = array_filter(
+                    (array) $hook['pipes'],
+                    static function ($pipe) {
+                        return $pipe['to'] && $pipe['from'] && $pipe['cast'];
+                    }
+                );
 
                 $valid_hooks[] = $hook;
             }

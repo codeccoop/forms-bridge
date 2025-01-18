@@ -1,7 +1,7 @@
 // vendor
 import React from "react";
 import { TabPanel } from "@wordpress/components";
-import { useState } from "@wordpress/element";
+import { useState, useEffect, useRef } from "@wordpress/element";
 
 const CopyIcon = ({ onClick }) => {
   const [focus, setFocus] = useState(false);
@@ -61,12 +61,12 @@ function TabTitle({ name, focus, setFocus, copy }) {
 export default function FormHooks({ hooks, setHooks, FormHook }) {
   const __ = wp.i18n.__;
 
-  const [currentTab, setCurrentTab] = useState(hooks[0]?.name || "add");
+  const [currentTab, setCurrentTab] = useState(String(hooks.length ? 0 : -1));
   const [tabFocus, setTabFocus] = useState(null);
   const tabs = hooks
-    .map(({ backend, form_id, name, pipes, ...customFields }) => ({
+    .map(({ backend, form_id, name, pipes, ...customFields }, i) => ({
       ...customFields,
-      name,
+      name: String(i),
       title: name,
       backend,
       form_id,
@@ -82,10 +82,23 @@ export default function FormHooks({ hooks, setHooks, FormHook }) {
     }))
     .concat([
       {
+        name: "-1",
         title: __("Add Form", "forms-bridge"),
-        name: "add",
       },
     ]);
+
+  const hookCount = useRef(hooks.length);
+  useEffect(() => {
+    if (hooks.length > hookCount.current) {
+      setCurrentTab(String(hooks.length - 1));
+    } else if (hooks.length < hookCount.current) {
+      setCurrentTab(String(currentTab - 1));
+    }
+
+    return () => {
+      hookCount.current = hooks.length;
+    };
+  }, [hooks]);
 
   const updateHook = (index, data) => {
     if (index === -1) index = hooks.length;
@@ -99,14 +112,12 @@ export default function FormHooks({ hooks, setHooks, FormHook }) {
       delete hook.icon;
     });
     setHooks(newHooks);
-    setCurrentTab(newHooks[index].name);
   };
 
   const removeHook = ({ name }) => {
     const index = hooks.findIndex((h) => h.name === name);
     const newHooks = hooks.slice(0, index).concat(hooks.slice(index + 1));
     setHooks(newHooks);
-    setCurrentTab(newHooks[index - 1]?.name || "add");
   };
 
   const copyHook = (name) => {
@@ -124,7 +135,6 @@ export default function FormHooks({ hooks, setHooks, FormHook }) {
     }
 
     setHooks(hooks.concat(copy));
-    setCurrentTab(copy.name);
   };
 
   return (
@@ -145,18 +155,21 @@ export default function FormHooks({ hooks, setHooks, FormHook }) {
         onSelect={setCurrentTab}
         initialTabName={currentTab}
       >
-        {(hook) => (
-          <FormHook
-            data={hook}
-            remove={removeHook}
-            update={(data) =>
-              updateHook(
-                hooks.findIndex(({ name }) => name === hook.name),
-                data
-              )
-            }
-          />
-        )}
+        {(hook) => {
+          hook.name = hook.name >= 0 ? hooks[+hook.name].name : "add";
+          return (
+            <FormHook
+              data={hook}
+              remove={removeHook}
+              update={(data) =>
+                updateHook(
+                  hooks.findIndex(({ name }) => name === hook.name),
+                  data
+                )
+              }
+            />
+          );
+        }}
       </TabPanel>
     </div>
   );

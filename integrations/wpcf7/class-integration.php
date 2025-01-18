@@ -130,8 +130,7 @@ class Integration extends BaseIntegration
             'hooks' => apply_filters(
                 'forms_bridge_form_hooks',
                 [],
-                'wpcf7',
-                $form_id
+                'wpcf7:' . $form_id
             ),
             'fields' => array_values(
                 array_filter(

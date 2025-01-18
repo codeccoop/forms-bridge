@@ -8,6 +8,8 @@ import {
   useRef,
 } from "@wordpress/element";
 
+import useDiff from "../hooks/useDiff";
+
 const defaults = {
   general: {
     notification_receiver: "",
@@ -30,6 +32,8 @@ export default function SettingsProvider({ children, handle = ["general"] }) {
   const [state, setState] = useState(defaults);
   const [reload, setReload] = useState(false);
   currentState.current = state;
+
+  const onPatch = useRef((state) => setState(state)).current;
 
   const onFetch = useRef((settings) => {
     const newState = {
@@ -71,19 +75,20 @@ export default function SettingsProvider({ children, handle = ["general"] }) {
 
   const beforeUnload = useRef((ev) => {
     const state = currentState.current;
-    if (JSON.stringify(state) !== JSON.stringify(initialState.current)) {
+    if (useDiff(state, initialState.current) && !window.__wpfbReloading) {
       ev.preventDefault();
       ev.returnValue = true;
     }
   }).current;
 
   useEffect(() => {
-    // wpfb.off("fetch", onFetch);
+    wpfb.on("patch", onPatch);
     wpfb.on("fetch", onFetch);
     wpfb.join("submit", onSubmit);
     window.addEventListener("beforeunload", beforeUnload);
 
     () => {
+      wpfb.on("patch", onPatch);
       wpfb.off("fetch", onFetch);
       wpfb.leave("submit", onSubmit);
       window.removeEventListener("beforeunload", beforeUnload);
@@ -91,10 +96,13 @@ export default function SettingsProvider({ children, handle = ["general"] }) {
   }, []);
 
   useEffect(() => {
-    if (reload) window.location.reload();
+    if (reload) {
+      window.__wpfbReloading = true;
+      window.location.reload();
+    }
   }, [reload]);
 
-  const patchState = (partial) => setState({ ...state, ...partial });
+  const patchState = (partial) => wpfb.emit("patch", { ...state, ...partial });
 
   return (
     <SettingsContext.Provider value={[state, patchState]}>

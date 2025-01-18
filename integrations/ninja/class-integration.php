@@ -85,8 +85,7 @@ class Integration extends BaseIntegration
             'hooks' => apply_filters(
                 'forms_bridge_form_hooks',
                 [],
-                'ninja',
-                $form_id
+                'ninja:' . $form_id
             ),
             'fields' => array_values(
                 array_filter(

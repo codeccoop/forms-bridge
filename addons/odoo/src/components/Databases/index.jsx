@@ -1,7 +1,7 @@
 // vendor
 import React from "react";
 import { TabPanel } from "@wordpress/components";
-import { useState } from "@wordpress/element";
+import { useState, useEffect, useRef } from "@wordpress/element";
 
 // source
 import Database from "./Database";
@@ -64,11 +64,13 @@ function TabTitle({ name, focus, setFocus, copy }) {
 export default function Databases({ databases, setDatabases }) {
   const __ = wp.i18n.__;
 
-  const [currentTab, setCurrentTab] = useState(databases[0]?.name || "add");
+  const [currentTab, setCurrentTab] = useState(
+    String(databases.length ? 0 : -1)
+  );
   const [tabFocus, setTabFocus] = useState(null);
   const tabs = databases
-    .map(({ name, user, password, backend }) => ({
-      name,
+    .map(({ name, user, password, backend }, i) => ({
+      name: String(i),
       title: name,
       user,
       password,
@@ -84,10 +86,23 @@ export default function Databases({ databases, setDatabases }) {
     }))
     .concat([
       {
+        name: "-1",
         title: __("Add database", "forms-bridge"),
-        name: "add",
       },
     ]);
+
+  const dbCount = useRef(databases.length);
+  useEffect(() => {
+    if (databases.length > dbCount.current) {
+      setCurrentTab(String(databases.length - 1));
+    } else if (databases.length < dbCount.current) {
+      setCurrentTab(String(currentTab - 1));
+    }
+
+    return () => {
+      dbCount.current = databases.length;
+    };
+  }, [databases]);
 
   const updateDatabases = (index, data) => {
     if (index === -1) index = databases.length;
@@ -101,7 +116,6 @@ export default function Databases({ databases, setDatabases }) {
       delete db.icon;
     });
     setDatabases(newDatabases);
-    setCurrentTab(newDatabases[index].name);
   };
 
   const removeDatabase = ({ name }) => {
@@ -110,7 +124,6 @@ export default function Databases({ databases, setDatabases }) {
       .slice(0, index)
       .concat(databases.slice(index + 1));
     setDatabases(newDatabases);
-    setCurrentTab(newDatabases[index - 1]?.name || "add");
   };
 
   const copyDatabase = (name) => {
@@ -125,7 +138,6 @@ export default function Databases({ databases, setDatabases }) {
     }
 
     setDatabases(databases.concat(copy));
-    setCurrentTab(copy.name);
   };
 
   return (
@@ -146,19 +158,22 @@ export default function Databases({ databases, setDatabases }) {
         onSelect={setCurrentTab}
         initialTabName={currentTab}
       >
-        {(db) => (
-          <Database
-            data={db}
-            remove={removeDatabase}
-            update={(data) =>
-              updateDatabases(
-                databases.findIndex(({ name }) => name === db.name),
-                data
-              )
-            }
-            databases={databases}
-          />
-        )}
+        {(db) => {
+          db.name = db.name >= 0 ? databases[+db.name].name : "add";
+          return (
+            <Database
+              data={db}
+              remove={removeDatabase}
+              update={(data) =>
+                updateDatabases(
+                  databases.findIndex(({ name }) => name === db.name),
+                  data
+                )
+              }
+              databases={databases}
+            />
+          );
+        }}
       </TabPanel>
     </div>
   );
