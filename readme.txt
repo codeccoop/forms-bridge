@@ -6,7 +6,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Stable Tag: 2.3.1
 Tested up to: 6.7
 
-Bridge WP form builder plugins to any backend over HTTP requests.
+Bridge WP form builder plugins to any backend or service over HTTP requests.
 
 == Integrations ==
 
