@@ -120,7 +120,7 @@ class Form_Hook
     protected function form()
     {
         [$integration, $form_id] = explode(':', $this->form_id);
-        return apply_filters('forms_bridge_form', null, $integration, $form_id);
+        return apply_filters('forms_bridge_form', null, $form_id, $integration);
     }
 
     /**

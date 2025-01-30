@@ -299,7 +299,6 @@ abstract class Integration extends Singleton
             $prune_empties = apply_filters(
                 'forms_bridge_prune_empties',
                 false,
-                $hook->name,
                 $hook
             );
             if ($prune_empties) {
@@ -308,12 +307,7 @@ abstract class Integration extends Singleton
 
             $attachments = apply_filters(
                 'forms_bridge_attachments',
-                apply_filters(
-                    'forms_bridge_attachments_' . $hook->name,
-                    $this->attachments($uploads),
-                    $hook
-                ),
-                $uploads,
+                $this->attachments($uploads),
                 $hook
             );
 
@@ -333,17 +327,7 @@ abstract class Integration extends Singleton
                 }
             }
 
-            $payload = apply_filters(
-                'forms_bridge_payload',
-                apply_filters(
-                    'forms_bridge_payload_' . $hook->name,
-                    $payload,
-                    $uploads,
-                    $hook
-                ),
-                $uploads,
-                $hook
-            );
+            $payload = apply_filters('forms_bridge_payload', $payload, $hook);
 
             if (empty($payload)) {
                 continue;
@@ -351,27 +335,38 @@ abstract class Integration extends Singleton
 
             do_action(
                 'forms_bridge_before_submission',
+                $hook,
                 $payload,
-                $attachments,
-                $form_data
+                $attachments
             );
-            $response = $hook->submit($payload, $attachments, $form_data);
 
-            if (is_wp_error($response)) {
+            $skip = apply_filters(
+                'forms_bridge_skip_submission',
+                false,
+                $hook,
+                $payload,
+                $attachments
+            );
+            if ($skip) {
+                continue;
+            }
+
+            $response = $hook->submit($payload, $attachments);
+
+            if ($error = is_wp_error($response) ? $response : null) {
                 do_action(
                     'forms_bridge_on_failure',
+                    $hook,
+                    $error,
                     $payload,
-                    $attachments,
-                    $form_data,
-                    $response->get_error_data()
+                    $attachments
                 );
             } else {
                 do_action(
                     'forms_bridge_after_submission',
-                    $response,
+                    $hook,
                     $payload,
-                    $attachments,
-                    $form_data
+                    $attachments
                 );
             }
         }

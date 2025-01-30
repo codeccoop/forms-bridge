@@ -309,18 +309,13 @@ class Odoo_Addon extends Addon
         $db = $form_hook->database;
         $endpoint = $form_hook->endpoint;
         $login = self::rpc_login($db, $endpoint);
-        if (is_wp_error($login)) {
-            $form_data = apply_filters(
-                'forms_bridge_form',
-                null,
-                $form_hook->integration
-            );
+        if ($error = is_wp_error($login) ? $login : null) {
             do_action(
                 'forms_bridge_on_failure',
+                $form_hook,
+                $error,
                 $payload,
-                [],
-                $form_data,
-                $login->get_error_data()
+                []
             );
             return;
         }

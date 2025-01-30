@@ -202,6 +202,7 @@ class Google_Sheets_Addon extends Addon
         $form_data = apply_filters(
             'forms_bridge_form',
             null,
+            false,
             $form_hook->integration
         );
         if (!$form_data) {
@@ -218,18 +219,17 @@ class Google_Sheets_Addon extends Addon
         if (is_wp_error($result)) {
             do_action(
                 'forms_bridge_on_failure',
+                $form_hook,
+                $result,
                 $payload,
-                [],
-                $form_data,
-                $result->get_error_data()
+                []
             );
         } else {
             do_action(
                 'forms_bridge_after_submission',
-                $result,
+                $form_hook,
                 $payload,
-                [],
-                $form_data
+                []
             );
         }
     }

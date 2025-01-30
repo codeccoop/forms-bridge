@@ -76,18 +76,8 @@ class Forms_Bridge extends Base_Plugin
 
         add_action(
             'forms_bridge_on_failure',
-            static function (
-                $payload,
-                $attachments,
-                $form_data,
-                $error_data = []
-            ) {
-                self::notify_error(
-                    $payload,
-                    $attachments,
-                    $form_data,
-                    $error_data
-                );
+            static function ($form_hook, $error, $payload, $attachments) {
+                self::notify_error($form_hook, $error, $payload, $attachments);
             },
             90,
             4
@@ -188,8 +178,8 @@ class Forms_Bridge extends Base_Plugin
         // Return current pair plugin form representation
         add_filter(
             'forms_bridge_form',
-            static function ($default, $integration = null, $form_id = null) {
-                return self::form($integration, $form_id);
+            static function ($default, $form_id = null, $integration = null) {
+                return self::form($form_id, $integration);
             },
             5,
             3
@@ -242,12 +232,12 @@ class Forms_Bridge extends Base_Plugin
     /**
      * Gets form data, by context or by ID.
      *
-     * @param string $integration Integration slug.
      * @param int $form_id Form ID, optional.
+     * @param string $integration Integration slug.
      *
      * @return array|null Form data or null;
      */
-    private static function form($integration, $form_id)
+    private static function form($form_id, $integration)
     {
         $integrations = Integration::integrations();
 
@@ -359,16 +349,16 @@ class Forms_Bridge extends Base_Plugin
     /**
      * Sends error notifications to the email receiver.
      *
+     * @param Form_Hook $form_hook Form data.
+     * @param WP_Error $error Error instance.
      * @param array $payload Submission data.
      * @param array $attachments Submission attachments.
-     * @param array $form_data Form data.
-     * @param array $error_data Error data.
      */
     private static function notify_error(
+        $form_hook,
+        $error,
         $payload,
-        $attachments,
-        $form_data,
-        $error_data = []
+        $attachments
     ) {
         $email = Settings_Store::setting('general')->notification_receiver;
 
@@ -376,11 +366,13 @@ class Forms_Bridge extends Base_Plugin
             return;
         }
 
-        $error = print_r($error_data, true);
+        $form_data = $form_hook->form;
+        $error = print_r($error->get_error_data(), true);
         $to = $email;
         $subject = 'Forms Bridge Error';
         $body = "Form ID: {$form_data['id']}\n";
         $body .= "Form title: {$form_data['title']}\n";
+        $body .= "Form hook: {$form_hook->name}\n";
         $body .= 'Submission: ' . print_r($payload, true) . "\n";
         $body .= "Error: {$error}\n";
 
