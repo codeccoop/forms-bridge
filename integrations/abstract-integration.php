@@ -2,6 +2,9 @@
 
 namespace FORMS_BRIDGE;
 
+use Error;
+use Exception;
+use WP_Error;
 use WPCT_ABSTRACT\Singleton;
 
 if (!defined('ABSPATH')) {
@@ -273,10 +276,8 @@ abstract class Integration extends Singleton
 
     /**
      * Proceed with the submission sub-routine.
-     *
-     * @param mixed $submission Pair plugin submission handle.
      */
-    public function do_submission($submission)
+    public function do_submission()
     {
         $form_data = $this->form();
         if (!$form_data) {
@@ -289,84 +290,105 @@ abstract class Integration extends Singleton
 
         $hooks = $form_data['hooks'];
 
+        $submission = apply_filters('forms_bridge_submission', []);
         $uploads = $this->submission_uploads($submission, $form_data);
 
         foreach (array_values($hooks) as $hook) {
-            $payload = $this->serialize_submission($submission, $form_data);
-            // TODO: Exclude attachments from payload finger mangling
-            $payload = $hook->apply_pipes($payload);
+            try {
+                // TODO: Exclude attachments from payload finger mangling
+                $payload = $hook->apply_pipes($submission);
 
-            $prune_empties = apply_filters(
-                'forms_bridge_prune_empties',
-                false,
-                $hook
-            );
-            if ($prune_empties) {
-                $payload = $this->prune_empties($payload);
-            }
-
-            $attachments = apply_filters(
-                'forms_bridge_attachments',
-                $this->attachments($uploads),
-                $hook
-            );
-
-            if (!empty($attachments)) {
-                $content_type = $hook->content_type;
-                if (
-                    in_array($content_type, [
-                        'application/json',
-                        'application/x-www-form-urlencoded',
-                    ])
-                ) {
-                    $attachments = $this->stringify_attachments($attachments);
-                    foreach ($attachments as $name => $value) {
-                        $payload[$name] = $value;
-                    }
-                    $attachments = [];
+                $prune_empties = apply_filters(
+                    'forms_bridge_prune_empties',
+                    false,
+                    $hook
+                );
+                if ($prune_empties) {
+                    $payload = $this->prune_empties($payload);
                 }
-            }
 
-            $payload = apply_filters('forms_bridge_payload', $payload, $hook);
+                $attachments = apply_filters(
+                    'forms_bridge_attachments',
+                    $this->attachments($uploads),
+                    $hook
+                );
 
-            if (empty($payload)) {
-                continue;
-            }
+                if (!empty($attachments)) {
+                    $content_type = $hook->content_type;
+                    if (
+                        in_array($content_type, [
+                            'application/json',
+                            'application/x-www-form-urlencoded',
+                        ])
+                    ) {
+                        $attachments = $this->stringify_attachments(
+                            $attachments
+                        );
+                        foreach ($attachments as $name => $value) {
+                            $payload[$name] = $value;
+                        }
+                        $attachments = [];
+                    }
+                }
 
-            $skip = apply_filters(
-                'forms_bridge_skip_submission',
-                false,
-                $hook,
-                $payload,
-                $attachments
-            );
-            if ($skip) {
-                continue;
-            }
+                $payload = apply_filters(
+                    'forms_bridge_payload',
+                    $payload,
+                    $hook
+                );
 
-            do_action(
-                'forms_bridge_before_submission',
-                $hook,
-                $payload,
-                $attachments
-            );
+                if (empty($payload)) {
+                    continue;
+                }
 
-            $response = $hook->submit($payload, $attachments);
+                $skip = apply_filters(
+                    'forms_bridge_skip_submission',
+                    false,
+                    $hook,
+                    $payload,
+                    $attachments
+                );
+                if ($skip) {
+                    continue;
+                }
 
-            if ($error = is_wp_error($response) ? $response : null) {
+                do_action(
+                    'forms_bridge_before_submission',
+                    $hook,
+                    $payload,
+                    $attachments
+                );
+
+                $response = $hook->submit($payload, $attachments);
+
+                if ($error = is_wp_error($response) ? $response : null) {
+                    do_action(
+                        'forms_bridge_on_failure',
+                        $hook,
+                        $error,
+                        $payload,
+                        $attachments
+                    );
+                } else {
+                    do_action(
+                        'forms_bridge_after_submission',
+                        $hook,
+                        $payload,
+                        $attachments
+                    );
+                }
+            } catch (Error | Exception $e) {
+                $error = new WP_Error(
+                    'internal_server_error',
+                    $e->getMessage(),
+                    $e->getTrace()
+                );
                 do_action(
                     'forms_bridge_on_failure',
                     $hook,
                     $error,
-                    $payload,
-                    $attachments
-                );
-            } else {
-                do_action(
-                    'forms_bridge_after_submission',
-                    $hook,
-                    $payload,
-                    $attachments
+                    $payload ?? $submission,
+                    $attachments ?? []
                 );
             }
         }

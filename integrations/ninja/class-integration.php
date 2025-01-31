@@ -24,7 +24,7 @@ class Integration extends BaseIntegration
     {
         add_action('ninja_forms_after_submission', function ($submission) {
             self::$submission = $submission;
-            $this->do_submission($submission);
+            $this->do_submission();
         });
     }
 

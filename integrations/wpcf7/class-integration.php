@@ -23,12 +23,21 @@ class Integration extends BaseIntegration
         parent::construct(...$args);
 
         add_filter(
-            'wpcf7_before_send_mail',
-            function ($form, &$abort, $submission) {
-                $this->do_submission($submission, $form);
+            'wpcf7_submit',
+            function ($form, $result) {
+                if (
+                    in_array(
+                        $result['status'],
+                        ['validation_failed', 'acceptance_missing', 'spam'],
+                        true
+                    )
+                ) {
+                    return;
+                }
+                $this->do_submission();
             },
             10,
-            3
+            2
         );
     }
 

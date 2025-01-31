@@ -26,14 +26,9 @@ class Integration extends BaseIntegration
      */
     protected function construct(...$args)
     {
-        add_action(
-            'gform_after_submission',
-            function ($entry, $form) {
-                $this->do_submission($entry, $form);
-            },
-            10,
-            2
-        );
+        add_action('gform_after_submission', function () {
+            $this->do_submission();
+        });
 
         parent::construct(...$args);
     }
@@ -310,10 +305,12 @@ class Integration extends BaseIntegration
                         if (empty($names[$i])) {
                             continue;
                         }
-                        $data[$names[$i]] = rgar(
-                            $submission,
-                            (string) $inputs[$i]['id']
-                        );
+                        $value = rgar($submission, (string) $inputs[$i]['id']);
+                        // Prevent overwriting duplicated fields (conditionals?)
+                        // with empty values
+                        if (empty($data[$names[$i]])) {
+                            $data[$names[$i]] = $value;
+                        }
                     }
                 } else {
                     // Plain composed
@@ -334,7 +331,7 @@ class Integration extends BaseIntegration
 
                     if ($field['type'] === 'consent') {
                         $data[$input_name] = $values[0];
-                    } else {
+                    } elseif (empty($data[$input_name])) {
                         $data[$input_name] = $values;
                     }
                 }
@@ -342,10 +339,10 @@ class Integration extends BaseIntegration
                 // simple fields
                 if ($input_name) {
                     $raw_value = rgar($submission, (string) $field['id']);
-                    $data[$input_name] = $this->format_value(
-                        $raw_value,
-                        $field
-                    );
+                    $value = $this->format_value($raw_value, $field);
+                    if (empty($data[$input_name])) {
+                        $data[$input_name] = $value;
+                    }
                 }
             }
         }
