@@ -105,19 +105,14 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
         >
           {__("Form format pipes", "forms-bridge")}
         </label>
-        <Button
-          variant="secondary"
-          onClick={() => addPipe()}
-          style={{
-            marginLeft: "1em",
-            height: "32px",
-            marginBottom: "calc(8px)",
-          }}
-        >
-          {__("Add", "forms-bridge")}
-        </Button>
       </div>
-      <table style={{ width: "100%" }}>
+      <table
+        style={{
+          width: "calc(100% + 10px)",
+          borderSpacing: "5px",
+          margin: "0 -5px",
+        }}
+      >
         <tbody>
           {pipes.map(({ from, to, cast }, i) => (
             <tr key={i}>
@@ -128,6 +123,7 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
                   onChange={(value) => setPipe("from", i, value)}
                   options={fromOptions}
                   __nextHasNoMarginBottom
+                  __next40pxDefaultSize
                 />
               </td>
               <td>
@@ -136,9 +132,10 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
                   value={to}
                   onChange={(value) => setPipe("to", i, value)}
                   __nextHasNoMarginBottom
+                  __next40pxDefaultSize
                 />
               </td>
-              <td style={{ borderLeft: "1rem solid transparent" }}>
+              <td>
                 <SelectControl
                   placeholder={__("Cast as", "forms-bridge")}
                   value={cast || "string"}
@@ -148,14 +145,15 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
                     value,
                   }))}
                   __nextHasNoMarginBottom
+                  __next40pxDefaultSize
                 />
               </td>
-              <td style={{ borderLeft: "1rem solid transparent" }}>
+              <td>
                 <Button
                   isDestructive
                   variant="secondary"
                   onClick={() => dropPipe(i)}
-                  style={{ height: "32px" }}
+                  __next40pxDefaultSize
                 >
                   {__("Drop", "forms-bridge")}
                 </Button>
@@ -165,13 +163,18 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
         </tbody>
       </table>
       <Spacer paddingY="calc(3px)" />
-      <Button
-        variant="primary"
-        onClick={() => done()}
-        style={{ height: "32px" }}
-      >
-        {__("Done", "posts-bridge")}
-      </Button>
+      <div style={{ display: "flex", gap: "0.5rem" }}>
+        <Button
+          variant="secondary"
+          onClick={() => addPipe()}
+          __next40pxDefaultSize
+        >
+          {__("Add", "forms-bridge")}
+        </Button>
+        <Button variant="primary" onClick={() => done()} __next40pxDefaultSize>
+          {__("Done", "posts-bridge")}
+        </Button>
+      </div>
     </div>
   );
 }

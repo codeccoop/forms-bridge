@@ -36,6 +36,7 @@ export default function NewGSFormHook({ add, schema }) {
               onChange={(spreadsheet) => update({ ...data, spreadsheet })}
               options={sheetOptions}
               __nextHasNoMarginBottom
+              __next40pxDefaultSize
             />
           </div>
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
@@ -44,6 +45,7 @@ export default function NewGSFormHook({ add, schema }) {
               value={data.tab || ""}
               onChange={(tab) => update({ ...data, tab })}
               __nextHasNoMarginBottom
+              __next40pxDefaultSize
             />
           </div>
         </>

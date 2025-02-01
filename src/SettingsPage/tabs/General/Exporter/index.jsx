@@ -118,6 +118,8 @@ export default function Exporter() {
               "forms-bridge"
             )}
             onClick={downloadConfig}
+            style={{ width: "150px", justifyContent: "center" }}
+            __next40pxDefaultSize
           >
             {__("Download config", "forms-bridge")}
           </Button>
@@ -127,6 +129,8 @@ export default function Exporter() {
             variant="secondary"
             description={__("Import Forms Bridge JSON config", "forms-bridge")}
             onClick={() => setShowModal(true)}
+            style={{ width: "150px", justifyContent: "center" }}
+            __next40pxDefaultSize
           >
             {__("Import config", "forms-bridge")}
           </Button>

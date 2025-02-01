@@ -77,7 +77,7 @@ function SaveButton({ loading }) {
     <Button
       variant={error ? "secondary" : "primary"}
       onClick={onClick}
-      style={{ minWidth: "130px", justifyContent: "center" }}
+      style={{ minWidth: "150px", justifyContent: "center" }}
       disabled={loading}
       __next40pxDefaultSize
     >

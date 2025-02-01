@@ -78,6 +78,7 @@ export default function Database({ data, update, remove, databases }) {
             onFocus={() => (focus = true)}
             onBlur={() => (focus = false)}
             __nextHasNoMarginBottom
+            __next40pxDefaultSize
           />
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
@@ -87,6 +88,7 @@ export default function Database({ data, update, remove, databases }) {
             onChange={(backend) => update({ ...data, backend })}
             options={backendOptions}
             __nextHasNoMarginBottom
+            __next40pxDefaultSize
           />
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
@@ -95,6 +97,7 @@ export default function Database({ data, update, remove, databases }) {
             value={data.user}
             onChange={(user) => update({ ...data, user })}
             __nextHasNoMarginBottom
+            __next40pxDefaultSize
           />
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
@@ -104,6 +107,7 @@ export default function Database({ data, update, remove, databases }) {
             value={data.password}
             onChange={(password) => update({ ...data, password })}
             __nextHasNoMarginBottom
+            __next40pxDefaultSize
           />
         </div>
       </div>
@@ -133,7 +137,8 @@ export default function Database({ data, update, remove, databases }) {
             isDestructive
             variant="primary"
             onClick={() => remove(data)}
-            style={{ width: "130px", justifyContent: "center", height: "32px" }}
+            style={{ width: "150px", justifyContent: "center" }}
+            __next40pxDefaultSize
           >
             {__("Remove", "forms-bridge")}
           </Button>

@@ -14,7 +14,8 @@ export default function FormPipes({ form, pipes, setPipes }) {
       <Button
         variant="secondary"
         onClick={() => setOpen(true)}
-        style={{ width: "130px", justifyContent: "center", height: "32px" }}
+        style={{ width: "150px", justifyContent: "center" }}
+        __next40pxDefaultSize
       >
         {__("Pipes", "forms-bridge")}
       </Button>

@@ -104,6 +104,7 @@ export default function FormHook({
             onFocus={() => (focus = true)}
             onBlur={() => (focus = false)}
             __nextHasNoMarginBottom
+            __next40pxDefaultSize
           />
         </div>
         {schema.includes("backend") && (
@@ -114,6 +115,7 @@ export default function FormHook({
               onChange={(backend) => update({ ...data, backend })}
               options={backendOptions}
               __nextHasNoMarginBottom
+              __next40pxDefaultSize
             />
           </div>
         )}
@@ -125,6 +127,7 @@ export default function FormHook({
               onChange={(form_id) => update({ ...data, form_id })}
               options={formOptions}
               __nextHasNoMarginBottom
+              __next40pxDefaultSize
             />
           </div>
         )}
@@ -138,48 +141,20 @@ export default function FormHook({
           flexWrap: "wrap",
         }}
       >
-        <div>
-          <label
-            style={{
-              display: "block",
-              fontWeight: 500,
-              textTransform: "uppercase",
-              fontSize: "11px",
-              marginBottom: "calc(4px)",
-              maxWidth: "unset",
-            }}
-          >
-            {__("Edit pipes", "forms-bridge")}
-          </label>
-          <FormPipes
-            form={form}
-            pipes={data.pipes}
-            setPipes={(pipes) => update({ ...data, pipes })}
-          />
-        </div>
-        <div>
-          <label
-            style={{
-              display: "block",
-              fontWeight: 500,
-              textTransform: "uppercase",
-              fontSize: "11px",
-              margin: 0,
-              marginBottom: "calc(4px)",
-              maxWidth: "100%",
-            }}
-          >
-            {__("Remove form", "forms-bridge")}
-          </label>
-          <Button
-            isDestructive
-            variant="primary"
-            onClick={() => remove(data)}
-            style={{ width: "130px", justifyContent: "center", height: "32px" }}
-          >
-            {__("Remove", "forms-bridge")}
-          </Button>
-        </div>
+        <FormPipes
+          form={form}
+          pipes={data.pipes}
+          setPipes={(pipes) => update({ ...data, pipes })}
+        />
+        <Button
+          isDestructive
+          variant="primary"
+          onClick={() => remove(data)}
+          style={{ width: "150px", justifyContent: "center" }}
+          __next40pxDefaultSize
+        >
+          {__("Remove", "forms-bridge")}
+        </Button>
       </div>
     </div>
   );

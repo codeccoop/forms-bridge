@@ -106,6 +106,7 @@ export default function NewFormHook({ add, schema, children = () => {} }) {
             value={name}
             onChange={handleSetName}
             __nextHasNoMarginBottom
+            __next40pxDefaultSize
           />
         </div>
         {schema.includes("backend") && (
@@ -116,6 +117,7 @@ export default function NewFormHook({ add, schema, children = () => {} }) {
               onChange={setBackend}
               options={backendOptions}
               __nextHasNoMarginBottom
+              __next40pxDefaultSize
             />
           </div>
         )}
@@ -127,6 +129,7 @@ export default function NewFormHook({ add, schema, children = () => {} }) {
               onChange={setFormId}
               options={formOptions}
               __nextHasNoMarginBottom
+              __next40pxDefaultSize
             />
           </div>
         )}
@@ -143,29 +146,15 @@ export default function NewFormHook({ add, schema, children = () => {} }) {
           flexWrap: "wrap",
         }}
       >
-        <div>
-          <label
-            style={{
-              display: "block",
-              fontWeight: 500,
-              textTransform: "uppercase",
-              fontSize: "11px",
-              margin: 0,
-              marginBottom: "calc(4px)",
-              maxWidth: "100%",
-            }}
-          >
-            {__("Add form", "forms-bridge")}
-          </label>
-          <Button
-            variant="primary"
-            onClick={() => onClick()}
-            style={{ width: "130px", justifyContent: "center", height: "32px" }}
-            disabled={disabled}
-          >
-            {__("Add", "forms-bridge")}
-          </Button>
-        </div>
+        <Button
+          variant="primary"
+          onClick={() => onClick()}
+          style={{ width: "150px", justifyContent: "center" }}
+          disabled={disabled}
+          __next40pxDefaultSize
+        >
+          {__("Add", "forms-bridge")}
+        </Button>
       </div>
     </div>
   );

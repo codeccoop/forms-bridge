@@ -79,6 +79,7 @@ export default function NewDatabase({ add, databases }) {
             value={name}
             onChange={handleSetName}
             __nextHasNoMarginBottom
+            __next40pxDefaultSize
           />
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
@@ -88,6 +89,7 @@ export default function NewDatabase({ add, databases }) {
             onChange={setBackend}
             options={backendOptions}
             __nextHasNoMarginBottom
+            __next40pxDefaultSize
           />
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
@@ -96,6 +98,7 @@ export default function NewDatabase({ add, databases }) {
             value={user}
             onChange={setUser}
             __nextHasNoMarginBottom
+            __next40pxDefaultSize
           />
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
@@ -105,6 +108,7 @@ export default function NewDatabase({ add, databases }) {
             value={password}
             onChange={setPassword}
             __nextHasNoMarginBottom
+            __next40pxDefaultSize
           />
         </div>
       </div>
@@ -133,8 +137,9 @@ export default function NewDatabase({ add, databases }) {
           <Button
             variant="primary"
             onClick={() => onClick()}
-            style={{ width: "130px", justifyContent: "center", height: "32px" }}
+            style={{ width: "150px", justifyContent: "center" }}
             disabled={disabled}
+            __next40pxDefaultSize
           >
             {__("Add", "forms-bridge")}
           </Button>

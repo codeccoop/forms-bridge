@@ -42,8 +42,9 @@ export default function GeneralSettings() {
             update({ notification_receiver })
           }
           value={notification_receiver || ""}
-          style={{ width: "220px" }}
+          style={{ width: "300px" }}
           __nextHasNoMarginBottom
+          __next40pxDefaultSize
         />
       </PanelRow>
       <Spacer paddingY="calc(8px)" />

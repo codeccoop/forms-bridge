@@ -37,6 +37,7 @@ export default function OdooFormHook({ data, update, remove }) {
               onChange={(spreadsheet) => update({ ...data, spreadsheet })}
               options={sheetOptions}
               __nextHasNoMarginBottom
+              __next40pxDefaultSize
             />
           </div>
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
@@ -45,6 +46,7 @@ export default function OdooFormHook({ data, update, remove }) {
               value={data.tab || ""}
               onChange={(tab) => update({ ...data, tab })}
               __nextHasNoMarginBottom
+              __next40pxDefaultSize
             />
           </div>
         </>

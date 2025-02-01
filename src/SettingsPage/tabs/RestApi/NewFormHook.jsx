@@ -42,6 +42,7 @@ export default function NewRestFormHook({ add, schema }) {
               onChange={(method) => update({ ...data, method })}
               options={methodOptions}
               __nextHasNoMarginBottom
+              __next40pxDefaultSize
             />
           </div>
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
@@ -50,6 +51,7 @@ export default function NewRestFormHook({ add, schema }) {
               value={data.endpoint || ""}
               onChange={(endpoint) => update({ ...data, endpoint })}
               __nextHasNoMarginBottom
+              __next40pxDefaultSize
             />
           </div>
         </>

@@ -142,17 +142,6 @@ export default function Databases({ databases, setDatabases }) {
 
   return (
     <div style={{ width: "100%" }}>
-      <label
-        className="components-base-control__label"
-        style={{
-          fontSize: "11px",
-          textTransform: "uppercase",
-          fontWeight: 500,
-          marginBottom: "calc(8px)",
-        }}
-      >
-        {__("Databases", "forms-bridge")}
-      </label>
       <TabPanel
         tabs={tabs}
         onSelect={setCurrentTab}

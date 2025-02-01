@@ -60,19 +60,26 @@ function NewBackend({ add }) {
           value={name}
           onChange={handleSetName}
           __nextHasNoMarginBottom
+          __next40pxDefaultSize
         />
         <TextControl
-          style={{ minWidth: "250px" }}
+          style={{ minWidth: "300px" }}
           label={__("Backend base URL", "forms-bridge")}
           value={baseUrl}
           onChange={setBaseUrl}
           __nextHasNoMarginBottom
+          __next40pxDefaultSize
         />
         <Button
           variant="primary"
           onClick={() => onClick()}
-          style={{ marginTop: "auto", height: "32px" }}
+          style={{
+            width: "150px",
+            justifyContent: "center",
+            marginTop: "auto",
+          }}
           disabled={disabled}
+          __next40pxDefaultSize
         >
           {__("Add", "forms-bridge")}
         </Button>
@@ -146,36 +153,30 @@ export default function Backend({ update, remove, ...data }) {
           onChange={handleSetName}
           onFocus={() => (focus = true)}
           onBlur={() => (focus = false)}
-          __nextHasNoMarginBottom={true}
+          __nextHasNoMarginBottom
+          __next40pxDefaultSize
         />
         <TextControl
-          style={{ minWidth: "250px" }}
+          style={{ minWidth: "300px" }}
           label={__("Backend base URL", "forms-bridge")}
           value={data.base_url}
           onChange={(base_url) => update({ ...data, base_url })}
-          __nextHasNoMarginBottom={true}
+          __nextHasNoMarginBottom
+          __next40pxDefaultSize
         />
-        <div>
-          <label
-            style={{
-              display: "block",
-              fontWeight: 500,
-              textTransform: "uppercase",
-              fontSize: "11px",
-              marginBottom: "calc(4px)",
-            }}
-          >
-            {__("Remove backend", "forms-bridge")}
-          </label>
-          <Button
-            isDestructive
-            variant="primary"
-            onClick={() => remove(data)}
-            style={{ width: "150px", justifyContent: "center", height: "32px" }}
-          >
-            {__("Remove", "forms-bridge")}
-          </Button>
-        </div>
+        <Button
+          isDestructive
+          variant="primary"
+          onClick={() => remove(data)}
+          style={{
+            width: "150px",
+            marginTop: "auto",
+            justifyContent: "center",
+          }}
+          __next40pxDefaultSize
+        >
+          {__("Remove", "forms-bridge")}
+        </Button>
       </div>
       <Spacer paddingY="calc(8px)" />
       <BackendHeaders headers={data.headers} setHeaders={setHeaders} />
