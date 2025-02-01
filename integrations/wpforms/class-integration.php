@@ -29,7 +29,7 @@ class Integration extends BaseIntegration
                 $entry['fields'] = $fields;
                 $entry['entry_id'] = $entry_id;
                 self::$submission = $entry;
-                $this->do_submission($entry);
+                $this->do_submission();
             },
             10,
             4

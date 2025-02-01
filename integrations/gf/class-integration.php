@@ -26,14 +26,9 @@ class Integration extends BaseIntegration
      */
     protected function construct(...$args)
     {
-        add_action(
-            'gform_after_submission',
-            function ($entry, $form) {
-                $this->do_submission($entry, $form);
-            },
-            10,
-            2
-        );
+        add_action('gform_after_submission', function () {
+            $this->do_submission();
+        });
 
         parent::construct(...$args);
     }
@@ -301,6 +296,18 @@ class Integration extends BaseIntegration
 
             if (!empty($inputs)) {
                 // composed fields
+                $isset = array_reduce(
+                    $inputs,
+                    function ($isset, $input) {
+                        return $isset || $this->isset($input['id']);
+                    },
+                    false
+                );
+
+                if (!$isset) {
+                    continue;
+                }
+
                 $names = array_map(function ($input) {
                     return $input['name'];
                 }, $inputs);
@@ -310,10 +317,8 @@ class Integration extends BaseIntegration
                         if (empty($names[$i])) {
                             continue;
                         }
-                        $data[$names[$i]] = rgar(
-                            $submission,
-                            (string) $inputs[$i]['id']
-                        );
+                        $value = rgar($submission, (string) $inputs[$i]['id']);
+                        $data[$names[$i]] = $value;
                     }
                 } else {
                     // Plain composed
@@ -333,13 +338,18 @@ class Integration extends BaseIntegration
                     }
 
                     if ($field['type'] === 'consent') {
-                        $data[$input_name] = $values[0];
+                        $data[$input_name] = $values[0] ?? false;
                     } else {
                         $data[$input_name] = $values;
                     }
                 }
             } else {
                 // simple fields
+                $isset = $this->isset($field['id']);
+                if (!$isset) {
+                    continue;
+                }
+
                 if ($input_name) {
                     $raw_value = rgar($submission, (string) $field['id']);
                     $data[$input_name] = $this->format_value(
@@ -420,7 +430,7 @@ class Integration extends BaseIntegration
 
         return array_reduce(
             array_filter($form_data['fields'], function ($field) {
-                return $field['type'] === 'file' || $field['type'] === 'files';
+                return $field['type'] === 'file';
             }),
             function ($carry, $field) use ($submission, $private_upload) {
                 $paths = rgar($submission, (string) $field['id']);
@@ -428,8 +438,7 @@ class Integration extends BaseIntegration
                     return $carry;
                 }
 
-                $paths =
-                    $field['type'] === 'files' ? json_decode($paths) : [$paths];
+                $paths = $field['is_multi'] ? json_decode($paths) : [$paths];
                 $paths = array_map(function ($path) use ($private_upload) {
                     if ($private_upload) {
                         $url = wp_parse_url($path);
@@ -443,13 +452,19 @@ class Integration extends BaseIntegration
                 }, $paths);
 
                 $carry[$field['name']] = [
-                    'path' => $field['type'] === 'files' ? $paths : $paths[0],
-                    'is_multi' => $field['type'] === 'files',
+                    'path' => $field['is_multi'] ? $paths : $paths[0],
+                    'is_multi' => $field['is_multi'],
                 ];
 
                 return $carry;
             },
             []
         );
+    }
+
+    private function isset($field_id)
+    {
+        $key = 'input_' . implode('_', explode('.', $field_id));
+        return isset($_POST[$key]);
     }
 }
