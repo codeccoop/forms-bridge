@@ -160,21 +160,20 @@ class Odoo_Addon extends Addon
         // Submission payload interceptor
         add_filter(
             'forms_bridge_payload',
-            static function ($payload, $uploads, $hook) {
+            static function ($payload, $hook) {
                 return self::payload_interceptor($payload, $hook);
             },
             9,
-            3
+            2
         );
 
         // Submission response interceptor
         add_filter(
             'http_bridge_response',
-            static function ($res, $req) {
+            static function ($res) {
                 return self::response_interceptor($res);
             },
-            9,
-            2
+            9
         );
     }
 
