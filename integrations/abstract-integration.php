@@ -231,35 +231,6 @@ abstract class Integration extends Singleton
     abstract public function uploads();
 
     /**
-     * Serialize the current form submission data.
-     *
-     * @param any $submission Pair plugin submission handle.
-     * @param array $form_data Source form data.
-     *
-     * @return array Submission data.
-     */
-    abstract public function serialize_submission($submission, $form);
-
-    /**
-     * Serialize the current form data.
-     *
-     * @param any $form Pair plugin form handle.
-     *
-     * @return array Form data.
-     */
-    abstract public function serialize_form($form);
-
-    /**
-     * Get uploads from pair submission handle.
-     *
-     * @param any $submission Pair plugin submission handle.
-     * @param array $form_data Current form data.
-     *
-     * @return array Collection of uploaded files.
-     */
-    abstract protected function submission_uploads($submission, $form_data);
-
-    /**
      * Integration initializer to be fired on wp init.
      */
     abstract protected function init();
@@ -277,7 +248,7 @@ abstract class Integration extends Singleton
     /**
      * Proceed with the submission sub-routine.
      */
-    public function do_submission()
+    protected function do_submission()
     {
         $form_data = $this->form();
         if (!$form_data) {
@@ -290,8 +261,8 @@ abstract class Integration extends Singleton
 
         $hooks = $form_data['hooks'];
 
-        $submission = apply_filters('forms_bridge_submission', []);
-        $uploads = $this->submission_uploads($submission, $form_data);
+        $submission = $this->submission();
+        $uploads = $this->uploads();
 
         foreach (array_values($hooks) as $hook) {
             try {
@@ -303,6 +274,7 @@ abstract class Integration extends Singleton
                     false,
                     $hook
                 );
+
                 if ($prune_empties) {
                     $payload = $this->prune_empties($payload);
                 }
@@ -388,6 +360,7 @@ abstract class Integration extends Singleton
                     $e->getMessage(),
                     $e->getTrace()
                 );
+
                 do_action(
                     'forms_bridge_on_failure',
                     $hook,

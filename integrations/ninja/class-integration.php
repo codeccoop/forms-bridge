@@ -65,7 +65,8 @@ class Integration extends BaseIntegration
             return null;
         }
 
-        return $this->serialize_submission(self::$submission, $this->form());
+        $form = $this->form();
+        return $this->serialize_submission(self::$submission, $form);
     }
 
     public function uploads()

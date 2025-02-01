@@ -115,11 +115,13 @@ class Integration extends BaseIntegration
         $submission = GFFormsModel::get_current_lead(
             GFAPI::get_form($form_data['id'])
         );
+
         if (!$submission) {
             return null;
         }
 
-        return $this->serialize_submission($submission, $this->form());
+        $form = $this->form();
+        return $this->serialize_submission($submission, $form);
     }
 
     /**
@@ -137,11 +139,13 @@ class Integration extends BaseIntegration
         $submission = GFFormsModel::get_current_lead(
             GFAPI::get_form($form_data['id'])
         );
+
         if (!$submission) {
             return null;
         }
 
-        return $this->submission_uploads($submission, $this->form());
+        $form = $this->form();
+        return $this->submission_uploads($submission, $form);
     }
 
     /**

@@ -104,7 +104,8 @@ class Integration extends BaseIntegration
             return null;
         }
 
-        return $this->serialize_submission($submission, $this->form());
+        $form = $this->form();
+        return $this->serialize_submission($submission, $form);
     }
 
     /**
@@ -119,7 +120,8 @@ class Integration extends BaseIntegration
             return null;
         }
 
-        return $this->submission_uploads($submission, $this->form());
+        $form = $this->form();
+        return $this->submission_uploads($submission, $form);
     }
 
     /**
