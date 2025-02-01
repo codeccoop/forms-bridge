@@ -65,7 +65,8 @@ class Integration extends BaseIntegration
             return null;
         }
 
-        return $this->serialize_submission(self::$submission, $this->form());
+        $form = $this->form();
+        return $this->serialize_submission(self::$submission, $form);
     }
 
     public function uploads()
@@ -171,7 +172,7 @@ class Integration extends BaseIntegration
     public function serialize_submission($submission, $form_data)
     {
         $data = [
-            'submission_id' => $submission['actions']['save']['sub_id'],
+            'submission_id' => $submission['actions']['save']['sub_id'] ?? 0,
         ];
 
         foreach ($form_data['fields'] as $field_data) {

@@ -61,17 +61,17 @@ class Google_Sheets_Addon extends Addon
         // Intercepts submission payload and catch google sheets hooks
         add_filter(
             'forms_bridge_payload',
-            static function ($payload, $uploads, $hook) {
+            static function ($payload, $hook) {
                 return self::payload_interceptor($payload, $hook);
             },
             9,
-            3
+            2
         );
 
         // Discard attachments for google sheets submissions
         add_filter(
             'forms_bridge_attachments',
-            static function ($attachments, $uploads, $hook) {
+            static function ($attachments, $hook) {
                 if ($hook->api === self::$slug) {
                     return [];
                 }
@@ -79,7 +79,7 @@ class Google_Sheets_Addon extends Addon
                 return $attachments;
             },
             90,
-            3
+            2
         );
     }
 
