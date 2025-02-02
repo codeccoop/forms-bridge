@@ -371,7 +371,14 @@ abstract class Addon extends Singleton
         $__FILE__ = (new ReflectionClass(static::class))->getFileName();
         $dir = dirname($__FILE__) . '/templates';
         if (!is_dir($dir)) {
-            mkdir($dir);
+            $result = mkdir($dir);
+            if (!$result) {
+                return;
+            }
+        }
+
+        if (!is_readable($dir)) {
+            return;
         }
 
         foreach (array_diff(scandir($dir), ['.', '..']) as $file) {
