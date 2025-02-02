@@ -23,7 +23,7 @@ export default function OdooSetting() {
       </PanelRow>
       <Spacer paddingY="calc(8px)" />
       <PanelBody
-        title={__("Databases", "posts-bridge")}
+        title={__("Databases", "forms-bridge")}
         initialOpen={databases.length === 0}
       >
         <Databases
