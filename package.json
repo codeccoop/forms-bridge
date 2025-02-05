@@ -1,6 +1,6 @@
 {
   "name": "forms-bridge-admin-client",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "main": "Gruntfile.js",
   "author": "Còdec",
   "license": "GPL-2.0-or-later",
