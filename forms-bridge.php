@@ -20,8 +20,6 @@ namespace FORMS_BRIDGE;
 use Exception;
 use WPCT_ABSTRACT\Plugin as Base_Plugin;
 
-use function WPCT_ABSTRACT\is_list;
-
 if (!defined('ABSPATH')) {
     exit();
 }
@@ -37,6 +35,7 @@ require_once 'includes/class-settings-store.php';
 require_once 'includes/class-rest-settings-controller.php';
 require_once 'includes/class-json-finger.php';
 require_once 'includes/class-form-hook.php';
+require_once 'includes/class-form-hook-template.php';
 
 require_once 'integrations/abstract-integration.php';
 require_once 'addons/abstract-addon.php';
@@ -69,6 +68,9 @@ class Forms_Bridge extends Base_Plugin
 
         Addon::load();
         Integration::load();
+
+        $templates_path = self::path() . 'templates';
+        Form_Hook::load_templates($templates_path);
 
         self::wp_hooks();
         self::custom_hooks();
@@ -103,7 +105,7 @@ class Forms_Bridge extends Base_Plugin
         add_filter(
             'forms_bridge_form_hooks',
             static function ($form_hooks, $form_id = null) {
-                if (!is_list($form_hooks)) {
+                if (!wp_is_numeric_array($form_hooks)) {
                     $form_hooks = [];
                 }
 

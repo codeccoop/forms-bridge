@@ -28,6 +28,44 @@ class Form_Hook
      */
     protected $api;
 
+    protected static $template_class = '\FORMS_BRIDGE\Form_Hook_Template';
+
+    protected static $templates = [];
+
+    public static function load_templates($templates_path)
+    {
+        if (!is_dir($templates_path)) {
+            $res = mkdir($templates_path);
+            if (!$res) {
+                return;
+            }
+        }
+
+        if (!is_readable($templates_path)) {
+            return;
+        }
+
+        foreach (
+            array_diff(scandir($templates_path), ['.', '..'])
+            as $template_file
+        ) {
+            $config = include $templates_path . '/' . $template_file;
+            static::$templates[] = new static::$template_class(
+                $template_file,
+                $config
+            );
+        }
+    }
+
+    public static function get_template($name)
+    {
+        foreach (static::$templates as $template) {
+            if ($template->name === $name) {
+                return $template;
+            }
+        }
+    }
+
     /**
      * Form hooks getter.
      *
