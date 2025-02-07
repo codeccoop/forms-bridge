@@ -90,6 +90,28 @@ class Integration extends BaseIntegration
         }, $forms);
     }
 
+    public function create_form($data)
+    {
+        if (empty($data['title']) || empty($data['fields'])) {
+            return;
+        }
+
+        $form = $this->fields_to_form($data['fields']);
+
+        $contact_form = wpcf7_save_contact_form([
+            'title' => $data['title'],
+            'locale' => apply_filters(
+                'wpct_i18n_current_language',
+                null,
+                'locale'
+            ),
+            'form' => $form,
+            'mail' => get_option('admin_email'),
+        ]);
+
+        return $contact_form->id();
+    }
+
     /**
      * Retrive the current submission data.
      *
@@ -281,5 +303,68 @@ class Integration extends BaseIntegration
         }
 
         return $uploads;
+    }
+
+    /**
+     * Gets fields from a template and return a contact form content string.
+     *
+     * @param array $fields
+     *
+     * @return string Form content.
+     */
+    private function fields_to_form($fields)
+    {
+        $form = '';
+        foreach ($fields as $field) {
+            if ($field['type'] == 'hidden') {
+                $form .= $this->field_to_tag($field) . "\n\n";
+            } else {
+                $form .= "<label> {$field['label']}\n";
+                $form .= '  ' . $this->field_to_tag($field) . " </label>\n\n";
+            }
+        }
+
+        $form .= sprintf('[submit "%s"]', __('Submit', 'forms-bridge'));
+        return $form;
+    }
+
+    /**
+     * Gets a field template data and returns a form tag string.
+     *
+     * @param array $field.
+     *
+     * @return string.
+     */
+    private function field_to_tag($field)
+    {
+        if (!empty($field['value'])) {
+            $type = 'hidden';
+        } else {
+            $type = sanitize_text_field($field['type']);
+
+            if ($field['required'] ?? false) {
+                $type .= '*';
+            }
+        }
+
+        $name = sanitize_text_field($field['name']);
+        $tag = "[{$type} {$name} ";
+
+        foreach ($field as $key => $val) {
+            if (
+                !in_array($key, ['name', 'type', 'value', 'required', 'label'])
+            ) {
+                $key = sanitize_text_field($key);
+                $val = sanitize_text_field($val);
+                $tag .= "{$key}:{$val} ";
+            }
+        }
+
+        if (!empty($field['value'])) {
+            $value = sanitize_text_field((string) $field['value']);
+            $tag .= "\"{$value}\"";
+        }
+
+        return $tag . ']';
     }
 }
