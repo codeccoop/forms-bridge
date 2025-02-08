@@ -1,0 +1,166 @@
+<?php
+
+add_filter(
+    'forms_bridge_template_data',
+    function ($data, $template_name) {
+        if ($template_name === 'financoop-subscription') {
+            $index = array_search(
+                'campaign_id',
+                array_column($data['form']['fields'], 'name')
+            );
+            $campaign_field = $data['form']['fields'][$index];
+            $campaign_id = $campaign_field['value'];
+            $data['hook']['endpoint'] = preg_replace(
+                '/campaign_id/',
+                $campaign_id,
+                $data['hook']['endpoint']
+            );
+        }
+
+        return $data;
+    },
+    10,
+    2
+);
+
+return [
+    'title' => __('FinanCoop Subscription', 'forms-bridge'),
+    'fields' => [
+        [
+            'ref' => '#form/fields[]',
+            'name' => 'ordered_parts',
+            'label' => __('Ordered parts', 'forms-bridge'),
+            'type' => 'integer',
+            'required' => true,
+        ],
+        [
+            'ref' => '#form/fields[]',
+            'name' => 'share_product_id',
+            'label' => __('Share product', 'forms-bridge'),
+            'type' => 'integer',
+            'required' => true,
+        ],
+        [
+            'ref' => '#form/fields[]',
+            'name' => 'source',
+            'label' => __('Source', 'forms-bridge'),
+            'type' => 'string',
+            'required' => true,
+        ],
+    ],
+    'hook' => [
+        'endpoint' => '/api/campaign/campaign_id/subscription_request',
+        'pipes' => [
+            [
+                'from' => 'partner_id',
+                'to' => 'partner_id',
+                'cast' => 'integer',
+            ],
+            [
+                'from' => 'ordered_parts',
+                'to' => 'ordered_parts',
+                'cast' => 'integer',
+            ],
+            [
+                'from' => 'share_product_id',
+                'to' => 'share_product_id',
+                'cast' => 'integer',
+            ],
+            [
+                'from' => 'campaign_id',
+                'to' => 'campaign_id',
+                'cast' => 'integer',
+            ],
+        ],
+    ],
+    'form' => [
+        'title' => __('FinanCoop Subscription', 'forms-bridge'),
+        'fields' => [
+            [
+                'name' => 'partner_id',
+                'type' => 'hidden',
+                'required' => true,
+            ],
+            [
+                'name' => 'ordered_parts',
+                'type' => 'hidden',
+                'required' => true,
+            ],
+            [
+                'name' => 'share_product_id',
+                'type' => 'hidden',
+                'required' => true,
+            ],
+            [
+                'name' => 'source',
+                'type' => 'hidden',
+                'required' => true,
+            ],
+            [
+                'name' => 'type',
+                'type' => 'hidden',
+                'required' => true,
+                'value' => 'increase',
+            ],
+            [
+                'name' => 'campaign_id',
+                'type' => 'hidden',
+                'required' => true,
+            ],
+            [
+                'label' => __('Country code', 'forms-bridge'),
+                'name' => 'country_code',
+                'type' => 'string',
+                'required' => true,
+            ],
+            [
+                'label' => __('First name', 'forms-bridge'),
+                'name' => 'firstname',
+                'type' => 'string',
+                'required' => true,
+            ],
+            [
+                'label' => __('Last name', 'forms-bridge'),
+                'name' => 'lastname',
+                'type' => 'string',
+                'required' => true,
+            ],
+            [
+                'label' => __('Email', 'forms-bridge'),
+                'name' => 'email',
+                'type' => 'string',
+                'required' => true,
+            ],
+            [
+                'label' => __('Address', 'forms-bridge'),
+                'name' => 'address',
+                'type' => 'string',
+                'required' => true,
+            ],
+            [
+                'label' => __('City', 'forms-bridge'),
+                'name' => 'city',
+                'type' => 'string',
+                'required' => true,
+            ],
+            [
+                'label' => __('Zip code', 'forms-bridge'),
+                'name' => 'zip_code',
+                'type' => 'string',
+                'required' => true,
+            ],
+            [
+                'label' => __('Phone', 'forms-bridge'),
+                'name' => 'phone',
+                'type' => 'string',
+                'required' => true,
+            ],
+            [
+                'name' => 'lang',
+                'type' => 'hidden',
+                'required' => true,
+                // 'value' => 'en_US',
+            ],
+        ],
+    ],
+];

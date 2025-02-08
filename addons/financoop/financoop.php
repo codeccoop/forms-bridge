@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) {
 }
 
 require_once 'class-financoop-form-hook.php';
+require_once 'class-financoop-form-hook-template.php';
 
 /**
  * FinanCoop Addon class.
