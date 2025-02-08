@@ -146,7 +146,7 @@ class Form_Hook
      *
      * @return Http_Backend|null
      */
-    private function backend()
+    protected function backend()
     {
         $backend_name = $this->data['backend'] ?? null;
         if (!$backend_name) {
@@ -234,7 +234,7 @@ class Form_Hook
      *
      * @return array Data modified by the hook's pipes.
      */
-    public function apply_pipes($data)
+    final public function apply_pipes($data)
     {
         $finger = new JSON_Finger($data);
         foreach ($this->pipes as $pipe) {

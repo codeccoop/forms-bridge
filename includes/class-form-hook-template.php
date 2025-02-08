@@ -55,7 +55,7 @@ class Form_Hook_Template
      *
      * @var string
      */
-    private $api;
+    protected $api;
 
     /**
      * Handles the template file name.
@@ -107,27 +107,23 @@ class Form_Hook_Template
                 'required' => true,
             ],
             [
-                'ref' => '#hook',
-                'name' => 'endpoint',
-                'label' => 'Endpoint',
+                'ref' => '#backend',
+                'name' => 'name',
+                'label' => 'Backend name',
                 'type' => 'string',
                 'required' => true,
             ],
             [
-                'ref' => '#hook',
-                'name' => 'method',
-                'label' => 'Method',
+                'ref' => '#backend',
+                'name' => 'base_url',
+                'label' => 'Base URL',
                 'type' => 'string',
-                'required' => true,
-                'default' => 'POST',
             ],
         ],
         'hook' => [
             'name' => '',
             'backend' => '',
             'form_id' => '',
-            'endpoint' => '',
-            'method' => 'POST',
         ],
     ];
 
@@ -154,11 +150,27 @@ class Form_Hook_Template
                     'label' => ['type' => 'string'],
                     'type' => ['type' => 'string'],
                     'required' => ['type' => 'boolean'],
-                    'const' => [
-                        'type' => ['string', 'boolean', 'number', 'integer'],
+                    'value' => [
+                        'type' => [
+                            'array',
+                            'object',
+                            'string',
+                            'boolean',
+                            'number',
+                            'integer',
+                            'null',
+                        ],
                     ],
                     'default' => [
-                        'type' => ['string', 'boolean', 'number', 'integer'],
+                        'type' => [
+                            'array',
+                            'object',
+                            'string',
+                            'boolean',
+                            'number',
+                            'integer',
+                            'null',
+                        ],
                     ],
                     'options' => [
                         'type' => 'array',
@@ -209,7 +221,28 @@ class Form_Hook_Template
                     ],
                 ],
             ],
-            'required' => ['name', 'backend', 'form_id', 'endpoint', 'pipes'],
+            'required' => ['name', 'form_id', 'pipes'],
+            'additionalProperties' => false,
+        ],
+        'backend' => [
+            'type' => 'object',
+            'properties' => [
+                'name' => ['type' => 'string'],
+                'base_url' => ['type' => 'string'],
+                'headers' => [
+                    'type' => 'array',
+                    'items' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'name' => ['type' => 'string'],
+                            'value' => ['type' => 'string'],
+                        ],
+                        'required' => ['name', 'value'],
+                        'additionalProperties' => false,
+                    ],
+                ],
+            ],
+            'required' => ['name' /*, 'base_url', 'headers'*/],
             'additionalProperties' => false,
         ],
         'form' => [
@@ -232,6 +265,9 @@ class Form_Hook_Template
                                     'properties' => [],
                                 ],
                             ],
+                            // 'value' => [
+                            //     'type' => ['object', 'array', 'string', 'integer', 'number', 'null']
+                            // ],
                             'is_file' => ['type' => 'boolean'],
                             'is_multi' => ['type' => 'boolean'],
                         ],
@@ -248,17 +284,22 @@ class Form_Hook_Template
     /**
      * Validates input config against the template schema.
      *
+     * @param string $name Template name.
      * @param array $config Input config.
      *
      * @return array|WP_Error Validated config.
      */
-    private static function validate_config($config)
+    private static function validate_config($name, $config)
     {
         $schema = [
             '$schema' => 'https://json-schema.org/draft/2020-12/schema',
             'type' => 'object',
             'additionalProperties' => false,
-            'properties' => static::$schema,
+            'properties' => apply_filters(
+                'forms_bridge_template_schema',
+                static::$schema,
+                $name
+            ),
             'required' => ['title', 'integrations', 'fields', 'form', 'hook'],
         ];
 
@@ -308,7 +349,18 @@ class Form_Hook_Template
                 ],
                 'hook' => [
                     'name' => '',
+                    'form_id' => '',
                     'pipes' => [],
+                ],
+                'backend' => [
+                    'name' => '',
+                    'base_url' => '',
+                    'headers' => [
+                        [
+                            'name' => 'Content-Type',
+                            'value' => 'application/json',
+                        ],
+                    ],
                 ],
                 'form' => [
                     'title' => '',
@@ -463,16 +515,19 @@ class Form_Hook_Template
      */
     public function __construct($file, $config)
     {
-        $this->api = 'rest-api';
         $this->file = $file;
         $this->name = pathinfo(basename($file))['filename'];
-        $this->config = self::validate_config($config);
+        $this->config = self::validate_config($this->name, $config);
 
         add_filter(
             'forms_bridge_templates',
-            function ($templates, $api = 'rest-api') {
+            function ($templates, $api) {
                 if (!wp_is_numeric_array($templates)) {
                     $templates = [];
+                }
+
+                if (empty($this->api)) {
+                    return $templates;
                 }
 
                 if ($api && $api !== $this->api) {
@@ -572,7 +627,15 @@ class Form_Hook_Template
                     'ref' => ['type' => 'string'],
                     'name' => ['type' => 'string'],
                     'value' => [
-                        'type' => ['string', 'boolean', 'number', 'integer'],
+                        'type' => [
+                            'array',
+                            'object',
+                            'string',
+                            'boolean',
+                            'number',
+                            'integer',
+                            'null',
+                        ],
                     ],
                 ],
                 'required' => ['ref', 'name', 'value'],
@@ -620,6 +683,14 @@ class Form_Hook_Template
                 ]);
             }
 
+            // Format backend headers' values
+            if ($field['ref'] === '#backend/headers[]') {
+                $field['value'] = [
+                    'name' => $field['name'],
+                    'value' => $field['value'],
+                ];
+            }
+
             $keys = explode('/', substr($field['ref'], 1));
             $leaf = &$data;
             foreach ($keys as $key) {
@@ -652,6 +723,8 @@ class Form_Hook_Template
             }
         }
 
+        $data = apply_filters('forms_bridge_template_data', $data, $this->name);
+
         $integration_instance = Integration::integrations()[$integration];
         $form_id = $integration_instance->create_form($data['form']);
 
@@ -662,6 +735,18 @@ class Form_Hook_Template
             );
         }
 
+        if (isset($data['backend']['base_url'])) {
+            $result = $this->create_backend($data['backend']);
+
+            if (!$result) {
+                $integration_instance->remove_form($form_id);
+                throw new Form_Hook_Template_Exception(
+                    'backend_creation_error',
+                    __('Forms bridge can\'t create the backend', 'forms-bridge')
+                );
+            }
+        }
+
         $result = $this->create_hook(
             array_merge($data['hook'], [
                 'form_id' => $integration . ':' . $form_id,
@@ -670,7 +755,7 @@ class Form_Hook_Template
         );
 
         if (!$result) {
-            wp_delete_post($form_id);
+            $integration_instance->remove_form($form_id);
             throw new Form_Hook_Template_Exception(
                 'hook_creation_error',
                 __('Forms bridge can\'t create the form hook', 'forms-bridge')
@@ -678,6 +763,42 @@ class Form_Hook_Template
         }
     }
 
+    private function create_backend($data)
+    {
+        $setting = Forms_Bridge::setting('general');
+        $setting_data = $setting->data();
+
+        $name_conflict =
+            array_search(
+                $data['name'],
+                array_column($setting_data['backends'], 'name')
+            ) !== false;
+
+        if ($name_conflict) {
+            return;
+        }
+
+        $setting_data['backends'][] = $data;
+
+        $setting_data = apply_filters(
+            'wpct_validate_setting',
+            $setting_data,
+            $setting
+        );
+
+        $is_valid =
+            array_search(
+                $data['name'],
+                array_column($setting_data['backends'], 'name')
+            ) !== false;
+
+        if (!$is_valid) {
+            return;
+        }
+
+        $setting->form_hooks = $setting_data['form_hooks'];
+        return true;
+    }
     /**
      * Stores the form hook data on the settings store.
      *
@@ -695,6 +816,7 @@ class Form_Hook_Template
                 $data['name'],
                 array_column($setting_data['form_hooks'], 'name')
             ) !== false;
+
         if ($name_conflict) {
             return;
         }
@@ -711,6 +833,7 @@ class Form_Hook_Template
                 $data['name'],
                 array_column($setting_data['form_hooks'], 'name')
             ) !== false;
+
         if (!$is_valid) {
             return;
         }

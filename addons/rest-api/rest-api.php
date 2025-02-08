@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) {
 }
 
 require_once 'class-rest-form-hook.php';
+require_once 'class-rest-form-hook-template.php';
 
 /**
  * REST API Addon class.
