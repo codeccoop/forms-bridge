@@ -10,47 +10,37 @@ class Odoo_Form_Hook extends Form_Hook
 {
     public function __construct($data)
     {
-        parent::__construct($data);
         $this->api = 'odoo';
-        $this->data['backend'] = $this->database()->backend->name;
-        $this->data['endpoint'] = $this->endpoint();
-        $this->data['method'] = 'POST';
+
+        parent::__construct(
+            array_merge($data, [
+                'endpoint' => '/jsonrpc',
+                'method' => 'POST',
+            ])
+        );
 
         add_filter(
             'forms_bridge_hook_database',
             function ($db, $hook) {
-                return $this->db_interceptor($db, $hook);
-            },
-            9,
-            2
-        );
+                if ($hook->name === $this->name) {
+                    $db = $this->database();
+                }
 
-        add_filter(
-            'forms_bridge_hook_content_type',
-            function ($content_type, $hook) {
-                return $this->content_type_interceptor($content_type, $hook);
+                return $db;
             },
-            9,
+            10,
             2
         );
     }
 
-    private function db_interceptor($db, $hook)
+    protected function content_type()
     {
-        if ($hook->name !== $this->name) {
-            return $db;
-        } else {
-            return $this->database();
-        }
+        return 'application/json';
     }
 
-    private function content_type_interceptor($content_type, $hook)
+    protected function backend()
     {
-        if ($hook->name !== $this->name) {
-            return $content_type;
-        } else {
-            return 'application/json';
-        }
+        return $this->database()->backend;
     }
 
     private function database()
@@ -60,16 +50,6 @@ class Odoo_Form_Hook extends Form_Hook
             if ($db['name'] === $this->data['database']) {
                 return new Odoo_DB($db);
             }
-        }
-    }
-
-    private function endpoint()
-    {
-        $base_url = $this->database()->backend->base_url;
-        if (preg_match('/\/jsonrpc\/?$/', $base_url)) {
-            return '';
-        } else {
-            return '/jsonrpc';
         }
     }
 }
