@@ -51,6 +51,11 @@ return [
         'model' => 'crm.lead',
         'pipes' => [
             [
+                'from' => 'submission_id',
+                'to' => 'submission_id',
+                'cast' => 'null',
+            ],
+            [
                 'from' => 'priority',
                 'to' => 'priority',
                 'cast' => 'string',
@@ -88,7 +93,7 @@ return [
             [
                 'label' => __('Your phone', 'forms-bridge'),
                 'name' => 'phone',
-                'type' => 'string',
+                'type' => 'text',
             ],
             [
                 'label' => __('Your mobile', 'forms-bridge'),

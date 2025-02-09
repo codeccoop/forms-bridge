@@ -124,6 +124,10 @@ abstract class Addon extends Singleton
         );
 
         add_filter("option_{$general_setting}", static function ($value) {
+            if (!is_array($value)) {
+                return $value;
+            }
+
             return array_merge($value, ['addons' => self::registry()]);
         });
 
@@ -351,6 +355,10 @@ abstract class Addon extends Singleton
         add_filter(
             'option_' . self::setting_name(),
             static function ($value) {
+                if (!is_array($value)) {
+                    return $value;
+                }
+
                 return array_merge($value, [
                     'templates' => static::templates(),
                 ]);

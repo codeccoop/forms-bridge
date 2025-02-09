@@ -132,29 +132,35 @@ class Form_Hook_Template
                     'required' => ['type' => 'boolean'],
                     'value' => [
                         'type' => [
+                            'integer',
+                            'number',
+                            'string',
                             'array',
                             'object',
-                            'string',
                             'boolean',
-                            'number',
-                            'integer',
                             'null',
                         ],
                     ],
                     'default' => [
                         'type' => [
+                            'integer',
+                            'number',
+                            'string',
                             'array',
                             'object',
-                            'string',
                             'boolean',
-                            'number',
-                            'integer',
                             'null',
                         ],
                     ],
                     'options' => [
                         'type' => 'array',
-                        'items' => ['type' => 'string'],
+                        'items' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'label' => ['type' => 'string'],
+                                'value' => ['type' => 'string'],
+                            ],
+                        ],
                         'uniqueItems' => true,
                     ],
                     'enum' => [
@@ -162,10 +168,12 @@ class Form_Hook_Template
                         'items' => [],
                         'uniqueItems' => true,
                     ],
+                    'min' => ['type' => 'integer'],
+                    'max' => ['type' => 'integer'],
                     'attributes' => ['type' => 'object'],
                 ],
                 'required' => ['ref', 'name', 'label', 'type'],
-                'additionalProperties' => false,
+                'additionalProperties' => true,
             ],
         ],
         'hook' => [
@@ -281,7 +289,7 @@ class Form_Hook_Template
             'required' => ['title', 'integrations', 'fields', 'form', 'hook'],
         ];
 
-        $config = self::with_defaults($config, static::$default);
+        $config = self::with_defaults($config, $schema);
 
         $is_valid = rest_validate_value_from_schema($config, $schema);
         if (is_wp_error($is_valid)) {
@@ -295,16 +303,12 @@ class Form_Hook_Template
      * Apply defaults to the given config.
      *
      * @param array $config Input config.
+     * @param array $schema Template data schema.
      *
      * @return array Config fullfilled with defaults.
      */
-    private static function with_defaults($config)
+    private static function with_defaults($config, $schema)
     {
-        $schema = [
-            'type' => 'object',
-            'properties' => static::$schema,
-        ];
-
         // merge template defaults with common defaults
         $default = self::merge_array(
             static::$default,
@@ -393,12 +397,27 @@ class Form_Hook_Template
         }
 
         if ($schema['type'] === 'object') {
-            // TODO: Not harcoded column name
             foreach ($default as $item) {
-                if (
-                    !in_array($item['name'], array_column($collection, 'name'))
-                ) {
+                $col_item = null;
+                for ($i = 0; $i < count($collection); $i++) {
+                    $col_item = $collection[$i];
+
+                    if (
+                        $col_item['name'] === $item['name'] &&
+                        ($col_item['ref'] ?? false) === ($item['ref'] ?? false)
+                    ) {
+                        break;
+                    }
+                }
+
+                if ($i === count($collection)) {
                     $collection[] = $item;
+                } else {
+                    $collection[$i] = self::merge_array(
+                        $col_item,
+                        $default,
+                        $schema
+                    );
                 }
             }
 
@@ -590,10 +609,17 @@ class Form_Hook_Template
             static::$schema['fields']['items']
         );
 
-        if (count($all_fields) !== count($fields)) {
+        $requireds = array_filter($all_fields, function ($field) {
+            return $field['required'] ?? false;
+        });
+
+        if (
+            count($fields) > count($all_fields) ||
+            count($fields) < count($requireds)
+        ) {
             throw new Form_Hook_Template_Exception(
                 'invalid_fields',
-                __('Invalid number of template fields', 'forms-bridge')
+                __('Invalid template fields', 'forms-bridge')
             );
         }
 
@@ -606,12 +632,12 @@ class Form_Hook_Template
                     'name' => ['type' => 'string'],
                     'value' => [
                         'type' => [
-                            'array',
-                            'object',
-                            'string',
-                            'boolean',
                             'number',
                             'integer',
+                            'string',
+                            'boolean',
+                            'array',
+                            'object',
                             'null',
                         ],
                     ],
@@ -724,7 +750,7 @@ class Form_Hook_Template
 
         do_action('forms_bridge_template_form', $data['form'], $this->name);
 
-        if (isset($data['backend']['base_url'])) {
+        if (!empty($data['backend']['base_url'])) {
             $result = $this->create_backend($data['backend']);
 
             if (!$result) {
@@ -745,6 +771,11 @@ class Form_Hook_Template
 
         if (!$result) {
             $integration_instance->remove_form($form_id);
+
+            if (!empty($data['backend']['base_url'])) {
+                $this->remove_backend($data['backend']['name']);
+            }
+
             throw new Form_Hook_Template_Exception(
                 'hook_creation_error',
                 __('Forms bridge can\'t create the form hook', 'forms-bridge')
@@ -752,47 +783,61 @@ class Form_Hook_Template
         }
     }
 
+    /**
+     * Removes backend from the settings store by name.
+     *
+     * @param string $name Backend name.
+     */
+    private function remove_backend($name)
+    {
+        $setting = \HTTP_BRIDGE\Settings_Store::setting('general'); // Forms_Bridge::setting('general');
+        $setting->backends = array_filter($setting->backends, function (
+            $backend
+        ) use ($name) {
+            return $backend['name'] !== $name;
+        });
+    }
+
+    /**
+     * Stores the backend data on the settings store.
+     *
+     * @param array $data Backend data.
+     *
+     * @return boolean Creation result.
+     */
     private function create_backend($data)
     {
-        $setting = Forms_Bridge::setting('general');
-        $setting_data = $setting->data();
+        $setting = \HTTP_BRIDGE\Settings_Store::setting('general'); // Forms_Bridge::setting('general');
+        $backends = $setting->backends;
 
         $name_conflict =
-            array_search(
-                $data['name'],
-                array_column($setting_data['backends'], 'name')
-            ) !== false;
+            array_search($data['name'], array_column($backends, 'name')) !==
+            false;
 
         if ($name_conflict) {
             return;
         }
 
-        $setting_data['backends'][] = $data;
+        do_action('forms_bridge_before_template_backend', $data, $this->name);
 
-        $setting_data = apply_filters(
-            'wpct_validate_setting',
-            $setting_data,
-            $setting
-        );
+        $setting->backends = array_merge($backends, [$data]);
+        $setting->refresh();
 
         $is_valid =
             array_search(
                 $data['name'],
-                array_column($setting_data['backends'], 'name')
+                array_column($setting->backends, 'name')
             ) !== false;
 
         if (!$is_valid) {
             return;
         }
 
-        do_action('forms_bridge_before_template_backend', $data, $this->name);
-
-        $setting->backends = $setting_data['backends'];
-
         do_action('forms_bridge_template_backend', $data, $this->name);
 
         return true;
     }
+
     /**
      * Stores the form hook data on the settings store.
      *
@@ -803,38 +848,30 @@ class Form_Hook_Template
     private function create_hook($data)
     {
         $setting = Forms_Bridge::setting($this->api);
-        $setting_data = $setting->data();
+        $form_hooks = $setting->form_hooks;
 
         $name_conflict =
-            array_search(
-                $data['name'],
-                array_column($setting_data['form_hooks'], 'name')
-            ) !== false;
+            array_search($data['name'], array_column($form_hooks, 'name')) !==
+            false;
 
         if ($name_conflict) {
             return;
         }
 
-        $setting_data['form_hooks'][] = $data;
-        $setting_data = apply_filters(
-            'wpct_validate_setting',
-            $setting_data,
-            $setting
-        );
+        do_action('forms_bridge_before_template_hook', $data, $this->name);
+
+        $setting->form_hooks = array_merge($form_hooks, [$data]);
+        $setting->refresh();
 
         $is_valid =
             array_search(
                 $data['name'],
-                array_column($setting_data['form_hooks'], 'name')
+                array_column($setting->form_hooks, 'name')
             ) !== false;
 
         if (!$is_valid) {
             return;
         }
-
-        do_action('forms_bridge_before_template_hook', $data, $this->name);
-
-        $setting->form_hooks = $setting_data['form_hooks'];
 
         do_action('forms_bridge_template_hook', $data, $this->name);
 

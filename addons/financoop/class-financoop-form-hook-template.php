@@ -44,13 +44,13 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
                 'type' => 'string',
                 'required' => true,
             ],
-            [
-                'ref' => '#hook',
-                'name' => 'endpoint',
-                'label' => 'Endpoint',
-                'type' => 'string',
-                'required' => true,
-            ],
+            // [
+            //     'ref' => '#hook',
+            //     'name' => 'endpoint',
+            //     'label' => 'Endpoint',
+            //     'type' => 'string',
+            //     'required' => true,
+            // ],
             [
                 'ref' => '#backend',
                 'name' => 'name',
@@ -63,7 +63,7 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
                 'ref' => '#backend',
                 'name' => 'base_url',
                 'label' => 'Base URL',
-                'type' => 'string',
+                'type' => 'url',
             ],
             [
                 'ref' => '#backend/headers[]',
@@ -98,7 +98,7 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
             'fields' => [
                 [
                     'name' => 'campaign_id',
-                    'type' => 'string',
+                    'type' => 'hidden',
                     'required' => true,
                 ],
             ],

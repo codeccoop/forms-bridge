@@ -50,6 +50,10 @@ class Settings_Store extends Base_Settings
         add_filter(
             "option_{$slug}_general",
             static function ($value) {
+                if (!is_array($value)) {
+                    return $value;
+                }
+
                 $backends = \HTTP_BRIDGE\Settings_Store::setting('general')
                     ->backends;
 

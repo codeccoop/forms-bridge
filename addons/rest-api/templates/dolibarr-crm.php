@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit();
+}
+
 add_filter(
     'forms_bridge_payload',
     function ($payload, $hook) {
@@ -21,6 +25,7 @@ return [
             'name' => 'title',
             'label' => __('Form title', 'forms-bridge'),
             'default' => __('Dolibarr CRM Leads', 'forms-bridge'),
+            'type' => 'string',
         ],
         [
             'ref' => '#form/fields[]',
@@ -33,7 +38,7 @@ return [
             'name' => 'endpoint',
             'label' => __('Endpoint', 'forms-bridge'),
             'type' => 'string',
-            'default' => '/api/index.php/products',
+            'value' => '/api/index.php/products',
         ],
     ],
     'form' => [

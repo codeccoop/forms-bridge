@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit();
+}
+
 add_filter(
     'forms_bridge_template_data',
     function ($data, $template_name) {
@@ -8,8 +12,10 @@ add_filter(
                 'campaign_id',
                 array_column($data['form']['fields'], 'name')
             );
+
             $campaign_field = $data['form']['fields'][$index];
             $campaign_id = $campaign_field['value'];
+
             $data['hook']['endpoint'] = preg_replace(
                 '/campaign_id/',
                 $campaign_id,
@@ -26,6 +32,13 @@ add_filter(
 return [
     'title' => __('FinanCoop Subscription', 'forms-bridge'),
     'fields' => [
+        [
+            'ref' => '#form/fields[]',
+            'name' => 'partner_id',
+            'label' => __('Partner ID', 'forms-bridge'),
+            'type' => 'integer',
+            'required' => true,
+        ],
         [
             'ref' => '#form/fields[]',
             'name' => 'ordered_parts',
@@ -47,10 +60,30 @@ return [
             'type' => 'string',
             'required' => true,
         ],
+        [
+            'ref' => '#form/fields[]',
+            'name' => 'type',
+            'label' => __('Type', 'forms-bridge'),
+            'type' => 'string',
+            'required' => true,
+            'value' => 'increase',
+        ],
+        [
+            'ref' => '#form/fields[]',
+            'name' => 'country_code',
+            'label' => __('Country code', 'forms-bridge'),
+            'type' => 'string',
+            'required' => true,
+        ],
     ],
     'hook' => [
         'endpoint' => '/api/campaign/campaign_id/subscription_request',
         'pipes' => [
+            [
+                'from' => 'submission_id',
+                'to' => 'submission_id',
+                'cast' => 'null',
+            ],
             [
                 'from' => 'partner_id',
                 'to' => 'partner_id',
@@ -100,7 +133,6 @@ return [
                 'name' => 'type',
                 'type' => 'hidden',
                 'required' => true,
-                'value' => 'increase',
             ],
             [
                 'name' => 'campaign_id',
@@ -108,58 +140,56 @@ return [
                 'required' => true,
             ],
             [
-                'label' => __('Country code', 'forms-bridge'),
                 'name' => 'country_code',
-                'type' => 'string',
+                'type' => 'hidden',
                 'required' => true,
             ],
             [
                 'label' => __('First name', 'forms-bridge'),
                 'name' => 'firstname',
-                'type' => 'string',
+                'type' => 'text',
                 'required' => true,
             ],
             [
                 'label' => __('Last name', 'forms-bridge'),
                 'name' => 'lastname',
-                'type' => 'string',
+                'type' => 'text',
                 'required' => true,
             ],
             [
                 'label' => __('Email', 'forms-bridge'),
                 'name' => 'email',
-                'type' => 'string',
+                'type' => 'email',
                 'required' => true,
             ],
             [
                 'label' => __('Address', 'forms-bridge'),
                 'name' => 'address',
-                'type' => 'string',
+                'type' => 'text',
                 'required' => true,
             ],
             [
                 'label' => __('City', 'forms-bridge'),
                 'name' => 'city',
-                'type' => 'string',
+                'type' => 'text',
                 'required' => true,
             ],
             [
                 'label' => __('Zip code', 'forms-bridge'),
                 'name' => 'zip_code',
-                'type' => 'string',
+                'type' => 'text',
                 'required' => true,
             ],
             [
                 'label' => __('Phone', 'forms-bridge'),
                 'name' => 'phone',
-                'type' => 'string',
+                'type' => 'text',
                 'required' => true,
             ],
             [
                 'name' => 'lang',
                 'type' => 'hidden',
                 'required' => true,
-                // 'value' => 'en_US',
             ],
         ],
     ],

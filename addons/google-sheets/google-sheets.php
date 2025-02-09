@@ -128,6 +128,10 @@ class Google_Sheets_Addon extends Addon
     {
         // Patch authorized state on the setting value
         add_filter('option_' . self::setting_name(), static function ($data) {
+            if (!is_array($data)) {
+                return $data;
+            }
+
             $data['authorized'] = Google_Sheets_Service::is_authorized();
             return $data;
         });
