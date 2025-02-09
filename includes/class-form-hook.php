@@ -67,11 +67,11 @@ class Form_Hook
             array_map(function ($template_file) use ($templates_path) {
                 return $templates_path . '/' . $template_file;
             }, array_diff(scandir($templates_path), ['.', '..'])),
-            $api,
+            $api
         );
 
         foreach ($template_files as $template_path) {
-            if (!is_file($template_file) || !is_readable($template_path)) {
+            if (!is_file($template_path) || !is_readable($template_path)) {
                 continue;
             }
 
@@ -90,7 +90,7 @@ class Form_Hook
                 static::$templates[] = new static::$template_class(
                     $template_file,
                     $config,
-                    $api,
+                    $api
                 );
             }
         }

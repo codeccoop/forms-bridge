@@ -477,7 +477,7 @@ class Form_Hook_Template
 
         add_filter(
             'forms_bridge_templates',
-            function ($templates, $api) {
+            function ($templates, $api = null) {
                 if (!wp_is_numeric_array($templates)) {
                     $templates = [];
                 }
