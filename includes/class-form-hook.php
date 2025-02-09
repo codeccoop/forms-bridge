@@ -47,8 +47,9 @@ class Form_Hook
      * are php and json.
      *
      * @param string $templates_path Source templates directory path.
+     * @param string $api API name.
      */
-    final public static function load_templates($templates_path)
+    final public static function load_templates($templates_path, $api)
     {
         if (!is_dir($templates_path)) {
             $res = mkdir($templates_path);
@@ -61,25 +62,35 @@ class Form_Hook
             return;
         }
 
-        foreach (
-            array_diff(scandir($templates_path), ['.', '..'])
-            as $template_file
-        ) {
-            $path = $templates_path . '/' . $template_file;
-            $ext = pathinfo($path)['extension'];
+        $template_files = apply_filters(
+            'forms_bridge_template_files',
+            array_map(function ($template_file) use ($templates_path) {
+                return $templates_path . '/' . $template_file;
+            }, array_diff(scandir($templates_path), ['.', '..'])),
+            $api,
+        );
+
+        foreach ($template_files as $template_path) {
+            if (!is_file($template_file) || !is_readable($template_path)) {
+                continue;
+            }
+
+            $template_file = basename($template_path);
+            $ext = pathinfo($template_file)['extension'];
 
             $config = null;
             if ($ext === 'php') {
-                $config = include $path;
+                $config = include $template_path;
             } elseif ($ext === 'json') {
-                $content = file_get_contents($path);
+                $content = file_get_contents($template_path);
                 $config = json_decode($content, true);
             }
 
             if ($config) {
                 static::$templates[] = new static::$template_class(
                     $template_file,
-                    $config
+                    $config,
+                    $api,
                 );
             }
         }
@@ -104,8 +115,9 @@ class Form_Hook
     /**
      * Stores the hook's data as a private attribute.
      */
-    public function __construct($data)
+    public function __construct($data, $api)
     {
+        $this->api = $api;
         $this->data = $data;
     }
 

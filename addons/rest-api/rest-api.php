@@ -22,11 +22,11 @@ class Rest_Addon extends Addon
     protected static $name = 'REST API';
 
     /**
-     * Handles the addon slug.
+     * Handles the addon's API name.
      *
      * @var string
      */
-    protected static $slug = 'rest-api';
+    protected static $api = 'rest-api';
 
     /**
      * Handles the addom's custom form hook class.
@@ -43,7 +43,7 @@ class Rest_Addon extends Addon
     protected static function setting_config()
     {
         return [
-            self::$slug,
+            self::$api,
             [
                 'form_hooks' => [
                     'type' => 'array',

@@ -30,11 +30,11 @@ abstract class Addon extends Singleton
     protected static $name;
 
     /**
-     * Handles addon unique slug.
+     * Handles addon's API name.
      *
      * @var string
      */
-    protected static $slug;
+    protected static $api;
 
     /**
      * Handles addon custom hook class name.
@@ -170,7 +170,7 @@ abstract class Addon extends Singleton
      */
     protected function construct(...$args)
     {
-        if (!(static::$name && static::$slug)) {
+        if (!(static::$name && static::$api)) {
             throw new Exception('Invalid addon registration');
         }
 
@@ -197,7 +197,7 @@ abstract class Addon extends Singleton
                 $form_hooks = static::setting()->form_hooks;
                 foreach ($form_hooks as $hook_data) {
                     if ($hook_data['name'] === $hook_name) {
-                        return new static::$hook_class($hook_data);
+                        return new static::$hook_class($hook_data, static::$api);
                     }
                 }
             },
@@ -215,7 +215,7 @@ abstract class Addon extends Singleton
      */
     final protected static function templates()
     {
-        return apply_filters('forms_bridge_templates', [], static::$slug);
+        return apply_filters('forms_bridge_templates', [], static::$api);
     }
 
     /**
@@ -225,7 +225,7 @@ abstract class Addon extends Singleton
      */
     final protected static function setting_name()
     {
-        return Forms_Bridge::slug() . '_' . static::$slug;
+        return Forms_Bridge::slug() . '_' . static::$api;
     }
 
     /**
@@ -235,7 +235,7 @@ abstract class Addon extends Singleton
      */
     final protected static function setting()
     {
-        return Forms_Bridge::setting(static::$slug);
+        return Forms_Bridge::setting(static::$api);
     }
 
     /**
@@ -256,7 +256,7 @@ abstract class Addon extends Singleton
             $form_hooks = [];
         }
 
-        if (!empty($api) && $api !== static::$slug) {
+        if (!empty($api) && $api !== static::$api) {
             return $form_hooks;
         }
 
@@ -290,11 +290,13 @@ abstract class Addon extends Singleton
             $form_id = "{$integration}:{$id}";
         }
 
+        $api = static::get_instance()->api;
+
         return array_merge(
             $form_hooks,
             array_map(
                 static function ($hook_data) {
-                    return new static::$hook_class($hook_data);
+                    return new static::$hook_class($hook_data, static::$api);
                 },
                 array_filter(
                     (array) static::setting()->form_hooks,
@@ -383,7 +385,7 @@ abstract class Addon extends Singleton
                 $reflector = new ReflectionClass(static::class);
                 $__FILE__ = $reflector->getFileName();
 
-                $script_name = Forms_Bridge::slug() . '-' . static::$slug;
+                $script_name = Forms_Bridge::slug() . '-' . static::$api;
                 wp_enqueue_script(
                     $script_name,
                     plugins_url('assets/addon.bundle.js', $__FILE__),
@@ -444,6 +446,6 @@ abstract class Addon extends Singleton
         $__FILE__ = (new ReflectionClass(static::class))->getFileName();
         $dir = dirname($__FILE__) . '/templates';
 
-        static::$hook_class::load_templates($dir);
+        static::$hook_class::load_templates($dir, static::$api);
     }
 }

@@ -111,11 +111,10 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
      *
      * @param string $file Source file path of the template config.
      * @param array $config Template config data.
+     * @param string $api Form hook API name.
      */
-    public function __construct($file, $config)
+    public function __construct($file, $config, $api)
     {
-        $this->api = 'financoop';
-
         add_filter(
             'forms_bridge_template_schema',
             function ($schema, $template_name) {
@@ -129,7 +128,7 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
             2
         );
 
-        parent::__construct($file, $config);
+        parent::__construct($file, $config, $api);
     }
 
     /**

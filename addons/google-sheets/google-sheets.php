@@ -29,11 +29,11 @@ class Google_Sheets_Addon extends Addon
     protected static $name = 'Google Sheets';
 
     /**
-     * Handles the addon slug.
+     * Handles the addon's API name.
      *
      * @var string
      */
-    protected static $slug = 'google-sheets';
+    protected static $api = 'google-sheets';
 
     /**
      * Handles the addom's custom form hook class.
@@ -74,7 +74,7 @@ class Google_Sheets_Addon extends Addon
         add_filter(
             'forms_bridge_attachments',
             static function ($attachments, $hook) {
-                if ($hook->api === self::$slug) {
+                if ($hook->api === self::$api) {
                     return [];
                 }
 
@@ -145,7 +145,7 @@ class Google_Sheets_Addon extends Addon
     protected static function setting_config()
     {
         return [
-            self::$slug,
+            self::$api,
             [
                 'form_hooks' => [
                     'type' => 'array',
@@ -209,7 +209,7 @@ class Google_Sheets_Addon extends Addon
             return $payload;
         }
 
-        if ($form_hook->api !== self::$slug) {
+        if ($form_hook->api !== self::$api) {
             return $payload;
         }
 

@@ -22,11 +22,11 @@ class Finan_Coop_Addon extends Addon
     protected static $name = 'FinanCoop';
 
     /**
-     * Handles the addon slug.
+     * Handles the addon's API name.
      *
      * @var string
      */
-    protected static $slug = 'financoop';
+    protected static $api = 'financoop';
 
     /**
      * Handles the addom's custom form hook class.
@@ -43,7 +43,7 @@ class Finan_Coop_Addon extends Addon
     protected static function setting_config()
     {
         return [
-            self::$slug,
+            self::$api,
             [
                 'form_hooks' => [
                     'type' => 'array',

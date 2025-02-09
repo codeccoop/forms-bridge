@@ -25,11 +25,11 @@ class Odoo_Addon extends Addon
     protected static $name = 'Odoo JSON-RPC';
 
     /**
-     * Handles the addon slug.
+     * Handles the addon's API name.
      *
      * @var string
      */
-    protected static $slug = 'odoo';
+    protected static $api = 'odoo';
 
     /**
      * Handles the addom's custom form hook class.
@@ -232,7 +232,7 @@ class Odoo_Addon extends Addon
     protected static function setting_config()
     {
         return [
-            self::$slug,
+            self::$api,
             [
                 'databases' => [
                     'type' => 'array',

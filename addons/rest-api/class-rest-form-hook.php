@@ -17,15 +17,4 @@ class Rest_Form_Hook extends Form_Hook
      * @var string
      */
     protected static $template_class = '\FORMS_BRIDGE\Rest_Form_Hook_Template';
-
-    /**
-     * Inherits the parent constructor and sets its api name.
-     *
-     * @param array $data Hook data.
-     */
-    public function __construct($data)
-    {
-        $this->api = 'rest-api';
-        parent::__construct($data);
-    }
 }

@@ -22,15 +22,15 @@ class Finan_Coop_Form_Hook extends Form_Hook
      * Inherits the parent constructor and sets its api name.
      *
      * @param array $data Hook data.
+     * @param string $api Form hook API name.
      */
-    public function __construct($data)
+    public function __construct($data, $api)
     {
-        $this->api = 'financoop';
-
         parent::__construct(
             array_merge($data, [
                 'method' => 'POST',
-            ])
+            ]),
+            $api,
         );
     }
 }

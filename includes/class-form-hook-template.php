@@ -83,29 +83,7 @@ class Form_Hook_Template
      *
      * @var array
      */
-    protected static $default = [
-        'fields' => [
-            [
-                'ref' => '#form',
-                'name' => 'title',
-                'label' => 'Form title',
-                'type' => 'string',
-                'required' => true,
-            ],
-            [
-                'ref' => '#hook',
-                'name' => 'name',
-                'label' => 'Hook name',
-                'type' => 'string',
-                'required' => true,
-            ],
-        ],
-        'hook' => [
-            'name' => '',
-            'backend' => '',
-            'form_id' => '',
-        ],
-    ];
+    protected static $default = [];
 
     /**
      * Handles the common template data json schema. The schema is common for all
@@ -420,27 +398,6 @@ class Form_Hook_Template
                     );
                 }
             }
-
-            $items = [];
-            foreach ($collection as $item) {
-                $default_item = array_values(
-                    array_filter($default, function ($value) use ($item) {
-                        return $value['name'] === $item['name'];
-                    })
-                );
-
-                if (!empty($default_item)) {
-                    $items[] = self::merge_array(
-                        $item,
-                        $default_item[0],
-                        $schema
-                    );
-                } else {
-                    $items[] = $item;
-                }
-            }
-
-            $collection = $items;
         } elseif ($schema['type'] === 'array') {
             // TODO: Handle matrix case
         }
@@ -509,9 +466,11 @@ class Form_Hook_Template
      *
      * @param string $file Source file path of the template config.
      * @param array $config Template config data.
+     * @param string $api Form hook API name.
      */
-    public function __construct($file, $config)
+    public function __construct($file, $config, $api)
     {
+        $this->api = $api;
         $this->file = $file;
         $this->name = pathinfo(basename($file))['filename'];
         $this->config = self::validate_config($this->name, $config);
@@ -747,6 +706,7 @@ class Form_Hook_Template
         }
 
         $data['hook']['form_id'] = $integration . ':' . $form_id;
+        $data['form']['id'] = $form_id;
 
         do_action('forms_bridge_template_form', $data['form'], $this->name);
 

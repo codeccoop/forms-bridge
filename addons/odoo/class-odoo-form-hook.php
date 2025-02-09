@@ -19,19 +19,19 @@ class Odoo_Form_Hook extends Form_Hook
     protected static $template_class = '\FORMS_BRIDGE\Odoo_Form_Hook_Template';
 
     /**
-     * Inherits the parent constructor and sets its api name.
+     * Inherits the parent constructor and sets data constants.
      *
      * @param array $data Hook data.
+     * @param string $api Form hook API name.
      */
-    public function __construct($data)
+    public function __construct($data, $api)
     {
-        $this->api = 'odoo';
-
         parent::__construct(
             array_merge($data, [
                 'endpoint' => '/jsonrpc',
                 'method' => 'POST',
-            ])
+            ]),
+            $api,
         );
     }
 
