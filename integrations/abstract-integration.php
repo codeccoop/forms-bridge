@@ -175,6 +175,10 @@ abstract class Integration extends Singleton
         );
 
         add_filter("option_{$general_setting}", static function ($value) {
+            if (!is_array($value)) {
+                return $value;
+            }
+
             return array_merge($value, ['integrations' => self::registry()]);
         });
 

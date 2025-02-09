@@ -89,6 +89,8 @@ class Integration extends BaseIntegration
      * @param array $data Form template data.
      *
      * @return int|null ID of the new form.
+     *
+     * @todo Fix form email attribute.
      */
     public function create_form($data)
     {
@@ -357,7 +359,7 @@ class Integration extends BaseIntegration
         } else {
             $type = sanitize_text_field($field['type']);
 
-            if ($field['required'] ?? false) {
+            if (($field['required'] ?? false) && $type !== 'hidden') {
                 $type .= '*';
             }
         }

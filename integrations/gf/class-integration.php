@@ -100,7 +100,22 @@ class Integration extends BaseIntegration
      *
      * @todo Implement this routine.
      */
-    public function create_form($data) {}
+    public function create_form($data)
+    {
+        if (empty($data['title']) || empty($data['fields'])) {
+            return;
+        }
+
+        $data['fields'] = $this->prepare_fields($data['fields']);
+
+        $form_id = GFAPI::add_form($data);
+
+        if (is_wp_error($form_id)) {
+            return;
+        }
+
+        return $form_id;
+    }
 
     /**
      * Removes a form by ID.
@@ -108,10 +123,11 @@ class Integration extends BaseIntegration
      * @param integer $form_id Form ID.
      *
      * @return boolean Removal result.
-     *
-     * @todo Implement this routine.
      */
-    public function remove_form($form_id) {}
+    public function remove_form($form_id)
+    {
+        GFFormsModel::delete_form($form_id);
+    }
 
     /**
      * Retrives the current submission data.
@@ -180,7 +196,6 @@ class Integration extends BaseIntegration
                 [],
                 'gf:' . $form_id
             ),
-            'description' => $form['description'],
             'fields' => array_values(
                 array_filter(
                     array_map(function ($field) {
@@ -488,5 +503,29 @@ class Integration extends BaseIntegration
     {
         $key = 'input_' . implode('_', explode('.', $field_id));
         return isset($_POST[$key]);
+    }
+
+    private function prepare_fields($fields)
+    {
+        return array_map(function ($field) {
+            $field = array_merge($field, [
+                'isRequired' => $field['required'] ?? false,
+                'allowPopulate' => true,
+                'inputName' => $field['name'],
+            ]);
+
+            if (isset($field['value'])) {
+                $field['defaultValue'] = $field['value'];
+            }
+
+            // TODO: Map forms bridge field types to gf field types
+            switch ($field['type']) {
+                case 'url':
+                    $field['type'] = 'website';
+                    break;
+            }
+
+            return $field;
+        }, $fields);
     }
 }
