@@ -8,6 +8,8 @@ if (!defined('ABSPATH')) {
 
 class Odoo_Form_Hook_Template extends Form_Hook_Template
 {
+    private $database_data = null;
+
     /**
      * Handles the template default values.
      *
@@ -22,12 +24,12 @@ class Odoo_Form_Hook_Template extends Form_Hook_Template
                 'type' => 'string',
                 'required' => true,
             ],
-            [
-                'ref' => '#database',
-                'name' => 'backend',
-                'label' => 'Backend',
-                'type' => 'string',
-            ],
+            // [
+            //     'ref' => '#database',
+            //     'name' => 'backend',
+            //     'label' => 'Backend',
+            //     'type' => 'string',
+            // ],
             [
                 'ref' => '#database',
                 'name' => 'user',
@@ -40,13 +42,13 @@ class Odoo_Form_Hook_Template extends Form_Hook_Template
                 'label' => 'Password',
                 'type' => 'string',
             ],
-            [
-                'ref' => '#hook',
-                'name' => 'database',
-                'label' => 'Database',
-                'type' => 'string',
-                'required' => true,
-            ],
+            // [
+            //     'ref' => '#hook',
+            //     'name' => 'database',
+            //     'label' => 'Database',
+            //     'type' => 'string',
+            //     'required' => true,
+            // ],
             // [
             //     'ref' => '#hook',
             //     'name' => 'model',
@@ -119,16 +121,38 @@ class Odoo_Form_Hook_Template extends Form_Hook_Template
             2
         );
 
+        parent::__construct($file, $config, $api);
+
         add_filter(
             'forms_bridge_template_data',
             function ($data, $name) {
-                if (
-                    $name === $this->name &&
-                    !empty($data['database']['backend']) &&
-                    !empty($data['database']['user']) &&
-                    !empty($data['database']['password'])
-                ) {
-                    $result = $this->create_database($data['database']);
+                if ($name === $this->name) {
+                    $this->database_data = array_merge($data['database'], [
+                        'backend' => $data['backend']['name'],
+                    ]);
+
+                    $data['hook']['database'] = $data['database']['name'];
+                }
+
+                return $data;
+            },
+            10,
+            2
+        );
+
+        add_action(
+            'forms_bridge_before_template_hook',
+            function ($data, $template_name) {
+                if ($template_name === $this->name && $this->database_data) {
+                    $database_exists = $this->database_exists(
+                        $this->database_data['name']
+                    );
+
+                    if ($database_exists) {
+                        return;
+                    }
+
+                    $result = $this->create_database($this->database_data);
 
                     if (!$result) {
                         throw new Form_Hook_Template_Exception(
@@ -140,14 +164,10 @@ class Odoo_Form_Hook_Template extends Form_Hook_Template
                         );
                     }
                 }
-
-                return $data;
             },
             10,
             2
         );
-
-        parent::__construct($file, $config, $api);
     }
 
     /**
@@ -185,30 +205,39 @@ class Odoo_Form_Hook_Template extends Form_Hook_Template
         return $schema;
     }
 
-    private function create_database($data)
+    /**
+     * Checks if a backend with the given name exists on the settings store.
+     *
+     * @param string $name Backend name.
+     *
+     * @return boolean
+     */
+    private function database_exists($name)
     {
         $setting = Forms_Bridge::setting($this->api);
         $databases = $setting->databases;
 
-        $name_conflict = array_search(
-            $data['name'],
-            array_column($databases, 'name')
-        );
+        return array_search($name, array_column($databases, 'name')) !== false;
+    }
 
-        if ($name_conflict) {
-            return;
-        }
+    /**
+     * Stores the database data on the settings store.
+     *
+     * @param array $data Database data.
+     *
+     * @return boolean Creation result.
+     */
+    private function create_database($data)
+    {
+        $setting = Forms_Bridge::setting($this->api);
+        $databases = $setting->databases;
 
         do_action('forms_bridge_before_template_database', $data, $this->name);
 
         $setting->databases = array_merge($databases, [$data]);
         $setting->refresh();
 
-        $is_valid =
-            array_search(
-                $data['name'],
-                array_column($setting->databases, 'name')
-            ) !== false;
+        $is_valid = $this->database_exists($data['name']);
 
         if (!$is_valid) {
             return;

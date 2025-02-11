@@ -106,28 +106,31 @@ class Form_Hook_Template
                     'ref' => ['type' => 'string'],
                     'name' => ['type' => 'string'],
                     'label' => ['type' => 'string'],
-                    'type' => ['type' => 'string'],
-                    'required' => ['type' => 'boolean'],
-                    'value' => [
-                        'type' => [
-                            'integer',
-                            'number',
-                            'string',
-                            'array',
-                            'object',
-                            'boolean',
-                            'null',
-                        ],
+                    'type' => [
+                        'type' => 'string',
+                        'enum' => ['string', 'number', 'options'],
                     ],
+                    'required' => ['type' => 'boolean'],
+                    // 'value' => [
+                    //     'type' => [
+                    //         'integer',
+                    //         'number',
+                    //         'string',
+                    //         'array',
+                    //         'object',
+                    //         'boolean',
+                    //         'null',
+                    //     ],
+                    // ],
                     'default' => [
                         'type' => [
                             'integer',
                             'number',
                             'string',
                             'array',
-                            'object',
+                            // 'object',
                             'boolean',
-                            'null',
+                            // 'null',
                         ],
                     ],
                     'options' => [
@@ -136,19 +139,29 @@ class Form_Hook_Template
                             'type' => 'object',
                             'properties' => [
                                 'label' => ['type' => 'string'],
-                                'value' => ['type' => 'string'],
+                                'value' => [
+                                    'type' => [
+                                        'integer',
+                                        'number',
+                                        'string',
+                                        'boolean',
+                                    ],
+                                ],
                             ],
                         ],
                         'uniqueItems' => true,
                     ],
                     'enum' => [
                         'type' => 'array',
-                        'items' => [],
+                        'items' => [
+                            'type' => ['integer', 'number', 'string'],
+                        ],
                         'uniqueItems' => true,
                     ],
                     'min' => ['type' => 'integer'],
                     'max' => ['type' => 'integer'],
-                    'attributes' => ['type' => 'object'],
+                    'multiple' => ['type' => 'boolean'],
+                    // 'attributes' => ['type' => 'object'],
                 ],
                 'required' => ['ref', 'name', 'label', 'type'],
                 'additionalProperties' => true,
@@ -185,7 +198,7 @@ class Form_Hook_Template
                     ],
                 ],
             ],
-            'required' => ['name', 'form_id', 'pipes'],
+            'required' => ['name', /* 'form_id', */ 'pipes'],
             'additionalProperties' => false,
         ],
         'backend' => [
@@ -220,18 +233,46 @@ class Form_Hook_Template
                         'properties' => [
                             'label' => ['type' => 'string'],
                             'name' => ['type' => 'string'],
-                            'type' => ['type' => 'string'],
+                            'type' => [
+                                'type' => 'string',
+                                'enum' => [
+                                    'text',
+                                    'number',
+                                    'url',
+                                    'email',
+                                    'options',
+                                    'hidden',
+                                ],
+                            ],
                             'required' => ['type' => 'boolean'],
                             'options' => [
                                 'type' => 'array',
                                 'items' => [
                                     'type' => 'object',
-                                    'properties' => [],
+                                    'properties' => [
+                                        'value' => [
+                                            'type' => [
+                                                'integer',
+                                                'number',
+                                                'string',
+                                                'boolean',
+                                            ],
+                                        ],
+                                        'label' => ['type' => 'string'],
+                                    ],
                                 ],
                             ],
-                            // 'value' => [
-                            //     'type' => ['object', 'array', 'string', 'integer', 'number', 'null']
-                            // ],
+                            'value' => [
+                                'type' => [
+                                    'integer',
+                                    'number',
+                                    'string',
+                                    // 'boolean',
+                                    // 'object',
+                                    'array',
+                                    // 'null',
+                                ],
+                            ],
                             'is_file' => ['type' => 'boolean'],
                             'is_multi' => ['type' => 'boolean'],
                         ],
@@ -710,7 +751,11 @@ class Form_Hook_Template
 
         do_action('forms_bridge_template_form', $data['form'], $this->name);
 
-        if (!empty($data['backend']['base_url'])) {
+        $create_backend =
+            (isset($data['backend']['name']) &&
+                !$this->backend_exists($data['backend']['name'])) ||
+            false;
+        if ($create_backend) {
             $result = $this->create_backend($data['backend']);
 
             if (!$result) {
@@ -732,7 +777,7 @@ class Form_Hook_Template
         if (!$result) {
             $integration_instance->remove_form($form_id);
 
-            if (!empty($data['backend']['base_url'])) {
+            if ($create_backend) {
                 $this->remove_backend($data['backend']['name']);
             }
 
@@ -750,12 +795,27 @@ class Form_Hook_Template
      */
     private function remove_backend($name)
     {
-        $setting = \HTTP_BRIDGE\Settings_Store::setting('general'); // Forms_Bridge::setting('general');
+        $setting = \HTTP_BRIDGE\Settings_Store::setting('general');
         $setting->backends = array_filter($setting->backends, function (
             $backend
         ) use ($name) {
             return $backend['name'] !== $name;
         });
+    }
+
+    /**
+     * Checks if a backend with the given name exists on the settings store.
+     *
+     * @param string $name Backend name.
+     *
+     * @return boolean
+     */
+    final protected function backend_exists($name)
+    {
+        $setting = \HTTP_BRIDGE\Settings_Store::setting('general');
+        $backends = $setting->backends;
+
+        return array_search($name, array_column($backends, 'name')) !== false;
     }
 
     /**
@@ -767,27 +827,15 @@ class Form_Hook_Template
      */
     private function create_backend($data)
     {
-        $setting = \HTTP_BRIDGE\Settings_Store::setting('general'); // Forms_Bridge::setting('general');
+        $setting = \HTTP_BRIDGE\Settings_Store::setting('general');
         $backends = $setting->backends;
-
-        $name_conflict =
-            array_search($data['name'], array_column($backends, 'name')) !==
-            false;
-
-        if ($name_conflict) {
-            return;
-        }
 
         do_action('forms_bridge_before_template_backend', $data, $this->name);
 
         $setting->backends = array_merge($backends, [$data]);
         $setting->refresh();
 
-        $is_valid =
-            array_search(
-                $data['name'],
-                array_column($setting->backends, 'name')
-            ) !== false;
+        $is_valid = $this->backend_exists($data['name']);
 
         if (!$is_valid) {
             return;

@@ -2,6 +2,7 @@
 import StoreProvider, { useStoreSubmit } from "../providers/Store";
 import SettingsProvider from "../providers/Settings";
 import FormsProvider from "../providers/Forms";
+import TemplatesProvider from "../providers/Templates";
 import GeneralSettings from "./General";
 import Spinner from "../components/Spinner";
 
@@ -10,24 +11,23 @@ const {
   CardHeader,
   CardBody,
   TabPanel,
-  __experimentalHeading: Heading,
+  Notice,
   Button,
+  __experimentalHeading: Heading,
   __experimentalSpacer: Spacer,
 } = wp.components;
-const { useState } = wp.element;
+const { useState, useEffect, useRef } = wp.element;
 const { __ } = wp.i18n;
 
 function Content({ tab, children }) {
   const content = (() => {
     switch (tab.name) {
       case "general":
+        wpfb.emit("api", null);
         return <GeneralSettings />;
       default:
-        const root = (
-          <div className="root" style={{ minHeight: "300px" }}></div>
-        );
-        setTimeout(() => wpfb.emit("tab", tab.name));
-        return root;
+        setTimeout(() => wpfb.emit("api", tab.name));
+        return <div className="root" style={{ minHeight: "300px" }}></div>;
     }
   })();
 
@@ -48,28 +48,25 @@ function Content({ tab, children }) {
   );
 }
 
-function SaveButton({ loading }) {
+function SaveButton({ error, loading }) {
   const submit = useStoreSubmit();
-
-  const [error, setError] = useState(false);
-
-  const onClick = () => submit().catch(() => setError(true));
 
   return (
     <Button
-      variant={error ? "secondary" : "primary"}
-      onClick={onClick}
+      variant="primary"
+      onClick={() => submit()}
       style={{ minWidth: "150px", justifyContent: "center" }}
-      disabled={loading}
+      disabled={loading || error}
       __next40pxDefaultSize
     >
-      {(error && __("Error", "forms-bridge")) || __("Save", "forms-bridge")}
+      {__("Save", "forms-bridge")}
     </Button>
   );
 }
 
 export default function SettingsPage({ addons }) {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const tabs = [
     {
@@ -97,9 +94,31 @@ export default function SettingsPage({ addons }) {
     );
   };
 
+  const onError = useRef((error) => setError(error)).current;
+  const onLoading = useRef((loading) => setLoading(loading)).current;
+
+  useEffect(() => {
+    wpfb.on("error", onError);
+    wpfb.on("loading", onLoading);
+
+    return () => {
+      wpfb.off("error", onError);
+      wpfb.off("loading", onLoading);
+    };
+  }, []);
+
   return (
     <StoreProvider setLoading={setLoading}>
       <Heading level={1}>Forms Bridge</Heading>
+      {error && (
+        <Notice
+          status="error"
+          onRemove={() => setError(null)}
+          politeness="assertive"
+        >
+          {error}
+        </Notice>
+      )}
       <TabPanel
         initialTabName={initalTab}
         onSelect={setTab}
@@ -110,16 +129,17 @@ export default function SettingsPage({ addons }) {
       >
         {(tab) => (
           <FormsProvider>
-            <SettingsProvider handle={["general", "rest-api"]}>
-              <Spacer />
-              <Content tab={tab}>
-                <SaveButton loading={loading} />
-              </Content>
+            <SettingsProvider handle={["general"]}>
+              <TemplatesProvider>
+                <Content tab={tab}>
+                  <SaveButton error={error} loading={loading} />
+                </Content>
+              </TemplatesProvider>
             </SettingsProvider>
           </FormsProvider>
         )}
       </TabPanel>
-      <Spacer />
+      <Spacer paddingY="calc(16px)" />
       <Spinner show={loading} />
     </StoreProvider>
   );

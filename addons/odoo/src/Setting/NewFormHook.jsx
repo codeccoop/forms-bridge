@@ -1,6 +1,7 @@
 // source
 import NewFormHook from "../../../../src/components/FormHooks/NewFormHook";
 import useOdooApi from "../hooks/useOdooApi";
+import OdooTemplateWizard from "./TemplateWizard";
 
 const { TextControl, SelectControl } = wp.components;
 const { __ } = wp.i18n;
@@ -15,7 +16,7 @@ export default function NewOdooFormHook({ add, schema }) {
   );
 
   return (
-    <NewFormHook add={add} schema={schema}>
+    <NewFormHook add={add} schema={schema} Wizard={OdooTemplateWizard}>
       {({ data, update }) => (
         <>
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>

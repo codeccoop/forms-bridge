@@ -19,17 +19,17 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
                 'ref' => '#form/fields[]',
                 'name' => 'campaign_id',
                 'label' => 'Campaign ID',
-                'type' => 'string',
+                'type' => 'number',
                 'required' => true,
             ],
-            [
-                'ref' => '#form/fields[]',
-                'name' => 'lang',
-                'label' => 'Language',
-                'type' => 'string',
-                'required' => true,
-                'value' => 'en_US',
-            ],
+            // [
+            //     'ref' => '#form/fields[]',
+            //     'name' => 'lang',
+            //     'label' => 'Language',
+            //     'type' => 'string',
+            //     'required' => true,
+            //     'value' => 'en_US',
+            // ],
             [
                 'ref' => '#hook',
                 'name' => 'name',
@@ -37,13 +37,13 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
                 'type' => 'string',
                 'required' => true,
             ],
-            [
-                'ref' => '#hook',
-                'name' => 'backend',
-                'label' => 'Backend',
-                'type' => 'string',
-                'required' => true,
-            ],
+            // [
+            //     'ref' => '#hook',
+            //     'name' => 'backend',
+            //     'label' => 'Backend',
+            //     'type' => 'string',
+            //     'required' => true,
+            // ],
             // [
             //     'ref' => '#hook',
             //     'name' => 'endpoint',
@@ -57,13 +57,13 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
                 'label' => 'Name',
                 'type' => 'string',
                 'required' => true,
-                'value' => 'FinanCoop',
+                'default' => 'FinanCoop',
             ],
             [
                 'ref' => '#backend',
                 'name' => 'base_url',
                 'label' => 'Base URL',
-                'type' => 'url',
+                'type' => 'string',
             ],
             [
                 'ref' => '#backend/headers[]',
@@ -93,6 +93,13 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
         ],
         'backend' => [
             'name' => 'FinanCoop',
+            'pipes' => [
+                [
+                    'from' => 'submission_id',
+                    'to' => 'submission_id',
+                    'cast' => 'null',
+                ],
+            ],
         ],
         'form' => [
             'fields' => [
@@ -100,6 +107,12 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
                     'name' => 'campaign_id',
                     'type' => 'hidden',
                     'required' => true,
+                ],
+                [
+                    'name' => 'lang',
+                    'type' => 'hidden',
+                    'required' => true,
+                    'value' => 'en_US',
                 ],
             ],
         ],
@@ -129,6 +142,35 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
         );
 
         parent::__construct($file, $config, $api);
+
+        add_filter(
+            'forms_bridge_template_data',
+            function ($data, $template_name) {
+                if ($template_name === $this->name) {
+                    if (!empty($data['backend']['name'])) {
+                        $data['hook']['backend'] = $data['backend']['name'];
+                    }
+
+                    $index = array_search(
+                        'campaign_id',
+                        array_column($data['form']['fields'], 'name')
+                    );
+
+                    if ($index !== false) {
+                        $campaign_id = $data['form']['fields'][$index]['value'];
+                        $data['hook']['endpoint'] = preg_replace(
+                            '/campaign_id/',
+                            $campaign_id,
+                            $data['hook']['endpoint']
+                        );
+                    }
+                }
+
+                return $data;
+            },
+            9,
+            2
+        );
     }
 
     /**

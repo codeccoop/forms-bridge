@@ -2,6 +2,7 @@
 import { useForms } from "../../providers/Forms";
 import { useGeneral } from "../../providers/Settings";
 import useHookNames from "../../hooks/useHookNames";
+import Templates from "../Templates";
 
 const {
   TextControl,
@@ -12,7 +13,12 @@ const {
 const { useState, useMemo } = wp.element;
 const { __ } = wp.i18n;
 
-export default function NewFormHook({ add, schema, children = () => {} }) {
+export default function NewFormHook({
+  add,
+  schema,
+  Wizard,
+  children = () => {},
+}) {
   const [{ backends }] = useGeneral();
   const backendOptions = [{ label: "", value: "" }].concat(
     backends.map(({ name }) => ({
@@ -152,6 +158,7 @@ export default function NewFormHook({ add, schema, children = () => {} }) {
         >
           {__("Add", "forms-bridge")}
         </Button>
+        <Templates Wizard={Wizard} />
       </div>
     </div>
   );

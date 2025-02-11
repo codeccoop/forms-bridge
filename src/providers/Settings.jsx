@@ -1,6 +1,7 @@
 import useDiff from "../hooks/useDiff";
 
 const { createContext, useContext, useState, useEffect, useRef } = wp.element;
+const { __ } = wp.i18n;
 
 const defaults = {
   general: {
@@ -119,4 +120,12 @@ export function useFormHooks() {
   return Object.keys(apis).reduce((formHooks, api) => {
     return formHooks.concat(apis[api].form_hooks);
   }, []);
+}
+
+export function useIntegrations() {
+  const [{ general }] = useContext(SettingsContext);
+
+  return Object.keys(general.integrations)
+    .filter((key) => general.integrations[key])
+    .map((key) => ({ label: __(key, "forms-bridge"), name: key }));
 }

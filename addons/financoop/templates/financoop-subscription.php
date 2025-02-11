@@ -4,31 +4,6 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-add_filter(
-    'forms_bridge_template_data',
-    function ($data, $template_name) {
-        if ($template_name === 'financoop-subscription') {
-            $index = array_search(
-                'campaign_id',
-                array_column($data['form']['fields'], 'name')
-            );
-
-            $campaign_field = $data['form']['fields'][$index];
-            $campaign_id = $campaign_field['value'];
-
-            $data['hook']['endpoint'] = preg_replace(
-                '/campaign_id/',
-                $campaign_id,
-                $data['hook']['endpoint']
-            );
-        }
-
-        return $data;
-    },
-    10,
-    2
-);
-
 return [
     'title' => __('FinanCoop Subscription', 'forms-bridge'),
     'fields' => [
@@ -36,21 +11,21 @@ return [
             'ref' => '#form/fields[]',
             'name' => 'partner_id',
             'label' => __('Partner ID', 'forms-bridge'),
-            'type' => 'integer',
+            'type' => 'number',
             'required' => true,
         ],
         [
             'ref' => '#form/fields[]',
             'name' => 'ordered_parts',
             'label' => __('Ordered parts', 'forms-bridge'),
-            'type' => 'integer',
+            'type' => 'number',
             'required' => true,
         ],
         [
             'ref' => '#form/fields[]',
             'name' => 'share_product_id',
             'label' => __('Share product', 'forms-bridge'),
-            'type' => 'integer',
+            'type' => 'number',
             'required' => true,
         ],
         [
@@ -60,14 +35,14 @@ return [
             'type' => 'string',
             'required' => true,
         ],
-        [
-            'ref' => '#form/fields[]',
-            'name' => 'type',
-            'label' => __('Type', 'forms-bridge'),
-            'type' => 'string',
-            'required' => true,
-            'value' => 'increase',
-        ],
+        // [
+        //     'ref' => '#form/fields[]',
+        //     'name' => 'type',
+        //     'label' => __('Type', 'forms-bridge'),
+        //     'type' => 'string',
+        //     'required' => true,
+        //     'value' => 'increase',
+        // ],
         [
             'ref' => '#form/fields[]',
             'name' => 'country_code',
@@ -133,6 +108,7 @@ return [
                 'name' => 'type',
                 'type' => 'hidden',
                 'required' => true,
+                'value' => 'increase',
             ],
             [
                 'name' => 'campaign_id',
@@ -184,11 +160,6 @@ return [
                 'label' => __('Phone', 'forms-bridge'),
                 'name' => 'phone',
                 'type' => 'text',
-                'required' => true,
-            ],
-            [
-                'name' => 'lang',
-                'type' => 'hidden',
                 'required' => true,
             ],
         ],

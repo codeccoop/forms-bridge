@@ -1,5 +1,6 @@
 // source
 import { useGeneral } from "../../../../../src/providers/Settings";
+import useDatabaseNames from "../../hooks/useDatabaseNames";
 import NewDatabase from "./NewDatabase";
 
 const {
@@ -8,12 +9,11 @@ const {
   Button,
   __experimentalSpacer: Spacer,
 } = wp.components;
-const { useState, useRef, useEffect, useMemo } = wp.element;
+const { useState, useRef, useEffect } = wp.element;
 const { __ } = wp.i18n;
 
-export default function Database({ data, update, remove, databases }) {
-  if (data.name === "add")
-    return <NewDatabase add={update} databases={databases} />;
+export default function Database({ data, update, remove }) {
+  if (data.name === "add") return <NewDatabase add={update} />;
 
   const [{ backends }] = useGeneral();
   const backendOptions = [{ label: "", value: "" }].concat(
@@ -26,9 +26,7 @@ export default function Database({ data, update, remove, databases }) {
   const [name, setName] = useState(data.name);
   const initialName = useRef(data.name);
 
-  const dbNames = useMemo(() => {
-    return new Set(databases.map(({ name }) => name));
-  }, [databases]);
+  const dbNames = useDatabaseNames();
   const [nameConflict, setNameConflict] = useState(false);
   const handleSetName = (name) => {
     setNameConflict(name !== initialName.current && dbNames.has(name.trim()));

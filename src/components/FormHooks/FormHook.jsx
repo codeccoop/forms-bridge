@@ -1,6 +1,6 @@
 // source
 import { useForms } from "../../providers/Forms";
-import { useFormHooks, useGeneral } from "../../providers/Settings";
+import { useGeneral } from "../../providers/Settings";
 import useHookNames from "../../hooks/useHookNames";
 import FormPipes from "../FormPipes";
 import NewFormHook from "./NewFormHook";
@@ -14,7 +14,6 @@ const {
 const { useState, useRef, useEffect, useMemo } = wp.element;
 const { __ } = wp.i18n;
 
-let focus = false;
 export default function FormHook({
   data,
   update,
@@ -47,19 +46,13 @@ export default function FormHook({
 
   const [name, setName] = useState(data.name);
   const initialName = useRef(data.name);
-  const nameInput = useRef();
 
-  const formHooks = useFormHooks();
-  const hookNames = useHookNames(formHooks);
+  const hookNames = useHookNames();
   const [nameConflict, setNameConflict] = useState(false);
   const handleSetName = (name) => {
     setNameConflict(name !== initialName.current && hookNames.has(name.trim()));
     setName(name);
   };
-
-  useEffect(() => {
-    if (focus) nameInput.current.focus();
-  }, []);
 
   const timeout = useRef();
   useEffect(() => {
@@ -90,7 +83,6 @@ export default function FormHook({
       >
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <TextControl
-            ref={nameInput}
             label={__("Name", "forms-bridge")}
             help={
               nameConflict
@@ -99,8 +91,6 @@ export default function FormHook({
             }
             value={name}
             onChange={handleSetName}
-            onFocus={() => (focus = true)}
-            onBlur={() => (focus = false)}
             __nextHasNoMarginBottom
             __next40pxDefaultSize
           />

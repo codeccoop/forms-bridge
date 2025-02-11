@@ -1,53 +1,73 @@
 const apiFetch = wp.apiFetch;
-const { createContext, useContext, useEffect } = wp.element;
+const { createContext, useContext, useEffect, useRef } = wp.element;
+const { __ } = wp.i18n;
 
 const StoreContext = createContext(() => {});
 
-export default function StoreProvider({ children, setLoading }) {
+export default function StoreProvider({ children }) {
   const fetchSettings = () => {
-    setLoading(true);
+    wpfb.emit("loading", true);
+
     return apiFetch({
       path: "forms-bridge/v1/settings",
     })
-      .then((settings) => {
-        wpfb.emit("fetch", settings);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      .then((settings) => wpfb.emit("fetch", settings))
+      .finally(() => wpfb.emit("loading", false));
   };
 
   const fetchForms = () => {
-    setLoading(true);
+    wpfb.emit("loading", true);
+
     return apiFetch({
       path: "forms-bridge/v1/forms",
     })
-      .then((forms) => {
-        wpfb.emit("forms", forms);
-      })
-      .finally(() => setLoading(false));
+      .then((forms) => wpfb.emit("forms", forms))
+      .catch(() =>
+        wpfb.emit("error", __("Load settings error", "forms-bridge"))
+      )
+      .finally(() => wpfb.emit("loading", true));
   };
+
+  const onFlush = useRef(() => fetchSettings()).current;
 
   useEffect(() => {
     fetchForms().then(fetchSettings);
+    wpfb.on("flushStore", onFlush);
+
+    return () => {
+      wpfb.off("flushStore", onFlush);
+    };
   }, []);
 
   const submit = () => {
-    setLoading(true);
+    wpfb.emit("loading", true);
 
     const settings = wpfb.bus("submit", {});
     return apiFetch({
       path: "forms-bridge/v1/settings",
       method: "POST",
       data: settings,
-    }).then(fetchSettings);
+    })
+      .then(fetchSettings)
+      .catch(() =>
+        wpfb.emit("error", __("Save settings error", "forms-bridge"))
+      )
+      .finally(() => wpfb.emit("loading", false));
   };
 
   return (
-    <StoreContext.Provider value={submit}>{children}</StoreContext.Provider>
+    <StoreContext.Provider value={{ submit, fetch: fetchSettings }}>
+      {children}
+    </StoreContext.Provider>
   );
 }
 
 export function useStoreSubmit() {
-  return useContext(StoreContext);
+  const { submit } = useContext(StoreContext);
+  return submit;
+}
+
+export function useStoreFetch() {
+  const { fetch } = useContext(StoreContext);
+  return fetch;
 }
