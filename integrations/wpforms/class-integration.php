@@ -94,8 +94,6 @@ class Integration extends BaseIntegration
      * @param array $data Form template data.
      *
      * @return int|null ID of the new form.
-     *
-     * @todo Implement this routine.
      */
     public function create_form($data)
     {
@@ -153,10 +151,12 @@ class Integration extends BaseIntegration
      * @param integer $form_id Form ID.
      *
      * @return boolean Removal result.
-     *
-     * @todo Implement this routine.
      */
-    public function remove_form($form_id) {}
+    public function remove_form($form_id)
+    {
+        $post = wp_delete_post($form_id);
+        return boolval($post->ID ?? false);
+    }
 
     /**
      * Retrives the current form submission data.
@@ -206,7 +206,7 @@ class Integration extends BaseIntegration
                 ? wpforms_decode($form->post_content)
                 : $form;
 
-        $form_id = (int) $data['id'];
+        $form_id = (int) $data['id'] ?: $form->ID;
         return [
             '_id' => 'wpforms:' . $form_id,
             'id' => $form_id,
@@ -257,29 +257,29 @@ class Integration extends BaseIntegration
         ];
     }
 
-    private function norm_field_type($type)
-    {
-        switch ($type) {
-            case 'name':
-            case 'email':
-            case 'textarea':
-            case 'payment-total':
-            case 'payment-single':
-                return 'text';
-            case 'number-slider':
-            case 'numbers':
-                return 'number';
-            case 'payment-select':
-            case 'payment-multiple':
-            case 'payment-checkbox':
-            case 'select':
-            case 'radio':
-            case 'checkbox':
-                return 'options';
-            default:
-                return $type;
-        }
-    }
+    // private function norm_field_type($type)
+    // {
+    //     switch ($type) {
+    //         case 'name':
+    //         case 'email':
+    //         case 'textarea':
+    //         case 'payment-total':
+    //         case 'payment-single':
+    //             return 'text';
+    //         case 'number-slider':
+    //         case 'numbers':
+    //             return 'number';
+    //         case 'payment-select':
+    //         case 'payment-multiple':
+    //         case 'payment-checkbox':
+    //         case 'select':
+    //         case 'radio':
+    //         case 'checkbox':
+    //             return 'options';
+    //         default:
+    //             return $type;
+    //     }
+    // }
 
     /**
      * Serializes the form's submission data.
@@ -394,6 +394,14 @@ class Integration extends BaseIntegration
         return $uploads;
     }
 
+    /**
+     * Formats the forms bridge form data to be used as the post_content of a wpform post
+     * type and encode it as json.
+     *
+     * @param array $data Forms bridge form template data.
+     *
+     * @return string Encoded and decorated form data.
+     */
     private function encode_form_data($data)
     {
         $wp_fields = [];
@@ -422,9 +430,9 @@ class Integration extends BaseIntegration
                 case 'text':
                     $wp_fields[strval($id)] = $this->text_field(...$args);
                     break;
-                case 'url':
-                case 'email':
-                case 'number':
+                // case 'url':
+                // case 'email':
+                // case 'number':
                 default:
                     $wp_fields[strval($id)] = $this->textarea_field(
                         $field['type'],
@@ -468,6 +476,16 @@ class Integration extends BaseIntegration
         ]);
     }
 
+    /**
+     * Returns a default field array data. Used as template for the field creation methods.
+     *
+     * @param string $type Field type.
+     * @param int $id Field id.
+     * @param string $label Field label.
+     * @param boolean $required Is field required.
+     *
+     * @return array
+     */
     private function field_template($type, $id, $label, $required)
     {
         return [
@@ -482,6 +500,15 @@ class Integration extends BaseIntegration
         ];
     }
 
+    /**
+     * Returns a valid text field data.
+     *
+     * @param int $id Field id.
+     * @param string $name Field name (label).
+     * @param boolean $required Is field required.
+     *
+     * @return array
+     */
     private function text_field($id, $name, $required)
     {
         return array_merge(
@@ -493,6 +520,15 @@ class Integration extends BaseIntegration
         );
     }
 
+    /**
+     * Returns a valid textarea field data.
+     *
+     * @param int $id Field id.
+     * @param string $name Field name (label).
+     * @param boolean $required Is field required.
+     *
+     * @return array
+     */
     private function textarea_field($id, $name, $required)
     {
         return array_merge(
@@ -504,6 +540,18 @@ class Integration extends BaseIntegration
         );
     }
 
+    /**
+     * Returns a valid multi options field data, as a select field if is single, as
+     * a checkbox field if is multiple.
+     *
+     * @param int $id Field id.
+     * @param string $name Field name (label).
+     * @param boolean $required Is field required.
+     * @param array Options data.
+     * @param boolean Is field multi value.
+     *
+     * @return array
+     */
     private function options_field($id, $name, $required, $options, $is_multi)
     {
         $choices = array_map(function ($opt) {
@@ -541,6 +589,16 @@ class Integration extends BaseIntegration
         }
     }
 
+    /**
+     * Returns a valid hidden field data.
+     *
+     * @param int $id Field id.
+     * @param string $name Field name (label).
+     * @param boolean $required Is field required.
+     * @param string $value Field's default value.
+     *
+     * @return array
+     */
     private function hidden_field($id, $name, $required, $value)
     {
         return array_merge(
@@ -551,6 +609,16 @@ class Integration extends BaseIntegration
         );
     }
 
+    /**
+     * Returns a valid file-upload field data.
+     *
+     * @param int $id Field id.
+     * @param string $name Field name (label).
+     * @param boolean $required Is field required.
+     * @param string $filetypes String with allowed file extensions separated by commas.
+     *
+     * @return array
+     */
     private function file_field($id, $name, $required, $filetypes)
     {
         return array_merge(

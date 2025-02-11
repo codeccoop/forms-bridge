@@ -242,28 +242,28 @@ class Integration extends BaseIntegration
         ];
     }
 
-    private function norm_field_type($type)
-    {
-        switch ($type) {
-            case 'iban':
-            case 'vat':
-            case 'email':
-            case 'url':
-            case 'textarea':
-            case 'quiz':
-                return 'text';
-            case 'select':
-            case 'checkbox':
-            case 'radio':
-                return 'options';
-            case 'files':
-                return 'file';
-            case 'acceptance':
-                return 'consent';
-            default:
-                return $type;
-        }
-    }
+    // private function norm_field_type($type)
+    // {
+    //     switch ($type) {
+    //         case 'iban':
+    //         case 'vat':
+    //         case 'email':
+    //         case 'url':
+    //         case 'textarea':
+    //         case 'quiz':
+    //             return 'text';
+    //         case 'select':
+    //         case 'checkbox':
+    //         case 'radio':
+    //             return 'options';
+    //         case 'files':
+    //             return 'file';
+    //         case 'acceptance':
+    //             return 'consent';
+    //         default:
+    //             return $type;
+    //     }
+    // }
 
     /**
      * Serializes the form's submission data.
