@@ -252,7 +252,10 @@ class Integration extends BaseIntegration
             'is_file' => false, // $field['type'] === 'file',
             'is_multi' =>
                 strstr($field['type'], 'checkbox') ||
-                ($field['type'] === 'select' && $field['multiple'] === '1'),
+                ($field['type'] === 'select' &&
+                    ($field['multiple'] ?? null) === '1') ||
+                ($field['type'] === 'file-upload' &&
+                    ($field['max_file_number'] ?? '1') !== '1'),
             'conditional' => false,
         ];
     }
@@ -434,7 +437,7 @@ class Integration extends BaseIntegration
                 // case 'email':
                 // case 'number':
                 default:
-                    $wp_fields[strval($id)] = $this->textarea_field(
+                    $wp_fields[strval($id)] = $this->field_template(
                         $field['type'],
                         ...$args
                     );
