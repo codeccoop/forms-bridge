@@ -15,6 +15,8 @@ export default function Templates({ Wizard }) {
   const templates = useTemplates();
   const [, setTemplate] = useTemplate();
 
+  const [done, setDone] = useState(false);
+
   const templateOptions = [{ label: "", value: "" }].concat(
     templates.map(({ name, title }) => ({
       label: title,
@@ -48,8 +50,15 @@ export default function Templates({ Wizard }) {
   }, [integrations]);
 
   useEffect(() => {
+    if (done) {
+      setTemplate(null);
+    }
+  }, [done]);
+
+  useEffect(() => {
     if (!isOpen) {
       setTemplate(null);
+      setDone(false);
     }
   }, [isOpen]);
 
@@ -74,28 +83,50 @@ export default function Templates({ Wizard }) {
           title={__("Templates", "forms-bridge")}
           onRequestClose={() => setIsOpen(false)}
         >
-          {integrations.length > 1 && (
+          {(done && (
             <>
+              <p style={{ fontSize: "1rem" }}>
+                {__(
+                  "Congratulations, you've created a new form bridge!",
+                  "forms-bridge"
+                )}
+              </p>
+              <Button
+                variant="primary"
+                onClick={() => setIsOpen(false)}
+                style={{
+                  width: "150px",
+                  margin: "1.5rem auto 0",
+                  display: "block",
+                }}
+                __next40pxDefaultSize
+              >
+                {__("Close", "forms-bridge")}
+              </Button>
+            </>
+          )) || (
+            <>
+              {integrations.length > 1 && (
+                <>
+                  <SelectControl
+                    label={__("Target integration", "forms-bridge")}
+                    options={integrationOptions}
+                    value={integration}
+                    onChange={setIntegration}
+                    __nextHasNoMarginBottom
+                  />
+                  <Spacer paddingY="calc(6px)" />
+                </>
+              )}
               <SelectControl
-                label={__("Target integration", "forms-bridge")}
-                options={integrationOptions}
-                value={integration}
-                onChange={setIntegration}
+                label={__("Select a template", "forms-bridge")}
+                options={templateOptions}
+                onChange={setTemplate}
                 __nextHasNoMarginBottom
               />
-              <Spacer paddingY="calc(6px)" />
             </>
           )}
-          <SelectControl
-            label={__("Select a template", "forms-bridge")}
-            options={templateOptions}
-            onChange={setTemplate}
-            __nextHasNoMarginBottom
-          />
-          <Wizard
-            integration={integration}
-            onDone={() => setTimeout(() => setIsOpen(false), 500)}
-          />
+          <Wizard integration={integration} onDone={() => setDone(true)} />
         </Modal>
       )}
     </>
