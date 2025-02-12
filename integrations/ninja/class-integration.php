@@ -253,9 +253,7 @@ class Integration extends BaseIntegration
      */
     public function serialize_submission($submission, $form_data)
     {
-        $data = [
-            'submission_id' => $submission['actions']['save']['sub_id'] ?? 0,
-        ];
+        $data = [];
 
         foreach ($form_data['fields'] as $field_data) {
             $field = $submission['fields_by_key'][$field_data['name']];
@@ -311,7 +309,7 @@ class Integration extends BaseIntegration
     {
         if ($type === 'hidden') {
             $number_val = (float) $value;
-            if ((string) $number_val === $value) {
+            if (strval($number_val) === $value) {
                 return $number_val;
             } else {
                 return $value;

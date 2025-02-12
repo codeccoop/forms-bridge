@@ -325,9 +325,7 @@ class Integration extends BaseIntegration
      */
     public function serialize_submission($submission, $form_data)
     {
-        $data = [
-            'submission_id' => $submission['id'],
-        ];
+        $data = [];
 
         foreach ($form_data['fields'] as $field) {
             if ($field['is_file']) {
@@ -428,7 +426,7 @@ class Integration extends BaseIntegration
                     return null;
                 case 'hidden':
                     $number_val = (float) $value;
-                    if ((string) $number_val === $value) {
+                    if (strval($number_val) === $value) {
                         return $number_val;
                     }
                     break;

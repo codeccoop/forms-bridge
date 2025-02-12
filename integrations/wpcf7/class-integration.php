@@ -276,15 +276,17 @@ class Integration extends BaseIntegration
     public function serialize_submission($submission, $form_data)
     {
         $data = $submission->get_posted_data();
-        $data['submission_id'] = $submission->get_posted_data_hash();
+
         foreach ($data as $key => $val) {
             $i = array_search($key, array_column($form_data['fields'], 'name'));
             $field = $form_data['fields'][$i];
 
             if ($field['type'] === 'hidden') {
                 $number_val = (float) $val;
-                if ((string) $number_val === $val) {
+                if (strval($number_val) === $val) {
                     $data[$key] = $number_val;
+                } else {
+                    $data[$key] = $val;
                 }
             } elseif ($field['type'] === 'number') {
                 $data[$key] = (float) $val;

@@ -50,10 +50,7 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
       .map(({ name, label }) => ({ name, label }));
   }, [form]);
 
-  const fromOptions = [
-    { label: "", value: "" },
-    { label: __("Submission ID", "forms-bridge"), value: "submission_id" },
-  ].concat(
+  const fromOptions = [{ label: "", value: "" }].concat(
     fields.map((field) => ({
       label: __(field.label, "forms-bridge"),
       value: field.name,

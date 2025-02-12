@@ -50,11 +50,17 @@ class Integration extends BaseIntegration
         $form_id = !empty($_POST['wpforms']['id'])
             ? absint($_POST['wpforms']['id'])
             : 0;
+
         if (!$form_id) {
-            return null;
+            return;
         }
 
         $form = wpforms()->obj('form')->get($form_id);
+
+        if (!$form) {
+            return;
+        }
+
         return $this->serialize_form($form);
     }
 
@@ -68,6 +74,7 @@ class Integration extends BaseIntegration
     public function get_form_by_id($form_id)
     {
         $form = wpforms()->obj('form')->get($form_id);
+
         if (!$form) {
             return null;
         }
@@ -82,7 +89,7 @@ class Integration extends BaseIntegration
      */
     public function forms()
     {
-        $forms = wpforms()->obj('form')->get();
+        $forms = array_filter((array) wpforms()->obj('form')->get());
         return array_map(function ($form) {
             return $this->serialize_form($form);
         }, $forms);
@@ -134,6 +141,7 @@ class Integration extends BaseIntegration
             );
 
         if ($title_exists) {
+            # $form_title = $form_title . ' (ID #' . $form_id . ')';
             remove_action('post_updated', 'wp_save_post_revision');
             wp_update_post([
                 'ID' => $form_id,
@@ -141,6 +149,15 @@ class Integration extends BaseIntegration
             ]);
             add_action('post_updated', 'wp_save_post_revision');
         }
+
+        $form = wpforms()->obj('form')->get($form_id);
+        $form_data = wpforms_decode($form->post_content);
+        $form_data['id'] = $form_id;
+        $form_data['settings']['form_title'] = $form_title;
+
+        wpforms()
+            ->obj('form')
+            ->update($form_id, $form_data, ['context' => 'save_form']);
 
         return $form_id;
     }
@@ -206,11 +223,12 @@ class Integration extends BaseIntegration
                 ? wpforms_decode($form->post_content)
                 : $form;
 
-        $form_id = (int) $data['id'] ?: $form->ID;
+        $form_id = isset($data['id']) ? (int) $data['id'] : $form->ID;
+
         return [
             '_id' => 'wpforms:' . $form_id,
             'id' => $form_id,
-            'title' => $data['settings']['form_title'],
+            'title' => $data['settings']['form_title'] ?? '',
             'hooks' => apply_filters(
                 'forms_bridge_form_hooks',
                 [],
@@ -242,10 +260,10 @@ class Integration extends BaseIntegration
         }
 
         return [
-            'id' => (int) $field['id'],
+            'id' => (int) ($field['id'] ?? 0),
             'type' => $field['type'],
-            'name' => $field['label'],
-            'label' => $field['label'],
+            'name' => $field['label'] ?? '',
+            'label' => $field['label'] ?? '',
             'required' =>
                 isset($field['required']) && $field['required'] === '1',
             'options' => isset($field['choices']) ? $field['choices'] : [],
@@ -294,9 +312,7 @@ class Integration extends BaseIntegration
      */
     public function serialize_submission($submission, $form_data)
     {
-        $data = [
-            'submission_id' => $submission['entry_id'],
-        ];
+        $data = [];
 
         foreach ($submission['fields'] as $field) {
             $i = array_search(
@@ -315,8 +331,10 @@ class Integration extends BaseIntegration
 
             if ($field_data['type'] === 'hidden') {
                 $number_val = (float) $field['value'];
-                if ((string) $number_val === $field['value']) {
+                if (strval($number_val) === $field['value']) {
                     $data[$field_data['name']] = $number_val;
+                } else {
+                    $data[$field_data['name']] = $field['value'];
                 }
             } elseif ($field_data['type'] === 'number') {
                 if (isset($field['amount'])) {
@@ -604,12 +622,20 @@ class Integration extends BaseIntegration
      */
     private function hidden_field($id, $name, $required, $value)
     {
-        return array_merge(
+        $field = array_merge(
             $this->field_template('hidden', $id, $name, $required),
             [
+                'label_hide' => '1',
+                'label_disable' => '1',
                 'default_value' => $value,
             ]
         );
+
+        unset($field['description']);
+        unset($field['required']);
+        unset($field['placeholder']);
+
+        return $field;
     }
 
     /**
