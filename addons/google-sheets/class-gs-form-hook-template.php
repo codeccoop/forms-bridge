@@ -69,10 +69,8 @@ class Google_Sheets_Form_Hook_Template extends Form_Hook_Template
             'forms_bridge_template_data',
             function ($data, $template_name) {
                 if ($template_name === $this->name) {
-                    $data['hook'] = array_merge(
-                        $data['hook'],
-                        $data['spreadsheet']
-                    );
+                    $data['hook']['spreadsheet'] = $data['spreadsheet']['id'];
+                    $data['hook']['tab'] = $data['spreadsheet']['tab'];
                 }
 
                 return $data;
@@ -101,6 +99,16 @@ class Google_Sheets_Form_Hook_Template extends Form_Hook_Template
 
         $schema['hook']['required'][] = 'spreadsheet';
         $schema['hook']['required'][] = 'tab';
+
+        $schema['spreadsheet'] = [
+            'type' => 'object',
+            'properties' => [
+                'id' => ['type' => 'string'],
+                'tab' => ['type' => 'string'],
+            ],
+            'required' => ['id', 'tab'],
+            'additionalProperties' => false,
+        ];
 
         return $schema;
     }

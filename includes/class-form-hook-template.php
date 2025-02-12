@@ -769,7 +769,7 @@ class Form_Hook_Template
             do_action('forms_bridge_template_form', $data['form'], $this->name);
 
             $create_backend =
-                (isset($data['backend']['name']) &&
+                (!empty($data['backend']['name']) &&
                     !$this->backend_exists($data['backend']['name'])) ||
                 false;
 
