@@ -107,22 +107,23 @@ class Form_Hook_Template
                     'ref' => ['type' => 'string'],
                     'name' => ['type' => 'string'],
                     'label' => ['type' => 'string'],
+                    'description' => ['type' => 'string'],
                     'type' => [
                         'type' => 'string',
                         'enum' => ['string', 'number', 'options'],
                     ],
                     'required' => ['type' => 'boolean'],
-                    // 'value' => [
-                    //     'type' => [
-                    //         'integer',
-                    //         'number',
-                    //         'string',
-                    //         'array',
-                    //         'object',
-                    //         'boolean',
-                    //         'null',
-                    //     ],
-                    // ],
+                    'value' => [
+                        'type' => [
+                            'integer',
+                            'number',
+                            'string',
+                            'array',
+                            // 'object',
+                            'boolean',
+                            // 'null',
+                        ],
+                    ],
                     'default' => [
                         'type' => [
                             'integer',
@@ -585,7 +586,11 @@ class Form_Hook_Template
     public function to_json()
     {
         return [
-            'fields' => $this->config['fields'],
+            'fields' => array_values(
+                array_filter($this->config['fields'], function ($field) {
+                    return empty($field['value']);
+                })
+            ),
             'title' => $this->config['title'],
             'name' => $this->name,
         ];
@@ -606,6 +611,13 @@ class Form_Hook_Template
             return;
         }
 
+        // Add constants to the user fields
+        foreach ($template['fields'] as $field) {
+            if (!empty($field['value'])) {
+                $fields[] = $field;
+            }
+        }
+
         $all_fields = self::merge_collection(
             $fields,
             $template['fields'],
@@ -613,7 +625,7 @@ class Form_Hook_Template
         );
 
         $requireds = array_filter($all_fields, function ($field) {
-            return $field['required'] ?? false;
+            return ($field['required'] ?? false) && empty($field['value']);
         });
 
         if (
@@ -730,6 +742,7 @@ class Form_Hook_Template
             }
         }
 
+        $data['fields'] = $fields;
         $data = apply_filters('forms_bridge_template_data', $data, $this->name);
 
         $integration_instance = Integration::integrations()[$integration];
@@ -759,6 +772,7 @@ class Form_Hook_Template
                 (isset($data['backend']['name']) &&
                     !$this->backend_exists($data['backend']['name'])) ||
                 false;
+
             if ($create_backend) {
                 $result = $this->create_backend($data['backend']);
 
