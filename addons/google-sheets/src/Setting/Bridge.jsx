@@ -1,12 +1,12 @@
 // source
-import NewFormHook from "../../../../src/components/FormHooks/NewFormHook";
+import Bridge from "../../../../src/components/Bridges/Bridge";
+import NewGSBridge from "./NewBridge";
 import { useSpreadsheets } from "../providers/Spreadsheets";
-import GoogleSheetsTemplateWizard from "./TemplateWizard";
 
 const { TextControl, SelectControl } = wp.components;
 const { __ } = wp.i18n;
 
-export default function NewGSFormHook({ add, schema }) {
+export default function GFBridge({ data, update, remove }) {
   const spreadsheets = useSpreadsheets();
   const sheetOptions = [{ label: "", value: "" }].concat(
     spreadsheets.map(({ title, id }) => ({
@@ -16,20 +16,18 @@ export default function NewGSFormHook({ add, schema }) {
   );
 
   return (
-    <NewFormHook add={add} schema={schema} Wizard={GoogleSheetsTemplateWizard}>
+    <Bridge
+      data={data}
+      update={update}
+      remove={remove}
+      template={({ add, schema }) => <NewGSBridge add={add} schema={schema} />}
+      schema={["name", "form_id", "spreadsheet", "tab"]}
+    >
       {({ data, update }) => (
         <>
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
             <SelectControl
               label={__("Spreadsheet", "forms-bridge")}
-              help={
-                spreadsheets.length === 0
-                  ? __(
-                      "Before you can use spreadsheet hooks, you have to grant access to Forms Bridge as OAuth client",
-                      "forms-bridge"
-                    )
-                  : ""
-              }
               value={data.spreadsheet || ""}
               onChange={(spreadsheet) => update({ ...data, spreadsheet })}
               options={sheetOptions}
@@ -48,6 +46,6 @@ export default function NewGSFormHook({ add, schema }) {
           </div>
         </>
       )}
-    </NewFormHook>
+    </Bridge>
   );
 }

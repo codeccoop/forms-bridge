@@ -229,8 +229,8 @@ class Integration extends BaseIntegration
             '_id' => 'wpforms:' . $form_id,
             'id' => $form_id,
             'title' => $data['settings']['form_title'] ?? '',
-            'hooks' => apply_filters(
-                'forms_bridge_form_hooks',
+            'bridges' => apply_filters(
+                'forms_bridge_bridges',
                 [],
                 'wpforms:' . $form_id
             ),
@@ -416,10 +416,10 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Formats the forms bridge form data to be used as the post_content of a wpform post
+     * Formats the bridge's form data to be used as the post_content of a wpform post
      * type and encode it as json.
      *
-     * @param array $data Forms bridge form template data.
+     * @param array $data Bridge's template form data.
      *
      * @return string Encoded and decorated form data.
      */

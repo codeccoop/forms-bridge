@@ -47,7 +47,7 @@ return [
         //     'required' => true,
         // ],
     ],
-    'hook' => [
+    'bridge' => [
         'model' => 'crm.lead',
         'pipes' => [
             [

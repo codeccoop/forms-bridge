@@ -51,7 +51,7 @@ return [
             'required' => true,
         ],
     ],
-    'hook' => [
+    'bridge' => [
         'endpoint' => '/api/campaign/{campaign_id}/subscription_request',
         'pipes' => [
             [

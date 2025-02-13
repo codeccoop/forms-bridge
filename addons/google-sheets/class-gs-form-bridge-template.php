@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-class Google_Sheets_Form_Hook_Template extends Form_Hook_Template
+class Google_Sheets_Form_Bridge_Template extends Form_Bridge_Template
 {
     /**
      * Handles the template default values.
@@ -30,7 +30,7 @@ class Google_Sheets_Form_Hook_Template extends Form_Hook_Template
                 'required' => true,
             ],
         ],
-        'hook' => [
+        'bridge' => [
             'spreadsheet' => '',
             'tab' => '',
         ],
@@ -46,7 +46,7 @@ class Google_Sheets_Form_Hook_Template extends Form_Hook_Template
      *
      * @param string $file Source file path of the template config.
      * @param array $config Template config data.
-     * @param string $api Form hook API name.
+     * @param string $api Bridge API name.
      */
     public function __construct($file, $config, $api)
     {
@@ -69,8 +69,8 @@ class Google_Sheets_Form_Hook_Template extends Form_Hook_Template
             'forms_bridge_template_data',
             function ($data, $template_name) {
                 if ($template_name === $this->name) {
-                    $data['hook']['spreadsheet'] = $data['spreadsheet']['id'];
-                    $data['hook']['tab'] = $data['spreadsheet']['tab'];
+                    $data['bridge']['spreadsheet'] = $data['spreadsheet']['id'];
+                    $data['bridge']['tab'] = $data['spreadsheet']['tab'];
                 }
 
                 return $data;
@@ -89,16 +89,16 @@ class Google_Sheets_Form_Hook_Template extends Form_Hook_Template
      */
     private function extend_schema($schema)
     {
-        $schema['hook']['properties'] = array_merge(
-            $schema['hook']['properties'],
+        $schema['bridge']['properties'] = array_merge(
+            $schema['bridge']['properties'],
             [
                 'spreadsheet' => ['type' => 'string'],
                 'tab' => ['type' => 'string'],
             ]
         );
 
-        $schema['hook']['required'][] = 'spreadsheet';
-        $schema['hook']['required'][] = 'tab';
+        $schema['bridge']['required'][] = 'spreadsheet';
+        $schema['bridge']['required'][] = 'tab';
 
         $schema['spreadsheet'] = [
             'type' => 'object',

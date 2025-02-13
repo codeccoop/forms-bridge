@@ -204,8 +204,8 @@ class Integration extends BaseIntegration
             '_id' => 'gf:' . $form_id,
             'id' => $form_id,
             'title' => $form['title'],
-            'hooks' => apply_filters(
-                'forms_bridge_form_hooks',
+            'bridges' => apply_filters(
+                'forms_bridge_bridges',
                 [],
                 'gf:' . $form_id
             ),
@@ -518,9 +518,9 @@ class Integration extends BaseIntegration
     }
 
     /**
-     * Decorate forms bridge form tempalte fields data to be created as gf fields.
+     * Decorate bridge's tempalte form fields data to be created as gf fields.
      *
-     * @param array $fields Array with forms bridge fields data.
+     * @param array $fields Array with bridge's template form fields data.
      *
      * @return array Decorated array of fields.
      */

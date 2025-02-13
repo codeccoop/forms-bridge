@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-class Odoo_Form_Hook_Template extends Form_Hook_Template
+class Odoo_Form_Bridge_Template extends Form_Bridge_Template
 {
     private $database_data = null;
 
@@ -43,14 +43,14 @@ class Odoo_Form_Hook_Template extends Form_Hook_Template
                 'type' => 'string',
             ],
             // [
-            //     'ref' => '#hook',
+            //     'ref' => '#bridge',
             //     'name' => 'database',
             //     'label' => 'Database',
             //     'type' => 'string',
             //     'required' => true,
             // ],
             // [
-            //     'ref' => '#hook',
+            //     'ref' => '#bridge',
             //     'name' => 'model',
             //     'label' => 'Model',
             //     'type' => 'string',
@@ -71,7 +71,7 @@ class Odoo_Form_Hook_Template extends Form_Hook_Template
                 'type' => 'string',
             ],
         ],
-        'hook' => [
+        'bridge' => [
             'name' => '',
             'form_id' => '',
             'database' => '',
@@ -104,7 +104,7 @@ class Odoo_Form_Hook_Template extends Form_Hook_Template
      *
      * @param string $file Source file path of the template config.
      * @param array $config Template config data.
-     * @param string $api Form hook API name.
+     * @param string $api Bridge API name.
      */
     public function __construct($file, $config, $api)
     {
@@ -131,7 +131,7 @@ class Odoo_Form_Hook_Template extends Form_Hook_Template
                         'backend' => $data['backend']['name'],
                     ]);
 
-                    $data['hook']['database'] = $data['database']['name'];
+                    $data['bridge']['database'] = $data['database']['name'];
                 }
 
                 return $data;
@@ -141,7 +141,7 @@ class Odoo_Form_Hook_Template extends Form_Hook_Template
         );
 
         add_action(
-            'forms_bridge_before_template_hook',
+            'forms_bridge_before_template_bridge',
             function ($data, $template_name) {
                 if ($template_name === $this->name && $this->database_data) {
                     $database_exists = $this->database_exists(
@@ -155,7 +155,7 @@ class Odoo_Form_Hook_Template extends Form_Hook_Template
                     $result = $this->create_database($this->database_data);
 
                     if (!$result) {
-                        throw new Form_Hook_Template_Exception(
+                        throw new Form_Bridge_Template_Exception(
                             'database_creation_error',
                             __(
                                 'Forms bridge can\'t create the database',
@@ -191,16 +191,16 @@ class Odoo_Form_Hook_Template extends Form_Hook_Template
             'additionalProperties' => false,
         ];
 
-        $schema['hook']['properties'] = array_merge(
-            $schema['hook']['properties'],
+        $schema['bridge']['properties'] = array_merge(
+            $schema['bridge']['properties'],
             [
                 'database' => ['type' => 'string'],
                 'model' => ['type' => 'string'],
             ]
         );
 
-        $schema['hook']['required'][] = 'database';
-        $schema['hook']['required'][] = 'model';
+        $schema['bridge']['required'][] = 'database';
+        $schema['bridge']['required'][] = 'model';
 
         return $schema;
     }

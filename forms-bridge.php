@@ -3,7 +3,7 @@
 /*
  * Plugin Name:         Forms Bridge
  * Plugin URI:          https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge
- * Description:         Plugin to bridge WP forms submissions to any backend
+ * Description:         Plugin to bridge WP forms submissions to any backend or service
  * Author:              codeccoop
  * Author URI:          https://www.codeccoop.org
  * License:             GPLv2 or later
@@ -34,8 +34,8 @@ require_once 'includes/class-menu.php';
 require_once 'includes/class-settings-store.php';
 require_once 'includes/class-rest-settings-controller.php';
 require_once 'includes/class-json-finger.php';
-require_once 'includes/class-form-hook.php';
-require_once 'includes/class-form-hook-template.php';
+require_once 'includes/class-form-bridge.php';
+require_once 'includes/class-form-bridge-template.php';
 
 require_once 'integrations/abstract-integration.php';
 require_once 'addons/abstract-addon.php';
@@ -74,8 +74,8 @@ class Forms_Bridge extends Base_Plugin
 
         add_action(
             'forms_bridge_on_failure',
-            static function ($form_hook, $error, $payload, $attachments) {
-                self::notify_error($form_hook, $error, $payload, $attachments);
+            static function ($bridge, $error, $payload, $attachments) {
+                self::notify_error($bridge, $error, $payload, $attachments);
             },
             90,
             4
@@ -286,13 +286,13 @@ class Forms_Bridge extends Base_Plugin
     /**
      * Sends error notifications to the email receiver.
      *
-     * @param Form_Hook $form_hook Form data.
+     * @param Form_Bridge $bridge Bridge instance.
      * @param WP_Error $error Error instance.
      * @param array $payload Submission data.
      * @param array $attachments Submission attachments.
      */
     private static function notify_error(
-        $form_hook,
+        $bridge,
         $error,
         $payload,
         $attachments
@@ -303,13 +303,13 @@ class Forms_Bridge extends Base_Plugin
             return;
         }
 
-        $form_data = $form_hook->form;
+        $form_data = $bridge->form;
         $error = print_r($error->get_error_data(), true);
         $to = $email;
         $subject = 'Forms Bridge Error';
         $body = "Form ID: {$form_data['id']}\n";
         $body .= "Form title: {$form_data['title']}\n";
-        $body .= "Form hook: {$form_hook->name}\n";
+        $body .= "Bridge: {$bridge->name}\n";
         $body .= 'Submission: ' . print_r($payload, true) . "\n";
         $body .= "Error: {$error}\n";
 

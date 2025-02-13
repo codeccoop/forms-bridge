@@ -6,7 +6,7 @@ import {
 } from "../../providers/Templates";
 import BackendStep from "./Steps/BackendStep";
 import FormStep from "./Steps/FormStep";
-import HookStep from "./Steps/HookStep";
+import BridgeStep from "./Steps/BridgeStep";
 
 const { Button } = wp.components;
 const { useMemo, useState, useEffect } = wp.element;
@@ -26,9 +26,9 @@ const defaultSteps = [
     ),
   },
   {
-    name: "hook",
+    name: "bridge",
     step: ({ fields, data, setData }) => (
-      <HookStep fields={fields} data={data} setData={setData} />
+      <BridgeStep fields={fields} data={data} setData={setData} />
     ),
   },
 ];

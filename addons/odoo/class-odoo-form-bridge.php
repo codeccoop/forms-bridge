@@ -7,22 +7,22 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Form hook implementation for the Odoo JSON-RPC api.
+ * Form bridge implementation for the Odoo JSON-RPC api.
  */
-class Odoo_Form_Hook extends Form_Hook
+class Odoo_Form_Bridge extends Form_Bridge
 {
     /**
-     * Handles the form hook's template class.
+     * Handles the bridge's template class.
      *
      * @var string
      */
-    protected static $template_class = '\FORMS_BRIDGE\Odoo_Form_Hook_Template';
+    protected static $template_class = '\FORMS_BRIDGE\Odoo_Form_Bridge_Template';
 
     /**
      * Inherits the parent constructor and sets data constants.
      *
-     * @param array $data Hook data.
-     * @param string $api Form hook API name.
+     * @param array $data Bridge data.
+     * @param string $api Bridge API name.
      */
     public function __construct($data, $api)
     {
@@ -33,27 +33,26 @@ class Odoo_Form_Hook extends Form_Hook
             ]),
             $api
         );
-
-        add_filter(
-            'forms_bridge_hook_database',
-            function ($name, $hook) {
-                if ($name instanceof Odoo_DB) {
-                    return $name;
-                }
-
-                if ($hook->name === $this->name) {
-                    return $this->database($name);
-                }
-
-                return $name;
-            },
-            10,
-            2
-        );
     }
 
     /**
-     * Returns json as static form hook content type.
+     * Parent getter interceptor ti short circtuit database access.
+     *
+     * @param string $name Attribute name.
+     *
+     * @return mixed Attribute value or null.
+     */
+    public function __get($name)
+    {
+        if ($name === 'database') {
+            return $this->database();
+        }
+
+        return parent::__get($name);
+    }
+
+    /**
+     * Returns json as static bridge content type.
      *
      * @return string.
      */
@@ -69,19 +68,19 @@ class Odoo_Form_Hook extends Form_Hook
      */
     protected function backend()
     {
-        return $this->database->backend;
+        return $this->database()->backend;
     }
 
     /**
-     * Form hook's database private getter.
+     * Bridge's database private getter.
      *
      * @return Odoo_DB|null
      */
-    private function database($name)
+    private function database()
     {
         $dbs = Forms_Bridge::setting('odoo')->databases;
         foreach ($dbs as $db) {
-            if ($db['name'] === $name) {
+            if ($db['name'] === $this->data['database']) {
                 return new Odoo_DB($db);
             }
         }

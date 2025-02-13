@@ -1,12 +1,12 @@
 // source
-import NewFormHook from "../../../../src/components/FormHooks/NewFormHook";
+import Bridge from "../../../../src/components/Bridges/Bridge";
+import NewOdooBridge from "./NewBridge";
 import useOdooApi from "../hooks/useOdooApi";
-import OdooTemplateWizard from "./TemplateWizard";
 
 const { TextControl, SelectControl } = wp.components;
 const { __ } = wp.i18n;
 
-export default function NewOdooFormHook({ add, schema }) {
+export default function OdooBridge({ data, update, remove }) {
   const [{ databases }] = useOdooApi();
   const dbOptions = [{ label: "", value: "" }].concat(
     databases.map(({ name }) => ({
@@ -16,7 +16,15 @@ export default function NewOdooFormHook({ add, schema }) {
   );
 
   return (
-    <NewFormHook add={add} schema={schema} Wizard={OdooTemplateWizard}>
+    <Bridge
+      data={data}
+      update={update}
+      remove={remove}
+      template={({ add, schema }) => (
+        <NewOdooBridge add={add} schema={schema} />
+      )}
+      schema={["name", "form_id", "model", "database"]}
+    >
       {({ data, update }) => (
         <>
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
@@ -31,13 +39,6 @@ export default function NewOdooFormHook({ add, schema }) {
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
             <SelectControl
               label={__("Database", "forms-bridge")}
-              help={
-                databases.length === 0
-                  ? __(
-                      "Configure, at least, one database access on the panel below"
-                    )
-                  : ""
-              }
               value={data.database || ""}
               onChange={(database) => update({ ...data, database })}
               options={dbOptions}
@@ -47,6 +48,6 @@ export default function NewOdooFormHook({ add, schema }) {
           </div>
         </>
       )}
-    </NewFormHook>
+    </Bridge>
   );
 }

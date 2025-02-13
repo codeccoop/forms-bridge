@@ -13,8 +13,8 @@ require_once 'class-gs-client.php';
 require_once 'class-gs-rest-controller.php';
 require_once 'class-gs-ajax-controller.php';
 require_once 'class-gs-service.php';
-require_once 'class-gs-form-hook.php';
-require_once 'class-gs-form-hook-template.php';
+require_once 'class-gs-form-bridge.php';
+require_once 'class-gs-form-bridge-template.php';
 
 /**
  * Google Sheets addon class.
@@ -36,11 +36,11 @@ class Google_Sheets_Addon extends Addon
     protected static $api = 'google-sheets';
 
     /**
-     * Handles the addom's custom form hook class.
+     * Handles the addom's custom bridge class.
      *
      * @var string
      */
-    protected static $hook_class = '\FORMS_BRIDGE\Google_Sheets_Form_Hook';
+    protected static $bridge_class = '\FORMS_BRIDGE\Google_Sheets_Form_Bridge';
 
     /**
      * Addon constructor. Inherits from the abstract addon and initialize interceptos
@@ -60,11 +60,11 @@ class Google_Sheets_Addon extends Addon
      */
     private function interceptors()
     {
-        // Intercepts submission payload and catch google sheets hooks
+        // Intercepts submission payload and catch google sheets bridges
         add_filter(
             'forms_bridge_payload',
-            static function ($payload, $hook) {
-                return self::payload_interceptor($payload, $hook);
+            static function ($payload, $bridge) {
+                return self::payload_interceptor($payload, $bridge);
             },
             90,
             2
@@ -73,8 +73,8 @@ class Google_Sheets_Addon extends Addon
         // Discard attachments for google sheets submissions
         add_filter(
             'forms_bridge_attachments',
-            static function ($attachments, $hook) {
-                if ($hook->api === self::$api) {
+            static function ($attachments, $bridge) {
+                if ($bridge->api === self::$api) {
                     return [];
                 }
 
@@ -147,7 +147,7 @@ class Google_Sheets_Addon extends Addon
         return [
             self::$api,
             [
-                'form_hooks' => [
+                'bridges' => [
                     'type' => 'array',
                     'items' => [
                         'type' => 'object',
@@ -192,7 +192,7 @@ class Google_Sheets_Addon extends Addon
                 ],
             ],
             [
-                'form_hooks' => [],
+                'bridges' => [],
             ],
         ];
     }
@@ -201,15 +201,15 @@ class Google_Sheets_Addon extends Addon
      * Intercepts the payload, flatten it, write to the spreadsheet and skip submission.
      *
      * @param array $payload Submission payload.
-     * @param Form_Hook $form_hook Instance of the current form hook.
+     * @param Form_Bridge $bridge Instance of the current bridge.
      */
-    private static function payload_interceptor($payload, $form_hook)
+    private static function payload_interceptor($payload, $bridge)
     {
         if (empty($payload)) {
             return $payload;
         }
 
-        if ($form_hook->api !== self::$api) {
+        if ($bridge->api !== self::$api) {
             return $payload;
         }
 
@@ -217,7 +217,7 @@ class Google_Sheets_Addon extends Addon
             'forms_bridge_form',
             null,
             false,
-            $form_hook->integration
+            $bridge->integration
         );
         if (!$form_data) {
             return;
@@ -225,26 +225,21 @@ class Google_Sheets_Addon extends Addon
 
         $payload = self::flatten_payload($payload);
         $result = Google_Sheets_Service::write_row(
-            $form_hook->spreadsheet,
-            $form_hook->tab,
+            $bridge->spreadsheet,
+            $bridge->tab,
             $payload
         );
 
         if (is_wp_error($result)) {
             do_action(
                 'forms_bridge_on_failure',
-                $form_hook,
+                $bridge,
                 $result,
                 $payload,
                 []
             );
         } else {
-            do_action(
-                'forms_bridge_after_submission',
-                $form_hook,
-                $payload,
-                []
-            );
+            do_action('forms_bridge_after_submission', $bridge, $payload, []);
         }
     }
 
@@ -295,20 +290,20 @@ class Google_Sheets_Addon extends Addon
      */
     protected static function validate_setting($data, $setting)
     {
-        $data['form_hooks'] = self::validate_form_hooks($data['form_hooks']);
+        $data['bridges'] = self::validate_bridges($data['bridges']);
         return $data;
     }
 
     /**
-     * Validates setting form hooks data.
+     * Validates setting's bridges data.
      *
-     * @param array $form_hooks List with form hooks data.
+     * @param array $bridges List with bridges data.
      *
-     * @return array Validated list with form hooks data.
+     * @return array Validated list with bridges data.
      */
-    private static function validate_form_hooks($form_hooks)
+    private static function validate_bridges($bridges)
     {
-        if (!wp_is_numeric_array($form_hooks)) {
+        if (!wp_is_numeric_array($bridges)) {
             return [];
         }
 
@@ -324,23 +319,23 @@ class Google_Sheets_Addon extends Addon
             return $template['name'];
         }, apply_filters('forms_bridge_templates', [], 'google-sheets'));
 
-        $valid_hooks = [];
-        for ($i = 0; $i < count($form_hooks); $i++) {
-            $hook = $form_hooks[$i];
+        $valid_bridges = [];
+        for ($i = 0; $i < count($bridges); $i++) {
+            $bridge = $bridges[$i];
 
             // Valid only if database and form id exists
             $is_valid =
-                in_array($hook['form_id'], $_ids) &&
-                (empty($hook['template']) ||
+                in_array($bridge['form_id'], $_ids) &&
+                (empty($bridge['template']) ||
                     empty($tempaltes) ||
-                    in_array($hook['template'], $tempaltes));
+                    in_array($bridge['template'], $tempaltes));
 
             if ($is_valid) {
-                $valid_hooks[] = $hook;
+                $valid_bridges[] = $bridge;
             }
         }
 
-        return $valid_hooks;
+        return $valid_bridges;
     }
 }
 

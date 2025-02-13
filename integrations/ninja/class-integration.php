@@ -142,8 +142,8 @@ class Integration extends BaseIntegration
             '_id' => 'ninja:' . $form_id,
             'id' => $form_id,
             'title' => $form->get_setting('title'),
-            'hooks' => apply_filters(
-                'forms_bridge_form_hooks',
+            'bridges' => apply_filters(
+                'forms_bridge_bridges',
                 [],
                 'ninja:' . $form_id
             ),

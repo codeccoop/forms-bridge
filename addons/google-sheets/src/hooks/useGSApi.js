@@ -6,7 +6,7 @@ export default function useGSApi() {
     {
       "google-sheets": api = {
         authorized: false,
-        form_hooks: [],
+        bridges: [],
       },
     },
     patch,

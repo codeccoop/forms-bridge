@@ -10,30 +10,30 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Form hook object.
+ * Form bridge object.
  */
-class Form_Hook
+class Form_Bridge
 {
     /**
-     * Handles the form hook's settings data.
+     * Handles the form bridge's settings data.
      *
      * @var array
      */
-    private $data;
+    protected $data;
 
     /**
-     * Handles form hook's api slug.
+     * Handles form bridge's api slug.
      *
      * @var string
      */
     protected $api;
 
     /**
-     * Handles the form hook's template class.
+     * Handles the form bridge's template class.
      *
      * @var string
      */
-    protected static $template_class = '\FORMS_BRIDGE\Form_Hook_Template';
+    protected static $template_class = '\FORMS_BRIDGE\Form_Bridge_Template';
 
     /**
      * Handles available template instances.
@@ -101,7 +101,7 @@ class Form_Hook
      *
      * @param string $name Template name.
      *
-     * @return Form_Hook_Template|null
+     * @return Form_Bridge_Template|null
      */
     final public static function get_template($name)
     {
@@ -113,7 +113,7 @@ class Form_Hook
     }
 
     /**
-     * Stores the hook's data as a private attribute.
+     * Stores the form bridge's data as a private attribute.
      */
     public function __construct($data, $api)
     {
@@ -132,29 +132,22 @@ class Form_Hook
     {
         switch ($name) {
             case 'api':
-                $value = $this->api;
-                break;
+                return $this->api;
             case 'form':
-                $value = $this->form();
-                break;
+                return $this->form();
             case 'integration':
-                $value = $this->integration();
-                break;
+                return $this->integration();
             case 'backend':
-                $value = $this->backend();
-                break;
+                return $this->backend();
             case 'content_type':
-                $value = $this->content_type();
-                break;
+                return $this->content_type();
             default:
-                $value = $this->data[$name] ?? null;
+                return $this->data[$name] ?? null;
         }
-
-        return apply_filters("forms_bridge_hook_{$name}", $value, $this);
     }
 
     /**
-     * Retrives the hook's backend instance.
+     * Retrives the bridge's backend instance.
      *
      * @return Http_Backend|null
      */
@@ -169,7 +162,7 @@ class Form_Hook
     }
 
     /**
-     * Retrives the hook's form data.
+     * Retrives the bridge's form data.
      *
      * @return array|null
      */
@@ -180,7 +173,7 @@ class Form_Hook
     }
 
     /**
-     * Retrives the hook's integration name.
+     * Retrives the bridge's integration name.
      *
      * @return string
      */
@@ -191,7 +184,7 @@ class Form_Hook
     }
 
     /**
-     * Gets form hook's default body encoding schema.
+     * Gets bridge's default body encoding schema.
      *
      * @return string|null
      */
@@ -244,7 +237,7 @@ class Form_Hook
      *
      * @param array $data Array of data.
      *
-     * @return array Data modified by the hook's pipes.
+     * @return array Data modified by the bridge's pipes.
      */
     final public function apply_pipes($data)
     {

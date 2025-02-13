@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 /**
  * Custom exception for fine grained error handling during template implementations.
  */
-class Form_Hook_Template_Exception extends Exception
+class Form_Bridge_Template_Exception extends Exception
 {
     /**
      * Handles the error's string code.
@@ -46,10 +46,10 @@ class Form_Hook_Template_Exception extends Exception
 }
 
 /**
- * Form hooks template class. Handles the config data validation
- * and the use of template as form hook creation strategy.
+ * Form Bridge template class. Handles the config data validation
+ * and the use of template as form bridge creation strategy.
  */
-class Form_Hook_Template
+class Form_Bridge_Template
 {
     /**
      * Handles the template api name.
@@ -88,7 +88,7 @@ class Form_Hook_Template
 
     /**
      * Handles the common template data json schema. The schema is common for all
-     * Form_Hook_Templates.
+     * Form_Bridge_Templates.
      *
      * @var array
      */
@@ -169,7 +169,7 @@ class Form_Hook_Template
                 'additionalProperties' => true,
             ],
         ],
-        'hook' => [
+        'bridge' => [
             'type' => 'object',
             'properties' => [
                 'name' => ['type' => 'string'],
@@ -309,7 +309,7 @@ class Form_Hook_Template
                 static::$schema,
                 $name
             ),
-            'required' => ['title', 'integrations', 'fields', 'form', 'hook'],
+            'required' => ['title', 'integrations', 'fields', 'form', 'bridge'],
         ];
 
         $config = self::with_defaults($config, $schema);
@@ -345,14 +345,14 @@ class Form_Hook_Template
                         'required' => true,
                     ],
                     [
-                        'ref' => '#hook',
+                        'ref' => '#bridge',
                         'name' => 'name',
-                        'label' => __('Hook name', 'forms-bridge'),
+                        'label' => __('Bridge name', 'forms-bridge'),
                         'type' => 'string',
                         'required' => true,
                     ],
                 ],
-                'hook' => [
+                'bridge' => [
                     'name' => '',
                     'form_id' => '',
                     'pipes' => [],
@@ -511,7 +511,7 @@ class Form_Hook_Template
      *
      * @param string $file Source file path of the template config.
      * @param array $config Template config data.
-     * @param string $api Form hook API name.
+     * @param string $api Bridge API name.
      */
     public function __construct($file, $config, $api)
     {
@@ -598,7 +598,7 @@ class Form_Hook_Template
 
     /**
      * Applies the input fields with the template's config data to
-     * create a form and bind it with a form hook.
+     * create a form and bind it with a bridge.
      *
      * @param array $fields User input fields data.
      * @param string $integration Target integration.
@@ -632,7 +632,7 @@ class Form_Hook_Template
             count($fields) > count($all_fields) ||
             count($fields) < count($requireds)
         ) {
-            throw new Form_Hook_Template_Exception(
+            throw new Form_Bridge_Template_Exception(
                 'invalid_fields',
                 __('Invalid template fields', 'forms-bridge')
             );
@@ -661,7 +661,7 @@ class Form_Hook_Template
             ]);
 
             if (!$is_valid || ($field['ref'][0] ?? '') !== '#') {
-                throw new Form_Hook_Template_Exception(
+                throw new Form_Bridge_Template_Exception(
                     'invalid_field',
                     sprintf(
                         __(
@@ -682,7 +682,7 @@ class Form_Hook_Template
                 );
 
                 if ($index === false) {
-                    throw new Form_Hook_Template_Exception(
+                    throw new Form_Bridge_Template_Exception(
                         'invalid_template',
                         sprintf(
                             __(
@@ -715,7 +715,7 @@ class Form_Hook_Template
             foreach ($keys as $key) {
                 $clean_key = str_replace('[]', '', $key);
                 if (!isset($leaf[$clean_key])) {
-                    throw new Form_Hook_Template_Exception(
+                    throw new Form_Bridge_Template_Exception(
                         'invalid_ref',
                         sprintf(
                             __(
@@ -757,13 +757,13 @@ class Form_Hook_Template
             $form_id = $integration_instance->create_form($data['form']);
 
             if (!$form_id) {
-                throw new Form_Hook_Template_Exception(
+                throw new Form_Bridge_Template_Exception(
                     'form_creation_error',
                     __('Forms bridge can\'t create the form', 'forms-bridge')
                 );
             }
 
-            $data['hook']['form_id'] = $integration . ':' . $form_id;
+            $data['bridge']['form_id'] = $integration . ':' . $form_id;
             $data['form']['id'] = $form_id;
 
             do_action('forms_bridge_template_form', $data['form'], $this->name);
@@ -778,7 +778,7 @@ class Form_Hook_Template
 
                 if (!$result) {
                     $integration_instance->remove_form($form_id);
-                    throw new Form_Hook_Template_Exception(
+                    throw new Form_Bridge_Template_Exception(
                         'backend_creation_error',
                         __(
                             'Forms bridge can\'t create the backend',
@@ -788,8 +788,8 @@ class Form_Hook_Template
                 }
             }
 
-            $result = $this->create_hook(
-                array_merge($data['hook'], [
+            $result = $this->create_bridge(
+                array_merge($data['bridge'], [
                     'form_id' => $integration . ':' . $form_id,
                     'template' => $this->name,
                 ])
@@ -802,15 +802,15 @@ class Form_Hook_Template
                     $this->remove_backend($data['backend']['name']);
                 }
 
-                throw new Form_Hook_Template_Exception(
-                    'hook_creation_error',
+                throw new Form_Bridge_Template_Exception(
+                    'bridge_creation_error',
                     __(
-                        'Forms bridge can\'t create the form hook',
+                        'Forms bridge can\'t create the form bridge',
                         'forms-bridge'
                     )
                 );
             }
-        } catch (Form_Hook_Template_Exception $e) {
+        } catch (Form_Bridge_Template_Exception $e) {
             throw $e;
         } catch (Error | Exception $e) {
             if (isset($form_id)) {
@@ -822,10 +822,10 @@ class Form_Hook_Template
             }
 
             if (isset($result) && $result) {
-                $this->remove_hook($data['hook']['name']);
+                $this->remove_bridge($data['bridge']['name']);
             }
 
-            throw new Form_Hook_Template_Exception(
+            throw new Form_Bridge_Template_Exception(
                 'internal_server_error',
                 $e->getMessage()
             );
@@ -891,56 +891,56 @@ class Form_Hook_Template
     }
 
     /**
-     * Removes hook from the settings store by name.
+     * Removes a bridge from the settings store by name.
      *
-     * @param string $name Hook name.
+     * @param string $name Bridge name.
      */
-    private function remove_hook($name)
+    private function remove_bridge($name)
     {
         $setting = Forms_Bridge::setting($this->api);
-        $setting->form_hooks = array_filter($setting->form_hooks, function (
-            $form_hook
+        $setting->bridges = array_filter($setting->bridges, function (
+            $bridge
         ) use ($name) {
-            return $form_hook['name'] !== $name;
+            return $bridge['name'] !== $name;
         });
     }
 
     /**
-     * Stores the form hook data on the settings store.
+     * Stores the form bridge data on the settings store.
      *
-     * @param array $data Form hook data.
+     * @param array $data Form bridge data.
      *
      * @return boolean Creation result.
      */
-    private function create_hook($data)
+    private function create_bridge($data)
     {
         $setting = Forms_Bridge::setting($this->api);
-        $form_hooks = $setting->form_hooks;
+        $bridges = $setting->bridges;
 
         $name_conflict =
-            array_search($data['name'], array_column($form_hooks, 'name')) !==
+            array_search($data['name'], array_column($bridges, 'name')) !==
             false;
 
         if ($name_conflict) {
             return;
         }
 
-        do_action('forms_bridge_before_template_hook', $data, $this->name);
+        do_action('forms_bridge_before_template_bridge', $data, $this->name);
 
-        $setting->form_hooks = array_merge($form_hooks, [$data]);
+        $setting->bridges = array_merge($bridges, [$data]);
         $setting->flush();
 
         $is_valid =
             array_search(
                 $data['name'],
-                array_column($setting->form_hooks, 'name')
+                array_column($setting->bridges, 'name')
             ) !== false;
 
         if (!$is_valid) {
             return;
         }
 
-        do_action('forms_bridge_template_hook', $data, $this->name);
+        do_action('forms_bridge_template_bridge', $data, $this->name);
 
         return true;
     }

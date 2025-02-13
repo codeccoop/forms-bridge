@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
+class Finan_Coop_Form_Bridge_Template extends Form_Bridge_Template
 {
     /**
      * Handles the template default values.
@@ -31,21 +31,21 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
             //     'value' => 'en_US',
             // ],
             [
-                'ref' => '#hook',
+                'ref' => '#bridge',
                 'name' => 'name',
-                'label' => 'Hook name',
+                'label' => 'Bridge name',
                 'type' => 'string',
                 'required' => true,
             ],
             // [
-            //     'ref' => '#hook',
+            //     'ref' => '#bridge',
             //     'name' => 'backend',
             //     'label' => 'Backend',
             //     'type' => 'string',
             //     'required' => true,
             // ],
             // [
-            //     'ref' => '#hook',
+            //     'ref' => '#bridge',
             //     'name' => 'endpoint',
             //     'label' => 'Endpoint',
             //     'type' => 'string',
@@ -87,7 +87,7 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
                 'required' => true,
             ],
         ],
-        'hook' => [
+        'bridge' => [
             'backend' => 'FinanCoop',
             'endpoint' => '/api/campaign/{campaign_id}',
         ],
@@ -124,7 +124,7 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
      *
      * @param string $file Source file path of the template config.
      * @param array $config Template config data.
-     * @param string $api Form hook API name.
+     * @param string $api Bridge API name.
      */
     public function __construct($file, $config, $api)
     {
@@ -148,7 +148,7 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
             function ($data, $template_name) {
                 if ($template_name === $this->name) {
                     if (!empty($data['backend']['name'])) {
-                        $data['hook']['backend'] = $data['backend']['name'];
+                        $data['bridge']['backend'] = $data['backend']['name'];
                     }
 
                     $index = array_search(
@@ -158,10 +158,10 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
 
                     if ($index !== false) {
                         $campaign_id = $data['fields'][$index]['value'];
-                        $data['hook']['endpoint'] = preg_replace(
+                        $data['bridge']['endpoint'] = preg_replace(
                             '/\{campaign_id\}/',
                             $campaign_id,
-                            $data['hook']['endpoint']
+                            $data['bridge']['endpoint']
                         );
                     }
                 }
@@ -182,16 +182,16 @@ class Finan_Coop_Form_Hook_Template extends Form_Hook_Template
      */
     private function extend_schema($schema)
     {
-        $schema['hook']['properties'] = array_merge(
-            $schema['hook']['properties'],
+        $schema['bridge']['properties'] = array_merge(
+            $schema['bridge']['properties'],
             [
                 'backend' => ['type' => 'string'],
                 'endpoint' => ['type' => 'string'],
             ]
         );
 
-        $schema['hook']['required'][] = 'backend';
-        $schema['hook']['required'][] = 'endpoint';
+        $schema['bridge']['required'][] = 'backend';
+        $schema['bridge']['required'][] = 'endpoint';
 
         return $schema;
     }

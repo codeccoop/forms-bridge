@@ -5,7 +5,7 @@ const { Button, Modal } = wp.components;
 const { useState } = wp.element;
 const { __ } = wp.i18n;
 
-export default function FormPipes({ form, pipes, setPipes }) {
+export default function BridgePipes({ form, pipes, setPipes }) {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -19,7 +19,7 @@ export default function FormPipes({ form, pipes, setPipes }) {
       </Button>
       {open && (
         <Modal
-          title={__("Form pipes", "forms-bridge")}
+          title={__("Bridge pipes", "forms-bridge")}
           onRequestClose={() => setOpen(false)}
         >
           <div style={{ minWidth: "575px", minHeight: "125px" }}>

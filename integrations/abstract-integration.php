@@ -289,24 +289,24 @@ abstract class Integration extends Singleton
             return;
         }
 
-        if (empty($form_data['hooks'])) {
+        if (empty($form_data['bridges'])) {
             return;
         }
 
-        $hooks = $form_data['hooks'];
+        $bridges = $form_data['bridges'];
 
         $submission = $this->submission();
         $uploads = $this->uploads();
 
-        foreach (array_values($hooks) as $hook) {
+        foreach (array_values($bridges) as $bridge) {
             try {
                 // TODO: Exclude attachments from payload finger mangling
-                $payload = $hook->apply_pipes($submission);
+                $payload = $bridge->apply_pipes($submission);
 
                 $prune_empties = apply_filters(
                     'forms_bridge_prune_empties',
                     false,
-                    $hook
+                    $bridge
                 );
 
                 if ($prune_empties) {
@@ -316,11 +316,11 @@ abstract class Integration extends Singleton
                 $attachments = apply_filters(
                     'forms_bridge_attachments',
                     $this->attachments($uploads),
-                    $hook
+                    $bridge
                 );
 
                 if (!empty($attachments)) {
-                    $content_type = $hook->content_type;
+                    $content_type = $bridge->content_type;
                     if (
                         in_array($content_type, [
                             'application/json',
@@ -340,7 +340,7 @@ abstract class Integration extends Singleton
                 $payload = apply_filters(
                     'forms_bridge_payload',
                     $payload,
-                    $hook
+                    $bridge
                 );
 
                 if (empty($payload)) {
@@ -350,7 +350,7 @@ abstract class Integration extends Singleton
                 $skip = apply_filters(
                     'forms_bridge_skip_submission',
                     false,
-                    $hook,
+                    $bridge,
                     $payload,
                     $attachments
                 );
@@ -361,17 +361,17 @@ abstract class Integration extends Singleton
 
                 do_action(
                     'forms_bridge_before_submission',
-                    $hook,
+                    $bridge,
                     $payload,
                     $attachments
                 );
 
-                $response = $hook->submit($payload, $attachments);
+                $response = $bridge->submit($payload, $attachments);
 
                 if ($error = is_wp_error($response) ? $response : null) {
                     do_action(
                         'forms_bridge_on_failure',
-                        $hook,
+                        $bridge,
                         $error,
                         $payload,
                         $attachments
@@ -379,7 +379,7 @@ abstract class Integration extends Singleton
                 } else {
                     do_action(
                         'forms_bridge_after_submission',
-                        $hook,
+                        $bridge,
                         $payload,
                         $attachments
                     );
@@ -398,7 +398,7 @@ abstract class Integration extends Singleton
 
                 do_action(
                     'forms_bridge_on_failure',
-                    $hook,
+                    $bridge,
                     $error,
                     $payload ?? $submission,
                     $attachments ?? []

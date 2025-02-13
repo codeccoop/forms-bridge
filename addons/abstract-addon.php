@@ -37,11 +37,11 @@ abstract class Addon extends Singleton
     protected static $api;
 
     /**
-     * Handles addon custom hook class name.
+     * Handles addon custom bridge class name.
      *
      * @var string
      */
-    protected static $hook_class = '\FORMS_BRIDGE\Form_Hook';
+    protected static $bridge_class = '\FORMS_BRIDGE\Form_Bridge';
 
     /**
      * Public singleton initializer.
@@ -179,26 +179,26 @@ abstract class Addon extends Singleton
         self::admin_scripts();
 
         add_filter(
-            'forms_bridge_form_hooks',
-            static function ($form_hooks, $form_id = null, $api = null) {
-                return self::form_hooks($form_hooks, $form_id, $api);
+            'forms_bridge_bridges',
+            static function ($bridges, $form_id = null, $api = null) {
+                return self::bridges($bridges, $form_id, $api);
             },
             10,
             3
         );
 
         add_filter(
-            'forms_bridge_form_hook',
-            static function ($form_hook, $hook_name) {
-                if ($form_hook instanceof Form_Hook) {
-                    return $form_hook;
+            'forms_bridge_bridge',
+            static function ($bridge, $name) {
+                if ($bridge instanceof Form_Bridge) {
+                    return $bridge;
                 }
 
-                $form_hooks = static::setting()->form_hooks;
-                foreach ($form_hooks as $hook_data) {
-                    if ($hook_data['name'] === $hook_name) {
-                        return new static::$hook_class(
-                            $hook_data,
+                $bridges = static::setting()->bridges;
+                foreach ($bridges as $bridge_data) {
+                    if ($bridge_data['name'] === $name) {
+                        return new static::$bridge_class(
+                            $bridge_data,
                             static::$api
                         );
                     }
@@ -242,25 +242,22 @@ abstract class Addon extends Singleton
     }
 
     /**
-     * Adds addons' form hooks to the available hooks.
+     * Adds addons' bridges to the available bridges list.
      *
-     * @param array $form_hooks List with available form hooks.
+     * @param array $bridges List with available bridges.
      * @param int|null $form_id Target form ID.
      * @param string $api Api name to filter by.
      *
-     * @return array List with available form hooks.
+     * @return array List with available bridges.
      */
-    private static function form_hooks(
-        $form_hooks,
-        $form_id = null,
-        $api = null
-    ) {
-        if (!wp_is_numeric_array($form_hooks)) {
-            $form_hooks = [];
+    private static function bridges($bridges, $form_id = null, $api = null)
+    {
+        if (!wp_is_numeric_array($bridges)) {
+            $bridges = [];
         }
 
         if (!empty($api) && $api !== static::$api) {
-            return $form_hooks;
+            return $bridges;
         }
 
         // Check if form_id is internal or external
@@ -277,7 +274,7 @@ abstract class Addon extends Singleton
                 $integrations = array_keys(Integration::integrations());
                 if (count($integrations) > 1) {
                     _doing_it_wrong(
-                        'forms_bridge_form_hooks',
+                        'forms_bridge_bridges',
                         __(
                             '$form_id param should incloude the integration prefix if there is more than one integration active',
                             'forms-bridge'
@@ -294,16 +291,19 @@ abstract class Addon extends Singleton
         }
 
         return array_merge(
-            $form_hooks,
+            $bridges,
             array_map(
-                static function ($hook_data) {
-                    return new static::$hook_class($hook_data, static::$api);
+                static function ($bridge_data) {
+                    return new static::$bridge_class(
+                        $bridge_data,
+                        static::$api
+                    );
                 },
                 array_filter(
-                    (array) static::setting()->form_hooks,
-                    static function ($hook_data) use ($form_id) {
+                    (array) static::setting()->bridges,
+                    static function ($bridge_data) use ($form_id) {
                         return $form_id !== null
-                            ? $hook_data['form_id'] === $form_id
+                            ? $bridge_data['form_id'] === $form_id
                             : true;
                     }
                 )
@@ -440,13 +440,13 @@ abstract class Addon extends Singleton
     }
 
     /**
-     * Loads addon's hook templates.
+     * Loads addon's bridge templates.
      */
     private static function load_templates()
     {
         $__FILE__ = (new ReflectionClass(static::class))->getFileName();
         $dir = dirname($__FILE__) . '/templates';
 
-        static::$hook_class::load_templates($dir, static::$api);
+        static::$bridge_class::load_templates($dir, static::$api);
     }
 }

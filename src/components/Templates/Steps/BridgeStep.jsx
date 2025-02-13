@@ -6,7 +6,7 @@ const { __ } = wp.i18n;
 
 const fieldsOrder = ["name", "form_id"];
 
-export default function HookStep({ fields, data, setData }) {
+export default function BridgeStep({ fields, data, setData }) {
   const sortedFields = useMemo(
     () =>
       fields.sort(
@@ -17,8 +17,8 @@ export default function HookStep({ fields, data, setData }) {
 
   return (
     <TemplateStep
-      name={__("Form Hook", "forms-bridge")}
-      description={__("Configure the form hook", "forms-bridge")}
+      name={__("Bridge", "forms-bridge")}
+      description={__("Configure the bridge", "forms-bridge")}
     >
       {sortedFields.map((field) => (
         <Field

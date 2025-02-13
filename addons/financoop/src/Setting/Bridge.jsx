@@ -1,19 +1,19 @@
 // source
-import FormHook from "../../../../src/components/FormHooks/FormHook";
-import NewRestFormHook from "./NewFormHook";
+import Bridge from "../../../../src/components/Bridges/Bridge";
+import NewFinanCoopBridge from "./NewBridge";
 
 const { TextControl } = wp.components;
 const { __ } = wp.i18n;
 
-export default function FinanCoopFormHook({ data, update, remove }) {
+export default function FinanCoopBridge({ data, update, remove }) {
   return (
-    <FormHook
+    <Bridge
       data={data}
       update={update}
       remove={remove}
       schema={["name", "backend", "form_id", "endpoint"]}
       template={({ add, schema }) => (
-        <NewRestFormHook add={add} schema={schema} />
+        <NewFinanCoopBridge add={add} schema={schema} />
       )}
     >
       {({ data, update }) => (
@@ -27,6 +27,6 @@ export default function FinanCoopFormHook({ data, update, remove }) {
           />
         </div>
       )}
-    </FormHook>
+    </Bridge>
   );
 }

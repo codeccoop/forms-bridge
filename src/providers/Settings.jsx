@@ -114,11 +114,11 @@ export function useApis() {
   return [apis, (api) => patch({ apis: { ...apis, ...api } })];
 }
 
-export function useFormHooks() {
+export function useBridges() {
   const [apis] = useApis();
 
-  return Object.keys(apis).reduce((formHooks, api) => {
-    return formHooks.concat(apis[api].form_hooks);
+  return Object.keys(apis).reduce((bridges, api) => {
+    return bridges.concat(apis[api].bridges);
   }, []);
 }
 

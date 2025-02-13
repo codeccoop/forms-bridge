@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-class Rest_Form_Hook_Template extends Form_Hook_Template
+class Rest_Form_Bridge_Template extends Form_Bridge_Template
 {
     /**
      * Handles the template default values.
@@ -16,21 +16,21 @@ class Rest_Form_Hook_Template extends Form_Hook_Template
     protected static $default = [
         'fields' => [
             // [
-            //     'ref' => '#hook',
+            //     'ref' => '#bridge',
             //     'name' => 'backend',
             //     'label' => 'Backend',
             //     'type' => 'string',
             //     'required' => true,
             // ],
             [
-                'ref' => '#hook',
+                'ref' => '#bridge',
                 'name' => 'endpoint',
                 'label' => 'Endpoint',
                 'type' => 'string',
                 'required' => true,
             ],
             [
-                'ref' => '#hook',
+                'ref' => '#bridge',
                 'name' => 'method',
                 'label' => 'Method',
                 'type' => 'string',
@@ -51,7 +51,7 @@ class Rest_Form_Hook_Template extends Form_Hook_Template
                 'type' => 'string',
             ],
         ],
-        'hook' => [
+        'bridge' => [
             'backend' => '',
             'endpoint' => '',
             'method' => 'POST',
@@ -87,7 +87,7 @@ class Rest_Form_Hook_Template extends Form_Hook_Template
             function ($data, $template_name) {
                 if ($template_name === $this->name) {
                     if (!empty($data['backend']['name'])) {
-                        $data['hook']['backend'] = $data['backend']['name'];
+                        $data['bridge']['backend'] = $data['backend']['name'];
                     }
                 }
 
@@ -107,8 +107,8 @@ class Rest_Form_Hook_Template extends Form_Hook_Template
      */
     private function extend_schema($schema)
     {
-        $schema['hook']['properties'] = array_merge(
-            $schema['hook']['properties'],
+        $schema['bridge']['properties'] = array_merge(
+            $schema['bridge']['properties'],
             [
                 'backend' => ['type' => 'string'],
                 'endpoint' => ['type' => 'string'],
@@ -119,9 +119,9 @@ class Rest_Form_Hook_Template extends Form_Hook_Template
             ]
         );
 
-        $schema['hook']['required'][] = 'backend';
-        $schema['hook']['required'][] = 'endpoint';
-        $schema['hook']['required'][] = 'method';
+        $schema['bridge']['required'][] = 'backend';
+        $schema['bridge']['required'][] = 'endpoint';
+        $schema['bridge']['required'][] = 'method';
 
         return $schema;
     }

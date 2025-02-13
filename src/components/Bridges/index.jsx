@@ -18,10 +18,10 @@ function TabTitle({ name, focus, setFocus, copy }) {
   );
 }
 
-export default function FormHooks({ hooks, setHooks, FormHook }) {
-  const [currentTab, setCurrentTab] = useState(String(hooks.length ? 0 : -1));
+export default function Bridges({ bridges, setBridges, Bridge }) {
+  const [currentTab, setCurrentTab] = useState(String(bridges.length ? 0 : -1));
   const [tabFocus, setTabFocus] = useState(null);
-  const tabs = hooks
+  const tabs = bridges
     .map(({ backend, form_id, name, pipes, ...customFields }, i) => ({
       ...customFields,
       name: String(i),
@@ -34,7 +34,7 @@ export default function FormHooks({ hooks, setHooks, FormHook }) {
           name={name}
           focus={tabFocus === name}
           setFocus={(value) => setTabFocus(value ? name : null)}
-          copy={() => copyHook(name)}
+          copy={() => copyBridge(name)}
         />
       ),
     }))
@@ -45,54 +45,54 @@ export default function FormHooks({ hooks, setHooks, FormHook }) {
       },
     ]);
 
-  const hookCount = useRef(hooks.length);
+  const bridgesCount = useRef(bridges.length);
   useEffect(() => {
-    if (hooks.length > hookCount.current) {
-      setCurrentTab(String(hooks.length - 1));
-    } else if (hooks.length < hookCount.current) {
+    if (bridges.length > bridgesCount.current) {
+      setCurrentTab(String(bridges.length - 1));
+    } else if (bridges.length < bridgesCount.current) {
       setCurrentTab(String(currentTab - 1));
     }
 
     return () => {
-      hookCount.current = hooks.length;
+      bridgesCount.current = bridges.length;
     };
-  }, [hooks]);
+  }, [bridges]);
 
-  const updateHook = (index, data) => {
-    if (index === -1) index = hooks.length;
-    const newHooks = hooks
+  const updateBridge = (index, data) => {
+    if (index === -1) index = bridges.length;
+    const newBridges = bridges
       .slice(0, index)
       .concat([data])
-      .concat(hooks.slice(index + 1, hooks.length));
+      .concat(bridges.slice(index + 1, bridges.length));
 
-    newHooks.forEach((hook) => {
-      delete hook.title;
-      delete hook.icon;
+    newBridges.forEach((bridge) => {
+      delete bridge.title;
+      delete bridge.icon;
     });
-    setHooks(newHooks);
+    setBridges(newBridges);
   };
 
-  const removeHook = ({ name }) => {
-    const index = hooks.findIndex((h) => h.name === name);
-    const newHooks = hooks.slice(0, index).concat(hooks.slice(index + 1));
-    setHooks(newHooks);
+  const removeBridge = ({ name }) => {
+    const index = bridges.findIndex((h) => h.name === name);
+    const newBridges = bridges.slice(0, index).concat(bridges.slice(index + 1));
+    setBridges(newBridges);
   };
 
-  const copyHook = (name) => {
-    const i = hooks.findIndex((h) => h.name === name);
-    const hook = hooks[i];
+  const copyBridge = (name) => {
+    const i = bridges.findIndex((h) => h.name === name);
+    const bridge = bridges[i];
     const copy = {
-      ...hook,
-      pipes: JSON.parse(JSON.stringify(hook.pipes || [])),
+      ...bridge,
+      pipes: JSON.parse(JSON.stringify(bridge.pipes || [])),
     };
 
     let isUnique = false;
     while (!isUnique) {
       copy.name += "-copy";
-      isUnique = hooks.find((h) => h.name === copy.name) === undefined;
+      isUnique = bridges.find((h) => h.name === copy.name) === undefined;
     }
 
-    setHooks(hooks.concat(copy));
+    setBridges(bridges.concat(copy));
   };
 
   return (
@@ -106,22 +106,22 @@ export default function FormHooks({ hooks, setHooks, FormHook }) {
           marginBottom: "calc(8px)",
         }}
       >
-        {__("Form Hooks", "forms-bridge")}
+        {__("Bridges", "forms-bridge")}
       </label>
       <TabPanel
         tabs={tabs}
         onSelect={setCurrentTab}
         initialTabName={currentTab}
       >
-        {(hook) => {
-          hook.name = hook.name >= 0 ? hooks[+hook.name].name : "add";
+        {(bridge) => {
+          bridge.name = bridge.name >= 0 ? bridges[+bridge.name].name : "add";
           return (
-            <FormHook
-              data={hook}
-              remove={removeHook}
+            <Bridge
+              data={bridge}
+              remove={removeBridge}
               update={(data) =>
-                updateHook(
-                  hooks.findIndex(({ name }) => name === hook.name),
+                updateBridge(
+                  bridges.findIndex(({ name }) => name === bridge.name),
                   data
                 )
               }

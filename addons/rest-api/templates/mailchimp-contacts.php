@@ -45,10 +45,10 @@ add_filter(
             );
 
             $list_id = $data['fields'][$index]['value'];
-            $data['hook']['endpoint'] = preg_replace(
+            $data['bridge']['endpoint'] = preg_replace(
                 '/\{list_id\}/',
                 $list_id,
-                $data['hook']['endpoint']
+                $data['bridge']['endpoint']
             );
         }
 
@@ -60,8 +60,8 @@ add_filter(
 
 add_filter(
     'forms_bridge_payload',
-    function ($payload, $hook) {
-        if ($hook->template !== 'mailchimp-contacts') {
+    function ($payload, $bridge) {
+        if ($bridge->template !== 'mailchimp-contacts') {
             return $payload;
         }
 
@@ -123,14 +123,14 @@ return [
             'default' => 'MailChimp API',
         ],
         [
-            'ref' => '#hook',
+            'ref' => '#bridge',
             'name' => 'method',
             'label' => __('Bridge HTTP method', 'forms-bridge'),
             'type' => 'string',
             'value' => 'POST',
         ],
         [
-            'ref' => '#hook',
+            'ref' => '#bridge',
             'name' => 'endpoint',
             'label' => __('Bridge endpoint', 'forms-bridge'),
             'type' => 'string',
@@ -235,7 +235,7 @@ return [
     'backend' => [
         'base_url' => 'https://{dc}.api.mailchimp.com/3.0',
     ],
-    'hook' => [
+    'bridge' => [
         'method' => 'POST',
         'endpoint' => '/v3/contacts',
         'pipes' => [

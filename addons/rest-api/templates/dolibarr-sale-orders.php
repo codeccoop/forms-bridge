@@ -6,8 +6,8 @@ if (!defined('ABSPATH')) {
 
 add_filter(
     'forms_bridge_payload',
-    function ($payload, $hook) {
-        if ($hook->template === 'dolibarr-crm') {
+    function ($payload, $bridge) {
+        if ($bridge->template === 'dolibarr-crm') {
             // do something
         }
 
@@ -49,7 +49,7 @@ return [
             'required' => true,
         ],
         [
-            'ref' => '#hook',
+            'ref' => '#bridge',
             'name' => 'endpoint',
             'label' => __('Endpoint', 'forms-bridge'),
             'type' => 'string',
@@ -88,7 +88,7 @@ return [
             ],
         ],
     ],
-    'hook' => [
+    'bridge' => [
         'endpoint' => '/api/index.php/orders',
         'pipes' => [
             [

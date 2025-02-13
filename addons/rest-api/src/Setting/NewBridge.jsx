@@ -1,5 +1,5 @@
 // source
-import NewFormHook from "../../../../src/components/FormHooks/NewFormHook";
+import NewBridge from "../../../../src/components/Bridges/NewBridge";
 import RestTemplateWizard from "./TemplateWizard";
 
 const { TextControl, SelectControl } = wp.components;
@@ -28,9 +28,9 @@ const methodOptions = [
   },
 ];
 
-export default function NewRestFormHook({ add, schema }) {
+export default function NewRestBridge({ add, schema }) {
   return (
-    <NewFormHook add={add} schema={schema} Wizard={RestTemplateWizard}>
+    <NewBridge add={add} schema={schema} Wizard={RestTemplateWizard}>
       {({ data, update }) => (
         <>
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
@@ -54,6 +54,6 @@ export default function NewRestFormHook({ add, schema }) {
           </div>
         </>
       )}
-    </NewFormHook>
+    </NewBridge>
   );
 }

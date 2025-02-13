@@ -1,6 +1,6 @@
 // source
-import FormHook from "../../../../src/components/FormHooks/FormHook";
-import NewRestFormHook from "./NewFormHook";
+import Bridge from "../../../../src/components/Bridges/Bridge";
+import NewRestBridge from "./NewBridge";
 
 const { TextControl, SelectControl } = wp.components;
 const { __ } = wp.i18n;
@@ -24,15 +24,15 @@ const methodOptions = [
   },
 ];
 
-export default function RestFormHook({ data, update, remove }) {
+export default function RestBridge({ data, update, remove }) {
   return (
-    <FormHook
+    <Bridge
       data={data}
       update={update}
       remove={remove}
       schema={["name", "backend", "form_id", "method", "endpoint"]}
       template={({ add, schema }) => (
-        <NewRestFormHook
+        <NewRestBridge
           add={(data) => add({ method: "POST", ...data })}
           schema={schema}
         />
@@ -61,6 +61,6 @@ export default function RestFormHook({ data, update, remove }) {
           </div>
         </>
       )}
-    </FormHook>
+    </Bridge>
   );
 }

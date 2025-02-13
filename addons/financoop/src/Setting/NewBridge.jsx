@@ -1,13 +1,13 @@
 // source
-import NewFormHook from "../../../../src/components/FormHooks/NewFormHook";
+import NewBridge from "../../../../src/components/Bridges/NewBridge";
 import FinanCoopTemplateWizard from "./TemplateWizard";
 
 const { TextControl } = wp.components;
 const { __ } = wp.i18n;
 
-export default function NewFinanCoopFormHook({ add, schema }) {
+export default function NewFinanCoopBridge({ add, schema }) {
   return (
-    <NewFormHook add={add} schema={schema} Wizard={FinanCoopTemplateWizard}>
+    <NewBridge add={add} schema={schema} Wizard={FinanCoopTemplateWizard}>
       {({ data, update }) => (
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <TextControl
@@ -19,6 +19,6 @@ export default function NewFinanCoopFormHook({ add, schema }) {
           />
         </div>
       )}
-    </NewFormHook>
+    </NewBridge>
   );
 }

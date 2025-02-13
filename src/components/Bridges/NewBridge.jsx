@@ -1,9 +1,8 @@
 // source
 import { useForms } from "../../providers/Forms";
 import { useGeneral } from "../../providers/Settings";
-import useHookNames from "../../hooks/useHookNames";
-import FormPipes from "../FormPipes";
-import NewFormHook from "./NewFormHook";
+import useBridgeNames from "../../hooks/useBridgeNames";
+import Templates from "../Templates";
 
 const {
   TextControl,
@@ -11,19 +10,15 @@ const {
   Button,
   __experimentalSpacer: Spacer,
 } = wp.components;
-const { useState, useRef, useEffect, useMemo } = wp.element;
+const { useState, useMemo } = wp.element;
 const { __ } = wp.i18n;
 
-export default function FormHook({
-  data,
-  update,
-  remove,
-  schema = ["name", "backend", "form_id"],
-  template = ({ add, schema }) => <NewFormHook add={add} schema={schema} />,
+export default function NewBridge({
+  add,
+  schema,
+  Wizard,
   children = () => {},
 }) {
-  if (data.name === "add") return template({ add: update, schema });
-
   const [{ backends }] = useGeneral();
   const backendOptions = [{ label: "", value: "" }].concat(
     backends.map(({ name }) => ({
@@ -40,31 +35,53 @@ export default function FormHook({
     }))
   );
 
-  const form = useMemo(() => {
-    return forms.find((form) => form._id == data.form_id);
-  }, [data.form_id]);
+  const bridgeNames = useBridgeNames();
 
-  const [name, setName] = useState(data.name);
-  const initialName = useRef(data.name);
-
-  const hookNames = useHookNames();
+  const [name, setName] = useState("");
+  const [backend, setBackend] = useState("");
+  const [formId, setFormId] = useState("");
   const [nameConflict, setNameConflict] = useState(false);
+  const [customFields, setCustomFields] = useState({});
+  const customFieldsSchema = useMemo(
+    () =>
+      schema.filter((field) => !["name", "backend", "form_id"].includes(field)),
+    [schema]
+  );
+
   const handleSetName = (name) => {
-    setNameConflict(name !== initialName.current && hookNames.has(name.trim()));
+    setNameConflict(bridgeNames.has(name.trim()));
     setName(name);
   };
 
-  const timeout = useRef();
-  useEffect(() => {
-    clearTimeout(timeout.current);
-    if (!name || nameConflict) return;
-    timeout.current = setTimeout(() => {
-      if (hookNames.has(name.trim())) return;
-      update({ ...data, name: name.trim() });
-    }, 500);
-  }, [name]);
+  const onClick = () => {
+    add({
+      ...customFields,
+      name: name.trim(),
+      backend,
+      form_id: formId,
+      pipes: [],
+    });
+    setName("");
+    setBackend("");
+    setFormId("");
+    setNameConflict(false);
+    setCustomFields({});
+  };
 
-  useEffect(() => setName(data.name), [data.name]);
+  const disabled = useMemo(
+    () =>
+      !(
+        name &&
+        !nameConflict &&
+        (backend || !schema.includes("backend")) &&
+        (formId || !schema.includes("form_id")) &&
+        customFieldsSchema.reduce(
+          (valid, field) => valid && customFields[field],
+          true
+        )
+      ),
+    [name, backend, formId, customFields, customFieldsSchema]
+  );
 
   return (
     <div
@@ -99,8 +116,8 @@ export default function FormHook({
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
             <SelectControl
               label={__("Backend", "forms-bridge")}
-              value={data.backend}
-              onChange={(backend) => update({ ...data, backend })}
+              value={backend}
+              onChange={setBackend}
               options={backendOptions}
               __nextHasNoMarginBottom
               __next40pxDefaultSize
@@ -111,15 +128,18 @@ export default function FormHook({
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
             <SelectControl
               label={__("Form", "forms-bridge")}
-              value={data.form_id}
-              onChange={(form_id) => update({ ...data, form_id })}
+              value={formId}
+              onChange={setFormId}
               options={formOptions}
               __nextHasNoMarginBottom
               __next40pxDefaultSize
             />
           </div>
         )}
-        {children({ data, update })}
+        {children({
+          data: customFields,
+          update: (customFields) => setCustomFields(customFields),
+        })}
       </div>
       <Spacer paddingY="calc(8px)" />
       <div
@@ -129,20 +149,16 @@ export default function FormHook({
           flexWrap: "wrap",
         }}
       >
-        <FormPipes
-          form={form}
-          pipes={data.pipes}
-          setPipes={(pipes) => update({ ...data, pipes })}
-        />
         <Button
-          isDestructive
           variant="primary"
-          onClick={() => remove(data)}
+          onClick={() => onClick()}
           style={{ width: "150px", justifyContent: "center" }}
+          disabled={disabled}
           __next40pxDefaultSize
         >
-          {__("Remove", "forms-bridge")}
+          {__("Add", "forms-bridge")}
         </Button>
+        <Templates Wizard={Wizard} />
       </div>
     </div>
   );

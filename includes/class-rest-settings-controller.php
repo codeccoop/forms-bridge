@@ -146,7 +146,7 @@ class REST_Settings_Controller extends Base_Controller
     {
         $forms = apply_filters('forms_bridge_forms', []);
         return array_map(static function ($form) {
-            unset($form['hooks']);
+            unset($form['bridges']);
             return $form;
         }, $forms);
     }
@@ -161,7 +161,7 @@ class REST_Settings_Controller extends Base_Controller
     private static function get_template($request)
     {
         $template_name = $request['name'];
-        $template = Form_Hook::get_template($template_name);
+        $template = Form_Bridge::get_template($template_name);
         if (!$template) {
             return new WP_Error(
                 'not_found',
@@ -216,7 +216,7 @@ class REST_Settings_Controller extends Base_Controller
             ]);
 
             return ['success' => true];
-        } catch (Form_Hook_Template_Exception $e) {
+        } catch (Form_Bridge_Template_Exception $e) {
             // Use custom exception to catch custom error status
             return new WP_Error($e->getStringCode(), $e->getMessage());
         } catch (Error | Exception $e) {

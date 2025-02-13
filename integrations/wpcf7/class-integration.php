@@ -176,8 +176,8 @@ class Integration extends BaseIntegration
             '_id' => 'wpcf7:' . $form_id,
             'id' => $form_id,
             'title' => $form->title(),
-            'hooks' => apply_filters(
-                'forms_bridge_form_hooks',
+            'bridges' => apply_filters(
+                'forms_bridge_bridges',
                 [],
                 'wpcf7:' . $form_id
             ),

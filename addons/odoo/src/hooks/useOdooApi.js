@@ -1,7 +1,7 @@
 import { useApis } from "../../../../src/providers/Settings";
 
 export default function useOdooApi() {
-  const [{ odoo: api = { databases: [], form_hooks: [] } }, patch] = useApis();
-  const setApi = (value) => patch({ odoo: value });
+  const [{ odoo: api = { databases: [], bridges: [] } }, patch] = useApis();
+  const setApi = (odoo) => patch({ odoo });
   return [api, setApi];
 }

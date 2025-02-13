@@ -6,8 +6,8 @@ if (!defined('ABSPATH')) {
 
 add_filter(
     'forms_bridge_payload',
-    function ($payload, $hook) {
-        if ($hook->template !== 'brevo-contacts') {
+    function ($payload, $bridge) {
+        if ($bridge->template !== 'brevo-contacts') {
             return $payload;
         }
 
@@ -53,14 +53,14 @@ return [
             'default' => 'Brevo API',
         ],
         [
-            'ref' => '#hook',
+            'ref' => '#bridge',
             'name' => 'method',
             'label' => __('Bridge HTTP method', 'forms-bridge'),
             'type' => 'string',
             'value' => 'POST',
         ],
         [
-            'ref' => '#hook',
+            'ref' => '#bridge',
             'name' => 'endpoint',
             'label' => __('Bridge endpoint', 'forms-bridge'),
             'type' => 'string',
@@ -80,7 +80,7 @@ return [
         [
             'ref' => '#form/fields[]',
             'name' => 'listIds',
-            'label' => __('List IDs', 'forms-bridge'),
+            'label' => __('Segment IDs', 'forms-bridge'),
             'type' => 'string',
             'description' => __(
                 'List IDs separated by commas. Leave it empty if you don\'t want to subscrive contact to any list',
@@ -124,7 +124,7 @@ return [
             ],
         ],
     ],
-    'hook' => [
+    'bridge' => [
         'method' => 'POST',
         'endpoint' => '/v3/contacts',
         'pipes' => [],

@@ -6,8 +6,8 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-require_once 'class-rest-form-hook.php';
-require_once 'class-rest-form-hook-template.php';
+require_once 'class-rest-form-bridge.php';
+require_once 'class-rest-form-bridge-template.php';
 
 /**
  * REST API Addon class.
@@ -29,11 +29,11 @@ class Rest_Addon extends Addon
     protected static $api = 'rest-api';
 
     /**
-     * Handles the addom's custom form hook class.
+     * Handles the addom's custom bridge class.
      *
      * @var string
      */
-    protected static $hook_class = '\FORMS_BRIDGE\Rest_Form_Hook';
+    protected static $bridge_class = '\FORMS_BRIDGE\Rest_Form_Bridge';
 
     /**
      * Registers the setting and its fields.
@@ -45,7 +45,7 @@ class Rest_Addon extends Addon
         return [
             self::$api,
             [
-                'form_hooks' => [
+                'bridges' => [
                     'type' => 'array',
                     'items' => [
                         'type' => 'object',
@@ -98,7 +98,7 @@ class Rest_Addon extends Addon
                 ],
             ],
             [
-                'form_hooks' => [],
+                'bridges' => [],
             ],
         ];
     }
@@ -112,26 +112,26 @@ class Rest_Addon extends Addon
      */
     protected static function validate_setting($data, $setting)
     {
-        $data['form_hooks'] = self::validate_form_hooks(
-            $data['form_hooks'],
-            Forms_Bridge::setting('general')->backends ?: []
+        $data['bridges'] = self::validate_bridges(
+            $data['bridges'],
+            \HTTP_BRIDGE\Settings_Store::setting('general')->backends ?: []
         );
 
         return $data;
     }
 
     /**
-     * Validate form hooks settings. Filters form hooks with inconsistencies with
-     * the existing backends.
+     * Validate bridge settings. Filters bridges with inconsistencies with
+     * current store state.
      *
-     * @param array $form_hooks Array with form hooks configurations.
+     * @param array $bridges Array with bridge configurations.
      * @param array $backends Array with backends data.
      *
-     * @return array Array with valid form hook configurations.
+     * @return array Array with valid bridge configurations.
      */
-    private static function validate_form_hooks($form_hooks, $backends)
+    private static function validate_bridges($bridges, $backends)
     {
-        if (!wp_is_numeric_array($form_hooks)) {
+        if (!wp_is_numeric_array($bridges)) {
             return [];
         }
 
@@ -147,31 +147,31 @@ class Rest_Addon extends Addon
             return $template['name'];
         }, apply_filters('forms_bridge_templates', [], 'rest-api'));
 
-        $valid_hooks = [];
-        for ($i = 0; $i < count($form_hooks); $i++) {
-            $hook = $form_hooks[$i];
+        $valid_bridges = [];
+        for ($i = 0; $i < count($bridges); $i++) {
+            $bridge = $bridges[$i];
 
             // Valid only if backend, form id and template exists
             $is_valid =
                 array_reduce(
                     $backends,
-                    static function ($is_valid, $backend) use ($hook) {
-                        return $hook['backend'] === $backend['name'] ||
+                    static function ($is_valid, $backend) use ($bridge) {
+                        return $bridge['backend'] === $backend['name'] ||
                             $is_valid;
                     },
                     false
                 ) &&
-                in_array($hook['form_id'], $_ids) &&
-                (empty($hook['template']) ||
+                in_array($bridge['form_id'], $_ids) &&
+                (empty($bridge['template']) ||
                     empty($tempaltes) ||
-                    in_array($hook['template'], $tempaltes));
+                    in_array($bridge['template'], $tempaltes));
 
             if ($is_valid) {
-                $valid_hooks[] = $hook;
+                $valid_bridges[] = $bridge;
             }
         }
 
-        return $valid_hooks;
+        return $valid_bridges;
     }
 }
 
