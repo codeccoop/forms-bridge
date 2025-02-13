@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 }
 
 return [
-    'title' => __('FinanCoop Subscription', 'forms-bridge'),
+    'title' => __('FinanCoop Loan Request', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#form/fields[]',
@@ -16,33 +16,11 @@ return [
         ],
         [
             'ref' => '#form/fields[]',
-            'name' => 'ordered_parts',
-            'label' => __('Ordered parts', 'forms-bridge'),
+            'name' => 'loan_type_id',
+            'label' => __('Loan type ID', 'forms-bridge'),
             'type' => 'number',
             'required' => true,
         ],
-        [
-            'ref' => '#form/fields[]',
-            'name' => 'share_product_id',
-            'label' => __('Share product', 'forms-bridge'),
-            'type' => 'number',
-            'required' => true,
-        ],
-        [
-            'ref' => '#form/fields[]',
-            'name' => 'source',
-            'label' => __('Source', 'forms-bridge'),
-            'type' => 'string',
-            'required' => true,
-        ],
-        // [
-        //     'ref' => '#form/fields[]',
-        //     'name' => 'type',
-        //     'label' => __('Type', 'forms-bridge'),
-        //     'type' => 'string',
-        //     'required' => true,
-        //     'value' => 'increase',
-        // ],
         [
             'ref' => '#form/fields[]',
             'name' => 'country_code',
@@ -52,37 +30,26 @@ return [
         ],
     ],
     'bridge' => [
-        'endpoint' => '/api/campaign/{campaign_id}/subscription_request',
+        'endpoint' => '/api/campaign/{campaign_id}/loan_request',
         'pipes' => [
-            [
-                'from' => 'submission_id',
-                'to' => 'submission_id',
-                'cast' => 'null',
-            ],
             [
                 'from' => 'partner_id',
                 'to' => 'partner_id',
                 'cast' => 'integer',
             ],
             [
-                'from' => 'ordered_parts',
-                'to' => 'ordered_parts',
+                'from' => 'loan_amount',
+                'to' => 'loan_amount',
                 'cast' => 'integer',
             ],
             [
-                'from' => 'share_product_id',
-                'to' => 'share_product_id',
-                'cast' => 'integer',
-            ],
-            [
-                'from' => 'campaign_id',
-                'to' => 'campaign_id',
+                'from' => 'loan_type_id',
+                'to' => 'loan_type_id',
                 'cast' => 'integer',
             ],
         ],
     ],
     'form' => [
-        'title' => __('FinanCoop Subscription', 'forms-bridge'),
         'fields' => [
             [
                 'name' => 'partner_id',
@@ -90,28 +57,7 @@ return [
                 'required' => true,
             ],
             [
-                'name' => 'ordered_parts',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'share_product_id',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'source',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'type',
-                'type' => 'hidden',
-                'required' => true,
-                'value' => 'increase',
-            ],
-            [
-                'name' => 'campaign_id',
+                'name' => 'loan_type_id',
                 'type' => 'hidden',
                 'required' => true,
             ],
@@ -119,6 +65,13 @@ return [
                 'name' => 'country_code',
                 'type' => 'hidden',
                 'required' => true,
+            ],
+            [
+                'label' => __('Loan amount', 'forms-bridge'),
+                'name' => 'loan_amount',
+                'type' => 'number',
+                'required' => true,
+                'min' => 0,
             ],
             [
                 'label' => __('First name', 'forms-bridge'),

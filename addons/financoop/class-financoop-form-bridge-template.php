@@ -16,20 +16,12 @@ class Finan_Coop_Form_Bridge_Template extends Form_Bridge_Template
     protected static $default = [
         'fields' => [
             [
-                'ref' => '#form/fields[]',
+                'ref' => '#bridge',
                 'name' => 'campaign_id',
                 'label' => 'Campaign ID',
                 'type' => 'number',
                 'required' => true,
             ],
-            // [
-            //     'ref' => '#form/fields[]',
-            //     'name' => 'lang',
-            //     'label' => 'Language',
-            //     'type' => 'string',
-            //     'required' => true,
-            //     'value' => 'en_US',
-            // ],
             [
                 'ref' => '#bridge',
                 'name' => 'name',
@@ -37,20 +29,6 @@ class Finan_Coop_Form_Bridge_Template extends Form_Bridge_Template
                 'type' => 'string',
                 'required' => true,
             ],
-            // [
-            //     'ref' => '#bridge',
-            //     'name' => 'backend',
-            //     'label' => 'Backend',
-            //     'type' => 'string',
-            //     'required' => true,
-            // ],
-            // [
-            //     'ref' => '#bridge',
-            //     'name' => 'endpoint',
-            //     'label' => 'Endpoint',
-            //     'type' => 'string',
-            //     'required' => true,
-            // ],
             [
                 'ref' => '#backend',
                 'name' => 'name',
@@ -90,31 +68,6 @@ class Finan_Coop_Form_Bridge_Template extends Form_Bridge_Template
         'bridge' => [
             'backend' => 'FinanCoop',
             'endpoint' => '/api/campaign/{campaign_id}',
-        ],
-        'backend' => [
-            'name' => 'FinanCoop',
-            'pipes' => [
-                [
-                    'from' => 'submission_id',
-                    'to' => 'submission_id',
-                    'cast' => 'null',
-                ],
-            ],
-        ],
-        'form' => [
-            'fields' => [
-                [
-                    'name' => 'campaign_id',
-                    'type' => 'hidden',
-                    'required' => true,
-                ],
-                [
-                    'name' => 'lang',
-                    'type' => 'hidden',
-                    'required' => true,
-                    'value' => 'en_US',
-                ],
-            ],
         ],
     ];
 
@@ -167,6 +120,29 @@ class Finan_Coop_Form_Bridge_Template extends Form_Bridge_Template
                 }
 
                 return $data;
+            },
+            9,
+            2
+        );
+
+        add_filter(
+            'forms_bridge_payload',
+            function ($payload, $bridge) {
+                if ($bridge->template === $this->name) {
+                    preg_match(
+                        '/(?<=campaign\/)[0-9]+/',
+                        $bridge->endpoint,
+                        $matches
+                    );
+                    $payload['campaign_id'] = (int) $matches[0];
+                    $payload['lang'] = apply_filters(
+                        'wpct_i18n_current_language',
+                        get_locale(),
+                        'locale'
+                    );
+                }
+
+                return $payload;
             },
             9,
             2
