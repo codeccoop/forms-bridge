@@ -1,12 +1,12 @@
 {
-  "translation-revision-date": "2025-02-08 03:51+0000",
-  "generator": "WP-CLI\/2.11.0",
+  "translation-revision-date": "2025-02-14 00:47+0000",
+  "generator": "Loco https:\/\/localise.biz\/",
   "source": "assets\/plugin.bundle.js",
-  "domain": "messages",
+  "domain": "forms-bridge",
   "locale_data": {
-    "messages": {
+    "forms-bridge": {
       "": {
-        "domain": "messages",
+        "domain": "",
         "lang": "es_ES",
         "plural-forms": "nplurals=2; plural=n != 1;"
       },
@@ -29,7 +29,6 @@
       "Debug": ["Depurar"],
       "Download config": ["Descargar configuraci\u00f3n"],
       "Drop": ["Descartar"],
-      "Error": ["Error"],
       "Export Forms Bridge config as JSON": [
         "Exportar configuraci\u00f3n como JSON"
       ],
@@ -71,10 +70,10 @@
         "\ud83d\udc4b Benvenida! Parece que dispones de m\u00e1s de un constructor de formularios. Antes de continuar, selecciona con que extensiones quieres que se integre Forms Bridge."
       ],
       "Cancel the import": ["Cancela la importaci\u00f3n"],
-      "wpforms": ["WPForms"],
-      "wpcf7": ["Contact Form 7"],
-      "gf": ["Gravity Forms"],
-      "ninja": ["Ninja Forms"]
+      "Load settings error": ["Error de carga de configuraci\u00f3n"],
+      "Save settings error": ["Error de guardado de configuraci\u00f3n"],
+      "Loading config error": ["Error de carga de configuraci\u00f3n"],
+      "Template submit error": ["Error de envio de plantilla"]
     }
   }
 }

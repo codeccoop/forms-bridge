@@ -4,17 +4,17 @@ return [
     'report-msgid-bugs-to' =>
         'https://wordpress.org/support/plugin/forms-bridge',
     'last-translator' => '',
-    'language-team' => 'Catalan',
+    'language-team' => 'Català',
     'mime-version' => '1.0',
     'content-type' => 'text/plain; charset=UTF-8',
     'content-transfer-encoding' => '8bit',
     'pot-creation-date' => '2024-11-23T00:33:18+00:00',
-    'po-revision-date' => '2025-02-08 03:50+0000',
+    'po-revision-date' => '2025-02-14 00:47+0000',
     'language' => 'ca',
     'x-generator' => 'Loco https://localise.biz/',
     'x-domain' => 'forms-bridge',
     'plural-forms' => 'nplurals=2; plural=n != 1;',
-    'x-loco-version' => '2.7.1; wp-6.7.1',
+    'x-loco-version' => '2.7.1; wp-6.7.2',
     'messages' => [
         '$form_id param should incloude the integration prefix if there is more than one integration active' =>
             'el paràmetre $form_id ha d\'incloure el prefix de la integració si hi ha més d\'una integració activa',
@@ -29,9 +29,6 @@ return [
         'Backend HTTP Headers' => 'Capçaleres HTTP',
         'Backend name' => 'Nóm del backend',
         'Backends' => 'Backends',
-        'Before you can use spreadsheet hooks, you have to grant access to Forms Bridge as OAuth client' =>
-            'Abans de poder utilitzar hooks de spreadsheets, has de garantir l\'accés a Forms Bridge com a client OAuth',
-        'Campaign' => 'Campanya',
         'Can\'t find the spreadsheets by id' =>
             'No s\'ha trobat el spreadsheets per id',
         'Can\'t write new values to the spreadhseet' =>
@@ -47,14 +44,11 @@ return [
         'Database' => 'Base de dades',
         'Databases' => 'Bases de dades',
         'Debug' => 'Depurar',
-        'Dolibarr CRM' => 'Dolibarr CRM',
-        'Dolibarr CRM Leads' => 'Leads del CRM de Dolibarr',
         'Done' => 'Fet',
         'Download config' => 'Descarregar configuració',
         'Drop' => 'Descartar',
         'Email' => 'Email',
         'Endpoint' => 'Endpoint',
-        'Error' => 'Error',
         'Export Forms Bridge config as JSON' =>
             'Exporta la configuració com a JSON',
         'Field `%s` does not match the schema' =>
@@ -66,20 +60,15 @@ return [
             'Segueix <a href=\'https://github.com/juampynr/google-spreadsheet-reader?tab=readme-ov-file\' target=\'_blank\'>l\'exemple</a> si necessites ajuda amb el process.',
         'Form' => 'Formulari',
         'Form format pipes' => 'Conversors de format',
-        'Form Hooks' => 'Connctors de Formularis',
-        'Form pipes' => 'Conversors del formulari',
         'Form title' => 'Títol de formulari',
         'Forms Bridge' => 'Forms Bridge',
         'Forms bridge can\'t create the form' =>
             'Forms bridge no pot crear el formulari',
-        'Forms bridge can\'t create the form hook' =>
-            'Forms bridge no pot crear el ganxo de formulari',
         'From' => 'De',
         'General' => 'General',
         'Google Service Credentials' => 'Credencials de Google Service',
         'Grant access' => 'Garantir accés',
         'Header-Name' => 'Nom-Capçalera',
-        'Hook name' => 'Nom del ganxo',
         'https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge' =>
             'https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge',
         'https://www.codeccoop.org' => 'https://www.codeccoop.org',
@@ -91,8 +80,6 @@ return [
         'Import config' => 'Importar configuració',
         'Import Forms Bridge JSON config' => 'Importa configuració JSON',
         'Integrations' => 'Integracions',
-        'Invalid number of template fields' =>
-            'Nombre invàlid de camps de plantilla',
         'Invalid template field ref `%s`' =>
             'Ref `%s` del camp de plantilla invàlida',
         'Invalid use template integration' =>
@@ -105,7 +92,6 @@ return [
         'JSON syntax error' => 'Error de sintaxi JSON',
         'Loading' => 'Carregant',
         'Logging' => 'Registrant',
-        'Message' => 'Missatge',
         'Method' => 'Mètode',
         'Model' => 'Model',
         'Name' => 'Nóm',
@@ -114,8 +100,6 @@ return [
         'Notification receiver' => 'Receptor de notificacions',
         'Password' => 'Contrasenya',
         'Pipes' => 'Conversors',
-        'Plugin to bridge WP forms submissions to any backend' =>
-            'Extensió per connectar formularis de WP amb qualsevol backend',
         'Remove' => 'Eliminar',
         'rest-api' => 'REST API',
         'Revoke access' => 'Revocar l\'accés',
@@ -125,7 +109,6 @@ return [
         'Somthing went wrong on the file upload' =>
             'Alguna cosa ha anat malament amb la pujada de l\'arxiu',
         'Spreadsheet' => 'Spreadsheet',
-        'Submission ID' => 'Submission ID',
         'Submit' => 'Enviar',
         'Tab Name' => 'Nom de la pestanya',
         'Target integration' => 'Integració destinatària',
@@ -150,5 +133,123 @@ return [
         'financoop' => 'FinanCoop',
         'google-sheets' => 'Google Sheets',
         'odoo' => 'Odoo JSON-RPC',
+        'wpforms' => 'WPForms',
+        'wpcf7' => 'Contact Form 7',
+        'gf' => 'Gravity Forms',
+        'ninja' => 'Ninja Forms',
+        'Plugin to bridge WP forms submissions to any backend or service' =>
+            'Extensió per connectar formularis de WP amb qualsevol backend o servei',
+        'FinanCoop Loan Request' => 'Petició de prèstec de FinanCoop',
+        'Partner ID' => 'ID del soci',
+        'Loan type ID' => 'ID del tipus de prèstec',
+        'Country code' => 'Codi de país',
+        'Loan amount' => 'Quantitat del prèstec',
+        'First name' => 'Nom',
+        'Last name' => 'Cognoms',
+        'Address' => 'Adreça',
+        'City' => 'Ciutat',
+        'Zip code' => 'Codi postal',
+        'Phone' => 'Telèfon',
+        'FinanCoop Subscription Request' =>
+            'Petició de subscripció de FinanCoop',
+        'Ordered parts' => 'Participacions',
+        'Share product ID' => 'ID del producte compartit',
+        'Source' => 'Origen',
+        'Forms bridge can\'t create the database' =>
+            'Forms Bridge no pot crear la base de dades',
+        'Odoo CRM Lead' => 'Leads del CRM d\'Odoo',
+        'User email' => 'Correu electrònic de l\'usuari',
+        'Lead name' => 'Nom del lead',
+        'Lead priority' => 'Prioritat del lead',
+        'Your email' => 'El teu correu electrònic',
+        'Your phone' => 'El teu telèfon',
+        'Your mobile' => 'El teu mòbil',
+        'Brevo Contacts' => 'Contactes de Brevo',
+        'Brevo API URL' => 'URL de la API de Brevo',
+        'Label of the Brevo API backend connection' =>
+            'Etiqueta de la connexió de backend amb la API de Brevo',
+        'Bridge HTTP method' => 'Mètode HTTP del bridge',
+        'Bridge endpoint' => 'Endpoint del bridge',
+        'Brevo API Key' => 'Clau API de Brevo',
+        'You can get it from "SMTP & API" > "API Keys" page from your dashboard' =>
+            'Pots obtenir-lo de la pàgina "SMTP & API" > "API Keys" del teu dashboard',
+        'Segment IDs' => 'IDs de segment',
+        'List IDs separated by commas. Leave it empty if you don\'t want to subscrive contact to any list' =>
+            'Llista d\'IDs separats per comas. Deixa\'l en blanc si no vols subscriure el contacte a cap llista',
+        'Your first name' => 'El teu nom',
+        'Your last name' => 'Els teus cognoms',
+        'MailChimp Contacts' => 'Contactes de MailChimp',
+        'MailChimp API URL' => 'URL de la API de MailChimp',
+        'Label of the MailChimp API backend connection' =>
+            'Etiqueta de la connexió de backend amb la API de MailChimp',
+        'MailChimp API Key' => 'Clau API de MailChimp',
+        'Datacenter' => 'Centre de dades',
+        'Audience ID' => 'ID de l\'audiència',
+        'You can find the ID on the settings tab of your segments' =>
+            'Pots trobar l\'ID a la pestanya de configuració dels teus segments',
+        'Subscription status' => 'Estat de la subscripció',
+        'Subscribed' => 'Subscrit',
+        'Unsubscribed' => 'Dessubscrit',
+        'Pending' => 'Pendent',
+        'Cleaned' => 'Net',
+        'Transactional' => 'Transaccional',
+        'Zoho CRM Leads' => 'Leads de Zoho CRM',
+        'Lead owner' => 'Responsable del lead',
+        'Email address of the owner of the lead' =>
+            'Adreça de correu electrònic del responsable del lead',
+        'Lead source' => 'Origen del lead',
+        'Label to identify your website sourced leads' =>
+            'Etiqueta identificativa dels leads provinents del teu lloc web',
+        'Lead status' => 'Estat del lead',
+        'Connected' => 'Connectat',
+        'OAuth grant token' => 'Toquen d\'accés OAuth',
+        'Do you have to create a Self-Client Application on the Zoho Developer Console and generates a grant token without caducity' =>
+            'Has de crear una Self-Client Application a la Zoho Developer Console i generar un toquen d\'accés sense caducitat',
+        'Company' => 'Companyia',
+        'Comments' => 'Comentaris',
+        'Bridge name' => 'Nom del bridge',
+        'Invalid template fields' => 'Camps de plantilla invàlids',
+        'Forms bridge can\'t create the backend' =>
+            'Forms Bridge no pot crear el backend',
+        'Forms bridge can\'t create the form bridge' =>
+            'Forms Bridge no pot crear el bridge de formulari',
+        'please supply a valid value' => 'si us plau, indica un valor',
+        'please supply a valid email address' =>
+            'si us plau, indica una adreça de correu electrònic vàlida',
+        'Sending...' => 'Enviant...',
+        'Thanks for contacting us! We will be in touch with you shortly.' =>
+            'Gràcies per contactar-nos! En breus et respondrem.',
+        'Load settings error' => 'Error de càrrega de configuració',
+        'Save settings error' => 'Error al guardar la configuració',
+        'Loading config error' => 'Error de càrrega de configuració',
+        'Template submit error' => 'Error d\'enviament de plantilla',
+        'Bridges' => 'Bridges',
+        'Bridge pipes' => 'Pasareles del bridge',
+        'Use tempalte' => 'Utilitzar plantilla',
+        'Templates' => 'Plantilles',
+        'Congratulations, you\'ve created a new form bridge!' =>
+            'Felicitats, has creat un nou bridge de formulari!',
+        'Close' => 'Tancar',
+        'Select a template' => 'Selecciona una plantilla',
+        'The value is not a number' => 'El valor no és un número',
+        'The value is too small' => 'El valor és massa petit',
+        'The value is too large' => 'El valor és massa gran',
+        'Configure the backend to bridge your form to' =>
+            'Configura el backend a on connctar-se',
+        'Reuse backend' => 'Reutilitza un backend',
+        'Populate the form default values' =>
+            'Emplena els valors per defecte del formulari',
+        'Bridge' => 'Bridge',
+        'Configure the bridge' => 'Configura el bridge',
+        'Previous' => 'Anterior',
+        'Next' => 'Següent',
+        'Select the spreadsheet do you want to use as backend' =>
+            'Selecciona el spreadsheet que vols fer servir com a backend',
+        'Select a Spreadsheet' => 'Selecciona un Spreadsheet',
+        'Before you can use spreadsheet bridges, you have to grant access to Forms Bridge as OAuth client' =>
+            'Abans de poder utilitzar bridges de spreadsheets, has de garantirs l\'acces de Forms Bridge com un client OAuth',
+        'Configure the Odoo database connection' =>
+            'Configura la connexió amb la base de dades d\'Odoo',
+        'Reuse database' => 'Reutilitza una base de dades',
     ],
 ];

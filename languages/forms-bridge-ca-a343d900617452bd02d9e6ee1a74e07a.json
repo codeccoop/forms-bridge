@@ -1,12 +1,12 @@
 {
-  "translation-revision-date": "2025-02-08 03:50+0000",
-  "generator": "WP-CLI\/2.11.0",
+  "translation-revision-date": "2025-02-14 00:47+0000",
+  "generator": "Loco https:\/\/localise.biz\/",
   "source": "assets\/plugin.bundle.js",
-  "domain": "messages",
+  "domain": "forms-bridge",
   "locale_data": {
-    "messages": {
+    "forms-bridge": {
       "": {
-        "domain": "messages",
+        "domain": "",
         "lang": "ca",
         "plural-forms": "nplurals=2; plural=n != 1;"
       },
@@ -29,7 +29,6 @@
       "Debug": ["Depurar"],
       "Download config": ["Descarregar configuraci\u00f3"],
       "Drop": ["Descartar"],
-      "Error": ["Error"],
       "Export Forms Bridge config as JSON": [
         "Exporta la configuraci\u00f3 com a JSON"
       ],
@@ -71,10 +70,10 @@
         "Benvinguda! Sembla que tens m\u00e9s d'un constructor de formularsi instal\u00b7lat. Abans de continuar, si us plau, selecciona amb quines extensions vols que s'integri Forms Bridge."
       ],
       "Cancel the import": ["Cancela la importaci\u00f3"],
-      "wpforms": ["WPForms"],
-      "wpcf7": ["Contact Form 7"],
-      "gf": ["Gravity Forms"],
-      "ninja": ["Ninja Forms"]
+      "Load settings error": ["Error de c\u00e0rrega de configuraci\u00f3"],
+      "Save settings error": ["Error al guardar la configuraci\u00f3"],
+      "Loading config error": ["Error de c\u00e0rrega de configuraci\u00f3"],
+      "Template submit error": ["Error d'enviament de plantilla"]
     }
   }
 }

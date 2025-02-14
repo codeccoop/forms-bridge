@@ -9,12 +9,12 @@ return [
     'content-type' => 'text/plain; charset=UTF-8',
     'content-transfer-encoding' => '8bit',
     'pot-creation-date' => '2024-11-23T00:33:18+00:00',
-    'po-revision-date' => '2025-02-08 03:51+0000',
+    'po-revision-date' => '2025-02-14 00:47+0000',
     'language' => 'es_ES',
     'x-generator' => 'Loco https://localise.biz/',
     'x-domain' => 'forms-bridge',
     'plural-forms' => 'nplurals=2; plural=n != 1;',
-    'x-loco-version' => '2.7.1; wp-6.7.1',
+    'x-loco-version' => '2.7.1; wp-6.7.2',
     'messages' => [
         '$form_id param should incloude the integration prefix if there is more than one integration active' =>
             'el parámetro $form_id ha de incluir el prefijo de la integración si hay más de una integración activa',
@@ -29,9 +29,6 @@ return [
         'Backend HTTP Headers' => 'Cabeceras HTTP',
         'Backend name' => 'Nombre del backend',
         'Backends' => 'Backends',
-        'Before you can use spreadsheet hooks, you have to grant access to Forms Bridge as OAuth client' =>
-            'Antes de poder usar ganchos de spreadsheet, has de garantizar el acceso de Forms Bridge como cliente OAuth',
-        'Campaign' => 'Campaña',
         'Can\'t find the spreadsheets by id' =>
             'No se encuentra el spreadsheet por id',
         'Can\'t write new values to the spreadhseet' =>
@@ -47,14 +44,11 @@ return [
         'Database' => 'Base de datos',
         'Databases' => 'Bases de datos',
         'Debug' => 'Depurar',
-        'Dolibarr CRM' => 'Dolibarr CRM',
-        'Dolibarr CRM Leads' => 'Leads del CRM de Dolibarr',
         'Done' => 'Hecho',
         'Download config' => 'Descargar configuración',
         'Drop' => 'Descartar',
         'Email' => 'Email',
         'Endpoint' => 'Endpoint',
-        'Error' => 'Error',
         'Export Forms Bridge config as JSON' =>
             'Exportar configuración como JSON',
         'Field `%s` does not match the schema' =>
@@ -66,20 +60,15 @@ return [
             'Sigue <a href=\'https://github.com/juampynr/google-spreadsheet-reader?tab=readme-ov-file\' target=\'_blank\'>este ejemplo</a> si necesitas ayuda con el proceso.',
         'Form' => 'Formulario',
         'Form format pipes' => 'Conversores de formato',
-        'Form Hooks' => 'Connectores de Formularios',
-        'Form pipes' => 'Conversores del formulario',
         'Form title' => 'Título del formulari',
         'Forms Bridge' => 'Forms Bridge',
         'Forms bridge can\'t create the form' =>
             'Forms bridge no puede crear el formulario',
-        'Forms bridge can\'t create the form hook' =>
-            'Forms bridge no puede crear el gancho',
         'From' => 'De',
         'General' => 'General',
         'Google Service Credentials' => 'Credencials de Google Service',
         'Grant access' => 'Garantizar acceso',
         'Header-Name' => 'Nombre-Cabecera',
-        'Hook name' => 'Nombre del gancho',
         'https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge' =>
             'https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge',
         'https://www.codeccoop.org' => 'https://www.codeccoop.org',
@@ -91,8 +80,6 @@ return [
         'Import config' => 'Importar configuración',
         'Import Forms Bridge JSON config' => 'Importa configuración JSON',
         'Integrations' => 'Integraciones',
-        'Invalid number of template fields' =>
-            'Número inválido de campos de plantilla',
         'Invalid template field ref `%s`' =>
             'Ref `%s` del campo de plantilla inválida',
         'Invalid use template integration' =>
@@ -106,7 +93,6 @@ return [
         'JSON syntax error' => 'Error de sintaxis JSON',
         'Loading' => 'Cargando',
         'Logging' => 'Registrando',
-        'Message' => 'Mensaje',
         'Method' => 'Método',
         'Model' => 'Modelo',
         'Name' => 'Nombre',
@@ -115,8 +101,6 @@ return [
         'Notification receiver' => 'Receptor de notificaciones',
         'Password' => 'Contraseña',
         'Pipes' => 'Conversores',
-        'Plugin to bridge WP forms submissions to any backend' =>
-            'Extensión para conectar formularios de WP con qualquier backend',
         'Remove' => 'Eliminar',
         'rest-api' => 'REST API',
         'Revoke access' => 'Revocar el acceso',
@@ -126,7 +110,6 @@ return [
         'Somthing went wrong on the file upload' =>
             'Alguna cosa ha ido mal con la subida del fichero',
         'Spreadsheet' => 'Spreadsheet',
-        'Submission ID' => 'ID de la entrada',
         'Submit' => 'Enviar',
         'Tab Name' => 'Nombre de pestaña',
         'Target integration' => 'Integración destinataria',
@@ -151,5 +134,123 @@ return [
         'financoop' => 'FinanCoop',
         'google-sheets' => 'Google Sheets',
         'odoo' => 'Odoo JSON-RPC',
+        'wpforms' => 'WPForms',
+        'wpcf7' => 'Contact Form 7',
+        'gf' => 'Gravity Forms',
+        'ninja' => 'Ninja Forms',
+        'Plugin to bridge WP forms submissions to any backend or service' =>
+            'Extensión para conectar formularios de WP con cualquier backend o servicio',
+        'FinanCoop Loan Request' => 'Petición de préstamo de FinanCoop',
+        'Partner ID' => 'ID del socio',
+        'Loan type ID' => 'ID del tipo de préstamo',
+        'Country code' => 'Código de país',
+        'Loan amount' => 'Cantidad del préstamo',
+        'First name' => 'Nombre',
+        'Last name' => 'Apellidos',
+        'Address' => 'Dirección',
+        'City' => 'Ciudad',
+        'Zip code' => 'Código postal',
+        'Phone' => 'Teléfono',
+        'FinanCoop Subscription Request' =>
+            'Petición de Suscripción de FinanCoop',
+        'Ordered parts' => 'Participaciones',
+        'Share product ID' => 'ID del producto compartido',
+        'Source' => 'Origen',
+        'Forms bridge can\'t create the database' =>
+            'Forms Bridge no puede crear la base de datos',
+        'Odoo CRM Lead' => 'Lead del CRM de Odoo',
+        'User email' => 'Correo electrónico del usuario',
+        'Lead name' => 'Nombre del lead',
+        'Lead priority' => 'Prioridad del lead',
+        'Your email' => 'Tu correo electrónico',
+        'Your phone' => 'Tu teléfono',
+        'Your mobile' => 'Tu móvil',
+        'Brevo Contacts' => 'Contactos de Brevo',
+        'Brevo API URL' => 'URL de la API de Brevo',
+        'Label of the Brevo API backend connection' =>
+            'Etiqueta de la conexión de backend con la API de Brevo',
+        'Bridge HTTP method' => 'Método HTTP del bridge',
+        'Bridge endpoint' => 'Endpoint del bridge',
+        'Brevo API Key' => 'Llave API de Brevo',
+        'You can get it from "SMTP & API" > "API Keys" page from your dashboard' =>
+            'Puedes obtenerlo de la página "SMT & API" > "API Keys" de tu dashboard',
+        'Segment IDs' => 'IDs de segmento',
+        'List IDs separated by commas. Leave it empty if you don\'t want to subscrive contact to any list' =>
+            'Lista de IDs separada por comas. Déjalo en blanco si no quieres suscribir el contacto a ninguna lista',
+        'Your first name' => 'Tu nombre',
+        'Your last name' => 'Tus apellidos',
+        'MailChimp Contacts' => 'Contactos de MailChimp',
+        'MailChimp API URL' => 'URL de la API de MailChimp',
+        'Label of the MailChimp API backend connection' =>
+            'Etiqueta de la conexión de abckend con la API de MailChimp',
+        'MailChimp API Key' => 'LLave API de MailChimp',
+        'Datacenter' => 'Centro de datos',
+        'Audience ID' => 'ID de la audiencia',
+        'You can find the ID on the settings tab of your segments' =>
+            'Puedes encontrar el ID en la pestaña de configuración de tus segmentos',
+        'Subscription status' => 'Estado de la suscripción',
+        'Subscribed' => 'Suscrito',
+        'Unsubscribed' => 'Dessuscrito',
+        'Pending' => 'Pendiente',
+        'Cleaned' => 'Limpio',
+        'Transactional' => 'Transaccional',
+        'Zoho CRM Leads' => 'Leads de Zoho CRM',
+        'Lead owner' => 'Responsable del lead',
+        'Email address of the owner of the lead' =>
+            'Dirección de correo electrónico del responsable del lead',
+        'Lead source' => 'Origen del lead',
+        'Label to identify your website sourced leads' =>
+            'Etiqueta identificativa de los leads provinientes de tu sitio web',
+        'Lead status' => 'Estado del lead',
+        'Connected' => 'Conectado',
+        'OAuth grant token' => 'Tiquen de acceso OAuth',
+        'Do you have to create a Self-Client Application on the Zoho Developer Console and generates a grant token without caducity' =>
+            'Has de crear una Self-Client Application en la Zoho Developer Console y generar un toquen de acceso sin caducidad',
+        'Company' => 'Compañía',
+        'Comments' => 'Comentarios',
+        'Bridge name' => 'Nombre del bridge',
+        'Invalid template fields' => 'Campos de plantilla inválidos',
+        'Forms bridge can\'t create the backend' =>
+            'Forms Bridge no puede crear el backend',
+        'Forms bridge can\'t create the form bridge' =>
+            'Forms Bridge no puede crear el bridge de formulario',
+        'please supply a valid value' => 'por favor, indica un valor',
+        'please supply a valid email address' =>
+            'por favor, indica una dirección de correo electrónico válida',
+        'Sending...' => 'Enviando...',
+        'Thanks for contacting us! We will be in touch with you shortly.' =>
+            'Gracias por ponerte en contacto! Te responderemos lo antes posible.',
+        'Load settings error' => 'Error de carga de configuración',
+        'Save settings error' => 'Error de guardado de configuración',
+        'Loading config error' => 'Error de carga de configuración',
+        'Template submit error' => 'Error de envio de plantilla',
+        'Bridges' => 'Bridges',
+        'Bridge pipes' => 'Pasarelas del bridge',
+        'Use tempalte' => 'Usar plantilla',
+        'Templates' => 'Plantillas',
+        'Congratulations, you\'ve created a new form bridge!' =>
+            'Felicidades, has creado un nuevo bridge de formulario!',
+        'Close' => 'Cerrar',
+        'Select a template' => 'Selecciona una plantilla',
+        'The value is not a number' => 'El valor no es un número',
+        'The value is too small' => 'El valor es demasiado pequeño',
+        'The value is too large' => 'El valor es demasiado grande',
+        'Configure the backend to bridge your form to' =>
+            'Configura un backend al que contectarse',
+        'Reuse backend' => 'Reutiliza un backend',
+        'Populate the form default values' =>
+            'Rellena los valores por defecto del formulario',
+        'Bridge' => 'Bridge',
+        'Configure the bridge' => 'Configura el bridge',
+        'Previous' => 'Anterior',
+        'Next' => 'Siguiente',
+        'Select the spreadsheet do you want to use as backend' =>
+            'Selecciona el spreadsheet que quieres usar como backend',
+        'Select a Spreadsheet' => 'Selecciona un Spreadsheet',
+        'Before you can use spreadsheet bridges, you have to grant access to Forms Bridge as OAuth client' =>
+            'Antes de poder utilizar bridges de spreadsheet, has de garantizar el acceso de Forms Bridge como un cliente OAuth',
+        'Configure the Odoo database connection' =>
+            'Configura la conexión con la base de datos de Odoo',
+        'Reuse database' => 'Reutiliza una base de datos',
     ],
 ];

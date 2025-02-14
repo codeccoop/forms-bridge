@@ -1,12 +1,12 @@
 {
-  "translation-revision-date": "2025-02-08 03:51+0000",
-  "generator": "WP-CLI\/2.11.0",
+  "translation-revision-date": "2025-02-14 00:47+0000",
+  "generator": "Loco https:\/\/localise.biz\/",
   "source": "addons\/financoop\/assets\/addon.bundle.js",
-  "domain": "messages",
+  "domain": "forms-bridge",
   "locale_data": {
-    "messages": {
+    "forms-bridge": {
       "": {
-        "domain": "messages",
+        "domain": "",
         "lang": "es_ES",
         "plural-forms": "nplurals=2; plural=n != 1;"
       },
@@ -19,16 +19,42 @@
       "Endpoint": ["Endpoint"],
       "Form": ["Formulario"],
       "Form format pipes": ["Conversores de formato"],
-      "Form Hooks": ["Connectores de Formularios"],
-      "Form pipes": ["Conversores del formulario"],
       "From": ["De"],
       "Name": ["Nombre"],
       "Pipes": ["Conversores"],
       "Remove": ["Eliminar"],
-      "Submission ID": ["ID de la entrada"],
+      "Submit": ["Enviar"],
+      "Target integration": ["Integraci\u00f3n destinataria"],
       "This name is already in use": ["Este nomre ya est\u00e1 en uso"],
       "To": ["A"],
-      "financoop": ["FinanCoop"]
+      "financoop": ["FinanCoop"],
+      "Load settings error": ["Error de carga de configuraci\u00f3n"],
+      "Save settings error": ["Error de guardado de configuraci\u00f3n"],
+      "Loading config error": ["Error de carga de configuraci\u00f3n"],
+      "Template submit error": ["Error de envio de plantilla"],
+      "Bridges": ["Bridges"],
+      "Bridge pipes": ["Pasarelas del bridge"],
+      "Use tempalte": ["Usar plantilla"],
+      "Templates": ["Plantillas"],
+      "Congratulations, you've created a new form bridge!": [
+        "Felicidades, has creado un nuevo bridge de formulario!"
+      ],
+      "Close": ["Cerrar"],
+      "Select a template": ["Selecciona una plantilla"],
+      "The value is not a number": ["El valor no es un n\u00famero"],
+      "The value is too small": ["El valor es demasiado peque\u00f1o"],
+      "The value is too large": ["El valor es demasiado grande"],
+      "Configure the backend to bridge your form to": [
+        "Configura un backend al que contectarse"
+      ],
+      "Reuse backend": ["Reutiliza un backend"],
+      "Populate the form default values": [
+        "Rellena los valores por defecto del formulario"
+      ],
+      "Bridge": ["Bridge"],
+      "Configure the bridge": ["Configura el bridge"],
+      "Previous": ["Anterior"],
+      "Next": ["Siguiente"]
     }
   }
 }

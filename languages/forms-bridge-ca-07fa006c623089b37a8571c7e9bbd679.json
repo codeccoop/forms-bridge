@@ -1,12 +1,12 @@
 {
-  "translation-revision-date": "2025-02-08 03:50+0000",
-  "generator": "WP-CLI\/2.11.0",
+  "translation-revision-date": "2025-02-14 00:47+0000",
+  "generator": "Loco https:\/\/localise.biz\/",
   "source": "addons\/rest-api\/assets\/addon.bundle.js",
-  "domain": "messages",
+  "domain": "forms-bridge",
   "locale_data": {
-    "messages": {
+    "forms-bridge": {
       "": {
-        "domain": "messages",
+        "domain": "",
         "lang": "ca",
         "plural-forms": "nplurals=2; plural=n != 1;"
       },
@@ -19,17 +19,43 @@
       "Endpoint": ["Endpoint"],
       "Form": ["Formulari"],
       "Form format pipes": ["Conversors de format"],
-      "Form Hooks": ["Connctors de Formularis"],
-      "Form pipes": ["Conversors del formulari"],
       "From": ["De"],
       "Method": ["M\u00e8tode"],
       "Name": ["N\u00f3m"],
       "Pipes": ["Conversors"],
       "Remove": ["Eliminar"],
       "rest-api": ["REST API"],
-      "Submission ID": ["Submission ID"],
+      "Submit": ["Enviar"],
+      "Target integration": ["Integraci\u00f3 destinat\u00e0ria"],
       "This name is already in use": ["Aquest n\u00f3m ja s'est\u00e0 usant"],
-      "To": ["A"]
+      "To": ["A"],
+      "Load settings error": ["Error de c\u00e0rrega de configuraci\u00f3"],
+      "Save settings error": ["Error al guardar la configuraci\u00f3"],
+      "Loading config error": ["Error de c\u00e0rrega de configuraci\u00f3"],
+      "Template submit error": ["Error d'enviament de plantilla"],
+      "Bridges": ["Bridges"],
+      "Bridge pipes": ["Pasareles del bridge"],
+      "Use tempalte": ["Utilitzar plantilla"],
+      "Templates": ["Plantilles"],
+      "Congratulations, you've created a new form bridge!": [
+        "Felicitats, has creat un nou bridge de formulari!"
+      ],
+      "Close": ["Tancar"],
+      "Select a template": ["Selecciona una plantilla"],
+      "The value is not a number": ["El valor no \u00e9s un n\u00famero"],
+      "The value is too small": ["El valor \u00e9s massa petit"],
+      "The value is too large": ["El valor \u00e9s massa gran"],
+      "Configure the backend to bridge your form to": [
+        "Configura el backend a on connctar-se"
+      ],
+      "Reuse backend": ["Reutilitza un backend"],
+      "Populate the form default values": [
+        "Emplena els valors per defecte del formulari"
+      ],
+      "Bridge": ["Bridge"],
+      "Configure the bridge": ["Configura el bridge"],
+      "Previous": ["Anterior"],
+      "Next": ["Seg\u00fcent"]
     }
   }
 }
