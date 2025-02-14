@@ -138,7 +138,7 @@ class Finan_Coop_Addon extends Addon
             []
         );
 
-        $tempaltes = array_map(function ($template) {
+        $templates = array_map(function ($template) {
             return $template['name'];
         }, apply_filters('forms_bridge_templates', [], 'financoop'));
 
@@ -158,8 +158,8 @@ class Finan_Coop_Addon extends Addon
                 ) &&
                 in_array($bridge['form_id'], $_ids) &&
                 (empty($bridge['template']) ||
-                    empty($tempaltes) ||
-                    in_array($bridge['template'], $tempaltes));
+                    empty($templates) ||
+                    in_array($bridge['template'], $templates));
 
             if ($is_valid) {
                 $valid_bridges[] = $bridge;

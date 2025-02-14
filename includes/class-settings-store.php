@@ -92,20 +92,17 @@ class Settings_Store extends Base_Settings
      */
     protected static function validate_setting($data, $setting)
     {
-        $name = $setting->name();
-        if ($name !== 'general') {
+        if ($setting->name() !== 'general') {
             return $data;
         }
 
         $data['notification_receiver'] =
             filter_var($data['notification_receiver'], FILTER_VALIDATE_EMAIL) ?:
-            '';
+            get_option('admin_email');
 
         $http = \HTTP_BRIDGE\Settings_Store::setting('general');
         $http->backends = \HTTP_BRIDGE\Settings_Store::validate_backends(
-            isset($data['backends']) && is_array($data['backends'])
-                ? $data['backends']
-                : []
+            $data['backends'] ?? []
         );
 
         unset($data['backends']);
