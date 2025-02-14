@@ -1,0 +1,79 @@
+{
+  "translation-revision-date": "2025-02-14 00:47+0000",
+  "generator": "Loco https:\/\/localise.biz\/",
+  "source": "addons\/google-sheets\/assets\/addon.bundle.js",
+  "domain": "forms-bridge",
+  "locale_data": {
+    "forms-bridge": {
+      "": {
+        "domain": "",
+        "lang": "ca",
+        "plural-forms": "nplurals=2; plural=n != 1;"
+      },
+      "Add": ["Afegir"],
+      "Add Form": ["Afegir Formulari"],
+      "Backend": ["Backend"],
+      "Cast as": ["Com a"],
+      "Database": ["Base de dades"],
+      "Done": ["Fet"],
+      "Drop": ["Descartar"],
+      "Follow <a href='https:\/\/github.com\/juampynr\/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>example<\/a> if do you need help with the process.": [
+        "Segueix <a href='https:\/\/github.com\/juampynr\/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>l'exemple<\/a> si necessites ajuda amb el process."
+      ],
+      "Form": ["Formulari"],
+      "Form format pipes": ["Conversors de format"],
+      "From": ["De"],
+      "Google Service Credentials": ["Credencials de Google Service"],
+      "Grant access": ["Garantir acc\u00e9s"],
+      "Name": ["N\u00f3m"],
+      "Pipes": ["Conversors"],
+      "Remove": ["Eliminar"],
+      "Revoke access": ["Revocar l'acc\u00e9s"],
+      "Spreadsheet": ["Spreadsheet"],
+      "Submit": ["Enviar"],
+      "Tab Name": ["Nom de la pestanya"],
+      "Target integration": ["Integraci\u00f3 destinat\u00e0ria"],
+      "This name is already in use": ["Aquest n\u00f3m ja s'est\u00e0 usant"],
+      "To": ["A"],
+      "Upload credentials": ["Pujar credencials"],
+      "You have to create a service account credentials to grant Forms Bridge access to your spreadhseets": [
+        "Has de crear credencials de compte de servei per garantis l'acc\u00e9s de Forms Bridge als teus spreadsheets"
+      ],
+      "google-sheets": ["Google Sheets"],
+      "Load settings error": ["Error de c\u00e0rrega de configuraci\u00f3"],
+      "Save settings error": ["Error al guardar la configuraci\u00f3"],
+      "Loading config error": ["Error de c\u00e0rrega de configuraci\u00f3"],
+      "Template submit error": ["Error d'enviament de plantilla"],
+      "Bridges": ["Bridges"],
+      "Bridge pipes": ["Pasareles del bridge"],
+      "Use tempalte": ["Utilitzar plantilla"],
+      "Templates": ["Plantilles"],
+      "Congratulations, you've created a new form bridge!": [
+        "Felicitats, has creat un nou bridge de formulari!"
+      ],
+      "Close": ["Tancar"],
+      "Select a template": ["Selecciona una plantilla"],
+      "The value is not a number": ["El valor no \u00e9s un n\u00famero"],
+      "The value is too small": ["El valor \u00e9s massa petit"],
+      "The value is too large": ["El valor \u00e9s massa gran"],
+      "Configure the backend to bridge your form to": [
+        "Configura el backend a on connctar-se"
+      ],
+      "Reuse backend": ["Reutilitza un backend"],
+      "Populate the form default values": [
+        "Emplena els valors per defecte del formulari"
+      ],
+      "Bridge": ["Bridge"],
+      "Configure the bridge": ["Configura el bridge"],
+      "Previous": ["Anterior"],
+      "Next": ["Seg\u00fcent"],
+      "Select the spreadsheet do you want to use as backend": [
+        "Selecciona el spreadsheet que vols fer servir com a backend"
+      ],
+      "Select a Spreadsheet": ["Selecciona un Spreadsheet"],
+      "Before you can use spreadsheet bridges, you have to grant access to Forms Bridge as OAuth client": [
+        "Abans de poder utilitzar bridges de spreadsheets, has de garantirs l'acces de Forms Bridge com un client OAuth"
+      ]
+    }
+  }
+}

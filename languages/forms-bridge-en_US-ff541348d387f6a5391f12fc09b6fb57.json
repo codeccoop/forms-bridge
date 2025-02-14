@@ -1,0 +1,39 @@
+{
+  "translation-revision-date": "2025-02-08 03:50+0000",
+  "generator": "WP-CLI\/2.11.0",
+  "source": "addons\/odoo\/assets\/addon.bundle.js",
+  "domain": "messages",
+  "locale_data": {
+    "messages": {
+      "": {
+        "domain": "messages",
+        "lang": "en_US",
+        "plural-forms": "nplurals=2; plural=n != 1;"
+      },
+      "Add": [""],
+      "Add database": [""],
+      "Add Form": [""],
+      "Backend": [""],
+      "Cast as": [""],
+      "Database": [""],
+      "Databases": [""],
+      "Done": [""],
+      "Drop": [""],
+      "Form": [""],
+      "Form format pipes": [""],
+      "Form Hooks": [""],
+      "Form pipes": [""],
+      "From": [""],
+      "Model": [""],
+      "Name": [""],
+      "Password": [""],
+      "Pipes": [""],
+      "Remove": [""],
+      "Submission ID": [""],
+      "This name is already in use": [""],
+      "To": [""],
+      "User": [""],
+      "odoo": ["Odoo JSON-RPC"]
+    }
+  }
+}

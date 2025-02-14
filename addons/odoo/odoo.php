@@ -4,14 +4,13 @@ namespace FORMS_BRIDGE;
 
 use WP_Error;
 
-use function WPCT_ABSTRACT\is_list;
-
 if (!defined('ABSPATH')) {
     exit();
 }
 
 require_once 'class-odoo-db.php';
-require_once 'class-odoo-form-hook.php';
+require_once 'class-odoo-form-bridge.php';
+require_once 'class-odoo-form-bridge-template.php';
 
 /**
  * Odoo Addon class.
@@ -26,18 +25,18 @@ class Odoo_Addon extends Addon
     protected static $name = 'Odoo JSON-RPC';
 
     /**
-     * Handles the addon slug.
+     * Handles the addon's API name.
      *
      * @var string
      */
-    protected static $slug = 'odoo-api';
+    protected static $api = 'odoo';
 
     /**
-     * Handles the addom's custom form hook class.
+     * Handles the addom's custom bridge class.
      *
      * @var string
      */
-    protected static $hook_class = '\FORMS_BRIDGE\Odoo_Form_Hook';
+    protected static $bridge_class = '\FORMS_BRIDGE\Odoo_Form_Bridge';
 
     /**
      * Handle is waiting for request response state.
@@ -125,7 +124,9 @@ class Odoo_Addon extends Addon
         ]);
 
         do_action('forms_bridge_before_odoo_rpc_login', $payload, $db);
+
         $response = $backend->post($endpoint, $payload);
+
         do_action(
             'forms_bridge_after_odoo_rpc_login',
             $response,
@@ -134,6 +135,7 @@ class Odoo_Addon extends Addon
         );
 
         $user_id = self::rpc_response($response);
+
         if (is_wp_error($user_id)) {
             return $user_id;
         }
@@ -148,6 +150,7 @@ class Odoo_Addon extends Addon
     protected function construct(...$args)
     {
         parent::construct(...$args);
+
         self::interceptors();
         self::custom_hooks();
     }
@@ -160,8 +163,8 @@ class Odoo_Addon extends Addon
         // Submission payload interceptor
         add_filter(
             'forms_bridge_payload',
-            static function ($payload, $hook) {
-                return self::payload_interceptor($payload, $hook);
+            static function ($payload, $bridge) {
+                return self::payload_interceptor($payload, $bridge);
             },
             90,
             2
@@ -183,7 +186,7 @@ class Odoo_Addon extends Addon
     private static function custom_hooks()
     {
         add_filter('forms_bridge_odoo_dbs', static function ($dbs) {
-            if (!is_list($dbs)) {
+            if (!wp_is_numeric_array($dbs)) {
                 $dbs = [];
             }
 
@@ -229,7 +232,7 @@ class Odoo_Addon extends Addon
     protected static function setting_config()
     {
         return [
-            self::$slug,
+            self::$api,
             [
                 'databases' => [
                     'type' => 'array',
@@ -242,9 +245,10 @@ class Odoo_Addon extends Addon
                             'password' => ['type' => 'string'],
                             'backend' => ['type' => 'string'],
                         ],
+                        'required' => ['name', 'user', 'password', 'backend'],
                     ],
                 ],
-                'form_hooks' => [
+                'bridges' => [
                     'type' => 'array',
                     'items' => [
                         'type' => 'object',
@@ -274,48 +278,147 @@ class Odoo_Addon extends Addon
                                             ],
                                         ],
                                     ],
+                                    'required' => ['from', 'to', 'cast'],
                                 ],
                             ],
+                        ],
+                        'required' => [
+                            'name',
+                            'database',
+                            'form_id',
+                            'model',
+                            'pipes',
                         ],
                     ],
                 ],
             ],
             [
                 'databases' => [],
-                'form_hooks' => [],
+                'bridges' => [],
             ],
         ];
+    }
+
+    /**
+     * Apply settings' data validations before db updates.
+     *
+     * @param array $data Setting data.
+     * @param Setting $setting Setting instance.
+     *
+     * @return array Validated setting data.
+     */
+    protected static function validate_setting($data, $setting)
+    {
+        $data['databases'] = self::validate_databases($data['databases']);
+        $data['bridges'] = self::validate_bridges(
+            $data['bridges'],
+            $data['databases']
+        );
+
+        return $data;
+    }
+
+    /**
+     * Database setting field validation.
+     *
+     * @param array $dbs Databases data.
+     *
+     * @return array Validated databases data.
+     */
+    private static function validate_databases($dbs)
+    {
+        if (!wp_is_numeric_array($dbs)) {
+            return [];
+        }
+
+        $backends = array_map(
+            function ($backend) {
+                return $backend['name'];
+            },
+            \HTTP_BRIDGE\Settings_Store::setting('general')->backends ?: []
+        );
+
+        return array_filter($dbs, function ($db_data) use ($backends) {
+            return in_array($db_data['backend'] ?? null, $backends);
+        });
+    }
+
+    /**
+     * Validate bridge settings. Filters bridges with inconsistencies with the
+     * current store state.
+     *
+     * @param array $bridges Array with bridge configurations.
+     * @param array $dbs Array with databases data.
+     *
+     * @return array Array with valid bridge configurations.
+     */
+    private static function validate_bridges($bridges, $dbs)
+    {
+        if (!wp_is_numeric_array($bridges)) {
+            return [];
+        }
+
+        $_ids = array_reduce(
+            apply_filters('forms_bridge_forms', []),
+            static function ($form_ids, $form) {
+                return array_merge($form_ids, [$form['_id']]);
+            },
+            []
+        );
+
+        $templates = array_map(function ($template) {
+            return $template['name'];
+        }, apply_filters('forms_bridge_templates', [], 'odoo'));
+
+        $valid_bridges = [];
+        for ($i = 0; $i < count($bridges); $i++) {
+            $bridge = $bridges[$i];
+
+            // Valid only if database and form id exists
+            $is_valid =
+                array_reduce(
+                    $dbs,
+                    static function ($is_valid, $db) use ($bridge) {
+                        return $bridge['database'] === $db['name'] || $is_valid;
+                    },
+                    false
+                ) &&
+                in_array($bridge['form_id'], $_ids) &&
+                (empty($bridge['template']) ||
+                    empty($templates) ||
+                    in_array($bridge['template'], $templates));
+
+            if ($is_valid) {
+                $valid_bridges[] = $bridge;
+            }
+        }
+
+        return $valid_bridges;
     }
 
     /**
      * Intercepts submission payloads and decorates them as RPC calls.
      *
      * @param array $payload Submission payload.
-     * @param Form_Hook $form_hook Current form hook instance.
+     * @param Form_Bridge $bridge Current bridge instance.
      *
      * @return array Decorated payload.
      */
-    private static function payload_interceptor($payload, $form_hook)
+    private static function payload_interceptor($payload, $bridge)
     {
         if (empty($payload)) {
             return $payload;
         }
 
-        if ($form_hook->api !== 'odoo') {
+        if ($bridge->api !== 'odoo') {
             return $payload;
         }
 
-        $db = $form_hook->database;
-        $endpoint = $form_hook->endpoint;
+        $db = $bridge->database;
+        $endpoint = $bridge->endpoint;
         $login = self::rpc_login($db, $endpoint);
         if ($error = is_wp_error($login) ? $login : null) {
-            do_action(
-                'forms_bridge_on_failure',
-                $form_hook,
-                $error,
-                $payload,
-                []
-            );
+            do_action('forms_bridge_on_failure', $bridge, $error, $payload, []);
             return;
         }
 
@@ -323,10 +426,10 @@ class Odoo_Addon extends Addon
 
         self::$submitting = true;
         return self::rpc_payload($sid, 'object', 'execute', [
-            $form_hook->database->name,
+            $bridge->database->name,
             $uid,
-            $form_hook->database->password,
-            $form_hook->model,
+            $bridge->database->password,
+            $bridge->model,
             'create',
             $payload,
         ]);
@@ -347,108 +450,6 @@ class Odoo_Addon extends Addon
 
         self::$submitting = false;
         return self::rpc_response($response);
-    }
-
-    /**
-     * Validate setting data callback.
-     *
-     * @param array $data Setting data.
-     * @param Setting $setting Setting instance.
-     *
-     * @return array Validated setting data.
-     */
-    protected static function validate_setting($data, $setting)
-    {
-        $data['databases'] = self::validate_databases($data['databases']);
-        $data['form_hooks'] = self::validate_form_hooks(
-            $data['form_hooks'],
-            $data['databases']
-        );
-
-        return $data;
-    }
-
-    /**
-     * Database setting field validation.
-     *
-     * @param array $dbs Databases data.
-     *
-     * @return array Validated databases data.
-     */
-    private static function validate_databases($dbs)
-    {
-        if (!is_list($dbs)) {
-            return [];
-        }
-
-        $backends = array_map(
-            function ($backend) {
-                return $backend['name'];
-            },
-            Forms_Bridge::setting('general')->backends ?: []
-        );
-
-        return array_filter($dbs, function ($db_data) use ($backends) {
-            return isset(
-                $db_data['name'],
-                $db_data['user'],
-                $db_data['password'],
-                $db_data['backend']
-            ) && in_array($db_data['backend'], $backends);
-        });
-    }
-
-    /**
-     * Validate form hooks settings. Filters form hooks with inconsistencies with the
-     * existing databases.
-     *
-     * @param array $form_hooks Array with form hooks configurations.
-     * @param array $dbs Array with databases data.
-     *
-     * @return array Array with valid form hook configurations.
-     */
-    private static function validate_form_hooks($form_hooks, $dbs)
-    {
-        if (!is_list($form_hooks)) {
-            return [];
-        }
-
-        $_ids = array_reduce(
-            apply_filters('forms_bridge_forms', []),
-            static function ($form_ids, $form) {
-                return array_merge($form_ids, [$form['_id']]);
-            },
-            []
-        );
-
-        $valid_hooks = [];
-        for ($i = 0; $i < count($form_hooks); $i++) {
-            $hook = $form_hooks[$i];
-
-            // Valid only if database and form id exists
-            $is_valid =
-                array_reduce(
-                    $dbs,
-                    static function ($is_valid, $db) use ($hook) {
-                        return $hook['database'] === $db['name'] || $is_valid;
-                    },
-                    false
-                ) && in_array($hook['form_id'], $_ids);
-
-            if ($is_valid) {
-                // filter empty pipes
-                $hook['pipes'] = array_filter(
-                    (array) $hook['pipes'],
-                    static function ($pipe) {
-                        return $pipe['to'] && $pipe['from'] && $pipe['cast'];
-                    }
-                );
-
-                $valid_hooks[] = $hook;
-            }
-        }
-
-        return $valid_hooks;
     }
 }
 

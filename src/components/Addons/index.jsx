@@ -22,10 +22,11 @@ export default function Addons() {
         return (
           <PanelRow key={addon}>
             <ToggleControl
-              __nextHasNoMarginBottom
+              disabled={addon === "rest-api"}
               label={__(addon, "forms-bridge")}
               checked={enabled}
               onChange={() => toggle(addon)}
+              __nextHasNoMarginBottom
             />
           </PanelRow>
         );

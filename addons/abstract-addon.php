@@ -6,8 +6,6 @@ use Exception;
 use ReflectionClass;
 use WPCT_ABSTRACT\Singleton;
 
-use function WPCT_ABSTRACT\is_list;
-
 if (!defined('ABSPATH')) {
     exit();
 }
@@ -32,18 +30,18 @@ abstract class Addon extends Singleton
     protected static $name;
 
     /**
-     * Handles addon unique slug.
+     * Handles addon's API name.
      *
      * @var string
      */
-    protected static $slug;
+    protected static $api;
 
     /**
-     * Handles addon custom hook class name.
+     * Handles addon custom bridge class name.
      *
      * @var string
      */
-    protected static $hook_class;
+    protected static $bridge_class = '\FORMS_BRIDGE\Form_Bridge';
 
     /**
      * Public singleton initializer.
@@ -73,6 +71,9 @@ abstract class Addon extends Singleton
                     : false;
             }
         }
+
+        // REST API always enabled
+        $registry['rest-api'] = true;
 
         return $registry;
     }
@@ -123,6 +124,10 @@ abstract class Addon extends Singleton
         );
 
         add_filter("option_{$general_setting}", static function ($value) {
+            if (!is_array($value)) {
+                return $value;
+            }
+
             return array_merge($value, ['addons' => self::registry()]);
         });
 
@@ -165,7 +170,7 @@ abstract class Addon extends Singleton
      */
     protected function construct(...$args)
     {
-        if (!(static::$name && static::$slug)) {
+        if (!(static::$name && static::$api)) {
             throw new Exception('Invalid addon registration');
         }
 
@@ -174,11 +179,32 @@ abstract class Addon extends Singleton
         self::admin_scripts();
 
         add_filter(
-            'forms_bridge_form_hooks',
-            static function ($form_hooks, $form_id = null) {
-                return self::form_hooks($form_hooks, $form_id);
+            'forms_bridge_bridges',
+            static function ($bridges, $form_id = null, $api = null) {
+                return self::bridges($bridges, $form_id, $api);
             },
-            9,
+            10,
+            3
+        );
+
+        add_filter(
+            'forms_bridge_bridge',
+            static function ($bridge, $name) {
+                if ($bridge instanceof Form_Bridge) {
+                    return $bridge;
+                }
+
+                $bridges = static::setting()->bridges;
+                foreach ($bridges as $bridge_data) {
+                    if ($bridge_data['name'] === $name) {
+                        return new static::$bridge_class(
+                            $bridge_data,
+                            static::$api
+                        );
+                    }
+                }
+            },
+            10,
             2
         );
     }
@@ -192,7 +218,7 @@ abstract class Addon extends Singleton
      */
     final protected static function templates()
     {
-        return apply_filters('forms_bridge_addon_templates', [], static::$slug);
+        return apply_filters('forms_bridge_templates', [], static::$api);
     }
 
     /**
@@ -202,42 +228,82 @@ abstract class Addon extends Singleton
      */
     final protected static function setting_name()
     {
-        return Forms_Bridge::slug() . '_' . static::$slug;
+        return Forms_Bridge::slug() . '_' . static::$api;
     }
 
     /**
      * Addon setting getter.
+     *
+     * @return Setting|null Setting instance.
      */
     final protected static function setting()
     {
-        return Forms_Bridge::setting(static::$slug);
+        return Forms_Bridge::setting(static::$api);
     }
 
     /**
-     * Adds addons' form hooks to the available hooks.
+     * Adds addons' bridges to the available bridges list.
      *
-     * @param array $form_hooks List with available form hooks.
+     * @param array $bridges List with available bridges.
      * @param int|null $form_id Target form ID.
+     * @param string $api Api name to filter by.
      *
-     * @return array List with available form hooks.
+     * @return array List with available bridges.
      */
-    private static function form_hooks($form_hooks, $form_id = null)
+    private static function bridges($bridges, $form_id = null, $api = null)
     {
-        if (!is_list($form_hooks)) {
-            $form_hooks = [];
+        if (!wp_is_numeric_array($bridges)) {
+            $bridges = [];
+        }
+
+        if (!empty($api) && $api !== static::$api) {
+            return $bridges;
+        }
+
+        // Check if form_id is internal or external
+        if ($form_id) {
+            $parts = explode(':', $form_id);
+            if (count($parts) === 1) {
+                $integration = null;
+                $id = $parts[0];
+            } else {
+                [$integration, $id] = $parts;
+            }
+
+            if (!$integration) {
+                $integrations = array_keys(Integration::integrations());
+                if (count($integrations) > 1) {
+                    _doing_it_wrong(
+                        'forms_bridge_bridges',
+                        __(
+                            '$form_id param should incloude the integration prefix if there is more than one integration active',
+                            'forms-bridge'
+                        ),
+                        '2.3.0'
+                    );
+                    return [];
+                }
+
+                $integration = array_pop($integrations);
+            }
+
+            $form_id = "{$integration}:{$id}";
         }
 
         return array_merge(
-            $form_hooks,
+            $bridges,
             array_map(
-                static function ($hook_data) {
-                    return new static::$hook_class($hook_data);
+                static function ($bridge_data) {
+                    return new static::$bridge_class(
+                        $bridge_data,
+                        static::$api
+                    );
                 },
                 array_filter(
-                    (array) static::setting()->form_hooks,
-                    static function ($hook_data) use ($form_id) {
+                    (array) static::setting()->bridges,
+                    static function ($bridge_data) use ($form_id) {
                         return $form_id !== null
-                            ? $hook_data['form_id'] === $form_id
+                            ? $bridge_data['form_id'] === $form_id
                             : true;
                     }
                 )
@@ -292,6 +358,10 @@ abstract class Addon extends Singleton
         add_filter(
             'option_' . self::setting_name(),
             static function ($value) {
+                if (!is_array($value)) {
+                    return $value;
+                }
+
                 return array_merge($value, [
                     'templates' => static::templates(),
                 ]);
@@ -316,7 +386,7 @@ abstract class Addon extends Singleton
                 $reflector = new ReflectionClass(static::class);
                 $__FILE__ = $reflector->getFileName();
 
-                $script_name = Forms_Bridge::slug() . '-' . static::$slug;
+                $script_name = Forms_Bridge::slug() . '-' . static::$api;
                 wp_enqueue_script(
                     $script_name,
                     plugins_url('assets/addon.bundle.js', $__FILE__),
@@ -332,6 +402,12 @@ abstract class Addon extends Singleton
                     ],
                     Forms_Bridge::version(),
                     ['in_footer' => true]
+                );
+
+                wp_set_script_translations(
+                    $script_name,
+                    Forms_Bridge::slug(),
+                    Forms_Bridge::path() . 'languages'
                 );
 
                 add_filter('forms_bridge_admin_script_deps', static function (
@@ -364,25 +440,13 @@ abstract class Addon extends Singleton
     }
 
     /**
-     * Loads addon templates.
+     * Loads addon's bridge templates.
      */
     private static function load_templates()
     {
         $__FILE__ = (new ReflectionClass(static::class))->getFileName();
         $dir = dirname($__FILE__) . '/templates';
-        if (!is_dir($dir)) {
-            $result = mkdir($dir);
-            if (!$result) {
-                return;
-            }
-        }
 
-        if (!is_readable($dir)) {
-            return;
-        }
-
-        foreach (array_diff(scandir($dir), ['.', '..']) as $file) {
-            include_once $file;
-        }
+        static::$bridge_class::load_templates($dir, static::$api);
     }
 }

@@ -1,0 +1,19 @@
+{
+  "translation-revision-date": "2025-02-08 03:50+0000",
+  "generator": "WP-CLI\/2.11.0",
+  "source": "assets\/plugin.bubdle.js",
+  "domain": "messages",
+  "locale_data": {
+    "messages": {
+      "": {
+        "domain": "messages",
+        "lang": "en_US",
+        "plural-forms": "nplurals=2; plural=n != 1;"
+      },
+      "nf": ["Ninja Forms"],
+      "wpforms": ["WPForms"],
+      "wpcf7": ["Contact Form 7"],
+      "gf": ["Gravity Forms"]
+    }
+  }
+}

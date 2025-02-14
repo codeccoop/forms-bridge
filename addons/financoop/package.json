@@ -1,0 +1,9 @@
+{
+  "name": "forms-bridge-financoop-addon",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "node esbuild/dev.cjs",
+    "build": "node esbuild/build.cjs"
+  }
+}

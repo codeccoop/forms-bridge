@@ -115,7 +115,6 @@ export default function Databases({ databases, setDatabases }) {
                   data
                 )
               }
-              databases={databases}
             />
           );
         }}

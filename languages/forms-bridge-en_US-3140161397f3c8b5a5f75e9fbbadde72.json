@@ -1,0 +1,34 @@
+{
+  "translation-revision-date": "2025-02-08 03:50+0000",
+  "generator": "WP-CLI\/2.11.0",
+  "source": "addons\/financoop\/assets\/addon.bundle.js",
+  "domain": "messages",
+  "locale_data": {
+    "messages": {
+      "": {
+        "domain": "messages",
+        "lang": "en_US",
+        "plural-forms": "nplurals=2; plural=n != 1;"
+      },
+      "Add": [""],
+      "Add Form": [""],
+      "Backend": [""],
+      "Cast as": [""],
+      "Done": [""],
+      "Drop": [""],
+      "Endpoint": [""],
+      "Form": [""],
+      "Form format pipes": [""],
+      "Form Hooks": [""],
+      "Form pipes": [""],
+      "From": [""],
+      "Name": [""],
+      "Pipes": [""],
+      "Remove": [""],
+      "Submission ID": [""],
+      "This name is already in use": [""],
+      "To": [""],
+      "financoop": ["FinanCoop"]
+    }
+  }
+}

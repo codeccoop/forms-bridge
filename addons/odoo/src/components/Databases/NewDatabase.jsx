@@ -1,5 +1,6 @@
 // source
 import { useGeneral } from "../../../../../src/providers/Settings";
+import useDatabaseNames from "../../hooks/useDatabaseNames";
 
 const {
   TextControl,
@@ -7,10 +8,10 @@ const {
   Button,
   __experimentalSpacer: Spacer,
 } = wp.components;
-const { useState, useMemo } = wp.element;
+const { useState } = wp.element;
 const { __ } = wp.i18n;
 
-export default function NewDatabase({ add, databases }) {
+export default function NewDatabase({ add }) {
   const [{ backends }] = useGeneral();
   const backendOptions = [{ label: "", value: "" }].concat(
     backends.map(({ name }) => ({
@@ -19,9 +20,7 @@ export default function NewDatabase({ add, databases }) {
     }))
   );
 
-  const dbNames = useMemo(() => {
-    return new Set(databases.map(({ name }) => name));
-  }, [databases]);
+  const dbNames = useDatabaseNames();
 
   const [name, setName] = useState("");
   const [backend, setBackend] = useState("");

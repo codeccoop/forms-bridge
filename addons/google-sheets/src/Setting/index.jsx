@@ -1,6 +1,6 @@
 // source
-import FormHooks from "../../../../src/components/FormHooks";
-import GSFormHook from "./FormHook";
+import Bridges from "../../../../src/components/Bridges";
+import GSBridge from "./Bridge";
 import useGSApi from "../hooks/useGSApi";
 import useAjaxGrant from "../hooks/useAjaxGrant";
 
@@ -15,13 +15,13 @@ const { useState, useEffect } = wp.element;
 const { __ } = wp.i18n;
 
 export default function GoogleSheetsSetting() {
-  const [{ authorized, form_hooks }, save] = useGSApi();
+  const [{ authorized, bridges }, save] = useGSApi();
 
   const { grant, revoke, loading, result } = useAjaxGrant();
 
   const [file, setFile] = useState(null);
 
-  const update = (field) => save({ authorized, form_hooks, ...field });
+  const update = (field) => save({ authorized, bridges, ...field });
 
   const onGrant = () => {
     if (file) grant(file);
@@ -38,10 +38,10 @@ export default function GoogleSheetsSetting() {
   return (
     <>
       <PanelRow>
-        <FormHooks
-          hooks={form_hooks}
-          setHooks={(form_hooks) => update({ form_hooks })}
-          FormHook={GSFormHook}
+        <Bridges
+          bridges={bridges}
+          setBridges={(bridges) => update({ bridges })}
+          Bridge={GSBridge}
         />
       </PanelRow>
       <Spacer paddingY="calc(8px)" />

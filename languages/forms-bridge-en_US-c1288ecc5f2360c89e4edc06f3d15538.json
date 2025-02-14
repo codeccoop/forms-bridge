@@ -1,0 +1,48 @@
+{
+  "translation-revision-date": "2025-02-08 03:50+0000",
+  "generator": "WP-CLI\/2.11.0",
+  "source": "addons\/google-sheets\/assets\/addon.bundle.js",
+  "domain": "messages",
+  "locale_data": {
+    "messages": {
+      "": {
+        "domain": "messages",
+        "lang": "en_US",
+        "plural-forms": "nplurals=2; plural=n != 1;"
+      },
+      "Add": [""],
+      "Add Form": [""],
+      "Backend": [""],
+      "Before you can use spreadsheet hooks, you have to grant access to Forms Bridge as OAuth client": [
+        ""
+      ],
+      "Cast as": [""],
+      "Done": [""],
+      "Drop": [""],
+      "Follow <a href='https:\/\/github.com\/juampynr\/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>example<\/a> if do you need help with the process.": [
+        ""
+      ],
+      "Form": [""],
+      "Form format pipes": [""],
+      "Form Hooks": [""],
+      "Form pipes": [""],
+      "From": [""],
+      "Google Service Credentials": [""],
+      "Grant access": [""],
+      "Name": [""],
+      "Pipes": [""],
+      "Remove": [""],
+      "Revoke access": [""],
+      "Spreadsheet": [""],
+      "Submission ID": [""],
+      "Tab Name": [""],
+      "This name is already in use": [""],
+      "To": [""],
+      "Upload credentials": [""],
+      "You have to create a service account credentials to grant Forms Bridge access to your spreadhseets": [
+        ""
+      ],
+      "google-sheets": ["Google Sheets"]
+    }
+  }
+}

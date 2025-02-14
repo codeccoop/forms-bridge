@@ -159,6 +159,10 @@ class Logger extends Singleton
             add_filter("option_{$plugin_slug}_general", static function (
                 $value
             ) {
+                if (!is_array($value)) {
+                    return $value;
+                }
+
                 $value['debug'] = self::is_active();
                 return $value;
             });

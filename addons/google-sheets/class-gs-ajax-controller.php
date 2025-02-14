@@ -31,15 +31,11 @@ class Google_Sheets_Ajax_Controller extends Singleton
 
     private static function localize_script()
     {
-        wp_localize_script(
-            'forms-bridge-google-sheets-api',
-            'formsBridgeGSAjax',
-            [
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce(self::nonce),
-                'action' => self::action,
-            ]
-        );
+        wp_localize_script('forms-bridge-google-sheets', 'formsBridgeGSAjax', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce(self::nonce),
+            'action' => self::action,
+        ]);
     }
 
     private static function ajax_handler()

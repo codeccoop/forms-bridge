@@ -13,13 +13,16 @@ if (!defined('ABSPATH')) {
  */
 class Integration extends BaseIntegration
 {
+    /**
+     * Handles the current submission data.
+     *
+     * @var array|null
+     */
     private static $submission = null;
 
-    protected function construct(...$args)
-    {
-        parent::construct(...$args);
-    }
-
+    /**
+     * Binds after submission hook to the do_submission routine.
+     */
     protected function init()
     {
         add_action('ninja_forms_after_submission', function ($submission) {
@@ -28,6 +31,11 @@ class Integration extends BaseIntegration
         });
     }
 
+    /**
+     * Retrives the current form's data.
+     *
+     * @return array.
+     */
     public function form()
     {
         $form_data = !empty($_POST['formData'])
@@ -44,11 +52,21 @@ class Integration extends BaseIntegration
         return $this->get_form_by_id($form_id);
     }
 
+    /**
+     * Retrives a form model's data by ID.
+     *
+     * @return array.
+     */
     public function get_form_by_id($form_id)
     {
         return $this->serialize_form(Ninja_Forms()->form($form_id));
     }
 
+    /**
+     * Retrives available form models' data.
+     *
+     * @return array Collection of forms data.
+     */
     public function forms()
     {
         $forms = Ninja_Forms()->form()->get_forms();
@@ -59,6 +77,33 @@ class Integration extends BaseIntegration
         }, $forms);
     }
 
+    /**
+     * Creates a form from the given template fields.
+     *
+     * @param array $data Form template data.
+     *
+     * @return int|null ID of the new form.
+     *
+     * @todo Implement this routine.
+     */
+    public function create_form($data) {}
+
+    /**
+     * Removes a form by ID.
+     *
+     * @param integer $form_id Form ID.
+     *
+     * @return boolean Removal result.
+     *
+     * @todo Implement this routine.
+     */
+    public function remove_form($form_id) {}
+
+    /**
+     * Retrives the current form submission data.
+     *
+     * @return array
+     */
     public function submission()
     {
         if (empty(self::$submission)) {
@@ -69,11 +114,25 @@ class Integration extends BaseIntegration
         return $this->serialize_submission(self::$submission, $form);
     }
 
+    /**
+     * Retrives the current submission uploaded files.
+     *
+     * @return array Collection of uploaded files.
+     *
+     * @todo Adapt to premium version with available upload field.
+     */
     public function uploads()
     {
         return [];
     }
 
+    /**
+     * Serializes a ninja form model instance as array data.
+     *
+     * @param NF_Abstracts_ModelFactory $form Form factory instance.
+     *
+     * @return array
+     */
     public function serialize_form($form_factory)
     {
         $form = $form_factory->get();
@@ -83,8 +142,8 @@ class Integration extends BaseIntegration
             '_id' => 'ninja:' . $form_id,
             'id' => $form_id,
             'title' => $form->get_setting('title'),
-            'hooks' => apply_filters(
-                'forms_bridge_form_hooks',
+            'bridges' => apply_filters(
+                'forms_bridge_bridges',
                 [],
                 'ninja:' . $form_id
             ),
@@ -98,6 +157,13 @@ class Integration extends BaseIntegration
         ];
     }
 
+    /**
+     * Serializes a form field model instance as array data.
+     *
+     * @param NF_Database_Models_Field $field Form field model instance.
+     *
+     * @return array
+     */
     private function serialize_field($field)
     {
         if (in_array($field->get_setting('type'), ['html', 'hr', 'submit'])) {
@@ -110,12 +176,20 @@ class Integration extends BaseIntegration
         );
     }
 
+    /**
+     * Serializes field settings as field data array.
+     *
+     * @param int $id Field id.
+     * @param array $settings Field settings data.
+     *
+     * @return array.
+     */
     private function _serialize_field($id, $settings)
     {
-        $type = $this->norm_field_type($settings['type']);
+        // $type = $this->norm_field_type($settings['type']);
         return [
             'id' => $id,
-            'type' => $type,
+            'type' => $settings['type'],
             'name' => $settings['key'],
             'label' => $settings['label'],
             'required' => isset($settings['required'])
@@ -124,7 +198,7 @@ class Integration extends BaseIntegration
             'options' => isset($settings['options'])
                 ? $settings['options']
                 : [],
-            'is_file' => $type === 'file',
+            'is_file' => false, // $settings['type'] === 'file',
             'is_multi' => in_array($settings['type'], [
                 'listmultiselect',
                 'listcheckbox',
@@ -169,11 +243,17 @@ class Integration extends BaseIntegration
         }
     }
 
+    /**
+     * Serialize the form's submission data.
+     *
+     * @param array $submission Submission data.
+     * @param array $form_data Form data.
+     *
+     * @return array.
+     */
     public function serialize_submission($submission, $form_data)
     {
-        $data = [
-            'submission_id' => $submission['actions']['save']['sub_id'] ?? 0,
-        ];
+        $data = [];
 
         foreach ($form_data['fields'] as $field_data) {
             $field = $submission['fields_by_key'][$field_data['name']];
@@ -217,11 +297,19 @@ class Integration extends BaseIntegration
         return $data;
     }
 
+    /**
+     * Formats field values based on its type.
+     *
+     * @param string $type Field type.
+     * @param mixed $value Raw field value.
+     *
+     * @return mixed Formated value.
+     */
     private function format_field_value($type, $value)
     {
         if ($type === 'hidden') {
             $number_val = (float) $value;
-            if ((string) $number_val === $value) {
+            if (strval($number_val) === $value) {
                 return $number_val;
             } else {
                 return $value;
@@ -233,6 +321,16 @@ class Integration extends BaseIntegration
         }
     }
 
+    /**
+     * Gets submission uploaded files.
+     *
+     * @param WPCF7_Submission $submission Submission instance.
+     * @param array $form_data Form data.
+     *
+     * @return array Uploaded files data.
+     *
+     * @todo Adapt to premium version with available upload field.
+     */
     protected function submission_uploads($submission, $form_data)
     {
         return [];

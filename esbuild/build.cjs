@@ -4,6 +4,7 @@ const esbuild = require("esbuild");
   await esbuild.build({
     entryPoints: ["src/index.jsx"],
     bundle: true,
+    sourcemap: true,
     minify: true,
     outfile: "assets/plugin.bundle.js",
     loader: { ".png": "base64" },

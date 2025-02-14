@@ -25,3 +25,7 @@ vendor
 # addons
 addons/enabled/*
 .store
+
+# loco
+languages/*.po~
+languages/*.pot~

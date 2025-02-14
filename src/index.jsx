@@ -1,6 +1,6 @@
 // source
 import SettingsPage from "./SettingsPage";
-import ErrorBoundary from "./ErrorBoundary.jsx";
+import ErrorBoundary from "./ErrorBoundary";
 
 const domReady = wp.domReady;
 const { createRoot } = wp.element;

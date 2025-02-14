@@ -1,0 +1,69 @@
+{
+  "translation-revision-date": "2025-02-14 00:47+0000",
+  "generator": "Loco https:\/\/localise.biz\/",
+  "source": "addons\/odoo\/assets\/addon.bundle.js",
+  "domain": "forms-bridge",
+  "locale_data": {
+    "forms-bridge": {
+      "": {
+        "domain": "",
+        "lang": "es_ES",
+        "plural-forms": "nplurals=2; plural=n != 1;"
+      },
+      "Add": ["A\u00f1adir"],
+      "Add database": ["A\u00f1adir base de datos"],
+      "Add Form": ["A\u00f1adir formulario"],
+      "Backend": ["Backend"],
+      "Cast as": ["Como"],
+      "Database": ["Base de datos"],
+      "Databases": ["Bases de datos"],
+      "Done": ["Hecho"],
+      "Drop": ["Descartar"],
+      "Form": ["Formulario"],
+      "Form format pipes": ["Conversores de formato"],
+      "From": ["De"],
+      "Model": ["Modelo"],
+      "Name": ["Nombre"],
+      "Password": ["Contrase\u00f1a"],
+      "Pipes": ["Conversores"],
+      "Remove": ["Eliminar"],
+      "Submit": ["Enviar"],
+      "Target integration": ["Integraci\u00f3n destinataria"],
+      "This name is already in use": ["Este nomre ya est\u00e1 en uso"],
+      "To": ["A"],
+      "User": ["Usuario"],
+      "odoo": ["Odoo JSON-RPC"],
+      "Load settings error": ["Error de carga de configuraci\u00f3n"],
+      "Save settings error": ["Error de guardado de configuraci\u00f3n"],
+      "Loading config error": ["Error de carga de configuraci\u00f3n"],
+      "Template submit error": ["Error de envio de plantilla"],
+      "Bridges": ["Bridges"],
+      "Bridge pipes": ["Pasarelas del bridge"],
+      "Use tempalte": ["Usar plantilla"],
+      "Templates": ["Plantillas"],
+      "Congratulations, you've created a new form bridge!": [
+        "Felicidades, has creado un nuevo bridge de formulario!"
+      ],
+      "Close": ["Cerrar"],
+      "Select a template": ["Selecciona una plantilla"],
+      "The value is not a number": ["El valor no es un n\u00famero"],
+      "The value is too small": ["El valor es demasiado peque\u00f1o"],
+      "The value is too large": ["El valor es demasiado grande"],
+      "Configure the backend to bridge your form to": [
+        "Configura un backend al que contectarse"
+      ],
+      "Reuse backend": ["Reutiliza un backend"],
+      "Populate the form default values": [
+        "Rellena los valores por defecto del formulario"
+      ],
+      "Bridge": ["Bridge"],
+      "Configure the bridge": ["Configura el bridge"],
+      "Previous": ["Anterior"],
+      "Next": ["Siguiente"],
+      "Configure the Odoo database connection": [
+        "Configura la conexi\u00f3n con la base de datos de Odoo"
+      ],
+      "Reuse database": ["Reutiliza una base de datos"]
+    }
+  }
+}

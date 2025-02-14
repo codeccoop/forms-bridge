@@ -3,7 +3,7 @@
 /*
  * Plugin Name:         Forms Bridge
  * Plugin URI:          https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge
- * Description:         Plugin to bridge WP forms submissions to any backend
+ * Description:         Plugin to bridge WP forms submissions to any backend or service
  * Author:              codeccoop
  * Author URI:          https://www.codeccoop.org
  * License:             GPLv2 or later
@@ -20,8 +20,6 @@ namespace FORMS_BRIDGE;
 use Exception;
 use WPCT_ABSTRACT\Plugin as Base_Plugin;
 
-use function WPCT_ABSTRACT\is_list;
-
 if (!defined('ABSPATH')) {
     exit();
 }
@@ -36,7 +34,8 @@ require_once 'includes/class-menu.php';
 require_once 'includes/class-settings-store.php';
 require_once 'includes/class-rest-settings-controller.php';
 require_once 'includes/class-json-finger.php';
-require_once 'includes/class-form-hook.php';
+require_once 'includes/class-form-bridge.php';
+require_once 'includes/class-form-bridge-template.php';
 
 require_once 'integrations/abstract-integration.php';
 require_once 'addons/abstract-addon.php';
@@ -75,8 +74,8 @@ class Forms_Bridge extends Base_Plugin
 
         add_action(
             'forms_bridge_on_failure',
-            static function ($form_hook, $error, $payload, $attachments) {
-                self::notify_error($form_hook, $error, $payload, $attachments);
+            static function ($bridge, $error, $payload, $attachments) {
+                self::notify_error($bridge, $error, $payload, $attachments);
             },
             90,
             4
@@ -99,67 +98,6 @@ class Forms_Bridge extends Base_Plugin
      */
     private static function custom_hooks()
     {
-        // Return registerd form hooks
-        add_filter(
-            'forms_bridge_form_hooks',
-            static function ($form_hooks, $form_id = null) {
-                if (!is_list($form_hooks)) {
-                    $form_hooks = [];
-                }
-
-                // Check if form_id is internal or external
-                if ($form_id) {
-                    $parts = explode(':', $form_id);
-                    if (count($parts) === 1) {
-                        $integration = null;
-                        $id = $parts[0];
-                    } else {
-                        [$integration, $id] = $parts;
-                    }
-
-                    if (!$integration) {
-                        $integrations = array_keys(Integration::integrations());
-                        if (count($integrations) > 1) {
-                            _doing_it_wrong(
-                                'forms_bridge_form_hooks',
-                                __(
-                                    '$form_id param should incloude the integration prefix if there is more than one integration active',
-                                    'forms-bridge'
-                                ),
-                                '2.3.0'
-                            );
-                            return [];
-                        }
-
-                        $integration = array_pop($integrations);
-                    }
-
-                    $form_id = "{$integration}:{$id}";
-                }
-
-                return array_merge(
-                    $form_hooks,
-                    Form_Hook::form_hooks($form_id)
-                );
-            },
-            5,
-            2
-        );
-
-        add_filter(
-            'forms_bridge_form_hook',
-            static function ($form_hook, $hook_name) {
-                $form_hooks = apply_filters('forms_bridge_form_hooks', []);
-                foreach ($form_hooks as $form_hook) {
-                    if ($form_hook->name === $hook_name) {
-                        return $form_hook;
-                    }
-                }
-            },
-            10,
-            2
-        );
-
         // Return pair plugin registered forms datums
         add_filter(
             'forms_bridge_forms',
@@ -348,13 +286,13 @@ class Forms_Bridge extends Base_Plugin
     /**
      * Sends error notifications to the email receiver.
      *
-     * @param Form_Hook $form_hook Form data.
+     * @param Form_Bridge $bridge Bridge instance.
      * @param WP_Error $error Error instance.
      * @param array $payload Submission data.
      * @param array $attachments Submission attachments.
      */
     private static function notify_error(
-        $form_hook,
+        $bridge,
         $error,
         $payload,
         $attachments
@@ -365,13 +303,13 @@ class Forms_Bridge extends Base_Plugin
             return;
         }
 
-        $form_data = $form_hook->form;
+        $form_data = $bridge->form;
         $error = print_r($error->get_error_data(), true);
         $to = $email;
         $subject = 'Forms Bridge Error';
         $body = "Form ID: {$form_data['id']}\n";
         $body .= "Form title: {$form_data['title']}\n";
-        $body .= "Form hook: {$form_hook->name}\n";
+        $body .= "Bridge: {$bridge->name}\n";
         $body .= 'Submission: ' . print_r($payload, true) . "\n";
         $body .= "Error: {$error}\n";
 

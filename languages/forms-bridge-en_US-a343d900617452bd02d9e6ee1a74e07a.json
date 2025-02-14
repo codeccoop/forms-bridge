@@ -1,0 +1,70 @@
+{
+  "translation-revision-date": "2025-02-08 03:50+0000",
+  "generator": "WP-CLI\/2.11.0",
+  "source": "assets\/plugin.bundle.js",
+  "domain": "messages",
+  "locale_data": {
+    "messages": {
+      "": {
+        "domain": "messages",
+        "lang": "en_US",
+        "plural-forms": "nplurals=2; plural=n != 1;"
+      },
+      "Add": [""],
+      "Add Backend": [""],
+      "Addons": [""],
+      "Are you sure to continue?": [""],
+      "Backend base URL": [""],
+      "Backend HTTP Headers": [""],
+      "Backend name": [""],
+      "Backends": [""],
+      "Cancel": [""],
+      "Config import warning": [""],
+      "Content encoding": [""],
+      "Continue": [""],
+      "Continue with the import": [""],
+      "Custom encoding": [""],
+      "Debug": [""],
+      "Download config": [""],
+      "Drop": [""],
+      "Error": [""],
+      "Export Forms Bridge config as JSON": [""],
+      "General": [""],
+      "Header-Name": [""],
+      "If your backend uses custom encoding, Forms Bridge will need a string payload. You can use the `forms_bridge_payload` hook to encode your form submission as string.": [
+        ""
+      ],
+      "Import \/ Export": [""],
+      "Import a new configuration is a destructive action. Your current configuration will be replaced with the new one. If there are some errors on the new config, Forms Bridge will filter it to avoid bugs.": [
+        ""
+      ],
+      "Import config": [""],
+      "Import Forms Bridge JSON config": [""],
+      "Integrations": [""],
+      "It has been an error on config import": [""],
+      "It seems you have no available integrations. If you want to use Forms Bridge, you should install one of the following plugins before you go.": [
+        ""
+      ],
+      "JSON syntax error": [""],
+      "Logging": [""],
+      "Notification receiver": [""],
+      "Remove": [""],
+      "Save": [""],
+      "Select how Forms Bridge should encode your form submissions.": [""],
+      "Somthing went wrong on the file upload": [""],
+      "This name is already in use": [""],
+      "Value": [""],
+      "When logging is activated, logs will be write to `wp-content\/debug.log` and read from them. If your server is not hardened, this file could be public to the web with confidencial data. Make sure to deactivate debugging once you've done.": [
+        ""
+      ],
+      "\ud83d\udc4b Welcome! It seems you have more than one forms builder plugin installed. Before you continue, please, select which plugins do you want to integrate with Forms Bridge.": [
+        ""
+      ],
+      "Cancel the import": [""],
+      "wpforms": ["WPForms"],
+      "wpcf7": ["Contact Form 7"],
+      "gf": ["Gravity Forms"],
+      "ninja": ["Ninja Forms"]
+    }
+  }
+}

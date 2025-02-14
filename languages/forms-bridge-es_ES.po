@@ -1,233 +1,1052 @@
-# Copyright (C) 2024 Còdec
-# This file is distributed under the same license as the Forms Bridge plugin.
 msgid ""
 msgstr ""
 "Project-Id-Version: Forms Bridge\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/forms-bridge\n"
-"Last-Translator: Lucas García <lucas@codeccoop.org>\n"
-"Language-Team: Español\n"
+"Last-Translator: \n"
+"Language-Team: Spanish (Spain)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2024-11-23T00:33:18+00:00\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2025-02-14 00:47+0000\n"
 "Language: es_ES\n"
-"X-Generator: WP-CLI 2.11.0\n"
+"X-Generator: Loco https://localise.biz/\n"
 "X-Domain: forms-bridge\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Loco-Version: 2.7.1; wp-6.7.2"
+
+#: addons/abstract-addon.php:278
+msgid ""
+"$form_id param should incloude the integration prefix if there is more than "
+"one integration active"
+msgstr ""
+"el parámetro $form_id ha de incluir el prefijo de la integración si hay más "
+"de una integración activa"
+
+#: addons/financoop/assets/addon.bundle.js:787
+#: addons/financoop/assets/addon.bundle.js:1128
+#: addons/google-sheets/assets/addon.bundle.js:814
+#: addons/google-sheets/assets/addon.bundle.js:1155
+#: addons/odoo/assets/addon.bundle.js:787
+#: addons/odoo/assets/addon.bundle.js:1128
+#: addons/odoo/assets/addon.bundle.js:2332
+#: addons/rest-api/assets/addon.bundle.js:787
+#: addons/rest-api/assets/addon.bundle.js:1128 assets/plugin.bundle.js:812
+#: assets/plugin.bundle.js:893
+msgid "Add"
+msgstr "Añadir"
+
+#: assets/plugin.bundle.js:517
+msgid "Add Backend"
+msgstr "Añadir Backend"
+
+#: addons/odoo/assets/addon.bundle.js:2513
+msgid "Add database"
+msgstr "Añadir base de datos"
+
+#: addons/financoop/assets/addon.bundle.js:517
+#: addons/google-sheets/assets/addon.bundle.js:544
+#: addons/odoo/assets/addon.bundle.js:517
+#: addons/rest-api/assets/addon.bundle.js:517
+msgid "Add Form"
+msgstr "Añadir formulario"
+
+#: assets/plugin.bundle.js:1110
+msgid "Addons"
+msgstr "Addons"
+
+#: assets/plugin.bundle.js:1387
+msgid "Are you sure to continue?"
+msgstr "¿Seguro que quieres continuar?"
+
+#: addons/financoop/assets/addon.bundle.js:1087
+#: addons/financoop/assets/addon.bundle.js:1238
+#: addons/financoop/assets/addon.bundle.js:1572
+#: addons/google-sheets/assets/addon.bundle.js:1114
+#: addons/google-sheets/assets/addon.bundle.js:1265
+#: addons/google-sheets/assets/addon.bundle.js:1599
+#: addons/odoo/assets/addon.bundle.js:1087
+#: addons/odoo/assets/addon.bundle.js:1238
+#: addons/odoo/assets/addon.bundle.js:1580
+#: addons/odoo/assets/addon.bundle.js:2290
+#: addons/odoo/assets/addon.bundle.js:2419
+#: addons/rest-api/assets/addon.bundle.js:1087
+#: addons/rest-api/assets/addon.bundle.js:1238
+#: addons/rest-api/assets/addon.bundle.js:1572
+msgid "Backend"
+msgstr "Backend"
+
+#: addons/rest-api/templates/zoho-crm-leads.php:76 assets/plugin.bundle.js:876
+#: assets/plugin.bundle.js:968
+msgid "Backend base URL"
+msgstr "URL base del backend"
+
+#: assets/plugin.bundle.js:755
+msgid "Backend HTTP Headers"
+msgstr "Cabeceras HTTP"
+
+#: addons/rest-api/templates/zoho-crm-leads.php:69 assets/plugin.bundle.js:863
+#: assets/plugin.bundle.js:953
+msgid "Backend name"
+msgstr "Nombre del backend"
+
+#: assets/plugin.bundle.js:1464
+msgid "Backends"
+msgstr "Backends"
+
+#: addons/google-sheets/class-gs-service.php:74
+msgid "Can't find the spreadsheets by id"
+msgstr "No se encuentra el spreadsheet por id"
+
+#: addons/google-sheets/class-gs-service.php:158
+msgid "Can't write new values to the spreadhseet"
+msgstr "No se han podido escribir los nuevos valores en el spreadsheet"
+
+#: assets/plugin.bundle.js:1408
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: addons/financoop/assets/addon.bundle.js:755
+#: addons/google-sheets/assets/addon.bundle.js:782
+#: addons/odoo/assets/addon.bundle.js:755
+#: addons/rest-api/assets/addon.bundle.js:755
+msgid "Cast as"
+msgstr "Como"
+
+#. Author of the plugin
+#: forms-bridge.php
+msgid "codeccoop"
+msgstr "codeccoop"
+
+#: assets/plugin.bundle.js:1378
+msgid "Config import warning"
+msgstr "Aviso de importación de configuración"
+
+#: assets/plugin.bundle.js:639
+msgid "Content encoding"
+msgstr "Codificación del contendio"
+
+#: assets/plugin.bundle.js:1397
+msgid "Continue"
+msgstr "Continuar"
+
+#: assets/plugin.bundle.js:1391
+msgid "Continue with the import"
+msgstr "Continuar con la importación"
+
+#: assets/plugin.bundle.js:684
+msgid "Custom encoding"
+msgstr "Codificación personalizada"
+
+#: addons/google-sheets/assets/addon.bundle.js:1942
+#: addons/odoo/assets/addon.bundle.js:1997
+#: addons/odoo/assets/addon.bundle.js:2133
+#: addons/odoo/assets/addon.bundle.js:2194
+msgid "Database"
+msgstr "Base de datos"
+
+#: addons/odoo/assets/addon.bundle.js:2618
+msgid "Databases"
+msgstr "Bases de datos"
+
+#: assets/plugin.bundle.js:1478
+msgid "Debug"
+msgstr "Depurar"
+
+#: addons/financoop/assets/addon.bundle.js:790
+#: addons/google-sheets/assets/addon.bundle.js:817
+#: addons/odoo/assets/addon.bundle.js:790
+#: addons/rest-api/assets/addon.bundle.js:790
+msgid "Done"
+msgstr "Hecho"
+
+#: assets/plugin.bundle.js:1364
+msgid "Download config"
+msgstr "Descargar configuración"
+
+#: addons/financoop/assets/addon.bundle.js:773
+#: addons/google-sheets/assets/addon.bundle.js:800
+#: addons/odoo/assets/addon.bundle.js:773
+#: addons/rest-api/assets/addon.bundle.js:773 assets/plugin.bundle.js:798
+msgid "Drop"
+msgstr "Descartar"
+
+#: addons/financoop/templates/financoop-loan-request.php:89
+#: addons/financoop/templates/financoop-subscription-request.php:112
+#: addons/rest-api/templates/zoho-crm-leads.php:137
+msgid "Email"
+msgstr "Email"
+
+#: addons/rest-api/templates/zoho-crm-leads.php:94
+#: addons/financoop/assets/addon.bundle.js:1923
+#: addons/financoop/assets/addon.bundle.js:1956
+#: addons/rest-api/assets/addon.bundle.js:1957
+#: addons/rest-api/assets/addon.bundle.js:2024
+msgid "Endpoint"
+msgstr "Endpoint"
+
+#: assets/plugin.bundle.js:1359
+msgid "Export Forms Bridge config as JSON"
+msgstr "Exportar configuración como JSON"
+
+#. translators: %s: Field name
+#: includes/class-form-bridge-template.php:667
+msgid "Field `%s` does not match the schema"
+msgstr "El campo `%s` no respeta el esquema"
+
+#: includes/class-rest-settings-controller.php:108
+msgid "Field ref that points to some template param"
+msgstr "Ref del campo que apunta a los parámetros de la plantilla"
+
+#: includes/class-rest-settings-controller.php:124
+msgid "Field value"
+msgstr "Valor del campo"
+
+#: addons/google-sheets/assets/addon.bundle.js:2252
+msgid ""
+"Follow <a href='https://github.com/juampynr/google-spreadsheet-reader?"
+"tab=readme-ov-file' target='_blank'>example</a> if do you need help with the "
+"process."
+msgstr ""
+"Sigue <a href='https://github.com/juampynr/google-spreadsheet-reader?"
+"tab=readme-ov-file' target='_blank'>este ejemplo</a> si necesitas ayuda con "
+"el proceso."
+
+#: addons/financoop/assets/addon.bundle.js:1099
+#: addons/financoop/assets/addon.bundle.js:1250
+#: addons/financoop/assets/addon.bundle.js:1632
+#: addons/google-sheets/assets/addon.bundle.js:1126
+#: addons/google-sheets/assets/addon.bundle.js:1277
+#: addons/google-sheets/assets/addon.bundle.js:1659
+#: addons/odoo/assets/addon.bundle.js:1099
+#: addons/odoo/assets/addon.bundle.js:1250
+#: addons/odoo/assets/addon.bundle.js:1640
+#: addons/rest-api/assets/addon.bundle.js:1099
+#: addons/rest-api/assets/addon.bundle.js:1250
+#: addons/rest-api/assets/addon.bundle.js:1632
+msgid "Form"
+msgstr "Formulario"
+
+#: addons/financoop/assets/addon.bundle.js:721
+#: addons/google-sheets/assets/addon.bundle.js:748
+#: addons/odoo/assets/addon.bundle.js:721
+#: addons/rest-api/assets/addon.bundle.js:721
+msgid "Form format pipes"
+msgstr "Conversores de formato"
+
+#: includes/class-form-bridge-template.php:343
+msgid "Form title"
+msgstr "Título del formulari"
 
 #. Plugin Name of the plugin
 #: forms-bridge.php
 msgid "Forms Bridge"
-msgstr ""
+msgstr "Forms Bridge"
+
+#: includes/class-form-bridge-template.php:762
+msgid "Forms bridge can't create the form"
+msgstr "Forms bridge no puede crear el formulario"
+
+#: addons/financoop/assets/addon.bundle.js:736
+#: addons/google-sheets/assets/addon.bundle.js:763
+#: addons/odoo/assets/addon.bundle.js:736
+#: addons/rest-api/assets/addon.bundle.js:736
+msgid "From"
+msgstr "De"
+
+#: assets/plugin.bundle.js:1593
+msgid "General"
+msgstr "General"
+
+#: addons/google-sheets/assets/addon.bundle.js:2220
+msgid "Google Service Credentials"
+msgstr "Credencials de Google Service"
+
+#: addons/google-sheets/assets/addon.bundle.js:2231
+msgid "Grant access"
+msgstr "Garantizar acceso"
+
+#: assets/plugin.bundle.js:770
+msgid "Header-Name"
+msgstr "Nombre-Cabecera"
 
 #. Plugin URI of the plugin
 #: forms-bridge.php
 msgid "https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge"
-msgstr ""
-
-#. Description of the plugin
-#: forms-bridge.php
-msgid "Plugin to bridge WP forms submissions to any backend"
-msgstr "Extensión para conectar formularios de WP con qualquier backend"
-
-#. Author of the plugin
-#: forms-bridge.php
-msgid "Còdec"
-msgstr ""
+msgstr "https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge"
 
 #. Author URI of the plugin
 #: forms-bridge.php
 msgid "https://www.codeccoop.org"
-msgstr ""
+msgstr "https://www.codeccoop.org"
 
-#: includes/class-menu.php:30
+#: assets/plugin.bundle.js:668
+msgid ""
+"If your backend uses custom encoding, Forms Bridge will need a string "
+"payload. You can use the `forms_bridge_payload` hook to encode your form "
+"submission as string."
+msgstr ""
+"Si tu backend usa una codificación personalizada, Forms Bridge necesitará "
+"una cadena de texto como cuerpo de la petición. Puedes usar el hook "
+"`forms_bridge_payload` para codificar las entradas de formulario."
+
+#: assets/plugin.bundle.js:1482
+msgid "Import / Export"
+msgstr "Importar / Exportar"
+
+#: assets/plugin.bundle.js:1382
+msgid ""
+"Import a new configuration is a destructive action. Your current "
+"configuration will be replaced with the new one. If there are some errors on "
+"the new config, Forms Bridge will filter it to avoid bugs."
+msgstr ""
+"Importar una nueva configuración es una acción destructiva. Tu configuración "
+"actual será reemplazada por la nueva. Si se dan errores en la nueva "
+"configuración, Forms Bridge la limpiara para prevenir problemas."
+
+#: assets/plugin.bundle.js:1373
+msgid "Import config"
+msgstr "Importar configuración"
+
+#: assets/plugin.bundle.js:1368
+msgid "Import Forms Bridge JSON config"
+msgstr "Importa configuración JSON"
+
+#: assets/plugin.bundle.js:1034
+msgid "Integrations"
+msgstr "Integraciones"
+
+#. translators: %s: ref value
+#: includes/class-form-bridge-template.php:721
+msgid "Invalid template field ref `%s`"
+msgstr "Ref `%s` del campo de plantilla inválida"
+
+#: includes/class-rest-settings-controller.php:206
+msgid "Invalid use template integration"
+msgstr "Integración inválida del uso de plantillas"
+
+#: includes/class-rest-settings-controller.php:199
+msgid "Invalid use template params"
+msgstr "Parámetros inválidos del uso de plantillas"
+
+#: assets/plugin.bundle.js:1326
+msgid "It has been an error on config import"
+msgstr "Ha habido un error en la importación de la configuración"
+
+#: assets/plugin.bundle.js:1040
+msgid ""
+"It seems you have no available integrations. If you want to use Forms Bridge,"
+" you should install one of the following plugins before you go."
+msgstr ""
+"Parece que no dispones de integraciones. Si quieres usar Forms Bridge, antes "
+"deberás instalar alguna de las extensiones siguientes antes de continuar."
+
+#: assets/plugin.bundle.js:1301
+msgid "JSON syntax error"
+msgstr "Error de sintaxis JSON"
+
+#: includes/class-menu.php:23
 msgid "Loading"
 msgstr "Cargando"
 
-#: src/FormPipes/index.jsx:19
-msgid "Pipes"
-msgstr "Conversores"
+#: assets/plugin.bundle.js:1212
+msgid "Logging"
+msgstr "Registrando"
 
-#: src/FormPipes/index.jsx:23
-msgid "Form pipes"
-msgstr "Conversores del formulario"
-
-#: src/FormPipes/Table.jsx:45
-msgid "Submission ID"
-msgstr ""
-
-#: src/FormPipes/Table.jsx:94
-msgid "Form format pipes"
-msgstr "Conversores de formato"
-
-#: src/FormPipes/Table.jsx:102
-msgid "From"
-msgstr "De"
-
-#: src/FormPipes/Table.jsx:111
-msgid "To"
-msgstr "A"
-
-#: src/FormPipes/Table.jsx:119
-msgid "Cast as"
-msgstr "Como"
-
-#: src/FormPipes/Table.jsx:136
-#: src/GeneralSettings/Backends/Headers.jsx:75
-msgid "Drop"
-msgstr "Descartar"
-
-#: src/FormPipes/Table.jsx:149
-#: src/GeneralSettings/Backends/Backend.jsx:69
-#: src/GeneralSettings/Backends/Headers.jsx:88
-#: src/RestApiSettings/FormHooks/FormHook.jsx:167
-#: src/RpcApiSettings/FormHooks/FormHook.jsx:131
-msgid "Add"
-msgstr "Añadir"
-
-#: src/GeneralSettings/Backends/Backend.jsx:46
-#: src/GeneralSettings/Backends/Backend.jsx:125
-msgid "Backend name"
-msgstr "Nombre del backend"
-
-#: src/GeneralSettings/Backends/Backend.jsx:49
-#: src/GeneralSettings/Backends/Backend.jsx:128
-#: src/RestApiSettings/FormHooks/FormHook.jsx:95
-#: src/RestApiSettings/FormHooks/FormHook.jsx:240
-#: src/RpcApiSettings/FormHooks/FormHook.jsx:68
-#: src/RpcApiSettings/FormHooks/FormHook.jsx:205
-msgid "This name is already in use"
-msgstr "Este nomre ya está en uso"
-
-#: src/GeneralSettings/Backends/Backend.jsx:58
-#: src/GeneralSettings/Backends/Backend.jsx:139
-msgid "Backend base URL"
-msgstr "URL base del backend"
-
-#: src/GeneralSettings/Backends/Backend.jsx:154
-msgid "Remove backend"
-msgstr "Eliminar backend"
-
-#: src/GeneralSettings/Backends/Backend.jsx:162
-#: src/RestApiSettings/FormHooks/FormHook.jsx:332
-#: src/RpcApiSettings/FormHooks/FormHook.jsx:288
-msgid "Remove"
-msgstr "Eliminar"
-
-#: src/GeneralSettings/Backends/Headers.jsx:46
-msgid "Backend HTTP Headers"
-msgstr "Cabeceras HTTP"
-
-#: src/GeneralSettings/Backends/Headers.jsx:54
-msgid "Header-Name"
-msgstr ""
-
-#: src/GeneralSettings/Backends/Headers.jsx:62
-msgid "Value"
-msgstr ""
-
-#: src/GeneralSettings/Backends/index.jsx:20
-msgid "Add Backend"
-msgstr "Añadir Backend"
-
-#: src/GeneralSettings/Backends/index.jsx:53
-msgid "Backends"
-msgstr ""
-
-#: src/GeneralSettings/index.jsx:27
-msgid "General"
-msgstr ""
-
-#: src/GeneralSettings/index.jsx:32
-msgid "Notification receiver"
-msgstr "Receptor de notificaciones"
-
-#: src/RestApiSettings/FormHooks/FormHook.jsx:92
-#: src/RestApiSettings/FormHooks/FormHook.jsx:237
-#: src/RpcApiSettings/FormHooks/FormHook.jsx:65
-#: src/RpcApiSettings/FormHooks/FormHook.jsx:202
-msgid "Name"
-msgstr "Nombre"
-
-#: src/RestApiSettings/FormHooks/FormHook.jsx:105
-#: src/RestApiSettings/FormHooks/FormHook.jsx:252
-#: src/RpcApiSettings/FormHooks/FormHook.jsx:78
-#: src/RpcApiSettings/FormHooks/FormHook.jsx:217
-msgid "Backend"
-msgstr "Backend"
-
-#: src/RestApiSettings/FormHooks/FormHook.jsx:114
-#: src/RestApiSettings/FormHooks/FormHook.jsx:261
+#: addons/rest-api/templates/zoho-crm-leads.php:101
+#: addons/rest-api/assets/addon.bundle.js:1947
+#: addons/rest-api/assets/addon.bundle.js:2014
 msgid "Method"
 msgstr "Método"
 
-#: src/RestApiSettings/FormHooks/FormHook.jsx:123
-#: src/RestApiSettings/FormHooks/FormHook.jsx:270
-#: src/RpcApiSettings/index.jsx:33
-msgid "Endpoint"
-msgstr ""
-
-#: src/RestApiSettings/FormHooks/FormHook.jsx:131
-#: src/RestApiSettings/FormHooks/FormHook.jsx:278
-#: src/RpcApiSettings/FormHooks/FormHook.jsx:95
-#: src/RpcApiSettings/FormHooks/FormHook.jsx:234
-msgid "Form"
-msgstr "Formulario"
-
-#: src/RestApiSettings/FormHooks/FormHook.jsx:159
-#: src/RpcApiSettings/FormHooks/FormHook.jsx:123
-msgid "Add form"
-msgstr "Añadir formulario"
-
-#: src/RestApiSettings/FormHooks/FormHook.jsx:304
-#: src/RpcApiSettings/FormHooks/FormHook.jsx:260
-msgid "Edit pipes"
-msgstr "Editar conversores"
-
-#: src/RestApiSettings/FormHooks/FormHook.jsx:324
-#: src/RpcApiSettings/FormHooks/FormHook.jsx:280
-msgid "Remove form"
-msgstr "Eliminar formulario"
-
-#: src/RestApiSettings/FormHooks/index.jsx:22
-#: src/RpcApiSettings/FormHooks/index.jsx:22
-msgid "Add Form"
-msgstr "Añadir formulario"
-
-#: src/RestApiSettings/FormHooks/index.jsx:53
-#: src/RpcApiSettings/FormHooks/index.jsx:53
-msgid "Form Hooks"
-msgstr "Connectores de Formularios"
-
-#: src/RestApiSettings/index.jsx:22
-msgid "REST API"
-msgstr ""
-
-#: src/RpcApiSettings/FormHooks/FormHook.jsx:87
-#: src/RpcApiSettings/FormHooks/FormHook.jsx:226
+#: addons/odoo/assets/addon.bundle.js:2124
+#: addons/odoo/assets/addon.bundle.js:2185
 msgid "Model"
 msgstr "Modelo"
 
-#: src/RpcApiSettings/index.jsx:28
-msgid "RPC API"
-msgstr ""
+#: addons/financoop/assets/addon.bundle.js:1072
+#: addons/financoop/assets/addon.bundle.js:1223
+#: addons/google-sheets/assets/addon.bundle.js:1099
+#: addons/google-sheets/assets/addon.bundle.js:1250
+#: addons/odoo/assets/addon.bundle.js:1072
+#: addons/odoo/assets/addon.bundle.js:1223
+#: addons/odoo/assets/addon.bundle.js:2276
+#: addons/odoo/assets/addon.bundle.js:2403
+#: addons/rest-api/assets/addon.bundle.js:1072
+#: addons/rest-api/assets/addon.bundle.js:1223
+msgid "Name"
+msgstr "Nombre"
 
-#: src/RpcApiSettings/index.jsx:41
-msgid "Database"
-msgstr "Base de datos"
+#: includes/class-rest-settings-controller.php:116
+msgid "Name of the field"
+msgstr "Nombre del campo"
 
-#: src/RpcApiSettings/index.jsx:49
-msgid "User"
-msgstr "Usuario"
+#: includes/class-rest-settings-controller.php:82
+msgid "Name of the template to use"
+msgstr "Nombre de la plantilla a usar"
 
-#: src/RpcApiSettings/index.jsx:57
+#: assets/plugin.bundle.js:1452
+msgid "Notification receiver"
+msgstr "Receptor de notificaciones"
+
+#: addons/odoo/assets/addon.bundle.js:2310
+#: addons/odoo/assets/addon.bundle.js:2439
 msgid "Password"
 msgstr "Contraseña"
 
-#: src/SettingsPage/index.jsx:66
-msgid "Error"
-msgstr ""
+#: addons/financoop/assets/addon.bundle.js:814
+#: addons/google-sheets/assets/addon.bundle.js:841
+#: addons/odoo/assets/addon.bundle.js:814
+#: addons/rest-api/assets/addon.bundle.js:814
+msgid "Pipes"
+msgstr "Conversores"
 
-#: src/SettingsPage/index.jsx:66
+#: addons/financoop/assets/addon.bundle.js:1281
+#: addons/google-sheets/assets/addon.bundle.js:1308
+#: addons/odoo/assets/addon.bundle.js:1281
+#: addons/odoo/assets/addon.bundle.js:2461
+#: addons/rest-api/assets/addon.bundle.js:1281 assets/plugin.bundle.js:985
+msgid "Remove"
+msgstr "Eliminar"
+
+#: addons/rest-api/assets/addon.bundle.js:2124 assets/plugin.bundle.js
+msgid "rest-api"
+msgstr "REST API"
+
+#: addons/google-sheets/assets/addon.bundle.js:2230
+msgid "Revoke access"
+msgstr "Revocar el acceso"
+
+#: assets/plugin.bundle.js:1581
 msgid "Save"
 msgstr "Guardar"
+
+#: assets/plugin.bundle.js:651
+msgid "Select how Forms Bridge should encode your form submissions."
+msgstr ""
+"Selecciona como quieres que Forms Bridge codifique las entradas de "
+"formularios"
+
+#: assets/plugin.bundle.js:1333
+msgid "Somthing went wrong on the file upload"
+msgstr "Alguna cosa ha ido mal con la subida del fichero"
+
+#: addons/google-sheets/assets/addon.bundle.js:2023
+#: addons/google-sheets/assets/addon.bundle.js:2083
+msgid "Spreadsheet"
+msgstr "Spreadsheet"
+
+#: integrations/gf/class-integration.php:117
+#: integrations/wpcf7/class-integration.php:346
+#: integrations/wpforms/class-integration.php:470
+#: addons/financoop/assets/addon.bundle.js:1885
+#: addons/google-sheets/assets/addon.bundle.js:1912
+#: addons/odoo/assets/addon.bundle.js:1893
+#: addons/rest-api/assets/addon.bundle.js:1885
+msgid "Submit"
+msgstr "Enviar"
+
+#: addons/google-sheets/assets/addon.bundle.js:2041
+#: addons/google-sheets/assets/addon.bundle.js:2093
+msgid "Tab Name"
+msgstr "Nombre de pestaña"
+
+#: includes/class-rest-settings-controller.php:90
+#: addons/financoop/assets/addon.bundle.js:946
+#: addons/google-sheets/assets/addon.bundle.js:973
+#: addons/odoo/assets/addon.bundle.js:946
+#: addons/rest-api/assets/addon.bundle.js:946
+msgid "Target integration"
+msgstr "Integración destinataria"
+
+#. translators: %s: Field name
+#: includes/class-form-bridge-template.php:688
+msgid "Template does not include form field `%s`"
+msgstr "La plantilla no incluye el campo `%s`"
+
+#: includes/class-rest-settings-controller.php:98
+msgid "Template fields with user inputs"
+msgstr "Campos de plantilla con entradas de usuario"
+
+#: includes/class-rest-settings-controller.php:168
+msgid "Template not found"
+msgstr "Plantilla no encontrada"
+
+#: addons/financoop/assets/addon.bundle.js:1075
+#: addons/financoop/assets/addon.bundle.js:1226
+#: addons/financoop/assets/addon.bundle.js:1589
+#: addons/google-sheets/assets/addon.bundle.js:1102
+#: addons/google-sheets/assets/addon.bundle.js:1253
+#: addons/google-sheets/assets/addon.bundle.js:1616
+#: addons/odoo/assets/addon.bundle.js:1075
+#: addons/odoo/assets/addon.bundle.js:1226
+#: addons/odoo/assets/addon.bundle.js:1597
+#: addons/odoo/assets/addon.bundle.js:2011
+#: addons/odoo/assets/addon.bundle.js:2279
+#: addons/odoo/assets/addon.bundle.js:2406
+#: addons/rest-api/assets/addon.bundle.js:1075
+#: addons/rest-api/assets/addon.bundle.js:1226
+#: addons/rest-api/assets/addon.bundle.js:1589 assets/plugin.bundle.js:866
+#: assets/plugin.bundle.js:956
+msgid "This name is already in use"
+msgstr "Este nomre ya está en uso"
+
+#: addons/financoop/assets/addon.bundle.js:746
+#: addons/google-sheets/assets/addon.bundle.js:773
+#: addons/odoo/assets/addon.bundle.js:746
+#: addons/rest-api/assets/addon.bundle.js:746
+msgid "To"
+msgstr "A"
+
+#: addons/google-sheets/assets/addon.bundle.js:2247
+msgid "Upload credentials"
+msgstr "Subir credenciales"
+
+#: addons/odoo/assets/addon.bundle.js:2300
+#: addons/odoo/assets/addon.bundle.js:2429
+msgid "User"
+msgstr "Usuario"
+
+#: assets/plugin.bundle.js:782
+msgid "Value"
+msgstr "Valor"
+
+#: assets/plugin.bundle.js:1213
+msgid ""
+"When logging is activated, logs will be write to `wp-content/debug.log` and "
+"read from them. If your server is not hardened, this file could be public to "
+"the web with confidencial data. Make sure to deactivate debugging once "
+"you've done."
+msgstr ""
+"Si el registro está activo, los registros serán escritos en `wp-"
+"content/debug.log` y leidos de ahí. Si tu servidor no está bien protegido, "
+"este fichero puede ser público a través de la web i exponer información "
+"confidencials. Asegurate de desactivar la depuración una vez hayas acabado."
+
+#: addons/google-sheets/class-gs-rest-controller.php:61
+msgid "You can't manage wp options"
+msgstr "No puedes gestionar opciones de wp"
+
+#: addons/google-sheets/assets/addon.bundle.js:2233
+msgid ""
+"You have to create a service account credentials to grant Forms Bridge "
+"access to your spreadhseets"
+msgstr ""
+"Has de crear unas credenciales de cuenta de servicio para garantizar acceso "
+"a tus spreadsheets a Forms Bridge"
+
+#: assets/plugin.bundle.js:1069
+msgid ""
+"👋 Welcome! It seems you have more than one forms builder plugin installed. "
+"Before you continue, please, select which plugins do you want to integrate "
+"with Forms Bridge."
+msgstr ""
+"👋 Benvenida! Parece que dispones de más de un constructor de formularios. "
+"Antes de continuar, selecciona con que extensiones quieres que se integre "
+"Forms Bridge."
+
+#: assets/plugin.bundle.js:1402
+msgid "Cancel the import"
+msgstr "Cancela la importación"
+
+#: addons/financoop/assets/addon.bundle.js:2057 assets/plugin.bundle.js
+msgid "financoop"
+msgstr "FinanCoop"
+
+#: addons/google-sheets/assets/addon.bundle.js:2322 assets/plugin.bundle.js
+msgid "google-sheets"
+msgstr "Google Sheets"
+
+#: addons/odoo/assets/addon.bundle.js:2686 assets/plugin.bundle.js
+msgid "odoo"
+msgstr "Odoo JSON-RPC"
+
+#: assets/plugin.bundle.js
+msgid "wpforms"
+msgstr "WPForms"
+
+#: assets/plugin.bundle.js
+msgid "wpcf7"
+msgstr "Contact Form 7"
+
+#: assets/plugin.bundle.js
+msgid "gf"
+msgstr "Gravity Forms"
+
+#: assets/plugin.bundle.js
+msgid "ninja"
+msgstr "Ninja Forms"
+
+#. Description of the plugin
+#: forms-bridge.php
+msgid "Plugin to bridge WP forms submissions to any backend or service"
+msgstr ""
+"Extensión para conectar formularios de WP con cualquier backend o servicio"
+
+#: addons/financoop/templates/financoop-loan-request.php:8
+msgid "FinanCoop Loan Request"
+msgstr "Petición de préstamo de FinanCoop"
+
+#: addons/financoop/templates/financoop-loan-request.php:13
+#: addons/financoop/templates/financoop-subscription-request.php:13
+msgid "Partner ID"
+msgstr "ID del socio"
+
+#: addons/financoop/templates/financoop-loan-request.php:20
+msgid "Loan type ID"
+msgstr "ID del tipo de préstamo"
+
+#: addons/financoop/templates/financoop-loan-request.php:27
+#: addons/financoop/templates/financoop-subscription-request.php:41
+msgid "Country code"
+msgstr "Código de país"
+
+#: addons/financoop/templates/financoop-loan-request.php:70
+msgid "Loan amount"
+msgstr "Cantidad del préstamo"
+
+#: addons/financoop/templates/financoop-loan-request.php:77
+#: addons/financoop/templates/financoop-subscription-request.php:100
+#: addons/rest-api/templates/zoho-crm-leads.php:125
+msgid "First name"
+msgstr "Nombre"
+
+#: addons/financoop/templates/financoop-loan-request.php:83
+#: addons/financoop/templates/financoop-subscription-request.php:106
+#: addons/rest-api/templates/zoho-crm-leads.php:131
+msgid "Last name"
+msgstr "Apellidos"
+
+#: addons/financoop/templates/financoop-loan-request.php:95
+#: addons/financoop/templates/financoop-subscription-request.php:118
+#: addons/odoo/templates/odoo-crm-lead.php:111
+msgid "Address"
+msgstr "Dirección"
+
+#: addons/financoop/templates/financoop-loan-request.php:101
+#: addons/financoop/templates/financoop-subscription-request.php:124
+#: addons/odoo/templates/odoo-crm-lead.php:116
+msgid "City"
+msgstr "Ciudad"
+
+#: addons/financoop/templates/financoop-loan-request.php:107
+#: addons/financoop/templates/financoop-subscription-request.php:130
+#: addons/odoo/templates/odoo-crm-lead.php:121
+msgid "Zip code"
+msgstr "Código postal"
+
+#: addons/financoop/templates/financoop-loan-request.php:113
+#: addons/financoop/templates/financoop-subscription-request.php:136
+#: addons/rest-api/templates/zoho-crm-leads.php:143
+msgid "Phone"
+msgstr "Teléfono"
+
+#: addons/financoop/templates/financoop-subscription-request.php:8
+msgid "FinanCoop Subscription Request"
+msgstr "Petición de Suscripción de FinanCoop"
+
+#: addons/financoop/templates/financoop-subscription-request.php:20
+msgid "Ordered parts"
+msgstr "Participaciones"
+
+#: addons/financoop/templates/financoop-subscription-request.php:27
+msgid "Share product ID"
+msgstr "ID del producto compartido"
+
+#: addons/financoop/templates/financoop-subscription-request.php:34
+msgid "Source"
+msgstr "Origen"
+
+#: addons/odoo/class-odoo-form-bridge-template.php:160
+msgid "Forms bridge can't create the database"
+msgstr "Forms Bridge no puede crear la base de datos"
+
+#: addons/odoo/templates/odoo-crm-lead.php:8
+msgid "Odoo CRM Lead"
+msgstr "Lead del CRM de Odoo"
+
+#: addons/odoo/templates/odoo-crm-lead.php:13
+msgid "User email"
+msgstr "Correo electrónico del usuario"
+
+#: addons/odoo/templates/odoo-crm-lead.php:20
+msgid "Lead name"
+msgstr "Nombre del lead"
+
+#: addons/odoo/templates/odoo-crm-lead.php:35
+msgid "Lead priority"
+msgstr "Prioridad del lead"
+
+#: addons/odoo/templates/odoo-crm-lead.php:95
+#: addons/rest-api/templates/brevo-contacts.php:101
+#: addons/rest-api/templates/mailchimp-contacts.php:219
+msgid "Your email"
+msgstr "Tu correo electrónico"
+
+#: addons/odoo/templates/odoo-crm-lead.php:101
+msgid "Your phone"
+msgstr "Tu teléfono"
+
+#: addons/odoo/templates/odoo-crm-lead.php:106
+msgid "Your mobile"
+msgstr "Tu móvil"
+
+#: addons/rest-api/templates/brevo-contacts.php:36
+#: addons/rest-api/templates/brevo-contacts.php:92
+msgid "Brevo Contacts"
+msgstr "Contactos de Brevo"
+
+#: addons/rest-api/templates/brevo-contacts.php:41
+msgid "Brevo API URL"
+msgstr "URL de la API de Brevo"
+
+#: addons/rest-api/templates/brevo-contacts.php:48
+msgid "Label of the Brevo API backend connection"
+msgstr "Etiqueta de la conexión de backend con la API de Brevo"
+
+#: addons/rest-api/templates/brevo-contacts.php:58
+#: addons/rest-api/templates/mailchimp-contacts.php:128
+msgid "Bridge HTTP method"
+msgstr "Método HTTP del bridge"
+
+#: addons/rest-api/templates/brevo-contacts.php:65
+#: addons/rest-api/templates/mailchimp-contacts.php:135
+msgid "Bridge endpoint"
+msgstr "Endpoint del bridge"
+
+#: addons/rest-api/templates/brevo-contacts.php:72
+msgid "Brevo API Key"
+msgstr "Llave API de Brevo"
+
+#: addons/rest-api/templates/brevo-contacts.php:73
+#: addons/rest-api/templates/mailchimp-contacts.php:143
+msgid ""
+"You can get it from \"SMTP & API\" > \"API Keys\" page from your dashboard"
+msgstr ""
+"Puedes obtenerlo de la página \"SMT & API\" > \"API Keys\" de tu dashboard"
+
+#: addons/rest-api/templates/brevo-contacts.php:83
+msgid "Segment IDs"
+msgstr "IDs de segmento"
+
+#: addons/rest-api/templates/brevo-contacts.php:85
+msgid ""
+"List IDs separated by commas. Leave it empty if you don't want to subscrive "
+"contact to any list"
+msgstr ""
+"Lista de IDs separada por comas. Déjalo en blanco si no quieres suscribir el "
+"contacto a ninguna lista"
+
+#: addons/rest-api/templates/brevo-contacts.php:107
+#: addons/rest-api/templates/mailchimp-contacts.php:225
+msgid "Your first name"
+msgstr "Tu nombre"
+
+#: addons/rest-api/templates/brevo-contacts.php:113
+#: addons/rest-api/templates/mailchimp-contacts.php:230
+msgid "Your last name"
+msgstr "Tus apellidos"
+
+#: addons/rest-api/templates/mailchimp-contacts.php:106
+#: addons/rest-api/templates/mailchimp-contacts.php:200
+msgid "MailChimp Contacts"
+msgstr "Contactos de MailChimp"
+
+#: addons/rest-api/templates/mailchimp-contacts.php:111
+msgid "MailChimp API URL"
+msgstr "URL de la API de MailChimp"
+
+#: addons/rest-api/templates/mailchimp-contacts.php:118
+msgid "Label of the MailChimp API backend connection"
+msgstr "Etiqueta de la conexión de abckend con la API de MailChimp"
+
+#: addons/rest-api/templates/mailchimp-contacts.php:142
+msgid "MailChimp API Key"
+msgstr "LLave API de MailChimp"
+
+#: addons/rest-api/templates/mailchimp-contacts.php:153
+msgid "Datacenter"
+msgstr "Centro de datos"
+
+#: addons/rest-api/templates/mailchimp-contacts.php:160
+msgid "Audience ID"
+msgstr "ID de la audiencia"
+
+#: addons/rest-api/templates/mailchimp-contacts.php:161
+msgid "You can find the ID on the settings tab of your segments"
+msgstr "Puedes encontrar el ID en la pestaña de configuración de tus segmentos"
+
+#: addons/rest-api/templates/mailchimp-contacts.php:171
+msgid "Subscription status"
+msgstr "Estado de la suscripción"
+
+#: addons/rest-api/templates/mailchimp-contacts.php:175
+msgid "Subscribed"
+msgstr "Suscrito"
+
+#: addons/rest-api/templates/mailchimp-contacts.php:179
+msgid "Unsubscribed"
+msgstr "Dessuscrito"
+
+#: addons/rest-api/templates/mailchimp-contacts.php:183
+msgid "Pending"
+msgstr "Pendiente"
+
+#: addons/rest-api/templates/mailchimp-contacts.php:187
+msgid "Cleaned"
+msgstr "Limpio"
+
+#: addons/rest-api/templates/mailchimp-contacts.php:191
+msgid "Transactional"
+msgstr "Transaccional"
+
+#: addons/rest-api/templates/zoho-crm-leads.php:27
+msgid "Zoho CRM Leads"
+msgstr "Leads de Zoho CRM"
+
+#: addons/rest-api/templates/zoho-crm-leads.php:32
+msgid "Lead owner"
+msgstr "Responsable del lead"
+
+#: addons/rest-api/templates/zoho-crm-leads.php:33
+msgid "Email address of the owner of the lead"
+msgstr "Dirección de correo electrónico del responsable del lead"
+
+#: addons/rest-api/templates/zoho-crm-leads.php:43
+msgid "Lead source"
+msgstr "Origen del lead"
+
+#: addons/rest-api/templates/zoho-crm-leads.php:44
+msgid "Label to identify your website sourced leads"
+msgstr "Etiqueta identificativa de los leads provinientes de tu sitio web"
+
+#: addons/rest-api/templates/zoho-crm-leads.php:55
+msgid "Lead status"
+msgstr "Estado del lead"
+
+#: addons/rest-api/templates/zoho-crm-leads.php:59
+msgid "Connected"
+msgstr "Conectado"
+
+#: addons/rest-api/templates/zoho-crm-leads.php:83
+msgid "OAuth grant token"
+msgstr "Tiquen de acceso OAuth"
+
+#: addons/rest-api/templates/zoho-crm-leads.php:84
+msgid ""
+"Do you have to create a Self-Client Application on the Zoho Developer "
+"Console and generates a grant token without caducity"
+msgstr ""
+"Has de crear una Self-Client Application en la Zoho Developer Console y "
+"generar un toquen de acceso sin caducidad"
+
+#: addons/rest-api/templates/zoho-crm-leads.php:148
+msgid "Company"
+msgstr "Compañía"
+
+#: addons/rest-api/templates/zoho-crm-leads.php:153
+msgid "Comments"
+msgstr "Comentarios"
+
+#: includes/class-form-bridge-template.php:350
+msgid "Bridge name"
+msgstr "Nombre del bridge"
+
+#: includes/class-form-bridge-template.php:637
+msgid "Invalid template fields"
+msgstr "Campos de plantilla inválidos"
+
+#: includes/class-form-bridge-template.php:783
+msgid "Forms bridge can't create the backend"
+msgstr "Forms Bridge no puede crear el backend"
+
+#: includes/class-form-bridge-template.php:807
+msgid "Forms bridge can't create the form bridge"
+msgstr "Forms Bridge no puede crear el bridge de formulario"
+
+#: integrations/gf/class-integration.php:594
+msgid "please supply a valid value"
+msgstr "por favor, indica un valor"
+
+#: integrations/gf/class-integration.php:649
+msgid "please supply a valid email address"
+msgstr "por favor, indica una dirección de correo electrónico válida"
+
+#: integrations/wpforms/class-integration.php:471
+msgid "Sending..."
+msgstr "Enviando..."
+
+#: integrations/wpforms/class-integration.php:487
+msgid "Thanks for contacting us! We will be in touch with you shortly."
+msgstr "Gracias por ponerte en contacto! Te responderemos lo antes posible."
+
+#: addons/financoop/assets/addon.bundle.js:269
+#: addons/google-sheets/assets/addon.bundle.js:269
+#: addons/odoo/assets/addon.bundle.js:269
+#: addons/rest-api/assets/addon.bundle.js:269 assets/plugin.bundle.js:26
+msgid "Load settings error"
+msgstr "Error de carga de configuración"
+
+#: addons/financoop/assets/addon.bundle.js:296
+#: addons/google-sheets/assets/addon.bundle.js:296
+#: addons/odoo/assets/addon.bundle.js:296
+#: addons/rest-api/assets/addon.bundle.js:296 assets/plugin.bundle.js:53
+msgid "Save settings error"
+msgstr "Error de guardado de configuración"
+
+#: addons/financoop/assets/addon.bundle.js:368
+#: addons/google-sheets/assets/addon.bundle.js:368
+#: addons/odoo/assets/addon.bundle.js:368
+#: addons/rest-api/assets/addon.bundle.js:368 assets/plugin.bundle.js:368
+msgid "Loading config error"
+msgstr "Error de carga de configuración"
+
+#: addons/financoop/assets/addon.bundle.js:390
+#: addons/google-sheets/assets/addon.bundle.js:390
+#: addons/odoo/assets/addon.bundle.js:390
+#: addons/rest-api/assets/addon.bundle.js:390 assets/plugin.bundle.js:390
+msgid "Template submit error"
+msgstr "Error de envio de plantilla"
+
+#: addons/financoop/assets/addon.bundle.js:582
+#: addons/google-sheets/assets/addon.bundle.js:609
+#: addons/odoo/assets/addon.bundle.js:582
+#: addons/rest-api/assets/addon.bundle.js:582
+msgid "Bridges"
+msgstr "Bridges"
+
+#: addons/financoop/assets/addon.bundle.js:818
+#: addons/google-sheets/assets/addon.bundle.js:845
+#: addons/odoo/assets/addon.bundle.js:818
+#: addons/rest-api/assets/addon.bundle.js:818
+msgid "Bridge pipes"
+msgstr "Pasarelas del bridge"
+
+#: addons/financoop/assets/addon.bundle.js:913
+#: addons/google-sheets/assets/addon.bundle.js:940
+#: addons/odoo/assets/addon.bundle.js:913
+#: addons/rest-api/assets/addon.bundle.js:913
+msgid "Use tempalte"
+msgstr "Usar plantilla"
+
+#: addons/financoop/assets/addon.bundle.js:917
+#: addons/google-sheets/assets/addon.bundle.js:944
+#: addons/odoo/assets/addon.bundle.js:917
+#: addons/rest-api/assets/addon.bundle.js:917
+msgid "Templates"
+msgstr "Plantillas"
+
+#: addons/financoop/assets/addon.bundle.js:923
+#: addons/google-sheets/assets/addon.bundle.js:950
+#: addons/odoo/assets/addon.bundle.js:923
+#: addons/rest-api/assets/addon.bundle.js:923
+msgid "Congratulations, you've created a new form bridge!"
+msgstr "Felicidades, has creado un nuevo bridge de formulario!"
+
+#: addons/financoop/assets/addon.bundle.js:938
+#: addons/google-sheets/assets/addon.bundle.js:965
+#: addons/odoo/assets/addon.bundle.js:938
+#: addons/rest-api/assets/addon.bundle.js:938
+msgid "Close"
+msgstr "Cerrar"
+
+#: addons/financoop/assets/addon.bundle.js:956
+#: addons/google-sheets/assets/addon.bundle.js:983
+#: addons/odoo/assets/addon.bundle.js:956
+#: addons/rest-api/assets/addon.bundle.js:956
+msgid "Select a template"
+msgstr "Selecciona una plantilla"
+
+#: addons/financoop/assets/addon.bundle.js:1394
+#: addons/google-sheets/assets/addon.bundle.js:1421
+#: addons/odoo/assets/addon.bundle.js:1402
+#: addons/rest-api/assets/addon.bundle.js:1394
+msgid "The value is not a number"
+msgstr "El valor no es un número"
+
+#: addons/financoop/assets/addon.bundle.js:1397
+#: addons/google-sheets/assets/addon.bundle.js:1424
+#: addons/odoo/assets/addon.bundle.js:1405
+#: addons/rest-api/assets/addon.bundle.js:1397
+msgid "The value is too small"
+msgstr "El valor es demasiado pequeño"
+
+#: addons/financoop/assets/addon.bundle.js:1399
+#: addons/google-sheets/assets/addon.bundle.js:1426
+#: addons/odoo/assets/addon.bundle.js:1407
+#: addons/rest-api/assets/addon.bundle.js:1399
+msgid "The value is too large"
+msgstr "El valor es demasiado grande"
+
+#: addons/financoop/assets/addon.bundle.js:1573
+#: addons/google-sheets/assets/addon.bundle.js:1600
+#: addons/odoo/assets/addon.bundle.js:1581
+#: addons/rest-api/assets/addon.bundle.js:1573
+msgid "Configure the backend to bridge your form to"
+msgstr "Configura un backend al que contectarse"
+
+#: addons/financoop/assets/addon.bundle.js:1579
+#: addons/google-sheets/assets/addon.bundle.js:1606
+#: addons/odoo/assets/addon.bundle.js:1587
+#: addons/rest-api/assets/addon.bundle.js:1579
+msgid "Reuse backend"
+msgstr "Reutiliza un backend"
+
+#: addons/financoop/assets/addon.bundle.js:1633
+#: addons/google-sheets/assets/addon.bundle.js:1660
+#: addons/odoo/assets/addon.bundle.js:1641
+#: addons/rest-api/assets/addon.bundle.js:1633
+msgid "Populate the form default values"
+msgstr "Rellena los valores por defecto del formulario"
+
+#: addons/financoop/assets/addon.bundle.js:1667
+#: addons/google-sheets/assets/addon.bundle.js:1694
+#: addons/odoo/assets/addon.bundle.js:1675
+#: addons/rest-api/assets/addon.bundle.js:1667
+msgid "Bridge"
+msgstr "Bridge"
+
+#: addons/financoop/assets/addon.bundle.js:1668
+#: addons/google-sheets/assets/addon.bundle.js:1695
+#: addons/odoo/assets/addon.bundle.js:1676
+#: addons/rest-api/assets/addon.bundle.js:1668
+msgid "Configure the bridge"
+msgstr "Configura el bridge"
+
+#: addons/financoop/assets/addon.bundle.js:1873
+#: addons/google-sheets/assets/addon.bundle.js:1900
+#: addons/odoo/assets/addon.bundle.js:1881
+#: addons/rest-api/assets/addon.bundle.js:1873
+msgid "Previous"
+msgstr "Anterior"
+
+#: addons/financoop/assets/addon.bundle.js:1881
+#: addons/google-sheets/assets/addon.bundle.js:1908
+#: addons/odoo/assets/addon.bundle.js:1889
+#: addons/rest-api/assets/addon.bundle.js:1881
+msgid "Next"
+msgstr "Siguiente"
+
+#: addons/google-sheets/assets/addon.bundle.js:1943
+msgid "Select the spreadsheet do you want to use as backend"
+msgstr "Selecciona el spreadsheet que quieres usar como backend"
+
+#: addons/google-sheets/assets/addon.bundle.js:1949
+msgid "Select a Spreadsheet"
+msgstr "Selecciona un Spreadsheet"
+
+#: addons/google-sheets/assets/addon.bundle.js:2026
+msgid ""
+"Before you can use spreadsheet bridges, you have to grant access to Forms "
+"Bridge as OAuth client"
+msgstr ""
+"Antes de poder utilizar bridges de spreadsheet, has de garantizar el acceso "
+"de Forms Bridge como un cliente OAuth"
+
+#: addons/odoo/assets/addon.bundle.js:1998
+msgid "Configure the Odoo database connection"
+msgstr "Configura la conexión con la base de datos de Odoo"
+
+#: addons/odoo/assets/addon.bundle.js:2001
+msgid "Reuse database"
+msgstr "Reutiliza una base de datos"
