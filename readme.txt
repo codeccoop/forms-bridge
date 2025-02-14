@@ -10,11 +10,11 @@ Bridge WP form builder plugins to any backend or service over HTTP requests.
 
 == Integrations ==
 
-Forms Bridge has integrations for [GravityForms](https://www.gravityforms.com), [Contact Form 7](https://wordpress.org/plugins/contact-form-7/), [WP Forms Lite](https://wordpress.org/plugins/wpforms-lite/) and [Ninja Forms](https://wordpress.org/plugins/ninja-forms/).
+Forms Bridge has integrations for [GravityForms](https://www.gravityforms.com), [Contact Form 7](https://wordpress.org/plugins/contact-form-7/), [WP Forms](https://wpforms.com/) and [Ninja Forms](https://wordpress.org/plugins/ninja-forms/).
 
 == Addons ==
 
-Forms Bridge has core support for REST API connexions and addons for [Odoo](https://www.odoo.com/) and [Google Spreadsheets](https://workspace.google.com/products/sheets/).
+Forms Bridge has core support for REST API connexions and addons for [Odoo JSON-RPC](https://www.odoo.com/) and [Google Spreadsheets](https://workspace.google.com/products/sheets/).
 
 == Docs ==
 

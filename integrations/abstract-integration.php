@@ -381,7 +381,8 @@ abstract class Integration extends Singleton
                         'forms_bridge_after_submission',
                         $bridge,
                         $payload,
-                        $attachments
+                        $attachments,
+                        $response
                     );
                 }
             } catch (Error | Exception $e) {

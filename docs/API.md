@@ -51,24 +51,24 @@ foreach ($forms_data as $form_data) {
 }
 ```
 
-### `forms_bridge_form_hooks`
+### `forms_bridge_bridges`
 
-Get available form hooks for the current form.
+Get available bridges for the current form.
 
 #### Arguments
 
 1. `mixed $default`: Fallback value.
-2. `integer $form_id`: If declared, try to return form hooks from the form with this id instead of the form hooks from the current form.
+2. `integer $form_id`: If declared, try to return bridges from the form with this id instead of the bridges from the current form.
 
 #### Returns
 
-1. `array $hooks`: List of given form available hooks instances.
+1. `array $bridges`: List of given form available bridges instances.
 
 #### Example
 
 ```php
-$hooks = apply_filters('forms_bridge_form_hooks', [], 13);
-foreach ($hooks as $hook) {
+$bridges = apply_filters('forms_bridge_bridges', [], 12);
+foreach ($bridges as $bridge) {
 	// do something
 }
 ```
@@ -124,34 +124,14 @@ Filters the submission data to be sent to the backend.
 #### Arguments
 
 1. `array $payload`: Submission payload.
-2. `array $uploads`: Submission uploaded files.
-3. `array $form_data`: Form data.
-4. `array $hook`: Hook data.
+4. `Form_Bridge $bridge`: Bridge instance.
 
 #### Example
 
 ```php
-add_filter('forms_bridge_payload', function ($payload, $uploads, $form_data, $form_hook) {
+add_filter('forms_bridge_payload', function ($payload, $bridge) {
 	return $payload;
 }, 10, 4);
-```
-
-### `forms_bridge_payload_{$hook_name}`
-
-Filters the submission data to be sent to the backend for a given form hook.
-
-#### Arguments
-
-1. `array $payload`: Submission payload.
-2. `array $uploads`: Submission uploaded files.
-3. `array $form_data`: Form data.
-
-#### Example
-
-```php
-add_filter('forms_bridge_payload_contact', function ($payload, $uploads, $form_data) {
-	return $payload;
-}, 10, 3);
 ```
 
 ### `forms_bridge_attachments`
@@ -161,32 +141,14 @@ Filters attached files to be sent to the backend.
 #### Arguments
 
 1. `array $uploads`: Submission attached files.
-2. `array $form_data`: Form data.
-3. `array $form_hook`: Form hook data.
+3. `Form_Bridge $bridge`: Bridge instance.
 
 #### Example
 
 ```php
-add_filter('forms_bridge_attachments', function ($attachments, $form_data, $form_hook) {
+add_filter('forms_bridge_attachments', function ($attachments, $bridge) {
 	return $attachments;
 }, 10, 3);
-```
-
-### `forms_bridge_attachments_{$hook_name}`
-
-Filters attached files to be sent to the backend for a given form hook.
-
-#### Arguments
-
-1. `array $uploads`: Submission attached files.
-2. `array $form_data`: Form data.
-
-#### Example
-
-```php
-add_filter('forms_bridge_attachments_contact', function ($attachments, $form_data) {
-	return $attachments;
-}, 10, 2);
 ```
 
 ### `forms_bridge_prune_empties`
@@ -196,12 +158,31 @@ Control if Forms Bridge should clean up the submission data and prune its empty 
 #### Arguments
 
 1. `boolean $prune`: False by default.
+2. `Form_Bridge $bridge`: Bridge instance.
 
 #### Example
 
 ```php
 add_filter('forms_bridge_prune_empties', '__return_true');
 ```
+
+### `forms_bridge_skip_submission`
+
+Control if Forms Bridge should skip the form submission.
+
+#### Arguments
+
+1. `boolean $prune`: False by default.
+2. `Form_Bridge $bridge`: Bridge instance.
+3. `array $payload`: Payload data.
+4. `array $attachments`: Attachments list.
+
+#### Example
+
+```php
+add_filter('forms_bridge_skip_submission', '__return_true');
+```
+
 
 ## Actions
 
@@ -211,14 +192,14 @@ Action to do just before submission has been sent to the backend.
 
 #### Arguments
 
-1. `array $payload`: Submission prepared payload data.
-2. `array $attachments`: Submission attached files.
-3. `array $form_data`: Form data.
+1. `Form_Bridge $bridge`: Bridge instance.
+2. `array $payload`: Payload data.
+3. `array $attachments`: Attachments list.
 
 #### Example
 
 ```php
-add_action('forms_bridge_before_submission', function ($payload, $attachments, $form_data) {
+add_action('forms_bridge_before_submission', function ($bridge, $payload, $attachments) {
 	// do something
 }, 10, 3);
 ```
@@ -229,17 +210,17 @@ Action to do after the submission has been succesfuly sent to the backend.
 
 #### Arguments
 
-1. `array $response`: HTTP response data
+1. `Form_Bridge $bridge`: Bridge instance.
 2. `array $payload`: Submission payload.
-2. `array $attachments`: Submission attached files.
-3. `array $form_data`: Form data.
+3. `array $attachments`: Attachments list.
+4. `array $response`: HTTP response data.
 
 #### Example
 
 ```php
-add_action('forms_bridge_after_submission', function ($payload, $attachments, $form_data) {
+add_action('forms_bridge_after_submission', function ($bridge, $payload, $attachments, $response) {
 	// do something
-}, 10, 3);
+}, 10, 1);
 ```
 
 ### `forms_bridge_on_failure`
@@ -248,30 +229,15 @@ Action to do after a request connexion error with the backend.
 
 #### Arguments
 
-1. `array $payload`: Submission payload.
-2. `array $attachments`: Submission attached files.
-3. `array $form_data`: Form data.
-4. `array $error_data`: Error data.
+1. `Form_Bridge $bridge`: Bridge instance.
+2. `WP_Error $error`: HTTP response error.
+3. `array $payload`: Submission payload.
+4. `array $attachments`: Attachments list.
 
 #### Example
 
 ```php
-add_action('forms_bridge_on_failure', function ($payload, $attachments, $form_data, $error_data) {
+add_action('forms_bridge_on_failure', function ($bridge, $error, $payload, $attachments) {
 	// do something
 }, 10, 4);
 ```
-
-### `forms_bridge_before_submit`
-
-Fired before Forms Bridge submits data to a REST API.
-
-#### Arguments
-
-1. `string $endpoint`: Target endpoint.
-2. `array $submission`: Submission data.
-3. `array $attachments`: Array of attached files.
-4. `Form_Hook $hook`: Instance of the form hook who triggers the request.
-
-### `forms_bridge_after_submit`
-
-Fired with the response data from the REST API.

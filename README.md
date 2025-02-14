@@ -1,48 +1,36 @@
 ![Forms Bridge](./assets/icon-256x256.png)
 
-Bridge WP form builder plugins to any backend over HTTP requests.
+Bridge WP form builder plugins to any backend or service over HTTP requests.
 
 Forms Bridge has integrations for [GravityForms](https://www.gravityforms.com)
-, [Contact Form 7](https://contactform7.com/) and [WP Forms](https://wpforms.com/).
-
-## Installation
-
-Download the [latest release](https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge/-/releases/permalink/latest/downloads/plugins/bridges/forms-bridge.zip)
-as a zipfile. Once downloaded, go to your site plugins page and upload the zip file
-as a new plugin, WordPress will do the rest.
-
-> Go to the [releases](https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge/-/releases)
-to find previous versions.
-
-If you have access to a console on your server, you can install it with `wp-cli` with
-the next command:
-
-```shell
-wp plugin install https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge/-/releases/permalink/latest/downloads/plugins/bridges/forms-bridge.zip
-```
+, [Contact Form 7](https://contactform7.com/), [WP Forms](https://wpforms.com/)
+and [Ninja Forms](https://wordpress.org/plugins/ninja-forms/).
 
 ## Getting started
 
 Install your preferred form builder from the available integrations and build your web
 forms. Once done, go to `Settings > Forms Bridge` to bridge your forms. The settings page
-has three main sections:
+is divided by tabs. By default, the **General** and **REST-API** tabs will be visible.
+As you activate addons, new tabs will be shown.
 
 1. General
 	* **Notification receiver**: Email address receiver of failed submission notifications.
-	* **Backends**: List of configured backend connections. Each backend needs a unique
-	name, a base URL, and, optional, a map of HTTP headers.
+	* **Backends**: List of configured backend connections. 
 	* **Addons**: Panel to manage addons. See the [addons](#addons) section to get know
 	which addons are available.
 	* **Debug**: Activate the logging console to see what's going on on inside WordPress.
 	This feature allow you to debug your form submissions while you are configuring your
 	hooks.
+	* **Export/Import**: Export and import Forms Bridge configurations as json files.
 2. REST API
-	* **Form Hooks**: A list of hooked forms and it's relation with your backend endpoints.
-	Each relation needs a unique name, a form ID, a backend, a HTTP method, and an endpoint.
-	Submission will be sent as encoded JSON data.
+	* **Bridges**: Panel with configured form bridges.
 
 Once configured, try to submit data with one of your hooked forms and watch the magic
 happen 🙌!
+
+## Bridges
+
+### Templates
 
 ## Backends
 
@@ -77,13 +65,13 @@ backend.
 
 By default, Forms Bridge will send this files as binary data using the `multipart/form-data`
 encoding schema unless your backend connexions has a different `Content-Type` HTTP header.
-Forms Bridge will check to the form hook's backend for this header. If it exists and is
+Forms Bridge will check to the form bridge's backend for this header. If it exists and is
 not `multipart/form-data`, Forms Bridge will include this files as base64 encoded strings to
 your payload.
 
 ## Form Pipes
 
-Each hooked form can be configured with transform pipes. With this pipes, you can transform
+Each bridged form can be configured with transform pipes. With this pipes, you can transform
 your form submissions into your backend API schemas. Form pipes allows you to rename
 variables, force primitive types casting and mutate data structures. If your form submission
 model does not fit your backend API schema, mutate it with pipes before its sendend over
@@ -125,9 +113,11 @@ payload and remove the original fields.
 Addons are moduls that allow Forms Bridge to be connected with special backends. This addons
 are available:
 
+1. **REST API**: The default addon, always active. With this addon you can bridge your form submissions over the REST API of your backends.
 1. **Odoo**: With this addon you can bridge your forms to Odoo over the JSON-RPC API. Fill the gap between your CMS and your ERP and scale up your business.
 2. **Google Sheets**: With this addon you can get your form submissions synchronized with google spreadsheets. Focus on your data, share it with your team and don't bother them with
 the wordpress admin page.
+3. **FinanCoop**: Addon to bridge forms to the FinanCoop Odoo's module. This module is intended to manage subscription and loan requests for cooperatives and non-profit organizations.
 
 To get more details about this addons, go the the [documentation](./docs/Addons.md).
 
@@ -150,6 +140,13 @@ git submodule update --init
 Once done, you will need to install frontend dependencies with `npm install`. To build
 the admin's react client, run `npm run dev` for development, or `npm run build` for
 production builts.
+
+The last step is to install google-sheets addon dependencies with composer:
+
+```bash
+cd addons/google-sheets
+composer install
+```
 
 > We work WordPress with docker. See our [development setup](https://github.com/codeccoop/wp-development/)
 > if you are interested.
