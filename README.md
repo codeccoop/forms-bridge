@@ -15,7 +15,7 @@ As you activate addons, new tabs will be shown.
 
 1. General
 	* **Notification receiver**: Email address receiver of failed submission notifications.
-	* **Backends**: List of configured backend connections. 
+	* **Backends**: List of configured backend connections.
 	* **Addons**: Panel to manage addons. See the [addons](#addons) section to get know
 	which addons are available.
 	* **Debug**: Activate the logging console to see what's going on on inside WordPress.
@@ -28,9 +28,42 @@ As you activate addons, new tabs will be shown.
 Once configured, try to submit data with one of your hooked forms and watch the magic
 happen 🙌!
 
+## Addons
+
+Addons are moduls that allow Forms Bridge to be connected with special backends. This addons
+are available:
+
+1. **REST API**: The default addon, always active. With this addon you can bridge your form
+   submissions over the REST API of your backends.
+1. **Odoo**: With this addon you can bridge your forms to Odoo over the JSON-RPC API. Fill the
+   gap between your CMS and your ERP and scale up your business.
+2. **Google Sheets**: With this addon you can get your form submissions synchronized with google
+   spreadsheets. Focus on your data, share it with your team and don't bother them with the
+   wordpress admin page.
+3. **FinanCoop**: Addon to bridge forms to the FinanCoop Odoo's module. This module is intended to
+   manage subscription and loan requests for cooperatives and non-profit organizations.
+
+To get more details about this addons, go the the [documentation](./docs/Addons.md).
+
 ## Bridges
 
+The key concept of this plugin is the **bridge**. A bridge is a configured connexion between
+a form and a backend or service with a unique name. Each addon of the Forms Bridge allows to
+create a new kind of bridge, with this bridges you can connect your forms to multiple HTTP APIs.
+
+As we've mentioned, a bridge is a connexion between a backend and a form. In addition, and
+based on the addon the bridge comes from, this connexion will need some other fields. For
+example, for a REST API bridge, each connexion will need an endpoint and an HTTP method.
+
 ### Templates
+
+Forms Bridge comes with multiple bridge templates for each addon. With templates you can
+automate the from and backend creation and its subsequent bound on a bridge. When you
+use templates, Forms Bridge will guide you over a simple and assisted process of steps
+where the template will require you to inform some fields. Once the process is completed,
+Forms Bridge will create a form on the integration you choose (GF, WPCF7, WPForms, etc)
+with a default layout and fields, configure a new backend connexion and bound them on a
+new bridge ready to use.
 
 ## Backends
 
@@ -53,7 +86,7 @@ and `multipart/form-data`. **JSON is the default encoding schema if there is no*
 
 If you needs any other encoding schema, you have to use `forms_bridge_payload` filter to encode
 your submission as string. When data comes as string, Forms Bridge skips the encoding step and
-sets the unmodified payload as the body of the request.  
+sets the unmodified payload as the body of the request.
 
 > 🚩 For HTTP methods GET and DELETE, the request has no body and your data will be sent as URL
 > query params.
@@ -107,19 +140,6 @@ $payload = [
 Then you can rename your form fields `street` and `city` as `address.street` and `address.city`
 and cast them as strings. JSON fingers will create the nested array on your form submission
 payload and remove the original fields.
-
-## Addons
-
-Addons are moduls that allow Forms Bridge to be connected with special backends. This addons
-are available:
-
-1. **REST API**: The default addon, always active. With this addon you can bridge your form submissions over the REST API of your backends.
-1. **Odoo**: With this addon you can bridge your forms to Odoo over the JSON-RPC API. Fill the gap between your CMS and your ERP and scale up your business.
-2. **Google Sheets**: With this addon you can get your form submissions synchronized with google spreadsheets. Focus on your data, share it with your team and don't bother them with
-the wordpress admin page.
-3. **FinanCoop**: Addon to bridge forms to the FinanCoop Odoo's module. This module is intended to manage subscription and loan requests for cooperatives and non-profit organizations.
-
-To get more details about this addons, go the the [documentation](./docs/Addons.md).
 
 ## Developers
 

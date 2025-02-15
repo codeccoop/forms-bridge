@@ -1,12 +1,12 @@
 {
   "translation-revision-date": "2025-02-14 00:47+0000",
-  "generator": "Loco https:\/\/localise.biz\/",
+  "generator": "WP-CLI\/2.11.0",
   "source": "addons\/google-sheets\/assets\/addon.bundle.js",
-  "domain": "forms-bridge",
+  "domain": "messages",
   "locale_data": {
-    "forms-bridge": {
+    "messages": {
       "": {
-        "domain": "",
+        "domain": "messages",
         "lang": "ca",
         "plural-forms": "nplurals=2; plural=n != 1;"
       },

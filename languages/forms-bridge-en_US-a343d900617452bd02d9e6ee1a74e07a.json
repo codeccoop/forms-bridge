@@ -27,7 +27,6 @@
       "Debug": [""],
       "Download config": [""],
       "Drop": [""],
-      "Error": [""],
       "Export Forms Bridge config as JSON": [""],
       "General": [""],
       "Header-Name": [""],
@@ -49,6 +48,7 @@
       "Logging": [""],
       "Notification receiver": [""],
       "Remove": [""],
+      "rest-api": ["REST API"],
       "Save": [""],
       "Select how Forms Bridge should encode your form submissions.": [""],
       "Somthing went wrong on the file upload": [""],
@@ -61,10 +61,17 @@
         ""
       ],
       "Cancel the import": [""],
+      "financoop": ["FinanCoop"],
+      "google-sheets": ["Google Sheets"],
+      "odoo": ["Odoo JSON-RPC"],
       "wpforms": ["WPForms"],
       "wpcf7": ["Contact Form 7"],
       "gf": ["Gravity Forms"],
-      "ninja": ["Ninja Forms"]
+      "ninja": ["Ninja Forms"],
+      "Load settings error": [""],
+      "Save settings error": [""],
+      "Loading config error": [""],
+      "Template submit error": [""]
     }
   }
 }

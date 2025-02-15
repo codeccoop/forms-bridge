@@ -13,10 +13,8 @@
       "Add": [""],
       "Add Form": [""],
       "Backend": [""],
-      "Before you can use spreadsheet hooks, you have to grant access to Forms Bridge as OAuth client": [
-        ""
-      ],
       "Cast as": [""],
+      "Database": [""],
       "Done": [""],
       "Drop": [""],
       "Follow <a href='https:\/\/github.com\/juampynr\/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>example<\/a> if do you need help with the process.": [
@@ -24,8 +22,6 @@
       ],
       "Form": [""],
       "Form format pipes": [""],
-      "Form Hooks": [""],
-      "Form pipes": [""],
       "From": [""],
       "Google Service Credentials": [""],
       "Grant access": [""],
@@ -34,15 +30,42 @@
       "Remove": [""],
       "Revoke access": [""],
       "Spreadsheet": [""],
-      "Submission ID": [""],
+      "Submit": [""],
       "Tab Name": [""],
+      "Target integration": [""],
       "This name is already in use": [""],
       "To": [""],
       "Upload credentials": [""],
       "You have to create a service account credentials to grant Forms Bridge access to your spreadhseets": [
         ""
       ],
-      "google-sheets": ["Google Sheets"]
+      "google-sheets": ["Google Sheets"],
+      "Load settings error": [""],
+      "Save settings error": [""],
+      "Loading config error": [""],
+      "Template submit error": [""],
+      "Bridges": [""],
+      "Bridge pipes": [""],
+      "Use tempalte": [""],
+      "Templates": [""],
+      "Congratulations, you've created a new form bridge!": [""],
+      "Close": [""],
+      "Select a template": [""],
+      "The value is not a number": [""],
+      "The value is too small": [""],
+      "The value is too large": [""],
+      "Configure the backend to bridge your form to": [""],
+      "Reuse backend": [""],
+      "Populate the form default values": [""],
+      "Bridge": [""],
+      "Configure the bridge": [""],
+      "Previous": [""],
+      "Next": [""],
+      "Select the spreadsheet do you want to use as backend": [""],
+      "Select a Spreadsheet": [""],
+      "Before you can use spreadsheet bridges, you have to grant access to Forms Bridge as OAuth client": [
+        ""
+      ]
     }
   }
 }
