@@ -297,15 +297,25 @@ abstract class Integration extends Singleton
             return;
         }
 
+        Logger::log('Form data');
+        Logger::log($form_data);
+
         $bridges = $form_data['bridges'];
 
         $submission = $this->submission();
+        Logger::log('Form submission');
+        Logger::log($submission);
+
         $uploads = $this->uploads();
+        Logger::log('Submission uploads');
+        Logger::log($uploads);
 
         foreach (array_values($bridges) as $bridge) {
             try {
                 // TODO: Exclude attachments from payload finger mangling
                 $payload = $bridge->apply_pipes($submission);
+                Logger::log('Submission payload after pipes');
+                Logger::log($payload);
 
                 $prune_empties = apply_filters(
                     'forms_bridge_prune_empties',
@@ -315,6 +325,8 @@ abstract class Integration extends Singleton
 
                 if ($prune_empties) {
                     $payload = $this->prune_empties($payload);
+                    Logger::log('Submission payload after prune empties');
+                    Logger::log($payload);
                 }
 
                 $attachments = apply_filters(
@@ -338,6 +350,11 @@ abstract class Integration extends Singleton
                             $payload[$name] = $value;
                         }
                         $attachments = [];
+                        Logger::log(
+                            'Submission payload after attachments stringify'
+                        );
+                        Logger:
+                        log($payload);
                     }
                 }
 
@@ -346,6 +363,9 @@ abstract class Integration extends Singleton
                     $payload,
                     $bridge
                 );
+
+                Logger::log('Filtered submission payload');
+                Logger::log($payload);
 
                 if (empty($payload)) {
                     continue;
@@ -360,6 +380,7 @@ abstract class Integration extends Singleton
                 );
 
                 if ($skip) {
+                    Logger::log('Skip submission');
                     continue;
                 }
 
@@ -371,6 +392,8 @@ abstract class Integration extends Singleton
                 );
 
                 $response = $bridge->submit($payload, $attachments);
+                Logger::log('Submission response');
+                Logger::log($response['response']);
 
                 if ($error = is_wp_error($response) ? $response : null) {
                     do_action(
