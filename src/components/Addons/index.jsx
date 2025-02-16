@@ -22,7 +22,6 @@ export default function Addons() {
         return (
           <PanelRow key={addon}>
             <ToggleControl
-              disabled={addon === "rest-api"}
               label={__(addon, "forms-bridge")}
               checked={enabled}
               onChange={() => toggle(addon)}

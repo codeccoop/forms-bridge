@@ -90,6 +90,10 @@ abstract class Integration extends Singleton
         $registry = [];
         foreach ($integrations as $integration) {
             $integration_dir = "{$integrations_dir}/{$integration}";
+            if (!is_dir($integration_dir)) {
+                continue;
+            }
+
             $index = "{$integration_dir}/class-integration.php";
             $has_dependencies = self::check_dependencies($integration);
             if (is_file($index) && $has_dependencies) {

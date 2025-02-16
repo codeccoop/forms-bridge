@@ -58,12 +58,16 @@ abstract class Addon extends Singleton
      */
     final public static function registry()
     {
-        $state = (array) get_option(self::registry, []);
+        $state = (array) get_option(self::registry, ['rest-api' => true]);
         $addons_dir = dirname(__FILE__);
         $addons = array_diff(scandir($addons_dir), ['.', '..']);
         $registry = [];
         foreach ($addons as $addon) {
             $addon_dir = "{$addons_dir}/{$addon}";
+            if (!is_dir($addon_dir)) {
+                continue;
+            }
+
             $index = "{$addon_dir}/{$addon}.php";
             if (is_file($index)) {
                 $registry[$addon] = isset($state[$addon])
@@ -71,9 +75,6 @@ abstract class Addon extends Singleton
                     : false;
             }
         }
-
-        // REST API always enabled
-        $registry['rest-api'] = true;
 
         return $registry;
     }
