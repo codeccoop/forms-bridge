@@ -17,7 +17,9 @@
 
 namespace FORMS_BRIDGE;
 
+use Error;
 use Exception;
+use WP_Error;
 use WPCT_ABSTRACT\Plugin as Base_Plugin;
 
 if (!defined('ABSPATH')) {
@@ -70,7 +72,6 @@ class Forms_Bridge extends Base_Plugin
         Integration::load();
 
         self::wp_hooks();
-        self::custom_hooks();
 
         add_action(
             'forms_bridge_on_failure',
@@ -105,147 +106,6 @@ class Forms_Bridge extends Base_Plugin
             10,
             2
         );
-    }
-
-    /**
-     * Adds plugin custom filters.
-     */
-    private static function custom_hooks()
-    {
-        // Return pair plugin registered forms datums
-        add_filter(
-            'forms_bridge_forms',
-            static function ($forms, $integration = null) {
-                if (!is_array($forms)) {
-                    $forms = [];
-                }
-
-                return array_merge($forms, self::forms($integration));
-            },
-            5,
-            2
-        );
-
-        // Return current pair plugin form representation
-        add_filter(
-            'forms_bridge_form',
-            static function ($default, $form_id = null, $integration = null) {
-                return self::form($form_id, $integration);
-            },
-            5,
-            3
-        );
-
-        // Return the current submission data
-        add_filter(
-            'forms_bridge_submission',
-            static function () {
-                return self::submission();
-            },
-            5
-        );
-
-        // Return the current submission uploaded files
-        add_filter(
-            'forms_bridge_uploads',
-            static function () {
-                return self::uploads();
-            },
-            5
-        );
-    }
-
-    /**
-     * Gets available forms' data.
-     *
-     * @param string $integration Integration slug.
-     *
-     * @return array Available forms' data.
-     */
-    private static function forms($integration)
-    {
-        $integrations = Integration::integrations();
-
-        if ($integration) {
-            return isset($integrations[$integration])
-                ? $integrations[$integration]->forms()
-                : [];
-        }
-
-        $forms = [];
-        foreach (array_values($integrations) as $integration) {
-            $forms = array_merge($forms, $integration->forms());
-        }
-
-        return $forms;
-    }
-
-    /**
-     * Gets form data, by context or by ID.
-     *
-     * @param int $form_id Form ID, optional.
-     * @param string $integration Integration slug.
-     *
-     * @return array|null Form data or null;
-     */
-    private static function form($form_id, $integration)
-    {
-        $integrations = Integration::integrations();
-
-        if ($integration) {
-            if (isset($integrations[$integration])) {
-                $integrations = [$integration => $integrations[$integration]];
-            } else {
-                $integrations = [];
-            }
-        } elseif ($form_id) {
-            // Form id without integration is ambiguous, discard.
-            return;
-        }
-
-        foreach ($integrations as $integration) {
-            if ($form_id) {
-                $form = $integration->get_form_by_id($form_id);
-            } else {
-                $form = $integration->form();
-            }
-
-            if ($form) {
-                return $form;
-            }
-        }
-    }
-
-    /**
-     * Gets current submission data.
-     *
-     * @return array|null Submission data or null.
-     */
-    private static function submission()
-    {
-        $integrations = Integration::integrations();
-        foreach (array_values($integrations) as $integration) {
-            $submission = $integration->submission();
-            if ($submission) {
-                return $submission;
-            }
-        }
-    }
-
-    /**
-     * Gets current submission uploads.
-     *
-     * @return array|null Uploaded files or null.
-     */
-    private static function uploads()
-    {
-        $integrations = Integration::integrations();
-        foreach (array_values($integrations) as $integration) {
-            $uploads = $integration->uploads();
-            if ($uploads) {
-                return $uploads;
-            }
-        }
     }
 
     /**
@@ -295,6 +155,231 @@ class Forms_Bridge extends Base_Plugin
         );
 
         wp_enqueue_style('wp-components');
+    }
+
+    /**
+     * Proceed with the submission sub-routine.
+     */
+    public static function do_submission()
+    {
+        $form_data = apply_filters('forms_bridge_form', null);
+        if (!$form_data) {
+            return;
+        }
+
+        if (empty($form_data['bridges'])) {
+            return;
+        }
+
+        Logger::log('Form data');
+        Logger::log($form_data);
+
+        $bridges = $form_data['bridges'];
+
+        $submission = apply_filters('forms_bridge_submission', null);
+        Logger::log('Form submission');
+        Logger::log($submission);
+
+        if (empty($submission)) {
+            return;
+        }
+
+        $uploads = apply_filters('forms_bridge_uploads', []);
+        Logger::log('Submission uploads');
+        Logger::log($uploads);
+
+        foreach (array_values($bridges) as $bridge) {
+            try {
+                // TODO: Exclude attachments from payload finger mangling
+                $payload = $bridge->apply_pipes($submission);
+                Logger::log('Submission payload after pipes');
+                Logger::log($payload);
+
+                $prune_empties = apply_filters(
+                    'forms_bridge_prune_empties',
+                    false,
+                    $bridge
+                );
+
+                if ($prune_empties) {
+                    $payload = self::prune_empties($payload);
+                    Logger::log('Submission payload after prune empties');
+                    Logger::log($payload);
+                }
+
+                $attachments = apply_filters(
+                    'forms_bridge_attachments',
+                    self::attachments($uploads),
+                    $bridge
+                );
+
+                if (!empty($attachments)) {
+                    $content_type = $bridge->content_type;
+                    if (
+                        in_array($content_type, [
+                            'application/json',
+                            'application/x-www-form-urlencoded',
+                        ])
+                    ) {
+                        $attachments = self::stringify_attachments(
+                            $attachments
+                        );
+                        foreach ($attachments as $name => $value) {
+                            $payload[$name] = $value;
+                        }
+                        $attachments = [];
+                        Logger::log(
+                            'Submission payload after attachments stringify'
+                        );
+                        Logger::log($payload);
+                    }
+                }
+
+                $payload = apply_filters(
+                    'forms_bridge_payload',
+                    $payload,
+                    $bridge
+                );
+
+                Logger::log('Filtered submission payload');
+                Logger::log($payload);
+
+                if (empty($payload)) {
+                    continue;
+                }
+
+                $skip = apply_filters(
+                    'forms_bridge_skip_submission',
+                    false,
+                    $bridge,
+                    $payload,
+                    $attachments
+                );
+
+                if ($skip) {
+                    Logger::log('Skip submission');
+                    continue;
+                }
+
+                do_action(
+                    'forms_bridge_before_submission',
+                    $bridge,
+                    $payload,
+                    $attachments
+                );
+
+                $response = $bridge->submit($payload, $attachments);
+                Logger::log('Submission response');
+                Logger::log($response['response']);
+
+                if ($error = is_wp_error($response) ? $response : null) {
+                    do_action(
+                        'forms_bridge_on_failure',
+                        $bridge,
+                        $error,
+                        $payload,
+                        $attachments
+                    );
+                } else {
+                    do_action(
+                        'forms_bridge_after_submission',
+                        $bridge,
+                        $payload,
+                        $attachments,
+                        $response
+                    );
+                }
+            } catch (Error | Exception $e) {
+                $message = $e->getMessage();
+                if (strstr($message, 'Error while submitting form ')) {
+                    throw $e;
+                }
+
+                $error = new WP_Error(
+                    'internal_server_error',
+                    $e->getMessage(),
+                    $e->getTrace()
+                );
+
+                do_action(
+                    'forms_bridge_on_failure',
+                    $bridge,
+                    $error,
+                    $payload ?? $submission,
+                    $attachments ?? []
+                );
+            }
+        }
+    }
+
+    /**
+     * Clean up submission empty fields.
+     *
+     * @param array $submission_data Submission data.
+     *
+     * @return array Submission data without empty fields.
+     */
+    private static function prune_empties($submission_data)
+    {
+        foreach ($submission_data as $key => $val) {
+            if ($val === '' || $val === null) {
+                unset($submission_data[$key]);
+            }
+        }
+
+        return $submission_data;
+    }
+
+    /**
+     * Transform collection of uploads to an attachments map.
+     *
+     * @param array $uploads Collection of uploaded files.
+     *
+     * @return array Map of uploaded files.
+     */
+    private static function attachments($uploads)
+    {
+        return array_reduce(
+            array_keys($uploads),
+            function ($carry, $name) use ($uploads) {
+                if ($uploads[$name]['is_multi']) {
+                    for ($i = 1; $i <= count($uploads[$name]['path']); $i++) {
+                        $carry[$name . '_' . $i] =
+                            $uploads[$name]['path'][$i - 1];
+                    }
+                } else {
+                    $carry[$name] = $uploads[$name]['path'];
+                }
+
+                return $carry;
+            },
+            []
+        );
+    }
+
+    /**
+     * Returns the attachments array with each attachment path replaced with its
+     * content as a base64 encoded string. For each file on the list, adds an
+     * additonal field with the file name on the response.
+     *
+     * @param array $attachments Submission attachments data.
+     *
+     * @return array Array with base64 encoded file contents and file names.
+     */
+    private static function stringify_attachments($attachments)
+    {
+        foreach ($attachments as $name => $path) {
+            if (!is_file($path) || !is_readable($path)) {
+                continue;
+            }
+
+            $filename = basename($path);
+            $content = file_get_contents($path);
+            $attachments[$name] = base64_encode($content);
+            $attachments[$name . '_filename'] = $filename;
+        }
+
+        return $attachments;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace FORMS_BRIDGE\WPFORMS;
 
+use FORMS_BRIDGE\Forms_Bridge;
 use FORMS_BRIDGE\Integration as BaseIntegration;
 use WP_Post;
 use WP_Query;
@@ -34,7 +35,8 @@ class Integration extends BaseIntegration
                 $entry['fields'] = $fields;
                 $entry['entry_id'] = $entry_id;
                 self::$submission = $entry;
-                $this->do_submission();
+
+                Forms_Bridge::do_submission();
             },
             10,
             4

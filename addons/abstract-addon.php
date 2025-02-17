@@ -261,34 +261,29 @@ abstract class Addon extends Singleton
             return $bridges;
         }
 
-        // Check if form_id is internal or external
+        $integrations = Integration::integrations();
+
         if ($form_id) {
-            $parts = explode(':', $form_id);
-            if (count($parts) === 1) {
-                $integration = null;
-                $id = $parts[0];
+            if (preg_match('/^(\w+):(\d+)$', $form_id, $matches)) {
+                [, $integration, $form_id] = $matches;
+                $form_id = (int) $form_id;
+            } elseif (count($integrations) > 1) {
+                _doing_it_wrong(
+                    'forms_bridge_bridges',
+                    __(
+                        '$form_id param should include the integration prefix if there is more than one integration active',
+                        'forms-bridge'
+                    ),
+                    '2.3.0'
+                );
+
+                return [];
             } else {
-                [$integration, $id] = $parts;
-            }
-
-            if (!$integration) {
-                $integrations = array_keys(Integration::integrations());
-                if (count($integrations) > 1) {
-                    _doing_it_wrong(
-                        'forms_bridge_bridges',
-                        __(
-                            '$form_id param should incloude the integration prefix if there is more than one integration active',
-                            'forms-bridge'
-                        ),
-                        '2.3.0'
-                    );
-                    return [];
-                }
-
                 $integration = array_pop($integrations);
+                $form_id = (int) $form_id;
             }
 
-            $form_id = "{$integration}:{$id}";
+            $form_id = "{$integration}:{$form_id}";
         }
 
         return array_merge(
@@ -303,9 +298,8 @@ abstract class Addon extends Singleton
                 array_filter(
                     (array) static::setting()->bridges,
                     static function ($bridge_data) use ($form_id) {
-                        return $form_id !== null
-                            ? $bridge_data['form_id'] === $form_id
-                            : true;
+                        return $form_id === null ||
+                            $bridge_data['form_id'] === $form_id;
                     }
                 )
             )

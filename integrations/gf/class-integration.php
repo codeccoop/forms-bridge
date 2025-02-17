@@ -2,8 +2,8 @@
 
 namespace FORMS_BRIDGE\GF;
 
+use FORMS_BRIDGE\Forms_Bridge;
 use FORMS_BRIDGE\Integration as BaseIntegration;
-use Exception;
 use TypeError;
 use GFAPI;
 use GFCommon;
@@ -27,7 +27,7 @@ class Integration extends BaseIntegration
     protected function init()
     {
         add_action('gform_after_submission', function () {
-            $this->do_submission();
+            Forms_Bridge::do_submission();
         });
     }
 

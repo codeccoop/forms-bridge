@@ -2,6 +2,7 @@
 
 namespace FORMS_BRIDGE\WPCF7;
 
+use FORMS_BRIDGE\Forms_Bridge;
 use FORMS_BRIDGE\Integration as BaseIntegration;
 use WPCF7_ContactForm;
 use WPCF7_Submission;
@@ -32,7 +33,8 @@ class Integration extends BaseIntegration
                 ) {
                     return;
                 }
-                $this->do_submission();
+
+                Forms_Bridge::do_submission();
             },
             10,
             2

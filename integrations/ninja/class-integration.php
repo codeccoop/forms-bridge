@@ -2,7 +2,8 @@
 
 namespace FORMS_BRIDGE\NINJA;
 
-use Forms_Bridge\Integration as BaseIntegration;
+use FORMS_BRIDGE\Forms_Bridge;
+use FORMS_BRIDGE\Integration as BaseIntegration;
 use NF_Database_FieldsController;
 
 if (!defined('ABSPATH')) {
@@ -28,7 +29,7 @@ class Integration extends BaseIntegration
     {
         add_action('ninja_forms_after_submission', function ($submission) {
             self::$submission = $submission;
-            $this->do_submission();
+            Forms_Bridge::do_submission();
         });
     }
 
