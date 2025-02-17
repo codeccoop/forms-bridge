@@ -173,8 +173,13 @@ class Odoo_Addon extends Addon
         // Submission response interceptor
         add_filter(
             'http_bridge_response',
-            static function ($res) {
-                return self::response_interceptor($res);
+            static function ($response) {
+                $result = self::response_interceptor($response);
+                if (is_wp_error($result)) {
+                    return $result;
+                }
+
+                return $response;
             },
             9
         );

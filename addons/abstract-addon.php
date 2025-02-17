@@ -261,10 +261,10 @@ abstract class Addon extends Singleton
             return $bridges;
         }
 
-        $integrations = Integration::integrations();
+        $integrations = array_keys(Integration::integrations());
 
         if ($form_id) {
-            if (preg_match('/^(\w+):(\d+)$', $form_id, $matches)) {
+            if (preg_match('/^(\w+):(\d+)$/', $form_id, $matches)) {
                 [, $integration, $form_id] = $matches;
                 $form_id = (int) $form_id;
             } elseif (count($integrations) > 1) {

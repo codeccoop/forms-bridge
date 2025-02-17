@@ -5,6 +5,7 @@ namespace FORMS_BRIDGE\NINJA;
 use FORMS_BRIDGE\Forms_Bridge;
 use FORMS_BRIDGE\Integration as BaseIntegration;
 use NF_Database_FieldsController;
+use WPN_Helper;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -93,10 +94,10 @@ class Integration extends BaseIntegration
         $title = sanitize_text_field($data['title']);
         $form_data = $this->form_template($title);
         $form_data['fields'] = $this->decorate_form_fields($data['fields']);
-        $form_data['settings']['form_content_data'] = array_map(function (
+        $form_data['settings']['formContentData'] = array_map(function (
             $field
         ) {
-            return $field['key'];
+            return $field['settings']['key'];
         }, $form_data['fields']);
 
         $form = Ninja_Forms()->form()->get();
@@ -111,14 +112,17 @@ class Integration extends BaseIntegration
             $form_data['fields']
         );
         $db_fields_controller->run();
+        $form_data['fields'] = $db_fields_controller->get_updated_fields_data();
 
-        foreach ($form_data['actions'] as $action_data) {
+        foreach ($form_data['actions'] as &$action_data) {
             $action_data['parent_id'] = $form_data['id'];
             $action = Ninja_Forms()->form()->action()->get();
             $action->save();
             $action_data['id'] = $action->get_id();
             $action->update_settings($action_data)->save();
         }
+
+        WPN_Helper::update_nf_cache($form_data['id'], $form_data);
 
         return $form_data['id'];
     }
@@ -231,8 +235,8 @@ class Integration extends BaseIntegration
             'id' => $id,
             'type' => $settings['type'],
             'name' =>
-                $settings['custom_name_attribute'] ?:
-                $settings['admin_label'] ?:
+                $settings['custom_name_attribute'] ?? null ?:
+                $settings['admin_label'] ?? null ?:
                 $settings['label'],
             'label' => $settings['label'],
             'required' => isset($settings['required'])
@@ -299,7 +303,7 @@ class Integration extends BaseIntegration
         $data = [];
 
         foreach ($form_data['fields'] as $field_data) {
-            $field = $submission['fields_by_key'][$field_data['name']];
+            $field = $submission['fields'][(int) $field_data['id']];
 
             if ($field_data['type'] === 'file') {
                 continue;
@@ -309,6 +313,7 @@ class Integration extends BaseIntegration
                 $subfields = $field['fields'];
                 $values = $field['value'];
                 $fieldset = [];
+
                 $i = 0;
                 foreach (array_values($values) as $value) {
                     $row_index = floor($i / count($subfields));
@@ -319,8 +324,9 @@ class Integration extends BaseIntegration
 
                     $field_index = $i % count($subfields);
                     $child_field = $field['fields'][$field_index];
+                    $child_data = $field_data['children'][$field_index];
 
-                    $row[$child_field['label']] = $this->format_field_value(
+                    $row[$child_data['name']] = $this->format_field_value(
                         $child_field['type'],
                         $value['value']
                     );
@@ -328,9 +334,10 @@ class Integration extends BaseIntegration
                     $fieldset[$row_index] = $row;
                     $i++;
                 }
-                $data[$field['label']] = $fieldset;
+
+                $data[$field_data['name']] = $fieldset;
             } else {
-                $data[$field['label']] = $this->format_field_value(
+                $data[$field_data['name']] = $this->format_field_value(
                     $field_data['type'],
                     $field['value']
                 );
@@ -668,6 +675,7 @@ class Integration extends BaseIntegration
                     'attach_csv' => '',
                     'redirect_url' => '',
                     'email_message_plain' => '',
+                    'fields-save-toggle' => 'save_all',
                 ],
                 [
                     'title' => '',
