@@ -21,6 +21,27 @@ class Logger extends Singleton
     private const log_file = '.forms-bridge.log';
 
     /**
+     * Error level constant.
+     *
+     * @var string
+     */
+    public const ERROR = 'ERROR';
+
+    /**
+     * Info level constant.
+     *
+     * @var string
+     */
+    public const INFO = 'INFO';
+
+    /**
+     * Debug level constant.
+     *
+     * @var string
+     */
+    public const DEBUG = 'DEBUG';
+
+    /**
      * Log file path getter.
      */
     private static function log_path()

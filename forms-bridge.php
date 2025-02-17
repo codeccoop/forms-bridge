@@ -95,8 +95,10 @@ class Forms_Bridge extends Base_Plugin
         add_action(
             'upgrader_process_complete',
             static function ($upgrader, $extra) {
-                if ($extra['type'] === 'plugin') {
-                    // && in_array(self::index(), $extra['plugins'])) {
+                if (
+                    $extra['type'] === 'plugin' &&
+                    in_array(self::index(), $extra['plugins'])
+                ) {
                     self::do_migrations();
                 }
             },
@@ -344,6 +346,7 @@ class Forms_Bridge extends Base_Plugin
         $from = get_option('forms-bridge-version', '1.0.0');
 
         if (!preg_match('/^\d+\.\d+\.\d+$/', $from)) {
+            Logger::log('Invalid db plugin version', Logger::ERROR);
             return;
         }
 
