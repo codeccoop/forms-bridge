@@ -3,6 +3,7 @@
 namespace FORMS_BRIDGE\NINJA;
 
 use Forms_Bridge\Integration as BaseIntegration;
+use NF_Database_FieldsController;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -86,7 +87,32 @@ class Integration extends BaseIntegration
      *
      * @todo Implement this routine.
      */
-    public function create_form($data) {}
+    public function create_form($data)
+    {
+        $title = sanitize_text_field($data['title']);
+        $form_data = $this->form_template($title);
+        $form_data['fields'] = $this->decorate_form_fields($data['fields']);
+        $form_data['settings']['form_content_data'] = array_map(function (
+            $field
+        ) {
+            return $field['key'];
+        }, $form_data['fields']);
+
+        $form = Ninja_Forms()->form()->get();
+        $form->save();
+
+        $form_data['id'] = $form->get_id();
+
+        $form->update_settings($form_data['settings'])->save();
+
+        $db_fields_controller = new NF_Database_FieldsController(
+            $form_data['id'],
+            $form_data['fields']
+        );
+        $db_fields_controller->run();
+
+        return $form_data['id'];
+    }
 
     /**
      * Removes a form by ID.
@@ -94,10 +120,16 @@ class Integration extends BaseIntegration
      * @param integer $form_id Form ID.
      *
      * @return boolean Removal result.
-     *
-     * @todo Implement this routine.
      */
-    public function remove_form($form_id) {}
+    public function remove_form($form_id)
+    {
+        $form = Ninja_Forms()->form($form_id)->get();
+        if ($form) {
+            return $form->delete();
+        }
+
+        return false;
+    }
 
     /**
      * Retrives the current form submission data.
@@ -186,11 +218,13 @@ class Integration extends BaseIntegration
      */
     private function _serialize_field($id, $settings)
     {
-        // $type = $this->norm_field_type($settings['type']);
         return [
             'id' => $id,
             'type' => $settings['type'],
-            'name' => $settings['key'],
+            'name' =>
+                $settings['custom_name_attribute'] ?:
+                $settings['admin_label'] ?:
+                $settings['label'],
             'label' => $settings['label'],
             'required' => isset($settings['required'])
                 ? $settings['required'] === '1'
@@ -198,7 +232,7 @@ class Integration extends BaseIntegration
             'options' => isset($settings['options'])
                 ? $settings['options']
                 : [],
-            'is_file' => false, // $settings['type'] === 'file',
+            'is_file' => false,
             'is_multi' => in_array($settings['type'], [
                 'listmultiselect',
                 'listcheckbox',
@@ -212,36 +246,36 @@ class Integration extends BaseIntegration
         ];
     }
 
-    private function norm_field_type($type)
-    {
-        switch ($type) {
-            case 'textbox':
-            case 'lastname':
-            case 'firstname':
-            case 'address':
-            case 'zip':
-            case 'phone':
-            case 'city':
-            case 'spam':
-            case 'email':
-            case 'textarea':
-                return 'text';
-            case 'listcountry':
-            case 'listselect':
-            case 'listmultiselect':
-            case 'listimage':
-            case 'listradio':
-            case 'listcheckbox':
-            case 'select':
-            case 'radio':
-            case 'checkbox':
-                return 'options';
-            case 'starrating':
-                return 'number';
-            default:
-                return $type;
-        }
-    }
+    // private function norm_field_type($type)
+    // {
+    //     switch ($type) {
+    //         case 'textbox':
+    //         case 'lastname':
+    //         case 'firstname':
+    //         case 'address':
+    //         case 'zip':
+    //         case 'phone':
+    //         case 'city':
+    //         case 'spam':
+    //         case 'email':
+    //         case 'textarea':
+    //             return 'text';
+    //         case 'listcountry':
+    //         case 'listselect':
+    //         case 'listmultiselect':
+    //         case 'listimage':
+    //         case 'listradio':
+    //         case 'listcheckbox':
+    //         case 'select':
+    //         case 'radio':
+    //         case 'checkbox':
+    //             return 'options';
+    //         case 'starrating':
+    //             return 'number';
+    //         default:
+    //             return $type;
+    //     }
+    // }
 
     /**
      * Serialize the form's submission data.
@@ -329,10 +363,243 @@ class Integration extends BaseIntegration
      *
      * @return array Uploaded files data.
      *
-     * @todo Adapt to premium version with available upload field.
+     * @todo Ninja forms uploads addon for premium licenses
      */
     protected function submission_uploads($submission, $form_data)
     {
         return [];
+    }
+
+    private function decorate_form_fields($fields)
+    {
+        $nf_fields = [];
+        for ($i = 0; $i < count($fields); $i++) {
+            $order = $i + 1;
+            $field = $fields[$i];
+
+            $args = [
+                $order,
+                $field['name'],
+                $field['label'] ?? $field['name'],
+                $field['required'] ?? false,
+            ];
+            switch ($field['type']) {
+                case 'text':
+                    $nf_fields[] = $this->text_field(...$args);
+                    break;
+                case 'textarea':
+                    $nf_fields[] = $this->textarea_field(...$args);
+                    break;
+                case 'email':
+                    $nf_fields[] = $this->email_field(...$args);
+                    break;
+                case 'hidden':
+                    $args[] = $field['value'] ?? '';
+                    $nf_fields[] = $this->hidden_field(...$args);
+                    break;
+                case 'options':
+                    $args[] = $field['options'] ?? [];
+                    $args[] = $field['is_multi'] ?? false;
+                    $nf_fields[] = $this->options_field(...$args);
+                    break;
+                default:
+                    $args = array_merge([$field['type']], $args);
+                    $nf_fields[] = $this->field_template(...$args);
+            }
+        }
+
+        $nf_fields[] = [
+            'objectType' => 'Field',
+            'objectDomain' => 'fields',
+            'editActive' => false,
+            'order' => count($nf_fields),
+            'type' => 'submit',
+            'label' => __('Submit', 'forms-bridge'),
+            'processing_label' => __('Processing', 'forms-bridge'),
+            'key' => 'submit',
+        ];
+
+        return array_map(function ($nf_field) {
+            return [
+                'id' => 'tmp-' . $nf_field['order'],
+                'settings' => $nf_field,
+            ];
+        }, $nf_fields);
+    }
+
+    private function field_template($type, $order, $name, $label, $required)
+    {
+        return [
+            'objectType' => 'Field',
+            'objectDomain' => 'fields',
+            'editActive' => false,
+            'order' => (string) $order,
+            'type' => $type,
+            'label' => $label,
+            'key' => $name,
+            'custom_name_attribute' => $name,
+            'admin_label' => '',
+            'required' => $required ? '1' : '',
+            'default' => '',
+            'placeholder' => '',
+            'container_class' => '',
+            'label_pos' => 'default',
+        ];
+    }
+
+    private function hidden_field($order, $name, $label, $required, $value)
+    {
+        return array_merge(
+            $this->field_template('hidden', $order, $name, $label, $required),
+            [
+                'required' => '1',
+                'default' => $value,
+                'value' => $value,
+            ]
+        );
+    }
+
+    private function options_field(
+        $order,
+        $name,
+        $label,
+        $required,
+        $options,
+        $is_multi
+    ) {
+        $options = [];
+        for ($i = 0; $i < count($options); $i++) {
+            $options[] = [
+                'label' => $options[$i]['label'],
+                'value' => $options[$i]['value'],
+                'order' => (string) $i,
+                'calc' => '',
+                'selected' => 0,
+                'max_options' => 0,
+                'errors' => [],
+                'settingModel' => [
+                    'settings' => false,
+                    'hide_merge_tags' => false,
+                    'error' => false,
+                    'name' => 'options',
+                    'type' => 'option-repeater',
+                    'label' =>
+                        'Options <a href="#" class="nf-add-new">Add New<\/a> <a href="#" class="extra nf-open-import-tooltip"><i class="fa fa-sign-in" aria-hidden="true"><\/i> Import<\/a>',
+                    'width' => 'full',
+                    'group' => '',
+                    'value' => [
+                        [
+                            'label' => 'One',
+                            'value' => 'one',
+                            'calc' => '',
+                            'selected' => 0,
+                            'order' => 0,
+                        ],
+                        [
+                            'label' => 'Two',
+                            'value' => 'two',
+                            'calc' => '',
+                            'selected' => 0,
+                            'order' => 0,
+                        ],
+                        [
+                            'label' => 'Three',
+                            'value' => 'three',
+                            'calc' => '',
+                            'selected' => 0,
+                            'order' => 0,
+                        ],
+                    ],
+                    'columns' => [
+                        'label' => ['header' => 'Label', 'default' => ''],
+                        'value' => ['header' => 'Value', 'default' => ''],
+                        'calc' => ['header' => 'Calc value', 'default' => ''],
+                        'selected' => [
+                            'header' =>
+                                '<span class="dashicons dashicons-yes"></span>',
+                            'default' => 0,
+                        ],
+                    ],
+                ],
+            ];
+        }
+
+        $type = $is_multi ? 'listcheckbox' : 'listselect';
+
+        return array_merge(
+            $this->field_template($type, $order, $name, $label, $required),
+            [
+                'options' => $options,
+            ]
+        );
+    }
+
+    private function text_field($order, $name, $label, $required)
+    {
+        return array_merge(
+            $this->field_template('textbox', $order, $name, $label, $required),
+            [
+                'input_limit_type' => 'characters',
+                'input_limit_msg' => __('Character(s) left', 'forms-bridge'),
+                'drawerDisabled' => false,
+                'manual_key' => false,
+            ]
+        );
+    }
+
+    private function textarea_field($order, $name, $label, $required)
+    {
+        return array_merge(
+            $this->field_template('textarea', $order, $name, $label, $required),
+            [
+                'input_limit_type' => 'characters',
+                'input_limit_msg' => __('Character(s) left', 'forms-bridge'),
+                'drawerDisabled' => false,
+                'manual_key' => false,
+            ]
+        );
+    }
+
+    private function email_field($order, $name, $label, $required)
+    {
+        return array_merge(
+            $this->field_template('email', $order, $name, $label, $required),
+            []
+        );
+    }
+
+    private function form_template($title)
+    {
+        return [
+            'id' => 'tmp-1',
+            'settings' => [
+                'objectType' => 'Form Setting',
+                'editActive' => true,
+                'key' => '',
+                'title' => $title,
+                'clear_complete' => '1',
+                'hide_complete' => '1',
+                'default_label_pos' => 'above',
+                'show_title' => '0',
+                'wrapper_class' => '',
+                'element_class' => '',
+                'add_submit' => '1',
+                'calculations' => [],
+                'formContentData' => [],
+                'drawerDisabled' => false,
+                'unique_field_error' => __(
+                    'A form with this value has already been submitted.',
+                    'forms-bridge'
+                ),
+                'sub_limit_msg' => __(
+                    'The form has reached its submission limit.',
+                    'forms-bridge'
+                ),
+                'logged_in' => false,
+                'not_logged_in_msg' => '',
+            ],
+            'fields' => [],
+            'actions' => [],
+        ];
     }
 }

@@ -399,8 +399,6 @@ class Integration extends BaseIntegration
      * @param array $form_data Form data.
      *
      * @return array Uploaded files data.
-     *
-     * @todo Adapt to premium version with available upload field.
      */
     protected function submission_uploads($submission, $form_data)
     {
