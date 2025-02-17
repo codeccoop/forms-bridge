@@ -111,6 +111,14 @@ class Integration extends BaseIntegration
         );
         $db_fields_controller->run();
 
+        foreach ($form_data['actions'] as $action_data) {
+            $action_data['parent_id'] = $form_data['id'];
+            $action = Ninja_Forms()->form()->action()->get();
+            $action->save();
+            $action_data['id'] = $action->get_id();
+            $action->update_settings($action_data)->save();
+        }
+
         return $form_data['id'];
     }
 
@@ -484,7 +492,7 @@ class Integration extends BaseIntegration
                     'name' => 'options',
                     'type' => 'option-repeater',
                     'label' =>
-                        'Options <a href="#" class="nf-add-new">Add New<\/a> <a href="#" class="extra nf-open-import-tooltip"><i class="fa fa-sign-in" aria-hidden="true"><\/i> Import<\/a>',
+                        'Options <a href="#" class="nf-add-new">Add New</a> <a href="#" class="extra nf-open-import-tooltip"><i class="fa fa-sign-in" aria-hidden="true"></i> Import</a>',
                     'width' => 'full',
                     'group' => '',
                     'value' => [
@@ -511,9 +519,18 @@ class Integration extends BaseIntegration
                         ],
                     ],
                     'columns' => [
-                        'label' => ['header' => 'Label', 'default' => ''],
-                        'value' => ['header' => 'Value', 'default' => ''],
-                        'calc' => ['header' => 'Calc value', 'default' => ''],
+                        'label' => [
+                            'header' => __('Label', 'forms-bridge'),
+                            'default' => '',
+                        ],
+                        'value' => [
+                            'header' => __('Value', 'forms-bridge'),
+                            'default' => '',
+                        ],
+                        'calc' => [
+                            'header' => __('Calc value', 'forms-bridge'),
+                            'default' => '',
+                        ],
                         'selected' => [
                             'header' =>
                                 '<span class="dashicons dashicons-yes"></span>',
@@ -599,7 +616,118 @@ class Integration extends BaseIntegration
                 'not_logged_in_msg' => '',
             ],
             'fields' => [],
-            'actions' => [],
+            'actions' => [
+                [
+                    'title' => '',
+                    'key' => '',
+                    'type' => 'save',
+                    'active' => '1',
+                    'created_at' => date('Y-m-d h:i:s'),
+                    'label' => __('Record Submission', 'forms-bridge'),
+                    'objectType' => 'Action',
+                    'objectDomain' => 'actions',
+                    'editActive' => '',
+                    'conditions' => [
+                        'collapsed' => '',
+                        'process' => '1',
+                        'connector' => 'all',
+                        'when' => [
+                            [
+                                'connector' => 'AND',
+                                'key' => '',
+                                'comparator' => '',
+                                'value' => '',
+                                'type' => 'field',
+                                'modelType' => 'when',
+                            ],
+                        ],
+                        'then' => [
+                            [
+                                'key' => '',
+                                'trigger' => '',
+                                'value' => '',
+                                'type' => 'field',
+                                'modelType' => 'then',
+                            ],
+                        ],
+                        'else' => [],
+                    ],
+                    'payment_gateways' => '',
+                    'payment_total' => '',
+                    'tag' => '',
+                    'to' => '',
+                    'email_subject' => '',
+                    'email_message' => '',
+                    'from_name' => '',
+                    'from_address' => '',
+                    'reply_to' => '',
+                    'email_format' => 'html',
+                    'cc' => '',
+                    'bcc' => '',
+                    'attach_csv' => '',
+                    'redirect_url' => '',
+                    'email_message_plain' => '',
+                ],
+                [
+                    'title' => '',
+                    'key' => '',
+                    'type' => 'successmessage',
+                    'active' => '1',
+                    'created_at' => date('Y-m-d h:i:s'),
+                    'label' => __('Success message', 'forms-bridge'),
+                    'message' => __(
+                        'Thank you for filling out my form!',
+                        'forms-bridge'
+                    ),
+                    'objectType' => 'Action',
+                    'objectDomain' => 'actions',
+                    'editActive' => '',
+                    'conditions' => [
+                        'collapsed' => '',
+                        'process' => '1',
+                        'connector' => 'all',
+                        'when' => [
+                            [
+                                'connector' => 'AND',
+                                'key' => '',
+                                'comparator' => '',
+                                'value' => '',
+                                'type' => 'field',
+                                'modelType' => 'when',
+                            ],
+                        ],
+                        'then' => [
+                            [
+                                'key' => '',
+                                'trigger' => '',
+                                'value' => '',
+                                'type' => 'field',
+                                'modelType' => 'then',
+                            ],
+                        ],
+                        'else' => [],
+                    ],
+                    'payment_gateways' => '',
+                    'payment_total' => '',
+                    'tag' => '',
+                    'to' => '',
+                    'email_subject' => '',
+                    'email_message' => '',
+                    'from_name' => '',
+                    'from_address' => '',
+                    'reply_to' => '',
+                    'email_format' => 'html',
+                    'cc' => '',
+                    'bcc' => '',
+                    'attach_csv' => '',
+                    'redirect_url' => '',
+                    'success_msg' => __(
+                        '<p>Form submitted successfully.</p>',
+                        'forms-bridge'
+                    ),
+                    'email_message_plain' => '',
+                ],
+            ],
         ];
     }
 }
