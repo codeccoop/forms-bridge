@@ -190,6 +190,7 @@ class Integration extends BaseIntegration
             'bridges' => apply_filters(
                 'forms_bridge_bridges',
                 [],
+                null,
                 'ninja:' . $form_id
             ),
             'fields' => array_values(

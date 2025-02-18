@@ -187,8 +187,16 @@ abstract class Addon extends Singleton
 
         add_filter(
             'forms_bridge_bridges',
-            static function ($bridges, $form_id = null, $api = null) {
-                return self::bridges($bridges, $form_id, $api);
+            static function ($bridges, $api = null, $form_id = null) {
+                if ($api !== static::$api) {
+                    return $bridges;
+                }
+
+                if (!wp_is_numeric_array($bridges)) {
+                    $bridges = [];
+                }
+
+                return static::bridges($form_id);
             },
             10,
             3
@@ -251,22 +259,12 @@ abstract class Addon extends Singleton
     /**
      * Adds addons' bridges to the available bridges list.
      *
-     * @param array $bridges List with available bridges.
      * @param int|null $form_id Target form ID.
-     * @param string $api Api name to filter by.
      *
      * @return array List with available bridges.
      */
-    private static function bridges($bridges, $form_id = null, $api = null)
+    private static function bridges($form_id = null)
     {
-        if (!wp_is_numeric_array($bridges)) {
-            $bridges = [];
-        }
-
-        if (!empty($api) && $api !== static::$api) {
-            return $bridges;
-        }
-
         $integrations = array_keys(Integration::integrations());
 
         if ($form_id) {
@@ -292,23 +290,15 @@ abstract class Addon extends Singleton
             $form_id = "{$integration}:{$form_id}";
         }
 
-        return array_merge(
-            $bridges,
-            array_map(
-                static function ($bridge_data) {
-                    return new static::$bridge_class(
-                        $bridge_data,
-                        static::$api
-                    );
-                },
-                array_filter(
-                    (array) static::setting()->bridges,
-                    static function ($bridge_data) use ($form_id) {
-                        return $form_id === null ||
-                            $bridge_data['form_id'] === $form_id;
-                    }
-                )
-            )
+        return array_map(
+            static function ($bridge_data) {
+                return new static::$bridge_class($bridge_data, static::$api);
+            },
+            array_filter((array) static::setting()->bridges, static function (
+                $bridge_data
+            ) use ($form_id) {
+                return empty($form_id) || $bridge_data['form_id'] === $form_id;
+            })
         );
     }
 

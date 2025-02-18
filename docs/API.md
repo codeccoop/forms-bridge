@@ -57,8 +57,9 @@ Get available bridges for the current form.
 
 #### Arguments
 
-1. `mixed $default`: Fallback value.
-2. `integer $form_id`: If declared, try to return bridges from the form with this id instead of the bridges from the current form.
+1. `array $bridges`: Initial value.
+2. `string $api`: If declared, filters bridges by api name.
+2. `string|integer $form_id`: If declared, try to return bridges from the form with this id. This id should includes the integration prefix if there is more than one active integration.
 
 #### Returns
 

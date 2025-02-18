@@ -207,6 +207,7 @@ class Integration extends BaseIntegration
             'bridges' => apply_filters(
                 'forms_bridge_bridges',
                 [],
+                null,
                 'gf:' . $form_id
             ),
             'fields' => array_values(

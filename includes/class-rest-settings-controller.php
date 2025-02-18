@@ -162,6 +162,7 @@ class REST_Settings_Controller extends Base_Controller
     {
         $template_name = $request['name'];
         $template = Form_Bridge::get_template($template_name);
+
         if (!$template) {
             return new WP_Error(
                 'not_found',
@@ -185,10 +186,12 @@ class REST_Settings_Controller extends Base_Controller
         $name = isset($request['name'])
             ? sanitize_text_field($request['name'])
             : null;
+
         $fields =
             isset($request['fields']) && is_array($request['fields'])
                 ? $request['fields']
                 : null;
+
         $integration = isset($request['integration'])
             ? sanitize_text_field($request['integration'])
             : null;

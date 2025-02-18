@@ -217,18 +217,20 @@ class Form_Bridge
 
         do_action(
             'forms_bridge_before_submit',
-            $this->endpoint,
+            $this,
             $submission,
-            $attachments,
-            $this
+            $attachments
         );
+
         $response = $backend->$method(
             $this->endpoint,
             $submission,
             [],
             $attachments
         );
-        do_action('forms_bridge_after_submit', $response, $this->name, $this);
+
+        do_action('forms_bridge_after_submit', $this, $response);
+
         return $response;
     }
 
