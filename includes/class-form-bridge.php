@@ -3,7 +3,6 @@
 namespace FORMS_BRIDGE;
 
 use TypeError;
-use WP_Error;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -12,7 +11,7 @@ if (!defined('ABSPATH')) {
 /**
  * Form bridge object.
  */
-class Form_Bridge
+abstract class Form_Bridge
 {
     /**
      * Handles the form bridge's settings data.
@@ -194,45 +193,37 @@ class Form_Bridge
     }
 
     /**
+     * Submits payload and attachments to the bridge's backend.
+     *
+     * @param array $payload Form submission data.
+     * @param array $attachments Form submission's attached files.
+     *
+     * @return array|WP_Error Http request response.
+     */
+    public function submit($payload, $attachments = [])
+    {
+        do_action('forms_bridge_before_submit', $payload, $attachments, $this);
+
+        $response = $this->do_submit($payload, $attachments);
+
+        if (is_wp_error($response)) {
+            do_action('forms_bridge_submit_error', $response, $this);
+        } else {
+            do_action('forms_bridge_submit', $response, $this);
+        }
+
+        return $response;
+    }
+
+    /**
      * Submits submission to the backend.
      *
-     * @param array $submission Submission data.
+     * @param array $payload Submission data.
      * @param array $attachments Submission's attached files.
      *
      * @return array|WP_Error Http request response.
      */
-    public function submit($submission, $attachments = [])
-    {
-        $backend = $this->backend;
-        $method = strtolower($this->method);
-
-        // Exists if http method is unkown
-        if (!in_array($method, ['get', 'post', 'put', 'delete'])) {
-            return new WP_Error(
-                'method_not_allowed',
-                "HTTP method {$this->method} is not allowed",
-                ['method' => $this->method]
-            );
-        }
-
-        do_action(
-            'forms_bridge_before_submit',
-            $this,
-            $submission,
-            $attachments
-        );
-
-        $response = $backend->$method(
-            $this->endpoint,
-            $submission,
-            [],
-            $attachments
-        );
-
-        do_action('forms_bridge_after_submit', $this, $response);
-
-        return $response;
-    }
+    abstract protected function do_submit($payload, $attachments);
 
     /**
      * Apply cast pipes to data.

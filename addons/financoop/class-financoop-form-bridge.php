@@ -9,8 +9,15 @@ if (!defined('ABSPATH')) {
 /**
  * Form bridge implamentation for the FinanCoop REST API.
  */
-class Finan_Coop_Form_Bridge extends Form_Bridge
+class Finan_Coop_Form_Bridge extends Rest_Form_Bridge
 {
+    /**
+     * Handles allowed HTTP method.
+     *
+     * @var array
+     */
+    protected const allowed_methods = ['POST'];
+
     /**
      * Handles the form bridge's template class.
      *

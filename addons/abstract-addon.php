@@ -188,7 +188,7 @@ abstract class Addon extends Singleton
         add_filter(
             'forms_bridge_bridges',
             static function ($bridges, $api = null, $form_id = null) {
-                if ($api !== static::$api) {
+                if (!empty($api) && $api !== static::$api) {
                     return $bridges;
                 }
 
@@ -259,7 +259,8 @@ abstract class Addon extends Singleton
     /**
      * Adds addons' bridges to the available bridges list.
      *
-     * @param int|null $form_id Target form ID.
+     * @param int|string|null $form_id Target form ID. This ID should include the integration prefix if there
+     * is more than one active integration.
      *
      * @return array List with available bridges.
      */

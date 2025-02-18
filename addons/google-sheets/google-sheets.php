@@ -50,25 +50,7 @@ class Google_Sheets_Addon extends Addon
     {
         parent::construct(...$args);
 
-        self::interceptors();
-        self::wp_hooks();
-        self::custom_hooks();
-    }
-
-    /**
-     * Addon interceptors
-     */
-    private function interceptors()
-    {
-        // Intercepts submission payload and catch google sheets bridges
-        add_filter(
-            'forms_bridge_payload',
-            static function ($payload, $bridge) {
-                return self::payload_interceptor($payload, $bridge);
-            },
-            90,
-            2
-        );
+        self::setting_hooks();
 
         // Discard attachments for google sheets submissions
         add_filter(
@@ -86,9 +68,9 @@ class Google_Sheets_Addon extends Addon
     }
 
     /**
-     * Binds plugin custom hooks.
+     * Intercept setting hooks and add authorized attribute.
      */
-    private static function custom_hooks()
+    private static function setting_hooks()
     {
         // Patch authorized state on the setting default value
         add_filter(
@@ -119,22 +101,20 @@ class Google_Sheets_Addon extends Addon
             9,
             2
         );
-    }
 
-    /**
-     * Binds wp standard hooks.
-     */
-    private static function wp_hooks()
-    {
-        // Patch authorized state on the setting value
-        add_filter('option_' . self::setting_name(), static function ($data) {
-            if (!is_array($data)) {
-                return $data;
-            }
+        add_filter(
+            'option_' . self::setting_name(),
+            static function ($value) {
+                if (!is_array($value)) {
+                    return $value;
+                }
 
-            $data['authorized'] = Google_Sheets_Service::is_authorized();
-            return $data;
-        });
+                $value['authorized'] = Google_Sheets_Service::is_authorized();
+                return $value;
+            },
+            9,
+            1
+        );
     }
 
     /**
@@ -195,89 +175,6 @@ class Google_Sheets_Addon extends Addon
                 'bridges' => [],
             ],
         ];
-    }
-
-    /**
-     * Intercepts the payload, flatten it, write to the spreadsheet and skip submission.
-     *
-     * @param array $payload Submission payload.
-     * @param Form_Bridge $bridge Instance of the current bridge.
-     */
-    private static function payload_interceptor($payload, $bridge)
-    {
-        if (empty($payload)) {
-            return $payload;
-        }
-
-        if ($bridge->api !== self::$api) {
-            return $payload;
-        }
-
-        $form_data = apply_filters(
-            'forms_bridge_form',
-            null,
-            false,
-            $bridge->integration
-        );
-        if (!$form_data) {
-            return;
-        }
-
-        $payload = self::flatten_payload($payload);
-        $result = Google_Sheets_Service::write_row(
-            $bridge->spreadsheet,
-            $bridge->tab,
-            $payload
-        );
-
-        if (is_wp_error($result)) {
-            do_action(
-                'forms_bridge_on_failure',
-                $bridge,
-                $result,
-                $payload,
-                []
-            );
-        } else {
-            do_action('forms_bridge_after_submission', $bridge, $payload, []);
-        }
-    }
-
-    /**
-     * Sheets are flat, if payload has nested arrays, flattens it and concatenate its keys
-     * as field names.
-     *
-     * @param array $payload Submission payload.
-     * @param string $path Prefix to prepend to the field name.
-     *
-     * @return array Flattened payload.
-     */
-    private static function flatten_payload($payload, $path = '')
-    {
-        $flat = [];
-        foreach ($payload as $field => $value) {
-            if (is_array($value)) {
-                $is_flat =
-                    wp_is_numeric_array($value) &&
-                    count(
-                        array_filter($value, static function ($d) {
-                            return !is_array($d);
-                        })
-                    ) === count($value);
-                if ($is_flat) {
-                    $flat[$path . $field] = implode(',', $value);
-                } else {
-                    $flat = array_merge(
-                        $flat,
-                        self::flatten_payload($value, $path . $field . '.')
-                    );
-                }
-            } else {
-                $flat[$path . $field] = $value;
-            }
-        }
-
-        return $flat;
     }
 
     /**
