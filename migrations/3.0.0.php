@@ -3,11 +3,20 @@
 $setting_names = ['rest-api', 'odoo', 'financoop', 'google-sheets'];
 
 foreach ($setting_names as $setting_name) {
-    $setting = get_option('forms-bridge_' . $setting_name, []);
+    $option = 'forms-bridge_' . $setting_name;
+    $deprecated_opton = $option . '-api';
 
-    if (isset($setting['form_hooks'])) {
-        $setting['bridges'] = $setting['form_hooks'];
-        unset($setting['form_hooks']);
-        update_option('forms-bridge_' . $setting_name, $setting);
+    $data = get_option($deprecated_name);
+    if (is_array($data)) {
+        update_option($option, $data);
+        delete_option($deprecated_opton);
+    }
+
+    $data = get_option($option, []);
+
+    if (isset($data['form_hooks'])) {
+        $data['bridges'] = $data['form_hooks'];
+        unset($data['form_hooks']);
+        update_option($option, $data);
     }
 }
