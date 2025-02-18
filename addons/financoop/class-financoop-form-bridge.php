@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 /**
  * Form bridge implamentation for the FinanCoop REST API.
  */
-class Finan_Coop_Form_Bridge extends Rest_Form_Bridge
+class Finan_Coop_Form_Bridge extends Form_Bridge
 {
     /**
      * Handles allowed HTTP method.
@@ -26,18 +26,15 @@ class Finan_Coop_Form_Bridge extends Rest_Form_Bridge
     protected static $template_class = '\FORMS_BRIDGE\Finan_Coop_Form_Bridge_Template';
 
     /**
-     * Inherits the parent constructor and sets its api name.
+     * Performs an http request to Odoo REST API.
      *
-     * @param array $data Form bridge data.
-     * @param string $api Bridge API name.
+     * @param array $payload Payload data.
+     * @param array $attachments Submission's attached files.
+     *
+     * @return array|WP_Error Http request response.
      */
-    public function __construct($data, $api)
+    public function do_submit($payload, $attachments = [])
     {
-        parent::__construct(
-            array_merge($data, [
-                'method' => 'POST',
-            ]),
-            $api
-        );
+        return $this->backend->post($this->endpoint, $payload);
     }
 }
