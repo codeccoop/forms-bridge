@@ -2,7 +2,7 @@
 
 namespace FORMS_BRIDGE;
 
-use WPCT_ABSTRACT\Settings_Store as Base_Settings;
+use WPCT_ABSTRACT\Settings_Store as Base_Settings_Store;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 /**
  * Plugin settings.
  */
-class Settings_Store extends Base_Settings
+class Settings_Store extends Base_Settings_Store
 {
     /**
      * Handle plugin settings rest controller class name.

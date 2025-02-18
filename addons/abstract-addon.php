@@ -37,7 +37,7 @@ abstract class Addon extends Singleton
     protected static $api;
 
     /**
-     * Handles addon custom bridge class name.
+     * Handles addon's custom bridge class name.
      *
      * @var string
      */
@@ -61,6 +61,7 @@ abstract class Addon extends Singleton
         $state = (array) get_option(self::registry, ['rest-api' => true]);
         $addons_dir = dirname(__FILE__);
         $addons = array_diff(scandir($addons_dir), ['.', '..']);
+
         $registry = [];
         foreach ($addons as $addon) {
             $addon_dir = "{$addons_dir}/{$addon}";
@@ -124,13 +125,18 @@ abstract class Addon extends Singleton
             2
         );
 
-        add_filter("option_{$general_setting}", static function ($value) {
-            if (!is_array($value)) {
-                return $value;
-            }
+        add_filter(
+            "option_{$general_setting}",
+            static function ($value) {
+                if (!is_array($value)) {
+                    return $value;
+                }
 
-            return array_merge($value, ['addons' => self::registry()]);
-        });
+                return array_merge($value, ['addons' => self::registry()]);
+            },
+            10,
+            1
+        );
 
         add_filter(
             'wpct_validate_setting',
@@ -225,7 +231,7 @@ abstract class Addon extends Singleton
     /**
      * Addon's setting name getter.
      *
-     * @return string Setting name.
+     * @return string
      */
     final protected static function setting_name()
     {
@@ -361,7 +367,8 @@ abstract class Addon extends Singleton
                     'templates' => static::templates(),
                 ]);
             },
-            10
+            10,
+            1
         );
     }
 
@@ -411,7 +418,8 @@ abstract class Addon extends Singleton
                     return array_merge($deps, [$script_name]);
                 });
             },
-            9
+            9,
+            1
         );
     }
 

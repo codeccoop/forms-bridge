@@ -71,6 +71,7 @@ class Forms_Bridge extends Base_Plugin
         Addon::load();
         Integration::load();
 
+        self::http_hooks();
         self::wp_hooks();
 
         add_action(
@@ -80,6 +81,69 @@ class Forms_Bridge extends Base_Plugin
             },
             90,
             4
+        );
+    }
+
+    /**
+     * Aliases to the http bride filters API.
+     */
+    private static function http_hooks()
+    {
+        add_filter(
+            'forms_bridge_backends',
+            static function ($backends) {
+                return apply_filters('http_bridge_backends', $backends);
+            },
+            10,
+            1
+        );
+
+        add_filter(
+            'forms_bridge_backend',
+            static function ($backend, $name) {
+                return apply_filters('http_bridge_backend', $backend, $name);
+            },
+            10,
+            2
+        );
+
+        add_filter(
+            'http_bridge_backend_headers',
+            static function ($headers, $backend) {
+                return apply_filters(
+                    'forms_bridge_backend_headers',
+                    $headers,
+                    $backend
+                );
+            },
+            99,
+            2
+        );
+
+        add_filter(
+            'http_bridge_backend_url',
+            static function ($url, $backend) {
+                return apply_filters(
+                    'forms_bridge_backend_url',
+                    $url,
+                    $backend
+                );
+            },
+            99,
+            2
+        );
+
+        add_filter(
+            'http_bridge_response',
+            static function ($response, $request) {
+                return apply_filters(
+                    'forms_bridge_http_response',
+                    $response,
+                    $request
+                );
+            },
+            99,
+            2
         );
     }
 

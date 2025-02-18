@@ -2,7 +2,7 @@
 
 namespace FORMS_BRIDGE;
 
-use WPCT_ABSTRACT\Menu as BaseMenu;
+use WPCT_ABSTRACT\Menu as Base_Menu;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 /**
  * Plugin menu class.
  */
-class Menu extends BaseMenu
+class Menu extends Base_Menu
 {
     /**
      * Renders the plugin menu page.
