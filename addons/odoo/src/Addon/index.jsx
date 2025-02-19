@@ -30,8 +30,10 @@ export default function Addon() {
 
   useEffect(() => {
     if (!root) return;
+
     const img = document.querySelector("#odoo .addon-logo");
     if (!img) return;
+
     img.setAttribute("src", "data:image/png;base64," + logo);
     img.style.width = "70px";
   }, [root]);

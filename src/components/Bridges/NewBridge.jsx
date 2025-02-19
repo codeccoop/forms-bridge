@@ -61,6 +61,7 @@ export default function NewBridge({
       form_id: formId,
       pipes: [],
     });
+
     setName("");
     setBackend("");
     setFormId("");

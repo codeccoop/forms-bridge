@@ -79,7 +79,6 @@ function NewBackend({ add }) {
   );
 }
 
-let focus = false;
 export default function Backend({ update, remove, ...data }) {
   if (data.name === "add") return <NewBackend add={update} />;
 
@@ -97,12 +96,6 @@ export default function Backend({ update, remove, ...data }) {
   };
 
   const setHeaders = (headers) => update({ ...data, headers });
-
-  useEffect(() => {
-    if (focus) {
-      nameInput.current.focus();
-    }
-  }, []);
 
   const timeout = useRef(false);
   useEffect(() => {
@@ -140,8 +133,6 @@ export default function Backend({ update, remove, ...data }) {
           }
           value={name}
           onChange={handleSetName}
-          onFocus={() => (focus = true)}
-          onBlur={() => (focus = false)}
           __nextHasNoMarginBottom
           __next40pxDefaultSize
         />

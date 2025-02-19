@@ -70,8 +70,6 @@ export default function Database({ data, update, remove }) {
             }
             value={name}
             onChange={handleSetName}
-            onFocus={() => (focus = true)}
-            onBlur={() => (focus = false)}
             __nextHasNoMarginBottom
             __next40pxDefaultSize
           />

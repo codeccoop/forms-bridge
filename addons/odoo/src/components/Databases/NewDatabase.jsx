@@ -40,6 +40,7 @@ export default function NewDatabase({ add }) {
       user,
       password,
     });
+
     setName("");
     setBackend("");
     setUser("");

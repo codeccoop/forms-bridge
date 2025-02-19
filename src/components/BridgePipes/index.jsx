@@ -7,6 +7,15 @@ const { __ } = wp.i18n;
 
 export default function BridgePipes({ form, pipes, setPipes }) {
   const [open, setOpen] = useState(false);
+
+  const handleSetPipes = (pipes) => {
+    pipes.forEach((pipe) => {
+      delete pipe.index;
+    });
+
+    setPipes(pipes);
+  };
+
   return (
     <>
       <Button
@@ -25,8 +34,8 @@ export default function BridgePipes({ form, pipes, setPipes }) {
           <div style={{ minWidth: "575px", minHeight: "125px" }}>
             <PipesTable
               form={form}
-              pipes={pipes}
-              setPipes={setPipes}
+              pipes={pipes.map((pipe, index) => ({ ...pipe, index }))}
+              setPipes={handleSetPipes}
               done={() => setOpen(false)}
             />
           </div>

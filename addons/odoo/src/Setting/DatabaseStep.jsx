@@ -89,7 +89,7 @@ export default function DatabaseStep({ fields, data, setData }) {
       description={__("Configure the Odoo database connection", "forms-bridge")}
     >
       <SelectControl
-        label={__("Reuse database", "forms-bridge")}
+        label={__("Reuse a database", "forms-bridge")}
         value={databaseName}
         options={databaseOptions}
         onChange={(value) => setDatabaseName(value)}

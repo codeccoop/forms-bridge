@@ -86,20 +86,18 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
   }, [pipes]);
 
   return (
-    <div className="components-base-control__label">
-      <div style={{ display: "flex" }}>
-        <label
-          className="components-base-control__label"
-          style={{
-            fontSize: "11px",
-            textTransform: "uppercase",
-            fontWeight: 500,
-            lineHeight: "32px",
-          }}
-        >
-          {__("Form format pipes", "forms-bridge")}
-        </label>
-      </div>
+    <>
+      <label
+        className="components-base-control__label"
+        style={{
+          fontSize: "11px",
+          textTransform: "uppercase",
+          fontWeight: 500,
+          lineHeight: "32px",
+        }}
+      >
+        {__("Form format pipes", "forms-bridge")}
+      </label>
       <table
         style={{
           width: "calc(100% + 10px)",
@@ -169,6 +167,6 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
           {__("Done", "forms-bridge")}
         </Button>
       </div>
-    </div>
+    </>
   );
 }

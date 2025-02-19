@@ -60,6 +60,7 @@ export default function Backends({ backends, setBackends, Backend }) {
 
   const updateBackend = (index, data) => {
     if (index === -1) index = backends.length;
+
     const newBackends = backends
       .slice(0, index)
       .concat([data])
@@ -69,14 +70,17 @@ export default function Backends({ backends, setBackends, Backend }) {
       delete backend.title;
       delete backend.icon;
     });
+
     setBackends(newBackends);
   };
 
   const removeBackend = ({ name }) => {
     const index = backends.findIndex((b) => b.name === name);
+
     const newBackends = backends
       .slice(0, index)
       .concat(backends.slice(index + 1));
+
     setBackends(newBackends);
   };
 

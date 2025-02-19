@@ -28,20 +28,20 @@ export default function OdooBridge({ data, update, remove }) {
       {({ data, update }) => (
         <>
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
-            <TextControl
-              label={__("Model", "forms-bridge")}
-              value={data.model || ""}
-              onChange={(model) => update({ ...data, model })}
-              __nextHasNoMarginBottom
-              __next40pxDefaultSize
-            />
-          </div>
-          <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
             <SelectControl
               label={__("Database", "forms-bridge")}
               value={data.database || ""}
               onChange={(database) => update({ ...data, database })}
               options={dbOptions}
+              __nextHasNoMarginBottom
+              __next40pxDefaultSize
+            />
+          </div>
+          <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
+            <TextControl
+              label={__("Model", "forms-bridge")}
+              value={data.model || ""}
+              onChange={(model) => update({ ...data, model })}
               __nextHasNoMarginBottom
               __next40pxDefaultSize
             />

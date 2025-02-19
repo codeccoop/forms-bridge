@@ -41,7 +41,7 @@ export default function Bridges({ bridges, setBridges, Bridge }) {
     .concat([
       {
         name: "-1",
-        title: __("Add Form", "forms-bridge"),
+        title: __("Add bridge", "forms-bridge"),
       },
     ]);
 
@@ -60,6 +60,7 @@ export default function Bridges({ bridges, setBridges, Bridge }) {
 
   const updateBridge = (index, data) => {
     if (index === -1) index = bridges.length;
+
     const newBridges = bridges
       .slice(0, index)
       .concat([data])
@@ -69,18 +70,20 @@ export default function Bridges({ bridges, setBridges, Bridge }) {
       delete bridge.title;
       delete bridge.icon;
     });
+
     setBridges(newBridges);
   };
 
   const removeBridge = ({ name }) => {
-    const index = bridges.findIndex((h) => h.name === name);
+    const index = bridges.findIndex((b) => b.name === name);
     const newBridges = bridges.slice(0, index).concat(bridges.slice(index + 1));
     setBridges(newBridges);
   };
 
   const copyBridge = (name) => {
-    const i = bridges.findIndex((h) => h.name === name);
+    const i = bridges.findIndex((b) => b.name === name);
     const bridge = bridges[i];
+
     const copy = {
       ...bridge,
       pipes: JSON.parse(JSON.stringify(bridge.pipes || [])),

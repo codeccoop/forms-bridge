@@ -181,9 +181,9 @@ abstract class Addon extends Singleton
             throw new Exception('Invalid addon registration');
         }
 
-        self::load_templates();
-        self::handle_settings();
-        self::admin_scripts();
+        static::load_templates();
+        static::handle_settings();
+        static::admin_scripts();
 
         add_filter(
             'forms_bridge_bridges',
@@ -327,7 +327,7 @@ abstract class Addon extends Singleton
         add_filter(
             'wpct_validate_setting',
             static function ($data, $setting) {
-                return self::do_validation($data, $setting);
+                return static::do_validation($data, $setting);
             },
             11,
             2
@@ -336,7 +336,7 @@ abstract class Addon extends Singleton
         add_filter(
             'wpct_setting_default',
             static function ($default, $name) {
-                if ($name !== self::setting_name()) {
+                if ($name !== static::setting_name()) {
                     return $default;
                 }
 
@@ -349,7 +349,7 @@ abstract class Addon extends Singleton
         );
 
         add_filter(
-            'option_' . self::setting_name(),
+            'option_' . static::setting_name(),
             static function ($value) {
                 if (!is_array($value)) {
                     return $value;
@@ -426,7 +426,7 @@ abstract class Addon extends Singleton
      */
     private static function do_validation($data, $setting)
     {
-        if ($setting->full_name() !== self::setting_name()) {
+        if ($setting->full_name() !== static::setting_name()) {
             return $data;
         }
 
