@@ -209,7 +209,8 @@ abstract class Addon extends Singleton
                     return $bridge;
                 }
 
-                $bridges = static::setting()->bridges;
+                $bridges = static::setting()->bridges ?: [];
+
                 foreach ($bridges as $bridge_data) {
                     if ($bridge_data['name'] === $name) {
                         return new static::$bridge_class(
@@ -291,13 +292,15 @@ abstract class Addon extends Singleton
             $form_id = "{$integration}:{$form_id}";
         }
 
+        $bridges = static::setting()->bridges ?: [];
+
         return array_map(
             static function ($bridge_data) {
                 return new static::$bridge_class($bridge_data, static::$api);
             },
-            array_filter((array) static::setting()->bridges, static function (
-                $bridge_data
-            ) use ($form_id) {
+            array_filter($bridges, static function ($bridge_data) use (
+                $form_id
+            ) {
                 return $form_id === null ||
                     $bridge_data['form_id'] === $form_id;
             })
