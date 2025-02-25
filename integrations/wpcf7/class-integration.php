@@ -101,6 +101,7 @@ class Integration extends BaseIntegration
         }
 
         $form = $this->fields_to_form($data['fields']);
+        $email = $this->form_email($data['title'], $data['fields']);
 
         $contact_form = wpcf7_save_contact_form([
             'title' => $data['title'],
@@ -110,7 +111,7 @@ class Integration extends BaseIntegration
                 'locale'
             ),
             'form' => $form,
-            'mail' => get_option('admin_email'),
+            'mail' => $email,
         ]);
 
         if (!$contact_form) {
@@ -387,5 +388,49 @@ class Integration extends BaseIntegration
         }
 
         return $tag . ']';
+    }
+
+    private function form_email($title, $fields)
+    {
+        $site_url = get_option('siteurl');
+        $host = wp_parse_url($site_url)['host'] ?? 'example.coop';
+
+        $email_index = array_search('email', array_column($fields, 'type'));
+        if ($email_index) {
+            $replay_to = 'Replay-To: [' . $fields[$email_index]['name'] . ']';
+        } else {
+            $replay_to = '';
+        }
+
+        $body = __(
+            "This are the responses to the contact form:\n\n",
+            'forms-bridge'
+        );
+
+        foreach ($fields as $field) {
+            $label = $field['label'] ?? $field['name'];
+            $body .= ' * ' . esc_html($label) . ': [' . $field['name'] . "]\n";
+        }
+
+        $notice = sprintf(
+            /* translators: 1: blog name, 2: blog URL */
+            __(
+                'This is a notification that a contact form was submitted on your website (%1$s %2$s).',
+                'forms-bridge'
+            ),
+            '[_site_title]',
+            '[_site_url]'
+        );
+
+        $body .= "\n---\n{$notice}";
+
+        return [
+            'recipient' => '[_site_admin_email]',
+            'sender' => "[_site_title] <admin@{$host}>",
+            'subject' => "[_site_title] \"{$title}\"",
+            'additional_headers' => $replay_to,
+            'body' => $body,
+            'attachments' => '',
+        ];
     }
 }
