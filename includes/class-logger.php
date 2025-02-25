@@ -261,7 +261,13 @@ class Logger extends Singleton
             'methods' => WP_REST_Server::READABLE,
             'callback' => static function () {
                 $lines = isset($_GET['lines']) ? (int) $_GET['lines'] : 500;
-                return self::logs($lines);
+                $logs = self::logs($lines);
+
+                if (empty($logs)) {
+                    return [];
+                }
+
+                return $logs;
             },
             'permission_callback' => static function () {
                 return self::permission_callback();
