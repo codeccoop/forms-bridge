@@ -42,7 +42,7 @@ const castOptions = [
   },
 ];
 
-export default function PipesTable({ form, pipes, setPipes, done }) {
+export default function MappersTable({ form, mappers, setMappers, done }) {
   const fields = useMemo(() => {
     if (!form) return [];
     return form.fields
@@ -57,33 +57,33 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
     }))
   );
 
-  const setPipe = (attr, index, value) => {
-    const newPipes = pipes.map((pipe, i) => {
+  const setMapper = (attr, index, value) => {
+    const newMappers = mappers.map((mapper, i) => {
       if (index === i) {
-        pipe[attr] = value;
-        if (attr === "from" && pipe.to !== value) {
-          pipe.to = value;
+        mapper[attr] = value;
+        if (attr === "from" && mapper.to !== value) {
+          mapper.to = value;
         }
       }
-      return { ...pipe };
+      return { ...mapper };
     });
 
-    setPipes(newPipes);
+    setMappers(newMappers);
   };
 
-  const addPipe = () => {
-    const newPipes = pipes.concat([{ from: "", to: "", cast: "string" }]);
-    setPipes(newPipes);
+  const addMapper = () => {
+    const newMappers = mappers.concat([{ from: "", to: "", cast: "string" }]);
+    setMappers(newMappers);
   };
 
-  const dropPipe = (index) => {
-    const newPipes = pipes.slice(0, index).concat(pipes.slice(index + 1));
-    setPipes(newPipes);
+  const dropMapper = (index) => {
+    const newMappers = mappers.slice(0, index).concat(mappers.slice(index + 1));
+    setMappers(newMappers);
   };
 
   useEffect(() => {
-    if (!pipes.length) addPipe();
-  }, [pipes]);
+    if (!mappers.length) addMapper();
+  }, [mappers]);
 
   return (
     <>
@@ -96,7 +96,7 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
           lineHeight: "32px",
         }}
       >
-        {__("Form format pipes", "forms-bridge")}
+        {__("Form mapper", "forms-bridge")}
       </label>
       <table
         style={{
@@ -106,13 +106,13 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
         }}
       >
         <tbody>
-          {pipes.map(({ from, to, cast }, i) => (
+          {mappers.map(({ from, to, cast }, i) => (
             <tr key={i}>
               <td>
                 <SelectControl
                   placeholder={__("From", "forms-bridge")}
                   value={from}
-                  onChange={(value) => setPipe("from", i, value)}
+                  onChange={(value) => setMapper("from", i, value)}
                   options={fromOptions}
                   __nextHasNoMarginBottom
                   __next40pxDefaultSize
@@ -122,7 +122,7 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
                 <TextControl
                   placeholder={__("To", "forms-bridge")}
                   value={to}
-                  onChange={(value) => setPipe("to", i, value)}
+                  onChange={(value) => setMapper("to", i, value)}
                   __nextHasNoMarginBottom
                   __next40pxDefaultSize
                 />
@@ -131,7 +131,7 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
                 <SelectControl
                   placeholder={__("Cast as", "forms-bridge")}
                   value={cast || "string"}
-                  onChange={(value) => setPipe("cast", i, value)}
+                  onChange={(value) => setMapper("cast", i, value)}
                   options={castOptions.map(({ label, value }) => ({
                     label: __(label, "forms-bridge"),
                     value,
@@ -144,7 +144,7 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
                 <Button
                   isDestructive
                   variant="secondary"
-                  onClick={() => dropPipe(i)}
+                  onClick={() => dropMapper(i)}
                   __next40pxDefaultSize
                 >
                   {__("Drop", "forms-bridge")}
@@ -158,7 +158,7 @@ export default function PipesTable({ form, pipes, setPipes, done }) {
       <div style={{ display: "flex", gap: "0.5rem" }}>
         <Button
           variant="secondary"
-          onClick={() => addPipe()}
+          onClick={() => addMapper()}
           __next40pxDefaultSize
         >
           {__("Add", "forms-bridge")}

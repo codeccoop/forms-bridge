@@ -31,22 +31,22 @@ return [
     ],
     'bridge' => [
         'endpoint' => '/api/campaign/{campaign_id}/loan_request',
-        'pipes' => [
-            [
-                'from' => 'partner_id',
-                'to' => 'partner_id',
-                'cast' => 'integer',
-            ],
+        'mappers' => [
+            // [
+            //     'from' => 'partner_id',
+            //     'to' => 'partner_id',
+            //     'cast' => 'integer',
+            // ],
             [
                 'from' => 'loan_amount',
                 'to' => 'loan_amount',
                 'cast' => 'integer',
             ],
-            [
-                'from' => 'loan_type_id',
-                'to' => 'loan_type_id',
-                'cast' => 'integer',
-            ],
+            // [
+            //     'from' => 'loan_type_id',
+            //     'to' => 'loan_type_id',
+            //     'cast' => 'integer',
+            // ],
         ],
     ],
     'form' => [

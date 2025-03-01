@@ -6,9 +6,9 @@ import useFinanCoopApi from "../hooks/useFinanCoopApi";
 const { PanelRow } = wp.components;
 
 export default function FinancoopSetting() {
-  const [{ bridges }, save] = useFinanCoopApi();
+  const [{ bridges, templates }, save] = useFinanCoopApi();
 
-  const update = (field) => save({ bridges, ...field });
+  const update = (field) => save({ bridges, templates, ...field });
 
   return (
     <PanelRow>

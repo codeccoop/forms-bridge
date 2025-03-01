@@ -124,7 +124,7 @@ class Odoo_Addon extends Addon
                             'database' => ['type' => 'string'],
                             'form_id' => ['type' => 'string'],
                             'model' => ['type' => 'string'],
-                            'pipes' => [
+                            'mappers' => [
                                 'type' => 'array',
                                 'items' => [
                                     'type' => 'object',
@@ -153,7 +153,7 @@ class Odoo_Addon extends Addon
                             'database',
                             'form_id',
                             'model',
-                            'pipes',
+                            'mappers',
                         ],
                     ],
                 ],
@@ -255,8 +255,8 @@ class Odoo_Addon extends Addon
                     in_array($bridge['template'], $templates));
 
             if ($is_valid) {
-                $bridge['pipes'] = array_values(
-                    array_filter($bridge['pipes'], function ($pipe) {
+                $bridge['mappers'] = array_values(
+                    array_filter($bridge['mappers'], function ($pipe) {
                         return !(
                             empty($pipe['from']) ||
                             empty($pipe['to']) ||

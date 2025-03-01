@@ -137,7 +137,7 @@ class Google_Sheets_Addon extends Addon
                             'form_id' => ['type' => 'string'],
                             'spreadsheet' => ['type' => 'string'],
                             'tab' => ['type' => 'string'],
-                            'pipes' => [
+                            'mappers' => [
                                 'type' => 'array',
                                 'items' => [
                                     'type' => 'object',
@@ -166,7 +166,7 @@ class Google_Sheets_Addon extends Addon
                             'form_id',
                             'spreadsheet',
                             'tab',
-                            'pipes',
+                            'mappers',
                         ],
                     ],
                 ],
@@ -228,8 +228,8 @@ class Google_Sheets_Addon extends Addon
                     in_array($bridge['template'], $templates));
 
             if ($is_valid) {
-                $bridge['pipes'] = array_values(
-                    array_filter($bridge['pipes'], function ($pipe) {
+                $bridge['mappers'] = array_values(
+                    array_filter($bridge['mappers'], function ($pipe) {
                         return !(
                             empty($pipe['from']) ||
                             empty($pipe['to']) ||

@@ -59,7 +59,7 @@ class Rest_Addon extends Addon
                                 'type' => 'string',
                                 'enum' => ['GET', 'POST', 'PUT', 'DELETE'],
                             ],
-                            'pipes' => [
+                            'mappers' => [
                                 'type' => 'array',
                                 'items' => [
                                     'type' => 'object',
@@ -92,7 +92,7 @@ class Rest_Addon extends Addon
                             'form_id',
                             'endpoint',
                             'method',
-                            'pipes',
+                            'mappers',
                         ],
                     ],
                 ],
@@ -167,8 +167,8 @@ class Rest_Addon extends Addon
                     in_array($bridge['template'], $templates));
 
             if ($is_valid) {
-                $bridge['pipes'] = array_values(
-                    array_filter($bridge['pipes'], function ($pipe) {
+                $bridge['mappers'] = array_values(
+                    array_filter($bridge['mappers'], function ($pipe) {
                         return !(
                             empty($pipe['from']) ||
                             empty($pipe['to']) ||

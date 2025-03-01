@@ -1,19 +1,19 @@
 // source
-import PipesTable from "./Table";
+import MappersTable from "./Table";
 
 const { Button, Modal } = wp.components;
 const { useState } = wp.element;
 const { __ } = wp.i18n;
 
-export default function BridgePipes({ form, pipes, setPipes }) {
+export default function BridgeMappers({ form, mappers, setMappers }) {
   const [open, setOpen] = useState(false);
 
-  const handleSetPipes = (pipes) => {
-    pipes.forEach((pipe) => {
+  const handleSetMappers = (mappers) => {
+    mappers.forEach((pipe) => {
       delete pipe.index;
     });
 
-    setPipes(pipes);
+    setMappers(mappers);
   };
 
   return (
@@ -24,18 +24,18 @@ export default function BridgePipes({ form, pipes, setPipes }) {
         style={{ width: "150px", justifyContent: "center" }}
         __next40pxDefaultSize
       >
-        {__("Pipes", "forms-bridge")}
+        {__("Mappers", "forms-bridge")}
       </Button>
       {open && (
         <Modal
-          title={__("Bridge pipes", "forms-bridge")}
+          title={__("Bridge mappers", "forms-bridge")}
           onRequestClose={() => setOpen(false)}
         >
           <div style={{ minWidth: "575px", minHeight: "125px" }}>
-            <PipesTable
+            <MappersTable
               form={form}
-              pipes={pipes.map((pipe, index) => ({ ...pipe, index }))}
-              setPipes={handleSetPipes}
+              mappers={mappers.map((pipe, index) => ({ ...pipe, index }))}
+              setMappers={handleSetMappers}
               done={() => setOpen(false)}
             />
           </div>

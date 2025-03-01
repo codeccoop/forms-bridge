@@ -49,7 +49,7 @@ return [
     ],
     'bridge' => [
         'model' => 'crm.lead',
-        'pipes' => [
+        'mappers' => [
             [
                 'from' => 'submission_id',
                 'to' => 'submission_id',

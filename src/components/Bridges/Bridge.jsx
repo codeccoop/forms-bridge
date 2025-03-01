@@ -2,7 +2,7 @@
 import { useForms } from "../../providers/Forms";
 import { useGeneral } from "../../providers/Settings";
 import useBridgeNames from "../../hooks/useBridgeNames";
-import BridgePipes from "../BridgePipes";
+import BridgeMappers from "../BridgeMappers";
 import NewBridge from "./NewBridge";
 
 const {
@@ -131,10 +131,10 @@ export default function Bridge({
           flexWrap: "wrap",
         }}
       >
-        <BridgePipes
+        <BridgeMappers
           form={form}
-          pipes={data.pipes}
-          setPipes={(pipes) => update({ ...data, pipes })}
+          mappers={data.mappers}
+          setMappers={(mappers) => update({ ...data, mappers })}
         />
         <Button
           isDestructive

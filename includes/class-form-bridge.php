@@ -232,16 +232,16 @@ abstract class Form_Bridge
     abstract protected function do_submit($payload, $attachments);
 
     /**
-     * Apply cast pipes to data.
+     * Apply cast mappers to data.
      *
      * @param array $data Array of data.
      *
-     * @return array Data modified by the bridge's pipes.
+     * @return array Data modified by the bridge's mappers.
      */
-    final public function apply_pipes($data)
+    final public function apply_mappers($data)
     {
         $finger = new JSON_Finger($data);
-        foreach ($this->pipes as $pipe) {
+        foreach ($this->mappers as $pipe) {
             extract($pipe);
             $value = $finger->get($from);
             $finger->unset($from);

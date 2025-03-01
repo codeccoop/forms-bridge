@@ -110,7 +110,7 @@ class Form_Bridge_Template
                     'description' => ['type' => 'string'],
                     'type' => [
                         'type' => 'string',
-                        'enum' => ['string', 'number', 'options'],
+                        'enum' => ['string', 'number', 'options', 'boolean'],
                     ],
                     'required' => ['type' => 'boolean'],
                     'value' => [
@@ -174,7 +174,7 @@ class Form_Bridge_Template
             'properties' => [
                 'name' => ['type' => 'string'],
                 'form_id' => ['type' => 'string'],
-                'pipes' => [
+                'mappers' => [
                     'type' => 'array',
                     'items' => [
                         'type' => 'object',
@@ -200,7 +200,7 @@ class Form_Bridge_Template
                     ],
                 ],
             ],
-            'required' => ['name', /* 'form_id', */ 'pipes'],
+            'required' => ['name', /* 'form_id', */ 'mappers'],
             'additionalProperties' => false,
         ],
         'backend' => [
@@ -355,7 +355,7 @@ class Form_Bridge_Template
                 'bridge' => [
                     'name' => '',
                     'form_id' => '',
-                    'pipes' => [],
+                    'mappers' => [],
                 ],
                 'backend' => [
                     'name' => '',
