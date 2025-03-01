@@ -18,6 +18,7 @@ const STEPS = [
 export default function FinanCoopTemplateWizard({ integration, onDone }) {
   const [{ backends }] = useGeneral();
   const [data, setData] = useState({});
+  const [campaigns, setCampaigns] = useState([]);
 
   const backend = useMemo(() => {
     if (!data.backend?.name) return;
@@ -54,7 +55,7 @@ export default function FinanCoopTemplateWizard({ integration, onDone }) {
         api_key: data.backend.api_key,
       };
     }
-  }, [data, backends]);
+  }, [data.backend, backends]);
 
   useEffect(() => {
     if (!backend) return;
@@ -64,9 +65,13 @@ export default function FinanCoopTemplateWizard({ integration, onDone }) {
       method: "POST",
       data: backend,
     }).then((campaigns) => {
-      console.log(campaigns);
+      setCampaigns(campaigns);
     });
   }, [backend]);
+
+  useEffect(() => {
+    setData({ ...data, bridge: { ...(data.bridge || {}), campaigns } });
+  }, [campaigns]);
 
   return (
     <TemplateWizard

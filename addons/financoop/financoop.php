@@ -236,7 +236,7 @@ class Finan_Coop_Addon extends Addon
             );
             $database = sanitize_text_field($params['database'] ?? null);
             $username = sanitize_text_field($params['username'] ?? null);
-            $api_key = sanitize_text_field($params['api-key'] ?? null);
+            $api_key = sanitize_text_field($params['api_key'] ?? null);
 
             if (
                 empty($base_url) ||

@@ -1,15 +1,20 @@
 import TemplateStep from "../../../../src/components/Templates/Steps/Step";
 import Field from "../../../../src/components/Templates/Field";
 
-const { useEffect, useMemo } = wp.element;
+const { useMemo } = wp.element;
 const { __ } = wp.i18n;
 
 const fieldsOrder = ["name", "form_id"];
 
 export default function BridgeStep({ fields, data, setData }) {
-  useEffect(() => {
-    console.log(data);
-  }, []);
+  const campaignOptions = useMemo(
+    () =>
+      data.campaigns.map(({ id, name }) => ({
+        value: id,
+        label: name,
+      })),
+    [data.campaigns]
+  );
 
   const sortedFields = useMemo(
     () =>
@@ -19,12 +24,31 @@ export default function BridgeStep({ fields, data, setData }) {
     [fields]
   );
 
+  const campaignIdField = useMemo(
+    () => sortedFields.find(({ name }) => name === "campaign_id"),
+    [sortedFields]
+  );
+
+  const filteredFields = useMemo(
+    () => sortedFields.filter(({ name }) => name !== "campaign_id"),
+    [sortedFields]
+  );
+
   return (
     <TemplateStep
       name={__("Bridge", "forms-bridge")}
       description={__("Configure the bridge", "forms-bridge")}
     >
-      {sortedFields.map((field) => (
+      <Field
+        data={{
+          ...campaignIdField,
+          value: data.campaign_id || "",
+          type: "options",
+          options: campaignOptions,
+          onChange: (campaign_id) => setData({ campaign_id }),
+        }}
+      />
+      {filteredFields.map((field) => (
         <Field
           data={{
             ...field,
