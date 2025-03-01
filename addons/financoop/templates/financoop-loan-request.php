@@ -7,27 +7,27 @@ if (!defined('ABSPATH')) {
 return [
     'title' => __('FinanCoop Loan Request', 'forms-bridge'),
     'fields' => [
-        [
-            'ref' => '#form/fields[]',
-            'name' => 'partner_id',
-            'label' => __('Partner ID', 'forms-bridge'),
-            'type' => 'number',
-            'required' => true,
-        ],
-        [
-            'ref' => '#form/fields[]',
-            'name' => 'loan_type_id',
-            'label' => __('Loan type ID', 'forms-bridge'),
-            'type' => 'number',
-            'required' => true,
-        ],
-        [
-            'ref' => '#form/fields[]',
-            'name' => 'country_code',
-            'label' => __('Country code', 'forms-bridge'),
-            'type' => 'string',
-            'required' => true,
-        ],
+        // [
+        //     'ref' => '#form/fields[]',
+        //     'name' => 'partner_id',
+        //     'label' => __('Partner ID', 'forms-bridge'),
+        //     'type' => 'number',
+        //     'required' => true,
+        // ],
+        // [
+        //     'ref' => '#form/fields[]',
+        //     'name' => 'loan_type_id',
+        //     'label' => __('Loan type ID', 'forms-bridge'),
+        //     'type' => 'number',
+        //     'required' => true,
+        // ],
+        // [
+        //     'ref' => '#form/fields[]',
+        //     'name' => 'country_code',
+        //     'label' => __('Country code', 'forms-bridge'),
+        //     'type' => 'string',
+        //     'required' => true,
+        // ],
     ],
     'bridge' => [
         'endpoint' => '/api/campaign/{campaign_id}/loan_request',
@@ -51,21 +51,21 @@ return [
     ],
     'form' => [
         'fields' => [
-            [
-                'name' => 'partner_id',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'loan_type_id',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'country_code',
-                'type' => 'hidden',
-                'required' => true,
-            ],
+            // [
+            //     'name' => 'partner_id',
+            //     'type' => 'hidden',
+            //     'required' => true,
+            // ],
+            // [
+            //     'name' => 'loan_type_id',
+            //     'type' => 'hidden',
+            //     'required' => true,
+            // ],
+            // [
+            //     'name' => 'country_code',
+            //     'type' => 'hidden',
+            //     'required' => true,
+            // ],
             [
                 'label' => __('Loan amount', 'forms-bridge'),
                 'name' => 'loan_amount',
@@ -86,9 +86,21 @@ return [
                 'required' => true,
             ],
             [
+                'label' => __('Vat ID', 'forms-bridge'),
+                'name' => 'vat',
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
                 'label' => __('Email', 'forms-bridge'),
                 'name' => 'email',
                 'type' => 'email',
+                'required' => true,
+            ],
+            [
+                'label' => __('Phone', 'forms-bridge'),
+                'name' => 'phone',
+                'type' => 'text',
                 'required' => true,
             ],
             [
@@ -97,21 +109,15 @@ return [
                 'type' => 'text',
                 'required' => true,
             ],
-            [
-                'label' => __('City', 'forms-bridge'),
-                'name' => 'city',
-                'type' => 'text',
-                'required' => true,
-            ],
+            // [
+            //     'label' => __('City', 'forms-bridge'),
+            //     'name' => 'city',
+            //     'type' => 'text',
+            //     'required' => true,
+            // ],
             [
                 'label' => __('Zip code', 'forms-bridge'),
                 'name' => 'zip_code',
-                'type' => 'text',
-                'required' => true,
-            ],
-            [
-                'label' => __('Phone', 'forms-bridge'),
-                'name' => 'phone',
                 'type' => 'text',
                 'required' => true,
             ],

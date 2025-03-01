@@ -2,6 +2,8 @@
 
 namespace FORMS_BRIDGE;
 
+use WP_Error;
+
 if (!defined('ABSPATH')) {
     exit();
 }
@@ -35,6 +37,13 @@ class Finan_Coop_Form_Bridge extends Form_Bridge
      */
     public function do_submit($payload, $attachments = [])
     {
-        return $this->backend->post($this->endpoint, $payload);
+        $response = $this->backend->post($this->endpoint, $payload);
+        $result = Odoo_Form_Bridge::rpc_response($response);
+
+        if (isset($result['error'])) {
+            return new WP_Error($result['status'], $result['error'], $payload);
+        }
+
+        return $result;
     }
 }

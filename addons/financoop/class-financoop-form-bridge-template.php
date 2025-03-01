@@ -140,6 +140,17 @@ class Finan_Coop_Form_Bridge_Template extends Form_Bridge_Template
                         get_locale(),
                         'locale'
                     );
+
+                    $national_prefix = preg_replace(
+                        '/_[a-z]{2}$/',
+                        '',
+                        $payload['lang']
+                    );
+                    if ($national_prefix === 'ca') {
+                        $national_prefix = 'es';
+                    }
+
+                    $payload['vat'] = $national_prefix . $payload['vat'];
                 }
 
                 return $payload;
