@@ -42,15 +42,25 @@ class Integration extends BaseIntegration
         if (isset($_POST['gform_submit'])) {
             require_once GFCommon::get_base_path() . '/form_display.php';
             $form_id = GFFormDisplay::is_submit_form_id_valid();
+
+            if (!$form_id && wp_doing_ajax()) {
+                if (
+                    isset($_POST['gform_submission_method']) &&
+                    $_POST['gform_submission_method'] ===
+                        GFFormDisplay::SUBMISSION_METHOD_AJAX
+                ) {
+                    $form_id = absint($_POST['gform_submit']);
+                }
+            }
         }
 
         $form = GFAPI::get_form($form_id);
         if (empty($form) || !$form['is_active'] || $form['is_trash']) {
-            return null;
+            return;
         }
 
         if (is_wp_error($form)) {
-            return null;
+            return;
         }
 
         return $this->serialize_form($form);
