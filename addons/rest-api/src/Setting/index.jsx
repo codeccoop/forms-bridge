@@ -6,15 +6,15 @@ import useRestApi from "../hooks/useRestApi";
 const { PanelRow } = wp.components;
 
 export default function RestSetting() {
-  const [{ bridges }, save] = useRestApi();
+  const [{ bridges, templates }, save] = useRestApi();
 
-  const update = (bridges) => save({ bridges });
+  const update = (field) => save({ bridges, templates, ...field });
 
   return (
     <PanelRow>
       <Bridges
         bridges={bridges}
-        setBridges={(bridges) => update(bridges)}
+        setBridges={(bridges) => update({ bridges })}
         Bridge={RestBridge}
       />
     </PanelRow>

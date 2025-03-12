@@ -7,12 +7,13 @@ export default function useGSApi() {
       "google-sheets": api = {
         authorized: false,
         bridges: [],
+        templates: [],
       },
     },
     patch,
   ] = useApis();
 
-  const setApi = (api) => patch({ "google-sheets": api });
+  const setApi = (data) => patch({ "google-sheets": data });
 
   return [api, setApi];
 }

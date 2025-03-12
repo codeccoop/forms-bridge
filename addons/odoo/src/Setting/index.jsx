@@ -8,9 +8,9 @@ const { PanelBody, PanelRow, __experimentalSpacer: Spacer } = wp.components;
 const { __ } = wp.i18n;
 
 export default function OdooSetting() {
-  const [{ databases, bridges }, save] = useOdooApi();
+  const [{ databases, bridges, templates }, save] = useOdooApi();
 
-  const update = (field) => save({ databases, bridges, ...field });
+  const update = (field) => save({ databases, bridges, templates, ...field });
 
   return (
     <>

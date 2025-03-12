@@ -15,13 +15,13 @@ const { useState, useEffect } = wp.element;
 const { __ } = wp.i18n;
 
 export default function GoogleSheetsSetting() {
-  const [{ authorized, bridges }, save] = useGSApi();
+  const [{ authorized, bridges, templates }, save] = useGSApi();
 
   const { grant, revoke, loading, result } = useAjaxGrant();
 
   const [file, setFile] = useState(null);
 
-  const update = (field) => save({ authorized, bridges, ...field });
+  const update = (field) => save({ authorized, bridges, templates, ...field });
 
   const onGrant = () => {
     if (file) grant(file);
