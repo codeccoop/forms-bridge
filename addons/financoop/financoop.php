@@ -205,7 +205,7 @@ class Finan_Coop_Addon extends Addon
 
             if ($is_valid) {
                 $bridge['mappers'] = array_values(
-                    array_filter($bridge['mappers'], function ($pipe) {
+                    array_filter((array) $bridge['mappers'], function ($pipe) {
                         return !(
                             empty($pipe['from']) ||
                             empty($pipe['to']) ||
