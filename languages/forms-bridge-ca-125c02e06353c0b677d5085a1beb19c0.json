@@ -1,7 +1,7 @@
 {
   "translation-revision-date": "2025-03-15 12:19+0000",
   "generator": "WP-CLI\/2.11.0",
-  "source": "addons\/financoop\/assets\/addon.bundle.js",
+  "source": "addons\/zoho\/assets\/addon.bundle.js",
   "domain": "messages",
   "locale_data": {
     "messages": {
@@ -24,7 +24,6 @@
       "Target integration": ["Integraci\u00f3 destinat\u00e0ria"],
       "This name is already in use": ["Aquest n\u00f3m ja s'est\u00e0 usant"],
       "To": ["A"],
-      "financoop": ["FinanCoop"],
       "Loading config error": ["Error de c\u00e0rrega de configuraci\u00f3"],
       "Template submit error": ["Error d'enviament de plantilla"],
       "Bridges": ["Bridges"],
@@ -49,6 +48,8 @@
       "Configure the bridge": ["Configura el bridge"],
       "Previous": ["Anterior"],
       "Next": ["Seg\u00fcent"],
+      "Scope": ["Context"],
+      "zoho": ["Zoho"],
       "Mappers": ["Mapejadors"],
       "Bridge mappers": ["Mapejadors del bridge"],
       "Form mapper": ["Mapejador de formulari"],

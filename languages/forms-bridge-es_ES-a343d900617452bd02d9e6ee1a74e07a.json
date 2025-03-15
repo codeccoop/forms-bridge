@@ -1,5 +1,5 @@
 {
-  "translation-revision-date": "2025-02-14 00:47+0000",
+  "translation-revision-date": "2025-03-15 12:28+0000",
   "generator": "WP-CLI\/2.11.0",
   "source": "assets\/plugin.bundle.js",
   "domain": "messages",
@@ -19,6 +19,7 @@
       "Backend name": ["Nombre del backend"],
       "Backends": ["Backends"],
       "Cancel": ["Cancelar"],
+      "Cancel the import": ["Cancela la importaci\u00f3n"],
       "Config import warning": [
         "Aviso de importaci\u00f3n de configuraci\u00f3n"
       ],
@@ -30,9 +31,11 @@
       "Download config": ["Exportar config"],
       "Drop": ["Descartar"],
       "Export Forms Bridge config as JSON": [
-        "Exportar configuraci\u00f3n JSON"
+        "Exportar configuraci\u00f3n como JSON"
       ],
+      "financoop": ["FinanCoop"],
       "General": ["General"],
+      "google-sheets": ["Google Sheets"],
       "Header-Name": ["Nombre-Cabecera"],
       "If your backend uses custom encoding, Forms Bridge will need a string payload. You can use the `forms_bridge_payload` hook to encode your form submission as string.": [
         "Si tu backend usa una codificaci\u00f3n personalizada, Forms Bridge necesitar\u00e1 una cadena de texto como cuerpo de la petici\u00f3n. Puedes usar el hook `forms_bridge_payload` para codificar las entradas de formulario."
@@ -51,37 +54,35 @@
         "Parece que no dispones de integraciones. Si quieres usar Forms Bridge, antes deber\u00e1s instalar alguna de las extensiones siguientes antes de continuar."
       ],
       "JSON syntax error": ["Error de sintaxis JSON"],
+      "Load settings error": ["Error de carga de configuraci\u00f3n"],
+      "Loading config error": ["Error de carga de configuraci\u00f3n"],
       "Logging": ["Registrando"],
       "Notification receiver": ["Receptor de notificaciones"],
+      "odoo": ["Odoo JSON-RPC"],
       "Remove": ["Eliminar"],
       "rest-api": ["REST API"],
       "Save": ["Guardar"],
+      "Save settings error": ["Error de guardado de configuraci\u00f3n"],
       "Select how Forms Bridge should encode your form submissions.": [
         "Selecciona como quieres que Forms Bridge codifique las entradas de formularios"
       ],
       "Somthing went wrong on the file upload": [
         "Alguna cosa ha ido mal con la subida del fichero"
       ],
+      "Template submit error": ["Error de envio de plantilla"],
       "This name is already in use": ["Este nomre ya est\u00e1 en uso"],
       "Value": ["Valor"],
-      "When logging is activated, logs will be write to `wp-content\/debug.log` and read from them. If your server is not hardened, this file could be public to the web with confidencial data. Make sure to deactivate debugging once you've done.": [
-        "Si el registro est\u00e1 activo, los registros ser\u00e1n escritos en `wp-content\/debug.log` y leidos de ah\u00ed. Si tu servidor no est\u00e1 bien protegido, este fichero puede ser p\u00fablico a trav\u00e9s de la web i exponer informaci\u00f3n confidencials. Asegurate de desactivar la depuraci\u00f3n una vez hayas acabado."
+      "When logging is activated, logs will be write to `wp-content\/uploads\/.forms-bridge.log` and read from them. If your server is not hardened, this file could be public to the web with confidencial data. Make sure to deactivate debugging once you've done.": [
+        "Cuando el registro est\u00e9 activo, los registros de escribir\u00e1n en `wp-content\/uploads\/.forms-bridge.log` y ser\u00e1n leidos de ah\u00ed. Si tu servidor no est\u00e1 protegido, este fichero ser\u00e1 acesible desde la web con informaci\u00f3n confidencial. Asegurate de desactivar la depuraci\u00f3n una vez hayas acabado."
       ],
+      "zoho": ["Zoho"],
       "\ud83d\udc4b Welcome! It seems you have more than one forms builder plugin installed. Before you continue, please, select which plugins do you want to integrate with Forms Bridge.": [
         "\ud83d\udc4b Benvenida! Parece que dispones de m\u00e1s de un constructor de formularios. Antes de continuar, selecciona con que extensiones quieres que se integre Forms Bridge."
       ],
-      "Cancel the import": ["Cancela la importaci\u00f3n"],
-      "financoop": ["FinanCoop"],
-      "google-sheets": ["Google Sheets"],
-      "odoo": ["Odoo JSON-RPC"],
-      "wpforms": ["WPForms"],
       "wpcf7": ["Contact Form 7"],
-      "gf": ["Gravity Forms"],
+      "gf": ["GravityForms"],
       "ninja": ["Ninja Forms"],
-      "Load settings error": ["Error de carga de configuraci\u00f3n"],
-      "Save settings error": ["Error de guardado de configuraci\u00f3n"],
-      "Loading config error": ["Error de carga de configuraci\u00f3n"],
-      "Template submit error": ["Error de envio de plantilla"]
+      "wpforms": ["WPForms"]
     }
   }
 }

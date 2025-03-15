@@ -1,5 +1,5 @@
 {
-  "translation-revision-date": "2025-02-08 03:50+0000",
+  "translation-revision-date": "2025-03-15 12:28+0000",
   "generator": "WP-CLI\/2.11.0",
   "source": "assets\/plugin.bundle.js",
   "domain": "messages",
@@ -54,9 +54,6 @@
       "Somthing went wrong on the file upload": [""],
       "This name is already in use": [""],
       "Value": [""],
-      "When logging is activated, logs will be write to `wp-content\/debug.log` and read from them. If your server is not hardened, this file could be public to the web with confidencial data. Make sure to deactivate debugging once you've done.": [
-        ""
-      ],
       "\ud83d\udc4b Welcome! It seems you have more than one forms builder plugin installed. Before you continue, please, select which plugins do you want to integrate with Forms Bridge.": [
         ""
       ],
@@ -64,14 +61,18 @@
       "financoop": ["FinanCoop"],
       "google-sheets": ["Google Sheets"],
       "odoo": ["Odoo JSON-RPC"],
-      "wpforms": ["WPForms"],
-      "wpcf7": ["Contact Form 7"],
-      "gf": ["Gravity Forms"],
-      "ninja": ["Ninja Forms"],
       "Load settings error": [""],
       "Save settings error": [""],
       "Loading config error": [""],
-      "Template submit error": [""]
+      "Template submit error": [""],
+      "zoho": ["Zoho"],
+      "When logging is activated, logs will be write to `wp-content\/uploads\/.forms-bridge.log` and read from them. If your server is not hardened, this file could be public to the web with confidencial data. Make sure to deactivate debugging once you've done.": [
+        ""
+      ],
+      "wpcf7": ["Contact Form 7"],
+      "gf": ["GravityForms"],
+      "ninja": ["Ninja Forms"],
+      "wpforms": ["WPForms"]
     }
   }
 }

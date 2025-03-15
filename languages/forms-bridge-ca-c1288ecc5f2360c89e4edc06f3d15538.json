@@ -1,5 +1,5 @@
 {
-  "translation-revision-date": "2025-02-14 00:47+0000",
+  "translation-revision-date": "2025-03-15 12:19+0000",
   "generator": "WP-CLI\/2.11.0",
   "source": "addons\/google-sheets\/assets\/addon.bundle.js",
   "domain": "messages",
@@ -11,7 +11,6 @@
         "plural-forms": "nplurals=2; plural=n != 1;"
       },
       "Add": ["Afegir"],
-      "Add Form": ["Afegir Formulari"],
       "Backend": ["Backend"],
       "Cast as": ["Com a"],
       "Database": ["Base de dades"],
@@ -21,12 +20,10 @@
         "Segueix <a href='https:\/\/github.com\/juampynr\/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>l'exemple<\/a> si necessites ajuda amb el process."
       ],
       "Form": ["Formulari"],
-      "Form format pipes": ["Conversors de format"],
       "From": ["De"],
       "Google Service Credentials": ["Credencials de Google Service"],
       "Grant access": ["Garantir acc\u00e9s"],
       "Name": ["N\u00f3m"],
-      "Pipes": ["Conversors"],
       "Remove": ["Eliminar"],
       "Revoke access": ["Revocar l'acc\u00e9s"],
       "Spreadsheet": ["Spreadsheet"],
@@ -40,12 +37,9 @@
         "Has de crear credencials de compte de servei per garantis l'acc\u00e9s de Forms Bridge als teus spreadsheets"
       ],
       "google-sheets": ["Google Sheets"],
-      "Load settings error": ["Error de c\u00e0rrega de configuraci\u00f3"],
-      "Save settings error": ["Error al guardar la configuraci\u00f3"],
       "Loading config error": ["Error de c\u00e0rrega de configuraci\u00f3"],
       "Template submit error": ["Error d'enviament de plantilla"],
       "Bridges": ["Bridges"],
-      "Bridge pipes": ["Pasareles del bridge"],
       "Use tempalte": ["Utilitzar plantilla"],
       "Templates": ["Plantilles"],
       "Congratulations, you've created a new form bridge!": [
@@ -73,7 +67,11 @@
       "Select a Spreadsheet": ["Selecciona un Spreadsheet"],
       "Before you can use spreadsheet bridges, you have to grant access to Forms Bridge as OAuth client": [
         "Abans de poder utilitzar bridges de spreadsheets, has de garantirs l'acces de Forms Bridge com un client OAuth"
-      ]
+      ],
+      "Mappers": ["Mapejadors"],
+      "Bridge mappers": ["Mapejadors del bridge"],
+      "Form mapper": ["Mapejador de formulari"],
+      "Add bridge": ["Afegir bridge"]
     }
   }
 }

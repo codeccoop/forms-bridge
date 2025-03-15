@@ -1,5 +1,5 @@
 {
-  "translation-revision-date": "2025-02-08 03:50+0000",
+  "translation-revision-date": "2025-03-15 12:28+0000",
   "generator": "WP-CLI\/2.11.0",
   "source": "addons\/google-sheets\/assets\/addon.bundle.js",
   "domain": "messages",
@@ -11,7 +11,6 @@
         "plural-forms": "nplurals=2; plural=n != 1;"
       },
       "Add": [""],
-      "Add Form": [""],
       "Backend": [""],
       "Cast as": [""],
       "Database": [""],
@@ -21,12 +20,10 @@
         ""
       ],
       "Form": [""],
-      "Form format pipes": [""],
       "From": [""],
       "Google Service Credentials": [""],
       "Grant access": [""],
       "Name": [""],
-      "Pipes": [""],
       "Remove": [""],
       "Revoke access": [""],
       "Spreadsheet": [""],
@@ -40,12 +37,9 @@
         ""
       ],
       "google-sheets": ["Google Sheets"],
-      "Load settings error": [""],
-      "Save settings error": [""],
       "Loading config error": [""],
       "Template submit error": [""],
       "Bridges": [""],
-      "Bridge pipes": [""],
       "Use tempalte": [""],
       "Templates": [""],
       "Congratulations, you've created a new form bridge!": [""],
@@ -65,7 +59,11 @@
       "Select a Spreadsheet": [""],
       "Before you can use spreadsheet bridges, you have to grant access to Forms Bridge as OAuth client": [
         ""
-      ]
+      ],
+      "Mappers": [""],
+      "Bridge mappers": [""],
+      "Form mapper": [""],
+      "Add bridge": [""]
     }
   }
 }

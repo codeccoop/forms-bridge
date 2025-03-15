@@ -1,5 +1,5 @@
 {
-  "translation-revision-date": "2025-02-14 00:47+0000",
+  "translation-revision-date": "2025-03-15 12:19+0000",
   "generator": "WP-CLI\/2.11.0",
   "source": "assets\/plugin.bundle.js",
   "domain": "messages",
@@ -37,7 +37,7 @@
       "If your backend uses custom encoding, Forms Bridge will need a string payload. You can use the `forms_bridge_payload` hook to encode your form submission as string.": [
         "Si el teu backend fa servir una codificaci\u00f3 personalitzada, Forms Bridge necessitar\u00e0 una cadena de text com a cos del missatge. Pots fer \u00fas del hook `forms_bridge_payload` per codificar les dades."
       ],
-      "Import \/ Export": ["Importar \/ Exportar"],
+      "Import \/ Export": ["Importa \/ Exporta"],
       "Import a new configuration is a destructive action. Your current configuration will be replaced with the new one. If there are some errors on the new config, Forms Bridge will filter it to avoid bugs.": [
         "La importaci\u00f3 de nova configuraci\u00f3 \u00e9s una acci\u00f3 destructiva. La teva configuraci\u00f3 actual ser\u00e0 reempla\u00e7ada per la nova. Si es dona algun error amb la nova configuraci\u00f3, Forms Bridge la netejar\u00e0 per tal d'evitar problemes."
       ],
@@ -64,9 +64,6 @@
       ],
       "This name is already in use": ["Aquest n\u00f3m ja s'est\u00e0 usant"],
       "Value": ["Valor"],
-      "When logging is activated, logs will be write to `wp-content\/debug.log` and read from them. If your server is not hardened, this file could be public to the web with confidencial data. Make sure to deactivate debugging once you've done.": [
-        "Si el registre est\u00e0 activat, els registres seran escrits a `wp-content\/debug.log` i llegists des d'all\u00e0. Si el teu servidor no est\u00e0 ben protegit, aquest arxiu pot ser d'acc\u00e9s p\u00fablic des de la web i exposar dades confidencials. Assegurat de desactivat la depuraci\u00f3 un cop hagis acabat."
-      ],
       "\ud83d\udc4b Welcome! It seems you have more than one forms builder plugin installed. Before you continue, please, select which plugins do you want to integrate with Forms Bridge.": [
         "Benvinguda! Sembla que tens m\u00e9s d'un constructor de formularsi instal\u00b7lat. Abans de continuar, si us plau, selecciona amb quines extensions vols que s'integri Forms Bridge."
       ],
@@ -74,14 +71,18 @@
       "financoop": ["FinanCoop"],
       "google-sheets": ["Google Sheets"],
       "odoo": ["Odoo JSON-RPC"],
-      "wpforms": ["WPForms"],
-      "wpcf7": ["Contact Form 7"],
-      "gf": ["Gravity Forms"],
-      "ninja": ["Ninja Forms"],
       "Load settings error": ["Error de c\u00e0rrega de configuraci\u00f3"],
       "Save settings error": ["Error al guardar la configuraci\u00f3"],
       "Loading config error": ["Error de c\u00e0rrega de configuraci\u00f3"],
-      "Template submit error": ["Error d'enviament de plantilla"]
+      "Template submit error": ["Error d'enviament de plantilla"],
+      "zoho": ["Zoho"],
+      "When logging is activated, logs will be write to `wp-content\/uploads\/.forms-bridge.log` and read from them. If your server is not hardened, this file could be public to the web with confidencial data. Make sure to deactivate debugging once you've done.": [
+        "Quan el registre est\u00e0 activat, els registres seran escrits a `wp-content\/uploads\/.forms-bridge.log` i llegits d'all\u00e0. Si el teu servidor no est\u00e0 protegit, aquest fitxer ser\u00e0 publicament accessible des de la web amb informaci\u00f3 confidencials. Assegura't de desactivar la depuraci\u00f3 un cop hagis acabat."
+      ],
+      "wpcf7": ["Contact Form 7"],
+      "gf": ["GravityForms"],
+      "ninja": ["Ninja Forms"],
+      "wpforms": ["WPForms"]
     }
   }
 }

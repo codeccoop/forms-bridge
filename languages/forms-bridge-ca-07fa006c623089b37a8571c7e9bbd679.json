@@ -1,5 +1,5 @@
 {
-  "translation-revision-date": "2025-02-14 00:47+0000",
+  "translation-revision-date": "2025-03-15 12:19+0000",
   "generator": "WP-CLI\/2.11.0",
   "source": "addons\/rest-api\/assets\/addon.bundle.js",
   "domain": "messages",
@@ -11,30 +11,24 @@
         "plural-forms": "nplurals=2; plural=n != 1;"
       },
       "Add": ["Afegir"],
-      "Add Form": ["Afegir Formulari"],
       "Backend": ["Backend"],
       "Cast as": ["Com a"],
       "Done": ["Fet"],
       "Drop": ["Descartar"],
       "Endpoint": ["Endpoint"],
       "Form": ["Formulari"],
-      "Form format pipes": ["Conversors de format"],
       "From": ["De"],
       "Method": ["M\u00e8tode"],
       "Name": ["N\u00f3m"],
-      "Pipes": ["Conversors"],
       "Remove": ["Eliminar"],
       "rest-api": ["REST API"],
       "Submit": ["Enviar"],
       "Target integration": ["Integraci\u00f3 destinat\u00e0ria"],
       "This name is already in use": ["Aquest n\u00f3m ja s'est\u00e0 usant"],
       "To": ["A"],
-      "Load settings error": ["Error de c\u00e0rrega de configuraci\u00f3"],
-      "Save settings error": ["Error al guardar la configuraci\u00f3"],
       "Loading config error": ["Error de c\u00e0rrega de configuraci\u00f3"],
       "Template submit error": ["Error d'enviament de plantilla"],
       "Bridges": ["Bridges"],
-      "Bridge pipes": ["Pasareles del bridge"],
       "Use tempalte": ["Utilitzar plantilla"],
       "Templates": ["Plantilles"],
       "Congratulations, you've created a new form bridge!": [
@@ -55,7 +49,11 @@
       "Bridge": ["Bridge"],
       "Configure the bridge": ["Configura el bridge"],
       "Previous": ["Anterior"],
-      "Next": ["Seg\u00fcent"]
+      "Next": ["Seg\u00fcent"],
+      "Mappers": ["Mapejadors"],
+      "Bridge mappers": ["Mapejadors del bridge"],
+      "Form mapper": ["Mapejador de formulari"],
+      "Add bridge": ["Afegir bridge"]
     }
   }
 }

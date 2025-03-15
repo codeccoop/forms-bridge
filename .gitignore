@@ -27,5 +27,6 @@ addons/enabled/*
 .store
 
 # loco
+languages/*.php
 languages/*.po~
 languages/*.pot~

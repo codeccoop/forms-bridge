@@ -224,7 +224,7 @@ abstract class Integration extends Singleton
                         _doing_it_wrong(
                             'forms_bridge_form',
                             __(
-                                '$form_id param should incloude the integration prefix if there is more than one integration active',
+                                '$form_id param should include the integration prefix if there is more than one integration active',
                                 'forms-bridge'
                             ),
                             '2.3.0'

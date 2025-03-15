@@ -1,5 +1,5 @@
 {
-  "translation-revision-date": "2025-02-14 00:47+0000",
+  "translation-revision-date": "2025-03-15 12:19+0000",
   "generator": "WP-CLI\/2.11.0",
   "source": "addons\/odoo\/assets\/addon.bundle.js",
   "domain": "messages",
@@ -12,7 +12,6 @@
       },
       "Add": ["Afegir"],
       "Add database": ["Afegir base de dades"],
-      "Add Form": ["Afegir Formulari"],
       "Backend": ["Backend"],
       "Cast as": ["Com a"],
       "Database": ["Base de dades"],
@@ -20,12 +19,10 @@
       "Done": ["Fet"],
       "Drop": ["Descartar"],
       "Form": ["Formulari"],
-      "Form format pipes": ["Conversors de format"],
       "From": ["De"],
       "Model": ["Model"],
       "Name": ["N\u00f3m"],
       "Password": ["Contrasenya"],
-      "Pipes": ["Conversors"],
       "Remove": ["Eliminar"],
       "Submit": ["Enviar"],
       "Target integration": ["Integraci\u00f3 destinat\u00e0ria"],
@@ -33,12 +30,9 @@
       "To": ["A"],
       "User": ["Usuari"],
       "odoo": ["Odoo JSON-RPC"],
-      "Load settings error": ["Error de c\u00e0rrega de configuraci\u00f3"],
-      "Save settings error": ["Error al guardar la configuraci\u00f3"],
       "Loading config error": ["Error de c\u00e0rrega de configuraci\u00f3"],
       "Template submit error": ["Error d'enviament de plantilla"],
       "Bridges": ["Bridges"],
-      "Bridge pipes": ["Pasareles del bridge"],
       "Use tempalte": ["Utilitzar plantilla"],
       "Templates": ["Plantilles"],
       "Congratulations, you've created a new form bridge!": [
@@ -63,7 +57,11 @@
       "Configure the Odoo database connection": [
         "Configura la connexi\u00f3 amb la base de dades d'Odoo"
       ],
-      "Reuse database": ["Reutilitza una base de dades"]
+      "Reuse a database": ["Reutilitza una base de dades"],
+      "Mappers": ["Mapejadors"],
+      "Bridge mappers": ["Mapejadors del bridge"],
+      "Form mapper": ["Mapejador de formulari"],
+      "Add bridge": ["Afegir bridge"]
     }
   }
 }
