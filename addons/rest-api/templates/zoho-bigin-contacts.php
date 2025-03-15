@@ -7,17 +7,34 @@ if (!defined('ABSPATH')) {
 }
 
 add_filter(
+    'http_request_args',
+    function ($args) {
+        if (
+            isset($args['headers']['Origin']) &&
+            $args['headers']['Origin'] === 'zoho-bigin-contacts'
+        ) {
+            unset($args['headers']['Origin']);
+        } elseif (
+            isset($args['headers']['origin']) &&
+            $args['headers']['origin'] === 'zoho-bigin-contacts'
+        ) {
+            unset($args['headers']['origin']);
+        }
+
+        return $args;
+    },
+    10,
+    2
+);
+
+add_filter(
     'forms_bridge_payload',
     function ($payload, $bridge) {
         if ($bridge->template !== 'zoho-bigin-contacts') {
             return $payload;
         }
 
-        return [
-            'data' => [
-                array_merge($payload, ['Owner' => ['id' => '20104985568']]),
-            ],
-        ];
+        return ['data' => [$payload]];
     },
     90,
     2
@@ -43,8 +60,9 @@ function forms_bridge_zoho_bigin_headers()
     $access_token = $credentials['access_token'] ?? '';
 
     return [
+        'Origin' => 'zoho-bigin-contacts',
         'Content-Type' => 'application/json',
-        'Accept' => 'application/json;charset=UTF-8',
+        'Accept' => 'application/json',
         'Authorization' => 'Zoho-oauthtoken ' . $access_token,
     ];
 }
@@ -226,8 +244,13 @@ return [
                 'required' => true,
             ],
             [
-                'name' => 'Mobile',
+                'name' => 'Phone',
                 'label' => __('Phone', 'forms-bridge'),
+                'type' => 'text',
+            ],
+            [
+                'name' => 'Mobile',
+                'label' => __('Mobile', 'forms-bridge'),
                 'type' => 'text',
             ],
             [
