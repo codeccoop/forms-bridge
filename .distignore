@@ -9,7 +9,7 @@ eslint.config.*
 .lintstagedrc.js
 .prettierrc
 .prettierrc-php
-.prettierrcignore
+.prettierignore
 .husky
 .git
 .gitignore
