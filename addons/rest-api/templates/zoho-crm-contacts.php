@@ -40,11 +40,11 @@ add_filter(
     2
 );
 
-function forms_bridge_zoho_crm_headers()
+function forms_bridge_zoho_crm_contacts_headers()
 {
     remove_filter(
         'http_bridge_backend_headers',
-        'forms_bridge_zoho_crm_headers',
+        'forms_bridge_zoho_crm_contacts_headers',
         10,
         0
     );
@@ -79,7 +79,7 @@ add_action(
 
         add_filter(
             'http_bridge_backend_headers',
-            'forms_bridge_zoho_crm_headers',
+            'forms_bridge_zoho_crm_contacts_headers',
             10,
             0
         );
