@@ -15,6 +15,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Loco-Version: 2.7.1; wp-6.7.2\n"
 
+#: addons/dolibarr/assets/addon.bundle.js:744
+#: addons/dolibarr/assets/addon.bundle.js:1095
 #: addons/financoop/assets/addon.bundle.js:744
 #: addons/financoop/assets/addon.bundle.js:1095
 #: addons/google-sheets/assets/addon.bundle.js:771
@@ -35,6 +37,7 @@ msgstr "Añadir"
 msgid "Add Backend"
 msgstr "Añadir Backend"
 
+#: addons/dolibarr/assets/addon.bundle.js:473
 #: addons/financoop/assets/addon.bundle.js:473
 #: addons/google-sheets/assets/addon.bundle.js:500
 #: addons/odoo/assets/addon.bundle.js:473
@@ -55,6 +58,9 @@ msgstr "Addons"
 msgid "Are you sure to continue?"
 msgstr "¿Seguro que quieres continuar?"
 
+#: addons/dolibarr/assets/addon.bundle.js:1054
+#: addons/dolibarr/assets/addon.bundle.js:1205
+#: addons/dolibarr/assets/addon.bundle.js:1567
 #: addons/financoop/assets/addon.bundle.js:1054
 #: addons/financoop/assets/addon.bundle.js:1205
 #: addons/financoop/assets/addon.bundle.js:1567
@@ -97,6 +103,7 @@ msgstr "Backends"
 msgid "Before you can use spreadsheet bridges, you have to grant access to Forms Bridge as OAuth client"
 msgstr "Antes de poder utilizar bridges de spreadsheet, has de garantizar el acceso de Forms Bridge como un cliente OAuth"
 
+#: addons/dolibarr/assets/addon.bundle.js:1662
 #: addons/financoop/assets/addon.bundle.js:1662
 #: addons/financoop/assets/addon.bundle.js:1926
 #: addons/google-sheets/assets/addon.bundle.js:1689
@@ -106,6 +113,7 @@ msgstr "Antes de poder utilizar bridges de spreadsheet, has de garantizar el acc
 msgid "Bridge"
 msgstr "Bridge"
 
+#: addons/dolibarr/assets/addon.bundle.js:784
 #: addons/financoop/assets/addon.bundle.js:784
 #: addons/google-sheets/assets/addon.bundle.js:811
 #: addons/odoo/assets/addon.bundle.js:784
@@ -114,6 +122,7 @@ msgstr "Bridge"
 msgid "Bridge mappers"
 msgstr "Mapeadores del Bridge"
 
+#: addons/dolibarr/assets/addon.bundle.js:541
 #: addons/financoop/assets/addon.bundle.js:541
 #: addons/google-sheets/assets/addon.bundle.js:568
 #: addons/odoo/assets/addon.bundle.js:541
@@ -130,6 +139,7 @@ msgstr "Cancelar"
 msgid "Cancel the import"
 msgstr "Cancela la importación"
 
+#: addons/dolibarr/assets/addon.bundle.js:712
 #: addons/financoop/assets/addon.bundle.js:712
 #: addons/google-sheets/assets/addon.bundle.js:739
 #: addons/odoo/assets/addon.bundle.js:712
@@ -138,6 +148,7 @@ msgstr "Cancela la importación"
 msgid "Cast as"
 msgstr "Como"
 
+#: addons/dolibarr/assets/addon.bundle.js:904
 #: addons/financoop/assets/addon.bundle.js:904
 #: addons/google-sheets/assets/addon.bundle.js:931
 #: addons/odoo/assets/addon.bundle.js:904
@@ -155,6 +166,7 @@ msgstr "codeccoop"
 msgid "Config import warning"
 msgstr "Aviso de importación de configuración"
 
+#: addons/dolibarr/assets/addon.bundle.js:1568
 #: addons/financoop/assets/addon.bundle.js:1568
 #: addons/google-sheets/assets/addon.bundle.js:1595
 #: addons/odoo/assets/addon.bundle.js:1577
@@ -163,6 +175,7 @@ msgstr "Aviso de importación de configuración"
 msgid "Configure the backend to bridge your form to"
 msgstr "Configura un backend al que contectarse"
 
+#: addons/dolibarr/assets/addon.bundle.js:1663
 #: addons/financoop/assets/addon.bundle.js:1663
 #: addons/financoop/assets/addon.bundle.js:1927
 #: addons/google-sheets/assets/addon.bundle.js:1690
@@ -176,6 +189,7 @@ msgstr "Configura el bridge"
 msgid "Configure the Odoo database connection"
 msgstr "Configura la conexión con la base de datos de Odoo"
 
+#: addons/dolibarr/assets/addon.bundle.js:889
 #: addons/financoop/assets/addon.bundle.js:889
 #: addons/google-sheets/assets/addon.bundle.js:916
 #: addons/odoo/assets/addon.bundle.js:889
@@ -215,6 +229,7 @@ msgstr "Bases de datos"
 msgid "Debug"
 msgstr "Depurar"
 
+#: addons/dolibarr/assets/addon.bundle.js:747
 #: addons/financoop/assets/addon.bundle.js:747
 #: addons/google-sheets/assets/addon.bundle.js:774
 #: addons/odoo/assets/addon.bundle.js:747
@@ -227,6 +242,7 @@ msgstr "Hecho"
 msgid "Download config"
 msgstr "Exportar config"
 
+#: addons/dolibarr/assets/addon.bundle.js:730
 #: addons/financoop/assets/addon.bundle.js:730
 #: addons/google-sheets/assets/addon.bundle.js:757
 #: addons/odoo/assets/addon.bundle.js:730
@@ -236,6 +252,8 @@ msgstr "Exportar config"
 msgid "Drop"
 msgstr "Descartar"
 
+#: addons/dolibarr/assets/addon.bundle.js:1919
+#: addons/dolibarr/assets/addon.bundle.js:1954
 #: addons/financoop/assets/addon.bundle.js:2050
 #: addons/financoop/assets/addon.bundle.js:2083
 #: addons/rest-api/assets/addon.bundle.js:1952
@@ -258,6 +276,9 @@ msgstr "FinanCoop"
 msgid "Follow <a href='https://github.com/juampynr/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>example</a> if do you need help with the process."
 msgstr "Sigue <a href='https://github.com/juampynr/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>este ejemplo</a> si necesitas ayuda con el proceso."
 
+#: addons/dolibarr/assets/addon.bundle.js:1066
+#: addons/dolibarr/assets/addon.bundle.js:1217
+#: addons/dolibarr/assets/addon.bundle.js:1627
 #: addons/financoop/assets/addon.bundle.js:1066
 #: addons/financoop/assets/addon.bundle.js:1217
 #: addons/financoop/assets/addon.bundle.js:1627
@@ -276,6 +297,7 @@ msgstr "Sigue <a href='https://github.com/juampynr/google-spreadsheet-reader?tab
 msgid "Form"
 msgstr "Formulario"
 
+#: addons/dolibarr/assets/addon.bundle.js:679
 #: addons/financoop/assets/addon.bundle.js:679
 #: addons/google-sheets/assets/addon.bundle.js:706
 #: addons/odoo/assets/addon.bundle.js:679
@@ -289,6 +311,7 @@ msgstr "Mapeador de formulario"
 msgid "Forms Bridge"
 msgstr "Forms Bridge"
 
+#: addons/dolibarr/assets/addon.bundle.js:693
 #: addons/financoop/assets/addon.bundle.js:693
 #: addons/google-sheets/assets/addon.bundle.js:720
 #: addons/odoo/assets/addon.bundle.js:693
@@ -368,6 +391,7 @@ msgstr "Error de sintaxis JSON"
 msgid "Load settings error"
 msgstr "Error de carga de configuración"
 
+#: addons/dolibarr/assets/addon.bundle.js:324
 #: addons/financoop/assets/addon.bundle.js:324
 #: addons/google-sheets/assets/addon.bundle.js:324
 #: addons/odoo/assets/addon.bundle.js:324
@@ -381,6 +405,7 @@ msgstr "Error de carga de configuración"
 msgid "Logging"
 msgstr "Registrando"
 
+#: addons/dolibarr/assets/addon.bundle.js:780
 #: addons/financoop/assets/addon.bundle.js:780
 #: addons/google-sheets/assets/addon.bundle.js:807
 #: addons/odoo/assets/addon.bundle.js:780
@@ -399,6 +424,8 @@ msgstr "Método"
 msgid "Model"
 msgstr "Modelo"
 
+#: addons/dolibarr/assets/addon.bundle.js:1039
+#: addons/dolibarr/assets/addon.bundle.js:1190
 #: addons/financoop/assets/addon.bundle.js:1039
 #: addons/financoop/assets/addon.bundle.js:1190
 #: addons/google-sheets/assets/addon.bundle.js:1066
@@ -414,6 +441,7 @@ msgstr "Modelo"
 msgid "Name"
 msgstr "Nombre"
 
+#: addons/dolibarr/assets/addon.bundle.js:1876
 #: addons/financoop/assets/addon.bundle.js:1876
 #: addons/google-sheets/assets/addon.bundle.js:1903
 #: addons/odoo/assets/addon.bundle.js:1885
@@ -441,6 +469,7 @@ msgstr "Contraseña"
 msgid "Plugin to bridge WP forms submissions to any backend or service"
 msgstr "Extensión para conectar formularios de WP con cualquier backend o servicio"
 
+#: addons/dolibarr/assets/addon.bundle.js:1628
 #: addons/financoop/assets/addon.bundle.js:1628
 #: addons/google-sheets/assets/addon.bundle.js:1655
 #: addons/odoo/assets/addon.bundle.js:1637
@@ -449,6 +478,7 @@ msgstr "Extensión para conectar formularios de WP con cualquier backend o servi
 msgid "Populate the form default values"
 msgstr "Rellena los valores por defecto del formulario"
 
+#: addons/dolibarr/assets/addon.bundle.js:1868
 #: addons/financoop/assets/addon.bundle.js:1868
 #: addons/google-sheets/assets/addon.bundle.js:1895
 #: addons/odoo/assets/addon.bundle.js:1877
@@ -457,6 +487,7 @@ msgstr "Rellena los valores por defecto del formulario"
 msgid "Previous"
 msgstr "Anterior"
 
+#: addons/dolibarr/assets/addon.bundle.js:1248
 #: addons/financoop/assets/addon.bundle.js:1248
 #: addons/google-sheets/assets/addon.bundle.js:1275
 #: addons/odoo/assets/addon.bundle.js:1248
@@ -476,6 +507,7 @@ msgstr "REST API"
 msgid "Reuse a database"
 msgstr "Reutiliza una base de datos"
 
+#: addons/dolibarr/assets/addon.bundle.js:1574
 #: addons/financoop/assets/addon.bundle.js:1574
 #: addons/google-sheets/assets/addon.bundle.js:1601
 #: addons/odoo/assets/addon.bundle.js:1583
@@ -505,6 +537,7 @@ msgstr "Contexto"
 msgid "Select a Spreadsheet"
 msgstr "Selecciona un Spreadsheet"
 
+#: addons/dolibarr/assets/addon.bundle.js:922
 #: addons/financoop/assets/addon.bundle.js:922
 #: addons/google-sheets/assets/addon.bundle.js:949
 #: addons/odoo/assets/addon.bundle.js:922
@@ -530,6 +563,7 @@ msgstr "Alguna cosa ha ido mal con la subida del fichero"
 msgid "Spreadsheet"
 msgstr "Spreadsheet"
 
+#: addons/dolibarr/assets/addon.bundle.js:1880
 #: addons/financoop/assets/addon.bundle.js:1880
 #: addons/google-sheets/assets/addon.bundle.js:1907
 #: addons/odoo/assets/addon.bundle.js:1889
@@ -543,6 +577,7 @@ msgstr "Enviar"
 msgid "Tab Name"
 msgstr "Nombre de pestaña"
 
+#: addons/dolibarr/assets/addon.bundle.js:912
 #: addons/financoop/assets/addon.bundle.js:912
 #: addons/google-sheets/assets/addon.bundle.js:939
 #: addons/odoo/assets/addon.bundle.js:912
@@ -551,6 +586,7 @@ msgstr "Nombre de pestaña"
 msgid "Target integration"
 msgstr "Integración destinataria"
 
+#: addons/dolibarr/assets/addon.bundle.js:346
 #: addons/financoop/assets/addon.bundle.js:346
 #: addons/google-sheets/assets/addon.bundle.js:346
 #: addons/odoo/assets/addon.bundle.js:346
@@ -560,6 +596,7 @@ msgstr "Integración destinataria"
 msgid "Template submit error"
 msgstr "Error de envio de plantilla"
 
+#: addons/dolibarr/assets/addon.bundle.js:883
 #: addons/financoop/assets/addon.bundle.js:883
 #: addons/google-sheets/assets/addon.bundle.js:910
 #: addons/odoo/assets/addon.bundle.js:883
@@ -568,6 +605,7 @@ msgstr "Error de envio de plantilla"
 msgid "Templates"
 msgstr "Plantillas"
 
+#: addons/dolibarr/assets/addon.bundle.js:1380
 #: addons/financoop/assets/addon.bundle.js:1380
 #: addons/google-sheets/assets/addon.bundle.js:1407
 #: addons/odoo/assets/addon.bundle.js:1389
@@ -576,6 +614,7 @@ msgstr "Plantillas"
 msgid "The value is not a number"
 msgstr "El valor no es un número"
 
+#: addons/dolibarr/assets/addon.bundle.js:1385
 #: addons/financoop/assets/addon.bundle.js:1385
 #: addons/google-sheets/assets/addon.bundle.js:1412
 #: addons/odoo/assets/addon.bundle.js:1394
@@ -584,6 +623,7 @@ msgstr "El valor no es un número"
 msgid "The value is too large"
 msgstr "El valor es demasiado grande"
 
+#: addons/dolibarr/assets/addon.bundle.js:1383
 #: addons/financoop/assets/addon.bundle.js:1383
 #: addons/google-sheets/assets/addon.bundle.js:1410
 #: addons/odoo/assets/addon.bundle.js:1392
@@ -592,6 +632,9 @@ msgstr "El valor es demasiado grande"
 msgid "The value is too small"
 msgstr "El valor es demasiado pequeño"
 
+#: addons/dolibarr/assets/addon.bundle.js:1042
+#: addons/dolibarr/assets/addon.bundle.js:1193
+#: addons/dolibarr/assets/addon.bundle.js:1584
 #: addons/financoop/assets/addon.bundle.js:1042
 #: addons/financoop/assets/addon.bundle.js:1193
 #: addons/financoop/assets/addon.bundle.js:1584
@@ -615,6 +658,7 @@ msgstr "El valor es demasiado pequeño"
 msgid "This name is already in use"
 msgstr "Este nomre ya está en uso"
 
+#: addons/dolibarr/assets/addon.bundle.js:703
 #: addons/financoop/assets/addon.bundle.js:703
 #: addons/google-sheets/assets/addon.bundle.js:730
 #: addons/odoo/assets/addon.bundle.js:703
@@ -627,6 +671,7 @@ msgstr "A"
 msgid "Upload credentials"
 msgstr "Subir credenciales"
 
+#: addons/dolibarr/assets/addon.bundle.js:879
 #: addons/financoop/assets/addon.bundle.js:879
 #: addons/google-sheets/assets/addon.bundle.js:906
 #: addons/odoo/assets/addon.bundle.js:879
@@ -676,3 +721,8 @@ msgstr "Ninja Forms"
 #: assets/plugin.bundle.js
 msgid "wpforms"
 msgstr "WPForms"
+
+#: assets/plugin.bundle.js
+#: addons/dolibarr/assets/addon.bundle.js:2054
+msgid "dolibarr"
+msgstr "Dolibarr"

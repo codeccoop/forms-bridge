@@ -15,6 +15,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Loco-Version: 2.7.1; wp-6.7.2\n"
 
+#: addons/dolibarr/assets/addon.bundle.js:744
+#: addons/dolibarr/assets/addon.bundle.js:1095
 #: addons/financoop/assets/addon.bundle.js:744
 #: addons/financoop/assets/addon.bundle.js:1095
 #: addons/google-sheets/assets/addon.bundle.js:771
@@ -47,6 +49,9 @@ msgstr ""
 msgid "Are you sure to continue?"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1054
+#: addons/dolibarr/assets/addon.bundle.js:1205
+#: addons/dolibarr/assets/addon.bundle.js:1567
 #: addons/financoop/assets/addon.bundle.js:1054
 #: addons/financoop/assets/addon.bundle.js:1205
 #: addons/financoop/assets/addon.bundle.js:1567
@@ -89,6 +94,7 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:712
 #: addons/financoop/assets/addon.bundle.js:712
 #: addons/google-sheets/assets/addon.bundle.js:739
 #: addons/odoo/assets/addon.bundle.js:712
@@ -137,6 +143,7 @@ msgstr ""
 msgid "Debug"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:747
 #: addons/financoop/assets/addon.bundle.js:747
 #: addons/google-sheets/assets/addon.bundle.js:774
 #: addons/odoo/assets/addon.bundle.js:747
@@ -149,6 +156,7 @@ msgstr ""
 msgid "Download config"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:730
 #: addons/financoop/assets/addon.bundle.js:730
 #: addons/google-sheets/assets/addon.bundle.js:757
 #: addons/odoo/assets/addon.bundle.js:730
@@ -158,6 +166,8 @@ msgstr ""
 msgid "Drop"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1919
+#: addons/dolibarr/assets/addon.bundle.js:1954
 #: addons/financoop/assets/addon.bundle.js:2050
 #: addons/financoop/assets/addon.bundle.js:2083
 #: addons/rest-api/assets/addon.bundle.js:1952
@@ -175,6 +185,9 @@ msgstr ""
 msgid "Follow <a href='https://github.com/juampynr/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>example</a> if do you need help with the process."
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1066
+#: addons/dolibarr/assets/addon.bundle.js:1217
+#: addons/dolibarr/assets/addon.bundle.js:1627
 #: addons/financoop/assets/addon.bundle.js:1066
 #: addons/financoop/assets/addon.bundle.js:1217
 #: addons/financoop/assets/addon.bundle.js:1627
@@ -198,6 +211,7 @@ msgstr ""
 msgid "Forms Bridge"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:693
 #: addons/financoop/assets/addon.bundle.js:693
 #: addons/google-sheets/assets/addon.bundle.js:720
 #: addons/odoo/assets/addon.bundle.js:693
@@ -282,6 +296,8 @@ msgstr ""
 msgid "Model"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1039
+#: addons/dolibarr/assets/addon.bundle.js:1190
 #: addons/financoop/assets/addon.bundle.js:1039
 #: addons/financoop/assets/addon.bundle.js:1190
 #: addons/google-sheets/assets/addon.bundle.js:1066
@@ -306,6 +322,7 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1248
 #: addons/financoop/assets/addon.bundle.js:1248
 #: addons/google-sheets/assets/addon.bundle.js:1275
 #: addons/odoo/assets/addon.bundle.js:1248
@@ -342,6 +359,7 @@ msgstr ""
 msgid "Spreadsheet"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1880
 #: addons/financoop/assets/addon.bundle.js:1880
 #: addons/google-sheets/assets/addon.bundle.js:1907
 #: addons/odoo/assets/addon.bundle.js:1889
@@ -355,6 +373,7 @@ msgstr ""
 msgid "Tab Name"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:912
 #: addons/financoop/assets/addon.bundle.js:912
 #: addons/google-sheets/assets/addon.bundle.js:939
 #: addons/odoo/assets/addon.bundle.js:912
@@ -363,6 +382,9 @@ msgstr ""
 msgid "Target integration"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1042
+#: addons/dolibarr/assets/addon.bundle.js:1193
+#: addons/dolibarr/assets/addon.bundle.js:1584
 #: addons/financoop/assets/addon.bundle.js:1042
 #: addons/financoop/assets/addon.bundle.js:1193
 #: addons/financoop/assets/addon.bundle.js:1584
@@ -386,6 +408,7 @@ msgstr ""
 msgid "This name is already in use"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:703
 #: addons/financoop/assets/addon.bundle.js:703
 #: addons/google-sheets/assets/addon.bundle.js:730
 #: addons/odoo/assets/addon.bundle.js:703
@@ -447,6 +470,7 @@ msgstr ""
 msgid "Save settings error"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:324
 #: addons/financoop/assets/addon.bundle.js:324
 #: addons/google-sheets/assets/addon.bundle.js:324
 #: addons/odoo/assets/addon.bundle.js:324
@@ -456,6 +480,7 @@ msgstr ""
 msgid "Loading config error"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:346
 #: addons/financoop/assets/addon.bundle.js:346
 #: addons/google-sheets/assets/addon.bundle.js:346
 #: addons/odoo/assets/addon.bundle.js:346
@@ -465,6 +490,7 @@ msgstr ""
 msgid "Template submit error"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:541
 #: addons/financoop/assets/addon.bundle.js:541
 #: addons/google-sheets/assets/addon.bundle.js:568
 #: addons/odoo/assets/addon.bundle.js:541
@@ -473,6 +499,7 @@ msgstr ""
 msgid "Bridges"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:879
 #: addons/financoop/assets/addon.bundle.js:879
 #: addons/google-sheets/assets/addon.bundle.js:906
 #: addons/odoo/assets/addon.bundle.js:879
@@ -481,6 +508,7 @@ msgstr ""
 msgid "Use tempalte"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:883
 #: addons/financoop/assets/addon.bundle.js:883
 #: addons/google-sheets/assets/addon.bundle.js:910
 #: addons/odoo/assets/addon.bundle.js:883
@@ -489,6 +517,7 @@ msgstr ""
 msgid "Templates"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:889
 #: addons/financoop/assets/addon.bundle.js:889
 #: addons/google-sheets/assets/addon.bundle.js:916
 #: addons/odoo/assets/addon.bundle.js:889
@@ -497,6 +526,7 @@ msgstr ""
 msgid "Congratulations, you've created a new form bridge!"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:904
 #: addons/financoop/assets/addon.bundle.js:904
 #: addons/google-sheets/assets/addon.bundle.js:931
 #: addons/odoo/assets/addon.bundle.js:904
@@ -505,6 +535,7 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:922
 #: addons/financoop/assets/addon.bundle.js:922
 #: addons/google-sheets/assets/addon.bundle.js:949
 #: addons/odoo/assets/addon.bundle.js:922
@@ -513,6 +544,7 @@ msgstr ""
 msgid "Select a template"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1380
 #: addons/financoop/assets/addon.bundle.js:1380
 #: addons/google-sheets/assets/addon.bundle.js:1407
 #: addons/odoo/assets/addon.bundle.js:1389
@@ -521,6 +553,7 @@ msgstr ""
 msgid "The value is not a number"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1383
 #: addons/financoop/assets/addon.bundle.js:1383
 #: addons/google-sheets/assets/addon.bundle.js:1410
 #: addons/odoo/assets/addon.bundle.js:1392
@@ -529,6 +562,7 @@ msgstr ""
 msgid "The value is too small"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1385
 #: addons/financoop/assets/addon.bundle.js:1385
 #: addons/google-sheets/assets/addon.bundle.js:1412
 #: addons/odoo/assets/addon.bundle.js:1394
@@ -537,6 +571,7 @@ msgstr ""
 msgid "The value is too large"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1568
 #: addons/financoop/assets/addon.bundle.js:1568
 #: addons/google-sheets/assets/addon.bundle.js:1595
 #: addons/odoo/assets/addon.bundle.js:1577
@@ -545,6 +580,7 @@ msgstr ""
 msgid "Configure the backend to bridge your form to"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1574
 #: addons/financoop/assets/addon.bundle.js:1574
 #: addons/google-sheets/assets/addon.bundle.js:1601
 #: addons/odoo/assets/addon.bundle.js:1583
@@ -553,6 +589,7 @@ msgstr ""
 msgid "Reuse backend"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1628
 #: addons/financoop/assets/addon.bundle.js:1628
 #: addons/google-sheets/assets/addon.bundle.js:1655
 #: addons/odoo/assets/addon.bundle.js:1637
@@ -561,6 +598,7 @@ msgstr ""
 msgid "Populate the form default values"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1662
 #: addons/financoop/assets/addon.bundle.js:1662
 #: addons/financoop/assets/addon.bundle.js:1926
 #: addons/google-sheets/assets/addon.bundle.js:1689
@@ -570,6 +608,7 @@ msgstr ""
 msgid "Bridge"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1663
 #: addons/financoop/assets/addon.bundle.js:1663
 #: addons/financoop/assets/addon.bundle.js:1927
 #: addons/google-sheets/assets/addon.bundle.js:1690
@@ -579,6 +618,7 @@ msgstr ""
 msgid "Configure the bridge"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1868
 #: addons/financoop/assets/addon.bundle.js:1868
 #: addons/google-sheets/assets/addon.bundle.js:1895
 #: addons/odoo/assets/addon.bundle.js:1877
@@ -587,6 +627,7 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:1876
 #: addons/financoop/assets/addon.bundle.js:1876
 #: addons/google-sheets/assets/addon.bundle.js:1903
 #: addons/odoo/assets/addon.bundle.js:1885
@@ -625,6 +666,7 @@ msgstr ""
 msgid "zoho"
 msgstr "Zoho"
 
+#: addons/dolibarr/assets/addon.bundle.js:780
 #: addons/financoop/assets/addon.bundle.js:780
 #: addons/google-sheets/assets/addon.bundle.js:807
 #: addons/odoo/assets/addon.bundle.js:780
@@ -633,6 +675,7 @@ msgstr "Zoho"
 msgid "Mappers"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:784
 #: addons/financoop/assets/addon.bundle.js:784
 #: addons/google-sheets/assets/addon.bundle.js:811
 #: addons/odoo/assets/addon.bundle.js:784
@@ -641,6 +684,7 @@ msgstr ""
 msgid "Bridge mappers"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:679
 #: addons/financoop/assets/addon.bundle.js:679
 #: addons/google-sheets/assets/addon.bundle.js:706
 #: addons/odoo/assets/addon.bundle.js:679
@@ -649,6 +693,7 @@ msgstr ""
 msgid "Form mapper"
 msgstr ""
 
+#: addons/dolibarr/assets/addon.bundle.js:473
 #: addons/financoop/assets/addon.bundle.js:473
 #: addons/google-sheets/assets/addon.bundle.js:500
 #: addons/odoo/assets/addon.bundle.js:473
@@ -676,3 +721,8 @@ msgstr "Ninja Forms"
 #: assets/plugin.bundle.js
 msgid "wpforms"
 msgstr "WPForms"
+
+#: assets/plugin.bundle.js
+#: addons/dolibarr/assets/addon.bundle.js:2054
+msgid "dolibarr"
+msgstr "Dolibarr"

@@ -1,0 +1,58 @@
+{
+  "translation-revision-date": "2025-03-15 12:19+0000",
+  "generator": "WP-CLI\/2.11.0",
+  "source": "addons\/dolibarr\/assets\/addon.bundle.js",
+  "domain": "messages",
+  "locale_data": {
+    "messages": {
+      "": {
+        "domain": "messages",
+        "lang": "ca",
+        "plural-forms": "nplurals=2; plural=n != 1;"
+      },
+      "Add": ["Afegir"],
+      "Backend": ["Backend"],
+      "Cast as": ["Com a"],
+      "Done": ["Fet"],
+      "Drop": ["Descartar"],
+      "Endpoint": ["Endpoint"],
+      "Form": ["Formulari"],
+      "From": ["De"],
+      "Name": ["N\u00f3m"],
+      "Remove": ["Eliminar"],
+      "Submit": ["Enviar"],
+      "Target integration": ["Integraci\u00f3 destinat\u00e0ria"],
+      "This name is already in use": ["Aquest n\u00f3m ja s'est\u00e0 usant"],
+      "To": ["A"],
+      "Loading config error": ["Error de c\u00e0rrega de configuraci\u00f3"],
+      "Template submit error": ["Error d'enviament de plantilla"],
+      "Bridges": ["Bridges"],
+      "Use tempalte": ["Utilitzar plantilla"],
+      "Templates": ["Plantilles"],
+      "Congratulations, you've created a new form bridge!": [
+        "Felicitats, has creat un nou bridge de formulari!"
+      ],
+      "Close": ["Tancar"],
+      "Select a template": ["Selecciona una plantilla"],
+      "The value is not a number": ["El valor no \u00e9s un n\u00famero"],
+      "The value is too small": ["El valor \u00e9s massa petit"],
+      "The value is too large": ["El valor \u00e9s massa gran"],
+      "Configure the backend to bridge your form to": [
+        "Configura el backend a on connctar-se"
+      ],
+      "Reuse backend": ["Reutilitza un backend"],
+      "Populate the form default values": [
+        "Emplena els valors per defecte del formulari"
+      ],
+      "Bridge": ["Bridge"],
+      "Configure the bridge": ["Configura el bridge"],
+      "Previous": ["Anterior"],
+      "Next": ["Seg\u00fcent"],
+      "Mappers": ["Mapejadors"],
+      "Bridge mappers": ["Mapejadors del bridge"],
+      "Form mapper": ["Mapejador de formulari"],
+      "Add bridge": ["Afegir bridge"],
+      "dolibarr": ["Dolibarr"]
+    }
+  }
+}

@@ -15,6 +15,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Loco-Version: 2.7.1; wp-6.7.2\n"
 
+#: addons/dolibarr/assets/addon.bundle.js:744
+#: addons/dolibarr/assets/addon.bundle.js:1095
 #: addons/financoop/assets/addon.bundle.js:744
 #: addons/financoop/assets/addon.bundle.js:1095
 #: addons/google-sheets/assets/addon.bundle.js:771
@@ -47,6 +49,9 @@ msgstr "Addons"
 msgid "Are you sure to continue?"
 msgstr "Segur que vols continuar?"
 
+#: addons/dolibarr/assets/addon.bundle.js:1054
+#: addons/dolibarr/assets/addon.bundle.js:1205
+#: addons/dolibarr/assets/addon.bundle.js:1567
 #: addons/financoop/assets/addon.bundle.js:1054
 #: addons/financoop/assets/addon.bundle.js:1205
 #: addons/financoop/assets/addon.bundle.js:1567
@@ -89,6 +94,7 @@ msgstr "Backends"
 msgid "Cancel"
 msgstr "Cancelar"
 
+#: addons/dolibarr/assets/addon.bundle.js:712
 #: addons/financoop/assets/addon.bundle.js:712
 #: addons/google-sheets/assets/addon.bundle.js:739
 #: addons/odoo/assets/addon.bundle.js:712
@@ -137,6 +143,7 @@ msgstr "Bases de dades"
 msgid "Debug"
 msgstr "Depurar"
 
+#: addons/dolibarr/assets/addon.bundle.js:747
 #: addons/financoop/assets/addon.bundle.js:747
 #: addons/google-sheets/assets/addon.bundle.js:774
 #: addons/odoo/assets/addon.bundle.js:747
@@ -149,6 +156,7 @@ msgstr "Fet"
 msgid "Download config"
 msgstr "Exportar config"
 
+#: addons/dolibarr/assets/addon.bundle.js:730
 #: addons/financoop/assets/addon.bundle.js:730
 #: addons/google-sheets/assets/addon.bundle.js:757
 #: addons/odoo/assets/addon.bundle.js:730
@@ -158,6 +166,8 @@ msgstr "Exportar config"
 msgid "Drop"
 msgstr "Descartar"
 
+#: addons/dolibarr/assets/addon.bundle.js:1919
+#: addons/dolibarr/assets/addon.bundle.js:1954
 #: addons/financoop/assets/addon.bundle.js:2050
 #: addons/financoop/assets/addon.bundle.js:2083
 #: addons/rest-api/assets/addon.bundle.js:1952
@@ -175,6 +185,9 @@ msgstr "Exporta la configuració com a JSON"
 msgid "Follow <a href='https://github.com/juampynr/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>example</a> if do you need help with the process."
 msgstr "Segueix <a href='https://github.com/juampynr/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>l'exemple</a> si necessites ajuda amb el process."
 
+#: addons/dolibarr/assets/addon.bundle.js:1066
+#: addons/dolibarr/assets/addon.bundle.js:1217
+#: addons/dolibarr/assets/addon.bundle.js:1627
 #: addons/financoop/assets/addon.bundle.js:1066
 #: addons/financoop/assets/addon.bundle.js:1217
 #: addons/financoop/assets/addon.bundle.js:1627
@@ -198,6 +211,7 @@ msgstr "Formulari"
 msgid "Forms Bridge"
 msgstr "Forms Bridge"
 
+#: addons/dolibarr/assets/addon.bundle.js:693
 #: addons/financoop/assets/addon.bundle.js:693
 #: addons/google-sheets/assets/addon.bundle.js:720
 #: addons/odoo/assets/addon.bundle.js:693
@@ -282,6 +296,8 @@ msgstr "Mètode"
 msgid "Model"
 msgstr "Model"
 
+#: addons/dolibarr/assets/addon.bundle.js:1039
+#: addons/dolibarr/assets/addon.bundle.js:1190
 #: addons/financoop/assets/addon.bundle.js:1039
 #: addons/financoop/assets/addon.bundle.js:1190
 #: addons/google-sheets/assets/addon.bundle.js:1066
@@ -306,6 +322,7 @@ msgstr "Receptor de notificacions"
 msgid "Password"
 msgstr "Contrasenya"
 
+#: addons/dolibarr/assets/addon.bundle.js:1248
 #: addons/financoop/assets/addon.bundle.js:1248
 #: addons/google-sheets/assets/addon.bundle.js:1275
 #: addons/odoo/assets/addon.bundle.js:1248
@@ -342,6 +359,7 @@ msgstr "Alguna cosa ha anat malament amb la pujada de l'arxiu"
 msgid "Spreadsheet"
 msgstr "Spreadsheet"
 
+#: addons/dolibarr/assets/addon.bundle.js:1880
 #: addons/financoop/assets/addon.bundle.js:1880
 #: addons/google-sheets/assets/addon.bundle.js:1907
 #: addons/odoo/assets/addon.bundle.js:1889
@@ -355,6 +373,7 @@ msgstr "Enviar"
 msgid "Tab Name"
 msgstr "Nom de la pestanya"
 
+#: addons/dolibarr/assets/addon.bundle.js:912
 #: addons/financoop/assets/addon.bundle.js:912
 #: addons/google-sheets/assets/addon.bundle.js:939
 #: addons/odoo/assets/addon.bundle.js:912
@@ -363,6 +382,9 @@ msgstr "Nom de la pestanya"
 msgid "Target integration"
 msgstr "Integració destinatària"
 
+#: addons/dolibarr/assets/addon.bundle.js:1042
+#: addons/dolibarr/assets/addon.bundle.js:1193
+#: addons/dolibarr/assets/addon.bundle.js:1584
 #: addons/financoop/assets/addon.bundle.js:1042
 #: addons/financoop/assets/addon.bundle.js:1193
 #: addons/financoop/assets/addon.bundle.js:1584
@@ -386,6 +408,7 @@ msgstr "Integració destinatària"
 msgid "This name is already in use"
 msgstr "Aquest nóm ja s'està usant"
 
+#: addons/dolibarr/assets/addon.bundle.js:703
 #: addons/financoop/assets/addon.bundle.js:703
 #: addons/google-sheets/assets/addon.bundle.js:730
 #: addons/odoo/assets/addon.bundle.js:703
@@ -447,6 +470,7 @@ msgstr "Error de càrrega de configuració"
 msgid "Save settings error"
 msgstr "Error al guardar la configuració"
 
+#: addons/dolibarr/assets/addon.bundle.js:324
 #: addons/financoop/assets/addon.bundle.js:324
 #: addons/google-sheets/assets/addon.bundle.js:324
 #: addons/odoo/assets/addon.bundle.js:324
@@ -456,6 +480,7 @@ msgstr "Error al guardar la configuració"
 msgid "Loading config error"
 msgstr "Error de càrrega de configuració"
 
+#: addons/dolibarr/assets/addon.bundle.js:346
 #: addons/financoop/assets/addon.bundle.js:346
 #: addons/google-sheets/assets/addon.bundle.js:346
 #: addons/odoo/assets/addon.bundle.js:346
@@ -465,6 +490,7 @@ msgstr "Error de càrrega de configuració"
 msgid "Template submit error"
 msgstr "Error d'enviament de plantilla"
 
+#: addons/dolibarr/assets/addon.bundle.js:541
 #: addons/financoop/assets/addon.bundle.js:541
 #: addons/google-sheets/assets/addon.bundle.js:568
 #: addons/odoo/assets/addon.bundle.js:541
@@ -473,6 +499,7 @@ msgstr "Error d'enviament de plantilla"
 msgid "Bridges"
 msgstr "Bridges"
 
+#: addons/dolibarr/assets/addon.bundle.js:879
 #: addons/financoop/assets/addon.bundle.js:879
 #: addons/google-sheets/assets/addon.bundle.js:906
 #: addons/odoo/assets/addon.bundle.js:879
@@ -481,6 +508,7 @@ msgstr "Bridges"
 msgid "Use tempalte"
 msgstr "Utilitzar plantilla"
 
+#: addons/dolibarr/assets/addon.bundle.js:883
 #: addons/financoop/assets/addon.bundle.js:883
 #: addons/google-sheets/assets/addon.bundle.js:910
 #: addons/odoo/assets/addon.bundle.js:883
@@ -489,6 +517,7 @@ msgstr "Utilitzar plantilla"
 msgid "Templates"
 msgstr "Plantilles"
 
+#: addons/dolibarr/assets/addon.bundle.js:889
 #: addons/financoop/assets/addon.bundle.js:889
 #: addons/google-sheets/assets/addon.bundle.js:916
 #: addons/odoo/assets/addon.bundle.js:889
@@ -497,6 +526,7 @@ msgstr "Plantilles"
 msgid "Congratulations, you've created a new form bridge!"
 msgstr "Felicitats, has creat un nou bridge de formulari!"
 
+#: addons/dolibarr/assets/addon.bundle.js:904
 #: addons/financoop/assets/addon.bundle.js:904
 #: addons/google-sheets/assets/addon.bundle.js:931
 #: addons/odoo/assets/addon.bundle.js:904
@@ -505,6 +535,7 @@ msgstr "Felicitats, has creat un nou bridge de formulari!"
 msgid "Close"
 msgstr "Tancar"
 
+#: addons/dolibarr/assets/addon.bundle.js:922
 #: addons/financoop/assets/addon.bundle.js:922
 #: addons/google-sheets/assets/addon.bundle.js:949
 #: addons/odoo/assets/addon.bundle.js:922
@@ -513,6 +544,7 @@ msgstr "Tancar"
 msgid "Select a template"
 msgstr "Selecciona una plantilla"
 
+#: addons/dolibarr/assets/addon.bundle.js:1380
 #: addons/financoop/assets/addon.bundle.js:1380
 #: addons/google-sheets/assets/addon.bundle.js:1407
 #: addons/odoo/assets/addon.bundle.js:1389
@@ -521,6 +553,7 @@ msgstr "Selecciona una plantilla"
 msgid "The value is not a number"
 msgstr "El valor no és un número"
 
+#: addons/dolibarr/assets/addon.bundle.js:1383
 #: addons/financoop/assets/addon.bundle.js:1383
 #: addons/google-sheets/assets/addon.bundle.js:1410
 #: addons/odoo/assets/addon.bundle.js:1392
@@ -529,6 +562,7 @@ msgstr "El valor no és un número"
 msgid "The value is too small"
 msgstr "El valor és massa petit"
 
+#: addons/dolibarr/assets/addon.bundle.js:1385
 #: addons/financoop/assets/addon.bundle.js:1385
 #: addons/google-sheets/assets/addon.bundle.js:1412
 #: addons/odoo/assets/addon.bundle.js:1394
@@ -537,6 +571,7 @@ msgstr "El valor és massa petit"
 msgid "The value is too large"
 msgstr "El valor és massa gran"
 
+#: addons/dolibarr/assets/addon.bundle.js:1568
 #: addons/financoop/assets/addon.bundle.js:1568
 #: addons/google-sheets/assets/addon.bundle.js:1595
 #: addons/odoo/assets/addon.bundle.js:1577
@@ -545,6 +580,7 @@ msgstr "El valor és massa gran"
 msgid "Configure the backend to bridge your form to"
 msgstr "Configura el backend a on connctar-se"
 
+#: addons/dolibarr/assets/addon.bundle.js:1574
 #: addons/financoop/assets/addon.bundle.js:1574
 #: addons/google-sheets/assets/addon.bundle.js:1601
 #: addons/odoo/assets/addon.bundle.js:1583
@@ -553,6 +589,7 @@ msgstr "Configura el backend a on connctar-se"
 msgid "Reuse backend"
 msgstr "Reutilitza un backend"
 
+#: addons/dolibarr/assets/addon.bundle.js:1628
 #: addons/financoop/assets/addon.bundle.js:1628
 #: addons/google-sheets/assets/addon.bundle.js:1655
 #: addons/odoo/assets/addon.bundle.js:1637
@@ -561,6 +598,7 @@ msgstr "Reutilitza un backend"
 msgid "Populate the form default values"
 msgstr "Emplena els valors per defecte del formulari"
 
+#: addons/dolibarr/assets/addon.bundle.js:1662
 #: addons/financoop/assets/addon.bundle.js:1662
 #: addons/financoop/assets/addon.bundle.js:1926
 #: addons/google-sheets/assets/addon.bundle.js:1689
@@ -570,6 +608,7 @@ msgstr "Emplena els valors per defecte del formulari"
 msgid "Bridge"
 msgstr "Bridge"
 
+#: addons/dolibarr/assets/addon.bundle.js:1663
 #: addons/financoop/assets/addon.bundle.js:1663
 #: addons/financoop/assets/addon.bundle.js:1927
 #: addons/google-sheets/assets/addon.bundle.js:1690
@@ -579,6 +618,7 @@ msgstr "Bridge"
 msgid "Configure the bridge"
 msgstr "Configura el bridge"
 
+#: addons/dolibarr/assets/addon.bundle.js:1868
 #: addons/financoop/assets/addon.bundle.js:1868
 #: addons/google-sheets/assets/addon.bundle.js:1895
 #: addons/odoo/assets/addon.bundle.js:1877
@@ -587,6 +627,7 @@ msgstr "Configura el bridge"
 msgid "Previous"
 msgstr "Anterior"
 
+#: addons/dolibarr/assets/addon.bundle.js:1876
 #: addons/financoop/assets/addon.bundle.js:1876
 #: addons/google-sheets/assets/addon.bundle.js:1903
 #: addons/odoo/assets/addon.bundle.js:1885
@@ -625,6 +666,7 @@ msgstr "Reutilitza una base de dades"
 msgid "zoho"
 msgstr "Zoho"
 
+#: addons/dolibarr/assets/addon.bundle.js:780
 #: addons/financoop/assets/addon.bundle.js:780
 #: addons/google-sheets/assets/addon.bundle.js:807
 #: addons/odoo/assets/addon.bundle.js:780
@@ -633,6 +675,7 @@ msgstr "Zoho"
 msgid "Mappers"
 msgstr "Mapejadors"
 
+#: addons/dolibarr/assets/addon.bundle.js:784
 #: addons/financoop/assets/addon.bundle.js:784
 #: addons/google-sheets/assets/addon.bundle.js:811
 #: addons/odoo/assets/addon.bundle.js:784
@@ -641,6 +684,7 @@ msgstr "Mapejadors"
 msgid "Bridge mappers"
 msgstr "Mapejadors del bridge"
 
+#: addons/dolibarr/assets/addon.bundle.js:679
 #: addons/financoop/assets/addon.bundle.js:679
 #: addons/google-sheets/assets/addon.bundle.js:706
 #: addons/odoo/assets/addon.bundle.js:679
@@ -649,6 +693,7 @@ msgstr "Mapejadors del bridge"
 msgid "Form mapper"
 msgstr "Mapejador de formulari"
 
+#: addons/dolibarr/assets/addon.bundle.js:473
 #: addons/financoop/assets/addon.bundle.js:473
 #: addons/google-sheets/assets/addon.bundle.js:500
 #: addons/odoo/assets/addon.bundle.js:473
@@ -676,3 +721,8 @@ msgstr "Ninja Forms"
 #: assets/plugin.bundle.js
 msgid "wpforms"
 msgstr "WPForms"
+
+#: assets/plugin.bundle.js
+#: addons/dolibarr/assets/addon.bundle.js:2054
+msgid "dolibarr"
+msgstr "Dolibarr"

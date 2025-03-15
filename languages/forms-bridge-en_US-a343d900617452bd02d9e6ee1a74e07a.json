@@ -72,7 +72,8 @@
       "wpcf7": ["Contact Form 7"],
       "gf": ["GravityForms"],
       "ninja": ["Ninja Forms"],
-      "wpforms": ["WPForms"]
+      "wpforms": ["WPForms"],
+      "dolibarr": ["Dolibarr"]
     }
   }
 }

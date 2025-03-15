@@ -1,0 +1,52 @@
+{
+  "translation-revision-date": "2025-03-15 12:28+0000",
+  "generator": "WP-CLI\/2.11.0",
+  "source": "addons\/dolibarr\/assets\/addon.bundle.js",
+  "domain": "messages",
+  "locale_data": {
+    "messages": {
+      "": {
+        "domain": "messages",
+        "lang": "en_US",
+        "plural-forms": "nplurals=2; plural=n != 1;"
+      },
+      "Add": [""],
+      "Backend": [""],
+      "Cast as": [""],
+      "Done": [""],
+      "Drop": [""],
+      "Endpoint": [""],
+      "Form": [""],
+      "From": [""],
+      "Name": [""],
+      "Remove": [""],
+      "Submit": [""],
+      "Target integration": [""],
+      "This name is already in use": [""],
+      "To": [""],
+      "Loading config error": [""],
+      "Template submit error": [""],
+      "Bridges": [""],
+      "Use tempalte": [""],
+      "Templates": [""],
+      "Congratulations, you've created a new form bridge!": [""],
+      "Close": [""],
+      "Select a template": [""],
+      "The value is not a number": [""],
+      "The value is too small": [""],
+      "The value is too large": [""],
+      "Configure the backend to bridge your form to": [""],
+      "Reuse backend": [""],
+      "Populate the form default values": [""],
+      "Bridge": [""],
+      "Configure the bridge": [""],
+      "Previous": [""],
+      "Next": [""],
+      "Mappers": [""],
+      "Bridge mappers": [""],
+      "Form mapper": [""],
+      "Add bridge": [""],
+      "dolibarr": ["Dolibarr"]
+    }
+  }
+}

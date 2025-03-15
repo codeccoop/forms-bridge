@@ -1,0 +1,58 @@
+{
+  "translation-revision-date": "2025-03-15 12:28+0000",
+  "generator": "WP-CLI\/2.11.0",
+  "source": "addons\/dolibarr\/assets\/addon.bundle.js",
+  "domain": "messages",
+  "locale_data": {
+    "messages": {
+      "": {
+        "domain": "messages",
+        "lang": "es_ES",
+        "plural-forms": "nplurals=2; plural=n != 1;"
+      },
+      "Add": ["A\u00f1adir"],
+      "Add bridge": ["A\u00f1adir bridge"],
+      "Backend": ["Backend"],
+      "Bridge": ["Bridge"],
+      "Bridge mappers": ["Mapeadores del Bridge"],
+      "Bridges": ["Bridges"],
+      "Cast as": ["Como"],
+      "Close": ["Cerrar"],
+      "Configure the backend to bridge your form to": [
+        "Configura un backend al que contectarse"
+      ],
+      "Configure the bridge": ["Configura el bridge"],
+      "Congratulations, you've created a new form bridge!": [
+        "Felicidades, has creado un nuevo bridge de formulario!"
+      ],
+      "Done": ["Hecho"],
+      "Drop": ["Descartar"],
+      "Endpoint": ["Endpoint"],
+      "Form": ["Formulario"],
+      "Form mapper": ["Mapeador de formulario"],
+      "From": ["De"],
+      "Loading config error": ["Error de carga de configuraci\u00f3n"],
+      "Mappers": ["Mapeadores"],
+      "Name": ["Nombre"],
+      "Next": ["Siguiente"],
+      "Populate the form default values": [
+        "Rellena los valores por defecto del formulario"
+      ],
+      "Previous": ["Anterior"],
+      "Remove": ["Eliminar"],
+      "Reuse backend": ["Reutiliza un backend"],
+      "Select a template": ["Selecciona una plantilla"],
+      "Submit": ["Enviar"],
+      "Target integration": ["Integraci\u00f3n destinataria"],
+      "Template submit error": ["Error de envio de plantilla"],
+      "Templates": ["Plantillas"],
+      "The value is not a number": ["El valor no es un n\u00famero"],
+      "The value is too large": ["El valor es demasiado grande"],
+      "The value is too small": ["El valor es demasiado peque\u00f1o"],
+      "This name is already in use": ["Este nomre ya est\u00e1 en uso"],
+      "To": ["A"],
+      "Use tempalte": ["Usar plantilla"],
+      "dolibarr": ["Dolibarr"]
+    }
+  }
+}
