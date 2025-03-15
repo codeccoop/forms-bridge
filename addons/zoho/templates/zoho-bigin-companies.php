@@ -28,7 +28,7 @@ add_action(
         if ($bridge->template === 'zoho-bigin-companies') {
             add_action(
                 'http_bridge_response',
-                'forms_bridge_on_company_http_response',
+                'forms_bridge_on_bigin_company_http_response',
                 10,
                 2
             );
@@ -38,7 +38,7 @@ add_action(
     1
 );
 
-function forms_bridge_on_company_http_response($res, $req)
+function forms_bridge_on_bigin_company_http_response($res, $req)
 {
     if (strstr($req['url'], '/bigin/v2/Accounts') !== false) {
         remove_action(
