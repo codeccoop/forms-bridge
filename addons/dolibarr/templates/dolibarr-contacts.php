@@ -14,8 +14,6 @@ add_filter(
             );
 
             $field = &$data['form']['fields'][$index];
-            $field['value'] =
-                isset($field['value'][0]) && $field['value'][0] === '1';
             $field['value'] = !$field['value'];
         }
 
@@ -50,7 +48,7 @@ return [
         ],
     ],
     'form' => [
-        'title' => __('Dolibarr Leads', 'forms-bridge'),
+        'title' => __('Contacts', 'forms-bridge'),
         'fields' => [
             [
                 'name' => 'status',

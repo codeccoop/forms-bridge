@@ -43,7 +43,7 @@ add_filter(
 );
 
 return [
-    'title' => __('Dolibarr individual prospects', 'forms-bridge'),
+    'title' => __('Dolibarr Individual Prospects', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#bridge',
