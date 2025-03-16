@@ -244,6 +244,7 @@ class Form_Bridge_Template
                                     'url',
                                     'email',
                                     'options',
+                                    'date',
                                     'hidden',
                                 ],
                             ],
@@ -420,25 +421,26 @@ class Form_Bridge_Template
         }
 
         if ($schema['type'] === 'object') {
-            foreach ($default as $item) {
+            foreach ($default as $default_item) {
                 $col_item = null;
                 for ($i = 0; $i < count($collection); $i++) {
                     $col_item = $collection[$i];
 
                     if (
-                        $col_item['name'] === $item['name'] &&
-                        ($col_item['ref'] ?? false) === ($item['ref'] ?? false)
+                        $col_item['name'] === $default_item['name'] &&
+                        ($col_item['ref'] ?? false) ===
+                            ($default_item['ref'] ?? false)
                     ) {
                         break;
                     }
                 }
 
                 if ($i === count($collection)) {
-                    $collection[] = $item;
+                    $collection[] = $default_item;
                 } else {
                     $collection[$i] = self::merge_array(
                         $col_item,
-                        $default,
+                        $default_item,
                         $schema
                     );
                 }
@@ -700,6 +702,15 @@ class Form_Bridge_Template
                 $field['value'] = array_merge($form_field, [
                     'value' => $field['value'],
                 ]);
+
+                if (
+                    $field['type'] === 'boolean' &&
+                    isset($field['value']['value']) &&
+                    is_array($field['value']['value'])
+                ) {
+                    $field['value']['value'] =
+                        ($field['value']['value'][0] ?? false) === '1';
+                }
             }
 
             // Format backend headers' values

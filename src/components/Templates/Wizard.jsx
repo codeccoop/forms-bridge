@@ -131,7 +131,35 @@ export default function TemplateWizard({
       integration,
       fields: fields.map((field) => {
         const group = refToGroup(field.ref);
-        return { ...field, value: data[group][field.name] };
+
+        if (Object.prototype.hasOwnProperty.call(data[group], field.name)) {
+          if (field.type === "boolean") {
+            field.value = !!data[group][field.name][0];
+          } else {
+            field.value = data[group][field.name];
+          }
+        } else if (field.default) {
+          field.value = field.default;
+        } else if (!field.required) {
+          switch (field.type) {
+            case "text":
+              field.value = "";
+              break;
+            case "number":
+              field.value = 0;
+              break;
+            case "options":
+              field.value = [];
+              break;
+            case "boolean":
+              field.value = false;
+              break;
+            default:
+              field.value = "";
+          }
+        }
+
+        return field;
       }),
     }).finally(() => onDone());
   };
