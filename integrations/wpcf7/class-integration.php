@@ -386,7 +386,7 @@ class Integration extends BaseIntegration
             }
         }
 
-        if ($type === 'select') {
+        if ($type === 'select' || $type === 'select*') {
             $options = array_map(function ($opt) {
                 return $opt['label'] . '|' . $opt['value'];
             }, $field['options'] ?? []);
