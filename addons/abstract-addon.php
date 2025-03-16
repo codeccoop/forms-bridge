@@ -155,6 +155,12 @@ abstract class Addon extends Singleton
         );
     }
 
+    final public static function lazy_load()
+    {
+        static::load();
+        do_action('wpct_init_store');
+    }
+
     /**
      * Abstract setting registration method to be overwriten by its descendants.
      */
