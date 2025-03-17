@@ -11,37 +11,17 @@ add_filter(
             return $payload;
         }
 
-        $team = $payload['team'];
-
-        add_filter(
-            'forms_bridge_rpc_payload',
-            function ($payload, $bridge) use ($team) {
-                if ($bridge->template !== 'odoo-crm-team-leads') {
-                    return $payload;
-                }
-
-                $data = $payload['params']['args'][5] ?? null;
-                if (empty($data)) {
-                    return $payload;
-                }
-
-                if (isset($data['name']) && $data['name'] === $team) {
-                    $payload['params']['args'][3] = 'crm.team';
-                    $payload['params']['args'][4] = 'search';
-                    $payload['params']['args'][5] = [['name', '=', $team]];
-                }
-
-                return $payload;
-            },
-            20,
-            2
-        );
-
-        $response = $bridge->submit(['name' => $payload['team']]);
+        $response = $bridge
+            ->patch([
+                'name' => 'odoo-rpc-search-lead-team-owner',
+                'template' => null,
+                'method' => 'search',
+                'model' => 'crm.team',
+            ])
+            ->submit([['name', '=', $payload['team']]]);
 
         if (is_wp_error($response)) {
             do_action('forms_bridge_on_failure', $bridge, $response, $payload);
-
             return;
         }
 
@@ -49,54 +29,54 @@ add_filter(
         $payload['team_id'] = $team_id;
         unset($payload['team']);
 
-        $contact = [
-            'name' => $payload['contact_name'],
-            'email' => $payload['email'],
-            'phone' => $payload['phone'] ?? '',
-        ];
-
-        add_filter(
-            'forms_bridge_rpc_payload',
-            function ($payload, $bridge) use ($contact) {
-                if ($bridge->template !== 'odoo-crm-team-leads') {
-                    return $payload;
-                }
-
-                $data = $payload['params']['args'][5] ?? null;
-                if (empty($data)) {
-                    return $payload;
-                }
-
-                $name = $data['name'] ?? null;
-                $email = $data['email'] ?? null;
-
-                if (
-                    $email === $contact['email'] &&
-                    $name === $contact['name']
-                ) {
-                    $payload['params']['args'][3] = 'res.partner';
-                }
-
-                return $payload;
-            },
-            20,
-            2
-        );
-
-        $response = $bridge->submit($contact);
+        $response = $bridge
+            ->patch([
+                'name' => 'odoo-rpc-search-team-lead-contact-by-email',
+                'template' => null,
+                'method' => 'search',
+                'model' => 'res.partner',
+            ])
+            ->submit([
+                ['email', '=', $payload['email']],
+                ['is_company', '=', false],
+            ]);
 
         if (is_wp_error($response)) {
-            do_action('forms_bridge_on_failure', $bridge, $response, $payload);
+            $contact = [
+                'is_company' => false,
+                'name' => $payload['contact_name'],
+                'email' => $payload['email'],
+                'phone' => $payload['phone'] ?? '',
+            ];
 
-            return;
+            $response = $bridge
+                ->patch([
+                    'name' => 'odoo-rpc-create-team-lead-contact',
+                    'template' => null,
+                    'model' => 'res.partner',
+                ])
+                ->submit($contact);
+
+            if (is_wp_error($response)) {
+                do_action(
+                    'forms_bridge_on_failure',
+                    $bridge,
+                    $response,
+                    $payload
+                );
+                return;
+            }
+
+            $partner_id = $response['data']['result'];
+        } else {
+            $partner_id = $response['data']['result'][0];
         }
+
+        $payload['partner_id'] = $partner_id;
 
         unset($payload['contact_name']);
         unset($payload['email']);
         unset($payload['phone']);
-
-        $partner_id = $response['data']['result'];
-        $payload['partner_id'] = $partner_id;
 
         return $payload;
     },

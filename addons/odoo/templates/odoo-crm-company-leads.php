@@ -56,43 +56,19 @@ add_filter(
             $payload['vat'] = $payload['country_code'] . $payload['vat'];
         }
 
-        $user_email = base64_decode($payload['owner']);
-        $payload['owner'] = $user_email;
+        $payload['owner'] = base64_decode($payload['owner']);
 
-        add_filter(
-            'forms_bridge_rpc_payload',
-            function ($payload, $bridge) use ($user_email) {
-                if ($bridge->template !== 'odoo-crm-company-leads') {
-                    return $payload;
-                }
-
-                $data = $payload['params']['args'][5] ?? null;
-                if (empty($data)) {
-                    return $payload;
-                }
-
-                if (
-                    isset($data['user_email']) &&
-                    $data['user_email'] === $user_email
-                ) {
-                    $payload['params']['args'][3] = 'res.users';
-                    $payload['params']['args'][4] = 'search';
-                    $payload['params']['args'][5] = [
-                        ['email', '=', $user_email],
-                    ];
-                }
-
-                return $payload;
-            },
-            20,
-            2
-        );
-
-        $response = $bridge->submit(['user_email' => $user_email]);
+        $response = $bridge
+            ->patch([
+                'name' => 'odoo-rpc-search-company-lead-owner-by-email',
+                'template' => null,
+                'method' => 'search',
+                'model' => 'res.users',
+            ])
+            ->submit([['email', '=', $payload['owner']]]);
 
         if (is_wp_error($response)) {
             do_action('forms_bridge_on_failure', $bridge, $response, $payload);
-
             return;
         }
 
@@ -100,50 +76,52 @@ add_filter(
         $payload['user_id'] = $user_id;
         unset($payload['owner']);
 
-        $company = [
-            'vat' => $payload['vat'],
-            'name' => $payload['company_name'],
-            'street' => $payload['street'],
-            'city' => $payload['city'],
-            'zip' => $payload['zip'],
-            'country_code' => $payload['country_code'],
-        ];
-
-        add_filter(
-            'forms_bridge_rpc_payload',
-            function ($payload, $bridge) use ($company) {
-                if ($bridge->template !== 'odoo-crm-company-leads') {
-                    return $payload;
-                }
-
-                $data = $payload['params']['args'][5] ?? null;
-                if (empty($data)) {
-                    return $payload;
-                }
-
-                $name = $data['name'] ?? null;
-                $vat = $data['vat'] ?? null;
-
-                if ($vat === $company['vat'] && $name === $company['name']) {
-                    $payload['params']['args'][3] = 'res.partner';
-                    $payload['params']['args'][5] = $company;
-                }
-
-                return $payload;
-            },
-            20,
-            2
-        );
-
-        $response = $bridge->submit($company);
+        $response = $bridge
+            ->patch([
+                'name' => 'odoo-rpc-search-lead-company-by-vat',
+                'template' => null,
+                'method' => 'search',
+                'model' => 'res.partner',
+            ])
+            ->submit([
+                ['vat', '=', $payload['vat']],
+                ['is_company', '=', true],
+            ]);
 
         if (is_wp_error($response)) {
-            do_action('forms_bridge_on_failure', $bridge, $response, $payload);
+            $company = [
+                'is_company' => true,
+                'vat' => $payload['vat'],
+                'name' => $payload['company_name'],
+                'street' => $payload['street'],
+                'city' => $payload['city'],
+                'zip' => $payload['zip'],
+                'country_code' => $payload['country_code'],
+            ];
 
-            return;
+            $response = $bridge
+                ->patch([
+                    'name' => 'odoo-rpc-create-company-lead-company',
+                    'template' => null,
+                    'model' => 'res.partner',
+                ])
+                ->submit($company);
+
+            if (is_wp_error($response)) {
+                do_action(
+                    'forms_bridge_on_failure',
+                    $bridge,
+                    $response,
+                    $payload
+                );
+                return;
+            }
+
+            $partner_id = $response['data']['result'];
+        } else {
+            $partner_id = $response['data']['result'][0];
         }
 
-        $partner_id = $response['data']['result'];
         $payload['partner_id'] = $partner_id;
 
         unset($payload['vat']);
@@ -153,49 +131,44 @@ add_filter(
         unset($payload['zip']);
         unset($payload['country_code']);
 
-        $contact = [
-            'name' => $payload['contact_name'],
-            'email' => $payload['email'],
-            'phone' => $payload['phone'] ?? '',
-            'function' => $payload['function'],
-            'parent_id' => $partner_id,
-        ];
-
-        add_filter(
-            'forms_bridge_rpc_payload',
-            function ($payload, $bridge) use ($contact) {
-                if ($bridge->template !== 'odoo-crm-company-leads') {
-                    return $payload;
-                }
-
-                $data = $payload['params']['args'][5] ?? null;
-                if (empty($data)) {
-                    return $payload;
-                }
-
-                $name = $data['name'] ?? null;
-                $email = $data['email'] ?? null;
-
-                if (
-                    $email === $contact['email'] &&
-                    $name === $contact['name']
-                ) {
-                    $payload['params']['args'][3] = 'res.partner';
-                    $payload['params']['args'][5] = $contact;
-                }
-
-                return $payload;
-            },
-            20,
-            2
-        );
-
-        $response = $bridge->submit($contact);
+        $response = $bridge
+            ->patch([
+                'name' => 'odoo-rpc-search-company-lead-contact-by-email',
+                'template' => null,
+                'method' => 'search',
+                'model' => 'res.partner',
+            ])
+            ->submit([
+                ['email', '=', $payload['email']],
+                ['parent_id', '=', $partner_id],
+            ]);
 
         if (is_wp_error($response)) {
-            do_action('forms_bridge_on_failure', $bridge, $response, $payload);
+            $contact = [
+                'name' => $payload['contact_name'],
+                'email' => $payload['email'],
+                'phone' => $payload['phone'] ?? '',
+                'function' => $payload['function'],
+                'parent_id' => $partner_id,
+            ];
 
-            return;
+            $response = $bridge
+                ->patch([
+                    'name' => 'odoo-rpc-create-company-lead-contact',
+                    'template' => null,
+                    'model' => 'res.partner',
+                ])
+                ->submit($contact);
+
+            if (is_wp_error($response)) {
+                do_action(
+                    'forms_bridge_on_failure',
+                    $bridge,
+                    $response,
+                    $payload
+                );
+                return;
+            }
         }
 
         $payload['email_from'] = $payload['email'];

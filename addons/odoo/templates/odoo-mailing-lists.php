@@ -7,16 +7,76 @@ if (!defined('ABSPATH')) {
 add_filter(
     'forms_bridge_payload',
     function ($payload, $bridge) {
-        if ($bridge->template === 'odoo-mailing-lists') {
-            $payload['list_ids'] = array_map(function ($list_id) {
-                return (int) $list_id;
-            }, explode(',', $payload['list_ids']));
+        if ($bridge->template !== 'odoo-mailing-lists') {
+            return $payload;
+        }
 
-            $payload[
-                'name'
-            ] = "{$payload['first_name']} {$payload['last_name']}";
+        $payload['list_ids'] = array_map(function ($list_id) {
+            return (int) $list_id;
+        }, explode(',', $payload['list_ids']));
 
-            unset($payload['lang']);
+        $payload['name'] = "{$payload['first_name']} {$payload['last_name']}";
+
+        $response = $bridge
+            ->patch([
+                'name' => 'odoo-rpc-search-mailing-contact-by-email',
+                'template' => null,
+                'method' => 'search',
+                'model' => 'mailing.contact',
+            ])
+            ->submit([['email', '=', $payload['email']]]);
+
+        if (!is_wp_error($response)) {
+            $contact_id = $response['data']['result'][0];
+            $list_ids = $payload['list_ids'];
+
+            $response = $bridge
+                ->patch([
+                    'name' => 'odoo-rpc-get-mailing-contact-subscriptions',
+                    'template' => null,
+                    'model' => 'mailing.subscription',
+                    'method' => 'search_read',
+                ])
+                ->submit([['contact_id', '=', $contact_id]]);
+
+            if (!is_wp_error($response)) {
+                foreach ($response['data']['result'] as $subscription) {
+                    if (!in_array($subscription['list_id'][0], $list_ids)) {
+                        $list_ids[] = $subscription['id'];
+                    }
+                }
+            }
+
+            add_filter(
+                'forms_bridge_rpc_payload',
+                function ($payload, $bridge) use ($list_ids) {
+                    if (
+                        $bridge->name ===
+                        'odoo-rpc-update-mailing-contact-subscriptions'
+                    ) {
+                        $payload['params']['args'][] = [
+                            'list_ids' => $list_ids,
+                        ];
+                    }
+
+                    return $payload;
+                },
+                10,
+                2
+            );
+
+            $response = $bridge
+                ->patch([
+                    'name' => 'odoo-rpc-update-mailing-contact-subscriptions',
+                    'template' => null,
+                    'model' => 'mailing.contact',
+                    'method' => 'write',
+                ])
+                ->submit([$contact_id]);
+
+            if (!is_wp_error($response)) {
+                return;
+            }
         }
 
         return $payload;

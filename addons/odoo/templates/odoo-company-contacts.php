@@ -37,25 +37,65 @@ add_filter(
             $payload['vat'] = $payload['country_code'] . $payload['vat'];
         }
 
-        $company = [
-            'is_company' => true,
-            'vat' => $payload['vat'],
-            'name' => $payload['company_name'],
-            'street' => $payload['street'],
-            'city' => $payload['city'],
-            'zip' => $payload['zip'],
-            'country_code' => $payload['country_code'],
-        ];
-
-        $response = $bridge->submit($company);
+        $response = $bridge
+            ->patch([
+                'name' => 'odoo-rpc-search-company-by-vat-id',
+                'template' => null,
+                'method' => 'search',
+            ])
+            ->submit([
+                ['vat', '=', $payload['vat']],
+                ['is_company', '=', true],
+            ]);
 
         if (is_wp_error($response)) {
-            do_action('forms_bridge_on_failure', $bridge, $response, $payload);
+            $company = [
+                'is_company' => true,
+                'vat' => $payload['vat'],
+                'name' => $payload['company_name'],
+                'street' => $payload['street'],
+                'city' => $payload['city'],
+                'zip' => $payload['zip'],
+                'country_code' => $payload['country_code'],
+            ];
 
-            return;
+            $response = $bridge
+                ->patch([
+                    'name' => 'odoo-rpc-create-company-contact',
+                    'template' => null,
+                ])
+                ->submit($company);
+
+            if (is_wp_error($response)) {
+                do_action(
+                    'forms_bridge_on_failure',
+                    $bridge,
+                    $response,
+                    $payload
+                );
+                return;
+            }
+
+            $company_id = $response['data']['result'];
+        } else {
+            $company_id = $response['data']['result'][0];
+
+            $response = $bridge
+                ->patch([
+                    'name' => 'odoo-rpc-search-company-contact-by-email',
+                    'template' => null,
+                    'method' => 'search',
+                ])
+                ->submit([
+                    ['email', '=', $payload['email']],
+                    ['parent_id', '=', $company_id],
+                ]);
+
+            if (!is_wp_error($response)) {
+                return;
+            }
         }
 
-        $company_id = $response['data']['result'];
         $payload['parent_id'] = $company_id;
 
         unset($payload['vat']);

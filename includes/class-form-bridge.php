@@ -222,6 +222,25 @@ abstract class Form_Bridge
     }
 
     /**
+     * Returns a clone of the bridge instance with its data patched by
+     * the partial array.
+     *
+     * @param array $partial Bridge data.
+     *
+     * @return Form_Bridge
+     */
+    public function patch($partial = [])
+    {
+        $data = array_merge($this->data, $partial);
+
+        if ($data['name'] === $this->name) {
+            $data['name'] = 'bridge-' . time();
+        }
+
+        return new static($data, $this->api);
+    }
+
+    /**
      * Submits submission to the backend.
      *
      * @param array $payload Submission data.

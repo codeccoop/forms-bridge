@@ -35,89 +35,76 @@ add_filter(
 
         add_filter(
             'forms_bridge_rpc_payload',
-            function ($payload, $bridge) use ($user_email) {
-                if ($bridge->template !== 'odoo-appointments') {
+            function ($payload, $bridge) {
+                if ($bridge->name !== 'odoo-rpc-search-owner-by-email') {
                     return $payload;
                 }
 
-                $data = $payload['params']['args'][5] ?? null;
-                if (empty($data)) {
-                    return $payload;
-                }
-
-                if (
-                    isset($data['user_email']) &&
-                    $data['user_email'] === $user_email
-                ) {
-                    $payload['params']['args'][3] = 'res.users';
-                    $payload['params']['args'][4] = 'search_read';
-                    $payload['params']['args'][5] = [
-                        ['email', '=', $user_email],
-                    ];
-                    $payload['params']['args'][6] = ['commercial_partner_id'];
-                }
-
-                return $payload;
-            },
-            20,
-            2
-        );
-
-        $response = $bridge->submit(['user_email' => $user_email]);
-
-        if (is_wp_error($response)) {
-            do_action('forms_bridge_on_failure', $bridge, $response, $payload);
-
-            return;
-        }
-
-        unset($payload['owner']);
-        $owner_id = $response['data']['result'][0]['commercial_partner_id'][0];
-
-        $contact = [
-            'name' => $payload['contact_name'],
-            'email' => $payload['email'],
-            'phone' => $payload['phone'] ?? '',
-        ];
-
-        add_filter(
-            'forms_bridge_rpc_payload',
-            function ($payload, $bridge) use ($contact) {
-                if ($bridge->template !== 'odoo-appointments') {
-                    return $payload;
-                }
-
-                $data = $payload['params']['args'][5] ?? null;
-                if (empty($data)) {
-                    return $payload;
-                }
-
-                $email = $data['email'] ?? null;
-                $name = $data['name'] ?? null;
-
-                if (
-                    $email === $contact['email'] &&
-                    $name === $contact['name']
-                ) {
-                    $payload['params']['args'][3] = 'res.partner';
-                }
-
+                $payload['params']['args'][6] = ['commercial_partner_id'];
                 return $payload;
             },
             10,
             2
         );
 
-        $response = $bridge->submit($contact);
+        $response = $bridge
+            ->patch([
+                'name' => 'odoo-rpc-search-owner-by-email',
+                'template' => null,
+                'model' => 'res.users',
+                'method' => 'search_read',
+            ])
+            ->submit([['email', '=', $user_email]]);
 
         if (is_wp_error($response)) {
             do_action('forms_bridge_on_failure', $bridge, $response, $payload);
-
             return;
         }
 
-        $payload['partner_ids'] = [$owner_id, $response['data']['result']];
+        $owner_id = $response['data']['result'][0]['commercial_partner_id'][0];
 
+        $response = $bridge
+            ->patch([
+                'name' => 'odoo-rpc-search-partner-by-email',
+                'template' => null,
+                'model' => 'res.partner',
+                'method' => 'search',
+            ])
+            ->submit([['email', '=', $payload['email']]]);
+
+        if (is_wp_error($response)) {
+            $contact = [
+                'name' => $payload['contact_name'],
+                'email' => $payload['email'],
+                'phone' => $payload['phone'] ?? '',
+            ];
+
+            $response = $bridge
+                ->patch([
+                    'name' => 'odoo-rpc-create-appointment-contact',
+                    'template' => null,
+                    'model' => 'res.partner',
+                ])
+                ->submit($contact);
+
+            if (is_wp_error($response)) {
+                do_action(
+                    'forms_bridge_on_failure',
+                    $bridge,
+                    $response,
+                    $payload
+                );
+                return;
+            }
+
+            $partner_id = $response['data']['result'];
+        } else {
+            $partner_id = $response['data']['result'][0];
+        }
+
+        $payload['partner_ids'] = [$owner_id, $partner_id];
+
+        unset($payload['owner']);
         unset($payload['contact_name']);
         unset($payload['email']);
         unset($payload['phone']);

@@ -30,98 +30,73 @@ add_filter(
             return $payload;
         }
 
-        $user_email = base64_decode($payload['owner']);
-        $payload['owner'] = $user_email;
+        $payload['owner'] = base64_decode($payload['owner']);
 
-        add_filter(
-            'forms_bridge_rpc_payload',
-            function ($payload, $bridge) use ($user_email) {
-                if ($bridge->template !== 'odoo-crm-leads') {
-                    return $payload;
-                }
-
-                $data = $payload['params']['args'][5] ?? null;
-                if (empty($data)) {
-                    return $payload;
-                }
-
-                if (
-                    isset($data['user_email']) &&
-                    $data['user_email'] === $user_email
-                ) {
-                    $payload['params']['args'][3] = 'res.users';
-                    $payload['params']['args'][4] = 'search';
-                    $payload['params']['args'][5] = [
-                        ['email', '=', $user_email],
-                    ];
-                }
-
-                return $payload;
-            },
-            20,
-            2
-        );
-
-        $response = $bridge->submit(['user_email' => $user_email]);
+        $response = $bridge
+            ->patch([
+                'name' => 'odoo-rpc-search-lead-owner-by-email',
+                'template' => null,
+                'method' => 'search',
+                'model' => 'res.users',
+            ])
+            ->submit([['email', '=', $payload['owner']]]);
 
         if (is_wp_error($response)) {
             do_action('forms_bridge_on_failure', $bridge, $response, $payload);
-
             return;
         }
 
-        unset($payload['owner']);
         $user_id = $response['data']['result'][0];
         $payload['user_id'] = $user_id;
+        unset($payload['owner']);
 
-        $contact = [
-            'name' => $payload['contact_name'],
-            'email' => $payload['email'],
-            'phone' => $payload['phone'] ?? '',
-        ];
-
-        add_filter(
-            'forms_bridge_rpc_payload',
-            function ($payload, $bridge) use ($contact) {
-                if ($bridge->template !== 'odoo-crm-leads') {
-                    return $payload;
-                }
-
-                $data = $payload['params']['args'][5] ?? null;
-                if (empty($data)) {
-                    return $payload;
-                }
-
-                $name = $data['name'] ?? null;
-                $email = $data['email'] ?? null;
-
-                if (
-                    $email === $contact['email'] &&
-                    $name === $contact['name']
-                ) {
-                    $payload['params']['args'][3] = 'res.partner';
-                }
-
-                return $payload;
-            },
-            20,
-            2
-        );
-
-        $response = $bridge->submit($contact);
+        $response = $bridge
+            ->patch([
+                'name' => 'odoo-rpc-search-lead-contact-by-email',
+                'template' => null,
+                'method' => 'search',
+                'model' => 'res.partner',
+            ])
+            ->submit([
+                ['email', '=', $payload['email']],
+                ['is_company', '=', false],
+            ]);
 
         if (is_wp_error($response)) {
-            do_action('forms_bridge_on_failure', $bridge, $response, $payload);
+            $contact = [
+                'name' => $payload['contact_name'],
+                'email' => $payload['email'],
+                'phone' => $payload['phone'] ?? '',
+            ];
 
-            return;
+            $response = $bridge
+                ->patch([
+                    'name' => 'odoo-rpc-create-lead-contact',
+                    'template' => null,
+                    'model' => 'res.partner',
+                ])
+                ->submit($contact);
+
+            if (is_wp_error($response)) {
+                do_action(
+                    'forms_bridge_on_failure',
+                    $bridge,
+                    $response,
+                    $payload
+                );
+                return;
+            }
+
+            $partner_id = $response['data']['result'];
+        } else {
+            $partner_id = $response['data']['result'][0];
         }
+
+        $payload['partner_id'] = $partner_id;
 
         unset($payload['contact_name']);
         unset($payload['email']);
         unset($payload['phone']);
-
-        $partner_id = $response['data']['result'];
-        $payload['partner_id'] = $partner_id;
 
         return $payload;
     },

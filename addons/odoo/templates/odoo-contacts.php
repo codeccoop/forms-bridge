@@ -4,6 +4,34 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
+add_filter(
+    'forms_bridge_payload',
+    function ($payload, $bridge) {
+        if ($bridge->template !== 'odoo-contacts') {
+            return $payload;
+        }
+
+        $response = $bridge
+            ->patch([
+                'name' => 'odoo-rpc-search-contact-by-email',
+                'template' => null,
+                'method' => 'search',
+            ])
+            ->submit([
+                ['email', '=', $payload['email']],
+                ['is_company', '=', false],
+            ]);
+
+        if (!is_wp_error($response)) {
+            return;
+        }
+
+        return $payload;
+    },
+    10,
+    2
+);
+
 return [
     'title' => __('Contacts', 'forms-bridge'),
     'fields' => [
