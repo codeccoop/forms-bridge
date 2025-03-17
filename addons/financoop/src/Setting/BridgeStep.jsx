@@ -7,13 +7,15 @@ const { __ } = wp.i18n;
 const fieldsOrder = ["name", "form_id"];
 
 export default function BridgeStep({ fields, data, setData }) {
+  const campaigns = data.campaigns || [];
+
   const campaignOptions = useMemo(
     () =>
-      data.campaigns.map(({ id, name }) => ({
+      campaigns.map(({ id, name }) => ({
         value: id,
         label: name,
       })),
-    [data.campaigns]
+    [campaigns]
   );
 
   const sortedFields = useMemo(
@@ -46,6 +48,12 @@ export default function BridgeStep({ fields, data, setData }) {
           type: "options",
           options: campaignOptions,
           onChange: (campaign_id) => setData({ campaign_id }),
+          description: !campaigns.length
+            ? __(
+                "There is no active campaign. This can happens due to a wrong backend connexion, or because you have no active campaigns on your FinanCoop module. Please, fix this issue before createing new bridges.",
+                "forms-bridge"
+              )
+            : null,
         }}
       />
       {filteredFields.map((field) => (

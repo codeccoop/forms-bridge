@@ -122,23 +122,13 @@ class Finan_Coop_Form_Bridge_Template extends Rest_Form_Bridge_Template
                         $bridge->endpoint,
                         $matches
                     );
+
                     $payload['campaign_id'] = (int) $matches[0];
                     $payload['lang'] = apply_filters(
                         'wpct_i18n_current_language',
                         get_locale(),
                         'locale'
                     );
-
-                    $national_prefix = preg_replace(
-                        '/_[a-z]{2}$/',
-                        '',
-                        $payload['lang']
-                    );
-                    if ($national_prefix === 'ca') {
-                        $national_prefix = 'es';
-                    }
-
-                    $payload['vat'] = $national_prefix . $payload['vat'];
                 }
 
                 return $payload;

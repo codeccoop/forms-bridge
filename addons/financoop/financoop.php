@@ -15,11 +15,20 @@ require_once FORMS_BRIDGE_ADDONS_DIR . '/rest-api/rest-api.php';
 require_once 'class-financoop-form-bridge.php';
 require_once 'class-financoop-form-bridge-template.php';
 
+$addons_dir = dirname(__FILE__, 2);
+require_once $addons_dir . '/odoo/country-codes.php';
+
 /**
  * FinanCoop Addon class.
  */
 class Finan_Coop_Addon extends Rest_Addon
 {
+    private const http_headers = [
+        'X-Odoo-Db',
+        'X-Odoo-Username',
+        'X-Odoo-Api-Key',
+    ];
+
     /**
      * Handles the addon name.
      *
@@ -66,7 +75,8 @@ class Finan_Coop_Addon extends Rest_Addon
                 [
                     'methods' => WP_REST_Server::CREATABLE,
                     'callback' => static function ($request) {
-                        return self::fetch_campaigns($request);
+                        $params = $request->get_json_params();
+                        return self::fetch_campaigns($params);
                     },
                     'permission_callback' => static function () {
                         return REST_Settings_Controller::permission_callback();
@@ -80,11 +90,15 @@ class Finan_Coop_Addon extends Rest_Addon
                 [
                     'methods' => WP_REST_Server::CREATABLE,
                     'callback' => static function ($request) {
-                        return self::fetch_campaigns($request);
+                        $campaign_id = $request['campaign_id'];
+                        $params = $request->get_json_params();
+
+                        return self::fetch_campaign($campaign_id, $params);
                     },
                     'permission_callback' => static function () {
                         return REST_Settings_Controller::permission_callback();
                     },
+                    'args' => [],
                 ]
             );
         });
@@ -100,94 +114,82 @@ class Finan_Coop_Addon extends Rest_Addon
      */
     private static function get_backend($params)
     {
-        if (isset($params['backend'])) {
+        if (isset($params['name'])) {
             $backend = apply_filters(
                 'http_bridge_backend',
                 null,
-                $params['backend']
+                $params['name']
             );
-        } else {
-            $base_url = filter_var(
-                $params['base_url'] ?? null,
-                FILTER_VALIDATE_URL
-            );
-            $database = sanitize_text_field($params['database'] ?? null);
-            $username = sanitize_text_field($params['username'] ?? null);
-            $api_key = sanitize_text_field($params['api_key'] ?? null);
 
-            if (
-                empty($base_url) ||
-                empty($database) ||
-                empty($username) ||
-                empty($api_key)
-            ) {
+            if ($backend) {
+                return $backend;
+            }
+        }
+
+        $base_url = filter_var(
+            $params['base_url'] ?? null,
+            FILTER_VALIDATE_URL
+        );
+
+        if (!$base_url) {
+            return;
+        }
+
+        $headers = [];
+        foreach (self::http_headers as $http_header) {
+            if (empty($params['headers'][$http_header])) {
                 return;
             }
 
-            $backend_data = [
-                'name' => '__financoop-' . time(),
-                'base_url' => $base_url,
-                'headers' => [
-                    [
-                        'name' => 'X-Odoo-Db',
-                        'value' => $database,
-                    ],
-                    [
-                        'name' => 'X-Odoo-Username',
-                        'value' => $username,
-                    ],
-                    [
-                        'name' => 'X-Odoo-Api-Key',
-                        'value' => $api_key,
-                    ],
-                ],
+            $headers[] = [
+                'name' => $http_header,
+                'value' => sanitize_text_field(
+                    $params['headers'][$http_header]
+                ),
             ];
-
-            add_filter(
-                'wpct_setting_data',
-                static function ($setting_data, $name) use ($backend_data) {
-                    if ($name !== 'http-bridge_general') {
-                        return $setting_data;
-                    }
-
-                    $index = array_search(
-                        $backend_data['name'],
-                        array_column($setting_data['backends'], 'name')
-                    );
-                    if ($index === false) {
-                        $setting_data['backends'][] = $backend_data;
-                    }
-
-                    return $setting_data;
-                },
-                20,
-                2
-            );
-
-            return new Http_Backend($backend_data['name']);
         }
 
-        return $backend;
+        $params['headers'] = $headers;
+        $params['name'] = $params['name'] ?? '__financoop-' . time();
+
+        add_filter(
+            'wpct_setting_data',
+            static function ($setting_data, $name) use ($params) {
+                if ($name !== 'http-bridge_general') {
+                    return $setting_data;
+                }
+
+                $index = array_search(
+                    $params['name'],
+                    array_column($setting_data['backends'], 'name')
+                );
+
+                if ($index === false) {
+                    $setting_data['backends'][] = $params;
+                }
+
+                return $setting_data;
+            },
+            20,
+            2
+        );
+
+        return new Http_Backend($params['name']);
     }
 
-    private static function fetch_campaigns($request)
+    public static function fetch_campaign($campaign_id, $backend_params)
     {
-        $params = $request->get_json_params();
-        $backend = self::get_backend($params);
+        $backend = self::get_backend($backend_params);
 
         if (empty($backend)) {
             return new WP_Error(
                 'bad_request',
                 __('Backend is unkown', 'forms-bridge'),
-                ['params' => $params]
+                ['params' => $backend_params]
             );
         }
 
-        $endpoint = '/api/campaign';
-
-        if ($campaign_id = $request['campaign_id']) {
-            $endpoint .= '/' . (int) $campaign_id;
-        }
+        $endpoint = '/api/campaign/' . intval($campaign_id);
 
         $response = $backend->get($endpoint);
 
@@ -196,6 +198,35 @@ class Finan_Coop_Addon extends Rest_Addon
         }
 
         return $response['data']['data'];
+    }
+
+    public static function fetch_campaigns($backend_params)
+    {
+        $backend = self::get_backend($backend_params);
+
+        if (empty($backend)) {
+            return new WP_Error(
+                'bad_request',
+                __('Backend is unkown', 'forms-bridge'),
+                ['params' => $backend_params]
+            );
+        }
+
+        $endpoint = '/api/campaign';
+
+        $response = $backend->get($endpoint);
+
+        if (is_wp_error($response)) {
+            return $response;
+        }
+
+        return array_values(
+            array_filter($response['data']['data'], static function (
+                $campaign
+            ) {
+                return $campaign['state'] !== 'closed';
+            })
+        );
     }
 }
 
