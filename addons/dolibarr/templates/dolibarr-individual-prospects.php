@@ -173,6 +173,11 @@ return [
                 'label' => __('Phone', 'forms-bridge'),
                 'type' => 'text',
             ],
+            [
+                'name' => 'note_public',
+                'label' => __('Comments', 'forms-bridge'),
+                'type' => 'textarea',
+            ],
         ],
     ],
     'backend' => [

@@ -298,6 +298,11 @@ return [
                 'type' => 'text',
                 'required' => true,
             ],
+            [
+                'name' => 'note_public',
+                'label' => __('Comments', 'forms-bridge'),
+                'type' => 'textarea',
+            ],
         ],
     ],
     'backend' => [
