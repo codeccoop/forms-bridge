@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 require_once 'class-dolibarr-form-bridge.php';
 require_once 'class-dolibarr-form-bridge-template.php';
 
-// require_once 'country-codes.php';
+require_once 'country-codes.php';
 // require_once 'state-codes.php';
 
 /**

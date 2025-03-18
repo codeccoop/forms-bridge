@@ -96,6 +96,10 @@ return [
             'ref' => '#form/fields[]',
             'name' => 'team',
             'label' => __('Owner team', 'forms-bridge'),
+            'description' => __(
+                'Name of the owner team of the lead',
+                'forms-bridge'
+            ),
             'type' => 'string',
             'required' => true,
         ],

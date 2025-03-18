@@ -11,7 +11,36 @@ add_filter(
             return $payload;
         }
 
+        $payload['name'] = "{$payload['firstname']} {$payload['lastname']}";
+
         $backend = $bridge->backend;
+
+        $response = $backend->get('/api/index.php/thirdparties', [
+            'limit' => '1',
+            'sqlfilters' => "(t.fk_typent:=:8) and (t.email:=:'{$payload['email']}')",
+        ]);
+
+        if (is_wp_error($response)) {
+            $error_code = $response->get_error_data()['response']['response'][
+                'code'
+            ];
+
+            if ($error_code !== 404) {
+                do_action(
+                    'forms_bridge_on_failure',
+                    $bridge,
+                    $response,
+                    $payload
+                );
+
+                return;
+            }
+        }
+
+        if (!is_wp_error($response)) {
+            return;
+        }
+
         $response = $backend->get('/api/index.php/thirdparties', [
             'sortfield' => 't.rowid',
             'sortorder' => 'DESC',
@@ -20,7 +49,6 @@ add_filter(
 
         if (is_wp_error($response)) {
             do_action('forms_bridge_on_failure', $bridge, $response, $payload);
-
             return;
         }
 
@@ -34,8 +62,6 @@ add_filter(
 
         $payload['code_client'] = $prefix . '-' . $next;
 
-        $payload['name'] = "{$payload['firstname']} {$payload['lastname']}";
-
         return $payload;
     },
     9,
@@ -43,7 +69,7 @@ add_filter(
 );
 
 return [
-    'title' => __('Dolibarr Individual Prospects', 'forms-bridge'),
+    'title' => __('Prospects', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#bridge',
@@ -56,10 +82,7 @@ return [
         [
             'ref' => '#form',
             'name' => 'title',
-            'label' => __('Form title', 'forms-bridge'),
-            'required' => true,
-            'type' => 'string',
-            'default' => __('Individual Leads', 'forms-bridge'),
+            'default' => __('Prospects', 'forms-bridge'),
         ],
         [
             'ref' => '#form/fields[]',
@@ -93,7 +116,7 @@ return [
         ],
     ],
     'form' => [
-        'title' => __('Individual Leads', 'forms-bridge'),
+        'title' => __('Prospects', 'forms-bridge'),
         'fields' => [
             [
                 'name' => 'status',

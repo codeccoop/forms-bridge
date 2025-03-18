@@ -116,6 +116,10 @@ return [
             'ref' => '#form/fields[]',
             'name' => 'owner',
             'label' => __('Owner email', 'forms-bridge'),
+            'description' => __(
+                'Email of the owner user of the lead',
+                'forms-bridge'
+            ),
             'type' => 'string',
             'required' => true,
         ],

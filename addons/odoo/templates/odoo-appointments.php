@@ -30,8 +30,7 @@ add_filter(
             return $payload;
         }
 
-        $user_email = base64_decode($payload['owner']);
-        $payload['owner'] = $user_email;
+        $payload['owner'] = base64_decode($payload['owner']);
 
         add_filter(
             'forms_bridge_rpc_payload',
@@ -40,7 +39,7 @@ add_filter(
                     return $payload;
                 }
 
-                $payload['params']['args'][6] = ['commercial_partner_id'];
+                $payload['params']['args'][] = ['commercial_partner_id'];
                 return $payload;
             },
             10,
@@ -54,7 +53,7 @@ add_filter(
                 'model' => 'res.users',
                 'method' => 'search_read',
             ])
-            ->submit([['email', '=', $user_email]]);
+            ->submit([['email', '=', $payload['owner']]]);
 
         if (is_wp_error($response)) {
             do_action('forms_bridge_on_failure', $bridge, $response, $payload);
@@ -189,6 +188,10 @@ return [
             'ref' => '#form/fields[]',
             'name' => 'owner',
             'label' => __('Owner email', 'forms-bridge'),
+            'description' => __(
+                'Email of the owner user of the appointment',
+                'forms-bridge'
+            ),
             'type' => 'string',
             'required' => true,
         ],

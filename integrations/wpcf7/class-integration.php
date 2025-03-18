@@ -389,6 +389,8 @@ class Integration extends BaseIntegration
             }
         }
 
+        $value = null;
+
         if ($type === 'select' || $type === 'select*') {
             $options = array_map(function ($opt) {
                 return $opt['label'] . '|' . $opt['value'];
@@ -399,7 +401,10 @@ class Integration extends BaseIntegration
             $value = sanitize_text_field((string) $field['value']);
         }
 
-        $tag .= "\"{$value}\"";
+        if ($value) {
+            $tag .= "\"{$value}\"";
+        }
+
         return $tag . ']';
     }
 

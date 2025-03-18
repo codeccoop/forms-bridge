@@ -4,10 +4,7 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-// global $forms_bridge_dolibarr_states;
-// global $forms_bridge_dolibarr_countries;
-
-$forms_bridge_dolibarr_company_contact_data = null;
+global $forms_bridge_dolibarr_countries;
 
 add_filter(
     'forms_bridge_payload',
@@ -16,100 +13,135 @@ add_filter(
             return $payload;
         }
 
-        $backend = $bridge->backend;
-        $response = $backend->get('/api/index.php/thirdparties', [
-            'sortfield' => 't.rowid',
-            'sortorder' => 'DESC',
-            'limit' => 1,
-        ]);
+        global $forms_bridge_dolibarr_countries;
 
-        if (is_wp_error($response)) {
-            do_action('forms_bridge_on_failure', $bridge, $response, $payload);
+        if (!isset($forms_bridge_dolibarr_countries[$payload['country_id']])) {
+            $countries_by_label = array_reduce(
+                array_keys($forms_bridge_dolibarr_countries),
+                function ($countries, $country_code) {
+                    global $forms_bridge_dolibarr_countries;
+                    $label = $forms_bridge_dolibarr_countries[$country_code];
+                    $countries[$label] = $country_code;
+                    return $countries;
+                },
+                []
+            );
 
-            return;
+            $payload['country_id'] =
+                $countries_by_label[$payload['country_id']];
         }
-
-        $previus_code_client = $response['data'][0]['code_client'];
-        [$prefix, $number] = explode('-', $previus_code_client);
-
-        $next = strval($number + 1);
-        while (strlen($next) < strlen($number)) {
-            $next = '0' . $next;
-        }
-
-        $payload['code_client'] = $prefix . '-' . $next;
 
         if (empty($payload['stcomm_id'])) {
             $payload['stcomm_id'] = '0';
         }
 
-        $contact = [
+        $backend = $bridge->backend;
+
+        $response = $backend->get('/api/index.php/thirdparties', [
+            'sortfield' => 't.rowid',
+            'sortorder' => 'ASC',
+            'limit' => '1',
+            'sqlfilters' => "(t.siren:=:'{$payload['idprof1']}')",
+        ]);
+
+        if (is_wp_error($response)) {
+            $error_data = $response->get_error_data();
+            $response_code = $error_data['response']['response']['code'];
+
+            if ($response_code !== 404) {
+                do_action(
+                    'forms_bridge_on_failure',
+                    $bridge,
+                    $response,
+                    $payload
+                );
+
+                return;
+            }
+        }
+
+        if (is_wp_error($response)) {
+            $response = $backend->get('/api/index.php/thirdparties', [
+                'sortfield' => 't.rowid',
+                'sortorder' => 'DESC',
+                'limit' => 1,
+            ]);
+
+            if (is_wp_error($response)) {
+                do_action(
+                    'forms_bridge_on_failure',
+                    $bridge,
+                    $response,
+                    $payload
+                );
+                return;
+            }
+
+            $previus_code_client = $response['data'][0]['code_client'];
+
+            [$prefix, $number] = explode('-', $previus_code_client);
+
+            $next = strval($number + 1);
+            while (strlen($next) < strlen($number)) {
+                $next = '0' . $next;
+            }
+
+            $code_client = $prefix . '-' . $next;
+
+            $company = [
+                'status' => $payload['status'],
+                'typent_id' => $payload['typent_id'],
+                'client' => $payload['client'],
+                'code_client' => $code_client,
+                'stcomm_id' => $payload['stcomm_id'],
+                'name' => $payload['name'],
+                'idprof1' => $payload['idprof1'],
+                'address' => $payload['address'],
+                'zip' => $payload['zip'],
+                'town' => $payload['town'],
+                'country_id' => $payload['country_id'],
+            ];
+
+            $response = $backend->post('/api/index.php/thirdparties', $company);
+
+            if (is_wp_error($response)) {
+                do_action(
+                    'forms_bridge_on_failure',
+                    $bridge,
+                    $response,
+                    $payload
+                );
+                return;
+            }
+
+            $company_id = $response['body'];
+        } else {
+            $company_id = $response['data'][0]['id'];
+
+            $response = $backend->get('/api/index.php/contacts', [
+                'limit' => '1',
+                'sqlfilters' => "(t.email:=:'{$payload['email']}') and (t.fk_soc:=:{$company_id})",
+            ]);
+
+            if (!is_wp_error($response)) {
+                return;
+            }
+        }
+
+        return [
+            'socid' => $company_id,
             'firstname' => $payload['firstname'],
             'lastname' => $payload['lastname'],
             'email' => $payload['email'],
             'poste' => $payload['poste'],
         ];
-
-        unset($payload['firstname']);
-        unset($payload['lastname']);
-        unset($payload['poste']);
-
-        global $forms_bridge_dolibarr_company_contact_data;
-        $forms_bridge_dolibarr_company_contact_data = $contact;
-
-        // $reversed_states = [];
-        // global $forms_bridge_dolibarr_states;
-        // foreach ($forms_bridge_dolibarr_states as $code => $label) {
-        //     $reversed_states[$label] = $code;
-        // }
-
-        // if (isset($reversed_states[$payload['state_id']])) {
-        //     $payload['state_id'] = $reversed_states[$payload['state_id']];
-        // }
-
-        // $reversed_countries = [];
-        // global $forms_bridge_dolibarr_countries;
-        // foreach ($forms_bridge_dolibarr_countries as $code => $label) {
-        //     $reversed_countries[$label] = $code;
-        // }
-
-        // if (isset($reversed_countries[$payload['country_id']])) {
-        //     $payload['country_id'] = $reversed_countries[$payload['country_id']];
-        // }
-
-        return $payload;
-    },
-    9,
-    2
-);
-
-add_action(
-    'forms_bridge_submit',
-    function ($bridge, $response) {
-        if ($bridge->template !== 'dolibarr-company-prospects') {
-            return;
-        }
-
-        $company_id = $response['body'];
-
-        global $forms_bridge_dolibarr_company_contact_data;
-        $payload = $forms_bridge_dolibarr_company_contact_data;
-
-        $payload['socid'] = $company_id;
-
-        $backend = $bridge->backend;
-        $response = $backend->post('/api/index.php/contacts', $payload);
-
-        if (is_wp_error($response)) {
-            do_action('forms_bridge_on_failure', $bridge, $response, $payload);
-        }
     },
     10,
     2
 );
 
 return [
-    'title' => __('Dolibarr Company Prospects', 'forms-bridge'),
+    'title' => __('Company Prospects', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#bridge',
@@ -117,15 +149,12 @@ return [
             'label' => __('Endpoint', 'forms-bridge'),
             'type' => 'string',
             'required' => true,
-            'value' => '/api/index.php/thirdparties',
+            'value' => '/api/index.php/contacts',
         ],
         [
             'ref' => '#form',
             'name' => 'title',
-            'label' => __('Form title', 'forms-bridge'),
-            'required' => true,
-            'type' => 'string',
-            'default' => __('Company Leads', 'forms-bridge'),
+            'default' => __('Company Prospects', 'forms-bridge'),
         ],
         [
             'ref' => '#form/fields[]',
@@ -155,7 +184,7 @@ return [
                     'value' => '-1',
                 ],
             ],
-            'default' => '0',
+            'default' => ' 0',
         ],
     ],
     'form' => [
@@ -185,6 +214,50 @@ return [
                 'required' => true,
             ],
             [
+                'name' => 'name',
+                'label' => __('Company name', 'forms-bridge'),
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
+                'name' => 'idprof1',
+                'label' => __('Tax ID', 'forms-bridge'),
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
+                'name' => 'address',
+                'label' => __('Address', 'forms-bridge'),
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
+                'name' => 'zip',
+                'label' => __('Postal code', 'forms-bridge'),
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
+                'name' => 'town',
+                'label' => __('City', 'forms-bridge'),
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
+                'name' => 'country_id',
+                'label' => __('Country', 'forms-bridge'),
+                'type' => 'options',
+                'options' => array_map(function ($country_id) {
+                    global $forms_bridge_dolibarr_countries;
+                    return [
+                        'value' => $country_id,
+                        'label' =>
+                            $forms_bridge_dolibarr_countries[$country_id],
+                    ];
+                }, array_keys($forms_bridge_dolibarr_countries)),
+                'required' => true,
+            ],
+            [
                 'name' => 'firstname',
                 'label' => __('First name', 'forms-bridge'),
                 'type' => 'text',
@@ -203,44 +276,11 @@ return [
                 'required' => true,
             ],
             [
-                'name' => 'name',
-                'label' => __('Company', 'forms-bridge'),
-                'type' => 'text',
-                'required' => true,
-            ],
-            [
                 'name' => 'poste',
                 'label' => __('Job position', 'forms-bridge'),
                 'type' => 'text',
                 'required' => true,
             ],
-            [
-                'name' => 'address',
-                'label' => __('Address', 'forms-bridge'),
-                'type' => 'text',
-            ],
-            [
-                'name' => 'zip',
-                'label' => __('Postal code', 'forms-bridge'),
-                'type' => 'text',
-            ],
-            [
-                'name' => 'town',
-                'label' => __('City', 'forms-bridge'),
-                'type' => 'text',
-            ],
-            // [
-            //     'name' => 'state_id',
-            //     'label' => __('State', 'forms-bridge'),
-            //     'type' => 'options',
-            //     'options' => $forms_bridge_dolibarr_states,
-            // ],
-            // [
-            //     'name' => 'country_id',
-            //     'label' => __('Country', 'forms-bridge'),
-            //     'type' => 'options',
-            //     'options' => $forms_bridge_dolibarr_countries,
-            // ]
         ],
     ],
     'backend' => [
@@ -250,7 +290,7 @@ return [
         ],
     ],
     'bridge' => [
-        'endpoint' => '/api/index.php/thirdparties',
+        'endpoint' => '/api/index.php/contacts',
         'method' => 'POST',
         'mappers' => [
             [

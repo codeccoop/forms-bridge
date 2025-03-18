@@ -73,6 +73,7 @@ add_filter(
                     $response,
                     $payload
                 );
+
                 return;
             }
 

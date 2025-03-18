@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 add_filter(
     'forms_bridge_prune_empties',
     function ($prune, $bridge) {
-        if ($bridge->template === 'dolibarr-schedules') {
+        if ($bridge->template === 'dolibarr-appointments') {
             return true;
         }
 
@@ -18,16 +18,49 @@ add_filter(
 );
 
 add_filter(
+    'forms_bridge_template_data',
+    function ($data, $template_name) {
+        if ($template_name === 'dolibarr-appointments') {
+            $index = array_search(
+                'owner',
+                array_column($data['form']['fields'], 'name')
+            );
+
+            $field = &$data['form']['fields'][$index];
+            $field['value'] = base64_encode($field['value']);
+        }
+
+        return $data;
+    },
+    10,
+    2
+);
+
+add_filter(
     'forms_bridge_payload',
     function ($payload, $bridge) {
-        if ($bridge->template !== 'dolibarr-schedules') {
+        if ($bridge->template !== 'dolibarr-appointments') {
             return $payload;
         }
 
         $backend = $bridge->backend;
+
+        $payload['owner'] = base64_decode($payload['owner']);
+
+        $response = $backend->get('/api/index.php/users', [
+            'limit' => '1',
+            'sqlfilters' => "(t.email:=:'{$payload['owner']}')",
+        ]);
+
+        if (is_wp_error($response)) {
+            do_action('forms_bridge_on_failure', $bridge, $response, $payload);
+            return;
+        }
+
+        $payload['userownerid'] = $response['data'][0]['id'];
+        unset($payload['owner']);
+
         $response = $backend->get('/api/index.php/contacts', [
-            'sortfield' => 't.rowid',
-            'sortorder' => 'ASC',
             'limit' => '1',
             'sqlfilters' => "(t.firstname:like:'{$payload['firstname']}') and (t.lastname:like:'{$payload['lastname']}') and (t.email:=:'{$payload['email']}')",
         ]);
@@ -90,10 +123,6 @@ add_filter(
         $hour = $payload['h'];
         $minute = $payload['m'];
 
-        unset($payload['date']);
-        unset($payload['h']);
-        unset($payload['m']);
-
         $form_data = apply_filters('forms_bridge_form', null);
         $date_index = array_search(
             'date',
@@ -144,7 +173,13 @@ add_filter(
         }
 
         $payload['datep'] = (string) $time;
-        $payload['datef'] = (string) $time;
+
+        $end = $payload['duration'] * 3600 + $time;
+        $payload['datef'] = (string) $end;
+
+        unset($payload['date']);
+        unset($payload['h']);
+        unset($payload['m']);
 
         return $payload;
     },
@@ -153,7 +188,7 @@ add_filter(
 );
 
 return [
-    'title' => __('Dolibarr Schedules', 'forms-bridge'),
+    'title' => __('Appointments', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#bridge',
@@ -166,7 +201,14 @@ return [
         [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('Schedules', 'forms-bridge'),
+            'default' => __('Web Appointments', 'forms-bridge'),
+        ],
+        [
+            'ref' => '#form/fields[]',
+            'name' => 'owner',
+            'label' => __('Owner email', 'forms-bridge'),
+            'type' => 'string',
+            'required' => true,
         ],
         [
             'ref' => '#form/fields[]',
@@ -200,6 +242,7 @@ return [
             'label' => __('Event label', 'forms-bridge'),
             'type' => 'string',
             'required' => true,
+            'default' => __('Web Appointment', 'forms-bridge'),
         ],
         [
             'ref' => '#form/fields[]',
@@ -210,19 +253,13 @@ return [
         ],
         [
             'ref' => '#form/fields[]',
-            'name' => 'location',
-            'label' => __('Location (optional)', 'forms-bridge'),
-            'type' => 'string',
-        ],
-        [
-            'ref' => '#form/fields[]',
-            'name' => 'userownerid',
-            'label' => __('Owen user ID (optional)', 'forms-bridge'),
+            'name' => 'duration',
+            'label' => __('Duration (Hours)', 'forms-bridge'),
             'type' => 'number',
+            'default' => 1,
         ],
     ],
     'form' => [
-        'title' => __('Schedules', 'forms-bridge'),
         'fields' => [
             [
                 'name' => 'type_code',
@@ -240,12 +277,12 @@ return [
                 'required' => true,
             ],
             [
-                'name' => 'location',
+                'name' => 'owner',
                 'type' => 'hidden',
                 'required' => true,
             ],
             [
-                'name' => 'userownerid',
+                'name' => 'duration',
                 'type' => 'hidden',
                 'required' => true,
             ],
@@ -383,7 +420,7 @@ return [
                 'type' => 'options',
                 'required' => true,
                 'options' => [
-                    ['label' => '00', 'value' => '00'],
+                    ['label' => '00', 'value' => '00.0'],
                     ['label' => '05', 'value' => '05'],
                     ['label' => '10', 'value' => '10'],
                     ['label' => '15', 'value' => '15'],
@@ -423,6 +460,11 @@ return [
                 'from' => 'userownerid',
                 'to' => 'userownerid',
                 'cast' => 'string',
+            ],
+            [
+                'from' => 'duration',
+                'to' => 'duration',
+                'cast' => 'float',
             ],
         ],
     ],
