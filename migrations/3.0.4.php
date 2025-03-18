@@ -12,8 +12,15 @@ foreach ($setting_names as $setting_name) {
     }
 
     foreach ($data['bridges'] as &$bridge_data) {
-        $bridge_data['mappers'] = $bridge_data['pipes'];
+        $pipes = $bridge_data['pipes'] ?? [];
         unset($bridge_data['pipes']);
+
+        if (
+            !isset($bridge_data['mappers']) ||
+            !wp_is_numeric_array($bridge_data['mappers'])
+        ) {
+            $bridge_data['mappers'] = $pipes;
+        }
     }
 
     update_option($option, $data);
