@@ -58,7 +58,6 @@ export default function ApiKeys({ apiKeys, setApiKeys }) {
   }, [apiKeys]);
 
   const updateApiKeys = (index, data) => {
-    console.log(data);
     if (index === -1) index = apiKeys.length;
     const newApiKeys = apiKeys
       .slice(0, index)

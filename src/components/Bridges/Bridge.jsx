@@ -2,7 +2,9 @@
 import { useForms } from "../../providers/Forms";
 import { useGeneral } from "../../providers/Settings";
 import useBridgeNames from "../../hooks/useBridgeNames";
+import { useTemplates } from "../../providers/Templates";
 import BridgeMappers from "../BridgeMappers";
+import BridgeTemplate from "../BridgeTemplate";
 import NewBridge from "./NewBridge";
 
 const {
@@ -23,6 +25,8 @@ export default function Bridge({
   children = () => {},
 }) {
   if (data.name === "add") return template({ add: update, schema });
+
+  const templates = useTemplates();
 
   const [{ backends }] = useGeneral();
   const backendOptions = [{ label: "", value: "" }].concat(
@@ -136,6 +140,13 @@ export default function Bridge({
           mappers={data.mappers}
           setMappers={(mappers) => update({ ...data, mappers })}
         />
+        {templates.length && (
+          <BridgeTemplate
+            templates={templates}
+            template={data.template}
+            setTemplate={(template) => update({ ...data, template })}
+          />
+        )}
         <Button
           isDestructive
           variant="primary"
