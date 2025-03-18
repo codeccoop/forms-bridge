@@ -18,7 +18,7 @@ add_filter(
 );
 
 return [
-    'title' => __('Zoho CRM Contacts', 'forms-bridge'),
+    'title' => __('CRM Contacts', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#backend',
@@ -73,6 +73,11 @@ return [
             'label' => __('Scope', 'forms-bridge'),
             'type' => 'string',
             'value' => 'ZohoCRM.modules.contacts.CREATE',
+        ],
+        [
+            'ref' => '#form',
+            'name' => 'title',
+            'default' => __('CRM Contacts', 'forms-bridge'),
         ],
     ],
     'form' => [

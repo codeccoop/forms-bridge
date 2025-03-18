@@ -148,6 +148,11 @@ return [
             'required' => true,
         ],
         [
+            'ref' => '#form',
+            'name' => 'title',
+            'default' => __('Newsletter', 'forms-bridge'),
+        ],
+        [
             'ref' => '#form/fields[]',
             'name' => 'datacenter',
             'label' => __('Datacenter', 'forms-bridge'),

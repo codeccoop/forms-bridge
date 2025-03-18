@@ -18,7 +18,7 @@ add_filter(
 );
 
 return [
-    'title' => __('Zoho Bigin Contacts', 'forms-bridge'),
+    'title' => __('Bigin Contacts', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#backend',

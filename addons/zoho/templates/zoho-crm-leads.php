@@ -18,7 +18,7 @@ add_filter(
 );
 
 return [
-    'title' => __('Zoho CRM Leads', 'forms-bridge'),
+    'title' => __('CRM Leads', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#form/fields[]',

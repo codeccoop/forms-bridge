@@ -43,6 +43,11 @@ return [
             'value' => '/subscription/form',
         ],
         [
+            'ref' => '#form',
+            'name' => 'title',
+            'default' => __('Newsletter', 'forms-bridge'),
+        ],
+        [
             'ref' => '#form/fields[]',
             'name' => 'l',
             'label' => __('List ID', 'forms-bridge'),

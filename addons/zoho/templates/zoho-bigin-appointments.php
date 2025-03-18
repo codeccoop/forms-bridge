@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 add_filter(
     'forms_bridge_prune_empties',
     function ($prune, $bridge) {
-        if ($bridge->template === 'zoho-bigin-schedules') {
+        if ($bridge->template === 'zoho-bigin-appointments') {
             return true;
         }
 
@@ -22,7 +22,7 @@ add_filter(
 add_filter(
     'forms_bridge_payload',
     function ($payload, $bridge) {
-        if ($bridge->template !== 'zoho-bigin-schedules') {
+        if ($bridge->template !== 'zoho-bigin-appointments') {
             return $payload;
         }
 
@@ -154,7 +154,7 @@ add_filter(
 );
 
 return [
-    'title' => __('Zoho Bigin Schedules', 'forms-bridge'),
+    'title' => __('Bigin Appintments', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#backend',
@@ -214,7 +214,7 @@ return [
         [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('Schedules', 'forms-bridge'),
+            'default' => __('Appointments', 'forms-bridge'),
         ],
         [
             'ref' => '#form/fields[]',

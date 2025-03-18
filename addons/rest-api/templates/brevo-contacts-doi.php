@@ -74,6 +74,11 @@ return [
             'required' => true,
         ],
         [
+            'ref' => '#form',
+            'name' => 'title',
+            'default' => __('Contacts DOI', 'forms-bridge'),
+        ],
+        [
             'ref' => '#form/fields[]',
             'name' => 'includeListIds',
             'label' => __('Segment IDs', 'forms-bridge'),

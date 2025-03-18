@@ -66,6 +66,11 @@ return [
             'required' => true,
         ],
         [
+            'ref' => '#form',
+            'name' => 'title',
+            'default' => __('Contacts', 'forms-bridge'),
+        ],
+        [
             'ref' => '#form/fields[]',
             'name' => 'listIds',
             'label' => __('Segment IDs', 'forms-bridge'),

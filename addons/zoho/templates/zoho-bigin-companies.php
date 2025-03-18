@@ -130,7 +130,7 @@ add_action(
 );
 
 return [
-    'title' => __('Zoho Bigin Companies', 'forms-bridge'),
+    'title' => __('Bigin Companies', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#backend',
