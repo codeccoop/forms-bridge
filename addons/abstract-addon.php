@@ -207,28 +207,6 @@ abstract class Addon extends Singleton
             10,
             3
         );
-
-        add_filter(
-            'forms_bridge_bridge',
-            static function ($bridge, $name) {
-                if ($bridge instanceof Form_Bridge) {
-                    return $bridge;
-                }
-
-                $bridges = static::setting()->bridges ?: [];
-
-                foreach ($bridges as $bridge_data) {
-                    if ($bridge_data['name'] === $name) {
-                        return new static::$bridge_class(
-                            $bridge_data,
-                            static::$api
-                        );
-                    }
-                }
-            },
-            10,
-            2
-        );
     }
 
     /**
