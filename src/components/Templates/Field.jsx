@@ -48,6 +48,10 @@ function Field({ data, error }) {
 }
 
 function CheckboxField({ name, value, onChange }) {
+  if (Array.isArray(value)) {
+    value = !!value[0];
+  }
+
   return (
     <input
       type="checkbox"
