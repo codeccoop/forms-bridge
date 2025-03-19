@@ -28,7 +28,7 @@ return [
             'default' => 'Zoho CRM API',
         ],
         [
-            'ref' => '#backend/headers[]',
+            'ref' => '#credential',
             'name' => 'organization_id',
             'label' => __('Organization ID', 'form-bridge'),
             'description' => __(
@@ -39,7 +39,7 @@ return [
             'required' => true,
         ],
         [
-            'ref' => '#backend/headers[]',
+            'ref' => '#credential',
             'name' => 'client_id',
             'label' => __('Client ID', 'forms-bridge'),
             'description' => __(
@@ -50,9 +50,9 @@ return [
             'required' => true,
         ],
         [
-            'ref' => '#backend/headers[]',
+            'ref' => '#credential',
             'name' => 'client_secret',
-            'label' => __('Client Secret', 'forms-bridge'),
+            'label' => __('Client secret', 'forms-bridge'),
             'description' => __(
                 'You have to create a Self-Client Application on the Zoho Developer Console and get the Client Secret',
                 'forms-bridge'
@@ -103,11 +103,6 @@ return [
             [
                 'name' => 'Phone',
                 'label' => __('Phone', 'forms-bridge'),
-                'type' => 'text',
-            ],
-            [
-                'name' => 'Mobile',
-                'label' => __('Mobile', 'forms-bridge'),
                 'type' => 'text',
             ],
             [

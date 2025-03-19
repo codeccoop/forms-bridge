@@ -48,7 +48,7 @@ class Dolibarr_Form_Bridge extends Form_Bridge
     }
 
     /**
-     * Intercepts backend access and returns it from the database.
+     * Intercepts backend access and returns it from the api key.
      *
      * @return Http_Backend|null
      */

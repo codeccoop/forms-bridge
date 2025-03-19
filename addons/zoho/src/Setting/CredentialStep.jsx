@@ -1,4 +1,4 @@
-import useDolibarrApi from "../hooks/useDolibarrApi";
+import useZohoApi from "../hooks/useZohoApi";
 import TemplateStep from "../../../../src/components/Templates/Steps/Step";
 import Field from "../../../../src/components/Templates/Field";
 
@@ -6,41 +6,51 @@ const { SelectControl } = wp.components;
 const { useMemo, useState, useEffect } = wp.element;
 const { __ } = wp.i18n;
 
-const fieldsOrder = ["name", "backend", "key"];
+const fieldsOrder = [
+  "name",
+  "backend",
+  "organization_id",
+  "client_id",
+  "client_secret",
+];
 
-export default function ApiKeyStep({ fields, data, setData }) {
-  const [{ api_keys }] = useDolibarrApi();
-  const apiKeyNames = useMemo(
+export default function CredentialStep({ fields, data, setData }) {
+  const [{ credentials }] = useZohoApi();
+  const credentialNames = useMemo(
     () =>
       new Set(
-        api_keys.filter(({ backend }) => backend).map(({ name }) => name)
+        credentials.filter(({ backend }) => backend).map(({ name }) => name)
       ),
-    [api_keys]
+    [credentials]
   );
 
-  const [name, setName] = useState(apiKeyNames.has(data.name) ? data.name : "");
+  const [name, setName] = useState(
+    credentialNames.has(data.name) ? data.name : ""
+  );
   const [newName, setNewName] = useState(data.name || "");
 
-  const keyOptions = [{ label: "", value: "" }].concat(
-    Array.from(apiKeyNames).map((name) => ({ label: name, value: name }))
+  const credentialOptions = [{ label: "", value: "" }].concat(
+    Array.from(credentialNames).map((name) => ({ label: name, value: name }))
   );
 
-  const apiKey = useMemo(
-    () => api_keys.find((key) => key.name === name),
-    [api_keys, name]
+  const credential = useMemo(
+    () => credentials.find((credential) => credential.name === name),
+    [credentials, name]
   );
 
   useEffect(() => {
-    if (apiKey) {
-      setData({ ...apiKey });
+    if (credential) {
+      setData({ ...credential });
     } else {
       setData({
         name: null,
         backend: null,
-        key: null,
+        organization_id: null,
+        client_id: null,
+        client_secret: null,
       });
     }
-  }, [apiKey]);
+  }, [credential]);
 
   const sortedFields = useMemo(
     () =>
@@ -67,8 +77,8 @@ export default function ApiKeyStep({ fields, data, setData }) {
   );
 
   const nameConflict = useMemo(
-    () => (newName && apiKeyNames.has(newName.trim())) || false,
-    [apiKeyNames, newName]
+    () => (newName && credentialNames.has(newName.trim())) || false,
+    [credentialNames, newName]
   );
 
   useEffect(() => {
@@ -85,16 +95,13 @@ export default function ApiKeyStep({ fields, data, setData }) {
 
   return (
     <TemplateStep
-      name={__("API key", "forms-bridge")}
-      description={__(
-        "Configure the Dolibarr REST API credentials",
-        "forms-bridge"
-      )}
+      name={__("Credentials", "forms-bridge")}
+      description={__("Configure the Zoho oauth credentials", "forms-bridge")}
     >
       <SelectControl
-        label={__("Reuse an API key", "forms-bridge")}
+        label={__("Reuse a credential", "forms-bridge")}
         value={name}
-        options={keyOptions}
+        options={credentialOptions}
         onChange={(value) => setName(value)}
         __nextHasNoMarginBottom
       />

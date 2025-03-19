@@ -87,9 +87,9 @@ class Dolibarr_Addon extends Addon
     }
 
     /**
-     * Addon databases instances getter.
+     * Addon api keys instances getter.
      *
-     * @return array List with available databases instances.
+     * @return array List with available api keys instances.
      */
     private static function api_keys()
     {
@@ -191,10 +191,12 @@ class Dolibarr_Addon extends Addon
     {
         $backends =
             \HTTP_BRIDGE\Settings_Store::setting('general')->backends ?: [];
+
         $data['api_keys'] = self::validate_api_keys(
             $data['api_keys'],
             $backends
         );
+
         $data['bridges'] = self::validate_bridges(
             $data['bridges'],
             $data['api_keys']

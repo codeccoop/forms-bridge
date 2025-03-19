@@ -114,11 +114,10 @@ export default function TemplateWizard({
     const groupFields = getGroupFields(fields, group);
     if (!groupFields.length) return true;
 
-    return groupFields.reduce(
-      (isValid, field) =>
-        isValid && (!!data[group]?.[field.name] || !field.required),
-      true
-    );
+    return groupFields.reduce((isValid, field) => {
+      const value = data[group]?.[field.name] || defaults[group]?.[field.name];
+      return isValid && (!!value || !field.required);
+    }, true);
   }, [fields, step, data]);
 
   const { name: group, step: Step } = sortedSteps[step];
@@ -132,8 +131,14 @@ export default function TemplateWizard({
       fields: fields.map((field) => {
         const group = refToGroup(field.ref);
 
-        if (Object.prototype.hasOwnProperty.call(data[group], field.name)) {
-          if (field.type === "boolean") {
+        if (
+          Object.prototype.hasOwnProperty.call(data[group], field.name) &&
+          data[group][field.name] !== null
+        ) {
+          if (
+            field.type === "boolean" &&
+            Array.isArray(data[group][field.name])
+          ) {
             field.value = !!data[group][field.name][0];
           } else {
             field.value = data[group][field.name];

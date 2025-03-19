@@ -8,6 +8,8 @@ if (!defined('ABSPATH')) {
 
 class Zoho_Form_Bridge_Template extends Form_Bridge_Template
 {
+    private $credential_data = null;
+
     /**
      * Handles the template default values.
      *
@@ -16,9 +18,46 @@ class Zoho_Form_Bridge_Template extends Form_Bridge_Template
     protected static $default = [
         'fields' => [
             [
+                'ref' => '#credential',
+                'name' => 'name',
+                'label' => 'Credentials name',
+                'type' => 'string',
+                'required' => true,
+            ],
+            [
+                'ref' => '#credential',
+                'name' => 'organization_id',
+                'label' => 'Organization ID',
+                'type' => 'string',
+                'required' => true,
+            ],
+            [
+                'ref' => '#credential',
+                'name' => 'client_id',
+                'label' => 'Client ID',
+                'type' => 'string',
+                'required' => true,
+            ],
+            [
+                'ref' => '#credential',
+                'name' => 'client_secret',
+                'label' => 'Client secret',
+                'type' => 'string',
+                'required' => true,
+            ],
+            [
                 'ref' => '#bridge',
                 'name' => 'endpoint',
                 'label' => 'Endpoint',
+                'type' => 'string',
+                'required' => true,
+            ],
+            [
+                'ref' => '#bridge',
+                'name' => 'scope',
+                'label' => 'Scope',
+                'description' =>
+                    'See <a href="https://www.zoho.com/accounts/protocol/oauth/scope.html">the documentation</a> for more information',
                 'type' => 'string',
                 'required' => true,
             ],
@@ -72,8 +111,17 @@ class Zoho_Form_Bridge_Template extends Form_Bridge_Template
             ],
         ],
         'bridge' => [
-            'backend' => '',
+            'credential' => '',
+            'form_id' => '',
             'endpoint' => '',
+            'scope' => '',
+        ],
+        'credential' => [
+            'name' => '',
+            'backend' => '',
+            'organization_id' => '',
+            'client_id' => '',
+            'client_secret' => '',
         ],
     ];
 
@@ -105,12 +153,43 @@ class Zoho_Form_Bridge_Template extends Form_Bridge_Template
             'forms_bridge_template_data',
             function ($data, $template_name) {
                 if ($template_name === $this->name) {
-                    if (!empty($data['backend']['name'])) {
-                        $data['bridge']['backend'] = $data['backend']['name'];
-                    }
+                    $this->credential_data = array_merge($data['credential'], [
+                        'backend' => $data['backend']['name'],
+                    ]);
+
+                    $data['bridge']['credential'] = $data['credential']['name'];
                 }
 
                 return $data;
+            },
+            10,
+            2
+        );
+
+        add_action(
+            'forms_bridge_before_template_bridge',
+            function ($data, $template_name) {
+                if ($template_name === $this->name && $this->credential_data) {
+                    $credential_exists = $this->credential_exists(
+                        $this->credential_data['name']
+                    );
+
+                    if ($credential_exists) {
+                        return;
+                    }
+
+                    $result = $this->create_credential($this->credential_data);
+
+                    if (!$result) {
+                        throw new Form_Bridge_Template_Exception(
+                            'credential_creation_error',
+                            __(
+                                'Forms Bridge can\'t create the credentials',
+                                'forms-bridge'
+                            )
+                        );
+                    }
+                }
             },
             10,
             2
@@ -126,17 +205,86 @@ class Zoho_Form_Bridge_Template extends Form_Bridge_Template
      */
     private function extend_schema($schema)
     {
+        $schema['credential'] = [
+            'type' => 'object',
+            'properties' => [
+                'name' => ['type' => 'string'],
+                'backend' => ['type' => 'string'],
+                'organization_id' => ['type' => 'string'],
+                'client_id' => ['type' => 'string'],
+                'client_secret' => ['type' => 'string'],
+            ],
+            'required' => [
+                'name',
+                'backend',
+                'organization_id',
+                'client_id',
+                'client_secret',
+            ],
+            'additionalProperties' => false,
+        ];
+
         $schema['bridge']['properties'] = array_merge(
             $schema['bridge']['properties'],
             [
-                'backend' => ['type' => 'string'],
+                'credential' => ['type' => 'string'],
                 'endpoint' => ['type' => 'string'],
+                'scope' => ['type' => 'string'],
             ]
         );
 
-        $schema['bridge']['required'][] = 'backend';
+        $schema['bridge']['required'][] = 'credential';
         $schema['bridge']['required'][] = 'endpoint';
+        $schema['bridge']['required'][] = 'scope';
 
         return $schema;
+    }
+
+    /**
+     * Checks if a credential with the given name exists on the settings store.
+     *
+     * @param string $name Credential name.
+     *
+     * @return boolean
+     */
+    private function credential_exists($name)
+    {
+        $setting = Forms_Bridge::setting($this->api);
+        $credentials = $setting->credentials ?: [];
+
+        return array_search($name, array_column($credentials, 'name')) !==
+            false;
+    }
+
+    /**
+     * Stores the credential data on the settings store.
+     *
+     * @param array $data Credential data.
+     *
+     * @return boolean Creation result.
+     */
+    private function create_credential($data)
+    {
+        $setting = Forms_Bridge::setting($this->api);
+        $credentials = $setting->credentials;
+
+        do_action(
+            'forms_bridge_before_template_credential',
+            $data,
+            $this->name
+        );
+
+        $setting->credentials = array_merge($credentials, [$data]);
+        $setting->flush();
+
+        $is_valid = $this->credential_exists($data['name']);
+
+        if (!$is_valid) {
+            return false;
+        }
+
+        do_action('forms_bridge_template_credential', $data, $this->name);
+
+        return true;
     }
 }

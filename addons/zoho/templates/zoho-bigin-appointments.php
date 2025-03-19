@@ -1,7 +1,5 @@
 <?php
 
-use FORMS_BRIDGE\Zoho_Form_Bridge;
-
 if (!defined('ABSPATH')) {
     exit();
 }
@@ -26,15 +24,9 @@ add_filter(
             return $payload;
         }
 
-        $contact_bridge = new Zoho_Form_Bridge(
-            [
-                'name' => '__event_contact',
-                'endpoint' => '/bigin/v2/Contacts',
-                'scope' => $bridge->scope,
-                'backend' => $bridge->backend->name,
-            ],
-            'zoho'
-        );
+        $payload['Owner'] = [
+            'id' => $payload['Owner'],
+        ];
 
         $contact = [
             'First_Name' => $payload['First_Name'],
@@ -42,7 +34,14 @@ add_filter(
             'Email' => $payload['Email'],
         ];
 
-        $response = $contact_bridge->do_submit($contact);
+        $response = $bridge
+            ->patch([
+                'name' => 'zoho-bigin-appointment-contact',
+                'endpoint' => '/bigin/v2/Contacts',
+                'template' => null,
+            ])
+            ->submit($contact);
+
         if (is_wp_error($response)) {
             $data = json_decode(
                 $response->get_error_data()['response']['body'],
@@ -65,6 +64,13 @@ add_filter(
             $contact_id = $response['data'][0]['details']['id'];
         }
 
+        $payload['Participants'] = [
+            [
+                'type' => 'contact',
+                'participant' => $contact_id,
+            ],
+        ];
+
         foreach (array_keys($contact) as $field) {
             unset($payload[$field]);
         }
@@ -72,10 +78,6 @@ add_filter(
         $date = $payload['date'];
         $hour = $payload['h'];
         $minute = $payload['m'];
-
-        unset($payload['date']);
-        unset($payload['h']);
-        unset($payload['m']);
 
         $form_data = apply_filters('forms_bridge_form', null);
         $date_index = array_search(
@@ -126,6 +128,10 @@ add_filter(
             return;
         }
 
+        unset($payload['date']);
+        unset($payload['h']);
+        unset($payload['m']);
+
         $payload['Start_DateTime'] = date('c', $time);
         $payload['End_DateTime'] = date('c', $time + 3600);
 
@@ -140,13 +146,6 @@ add_filter(
             ],
         ];
 
-        $payload['Participants'] = [
-            [
-                'type' => 'contact',
-                'participant' => $contact_id,
-            ],
-        ];
-
         return $payload;
     },
     10,
@@ -154,7 +153,7 @@ add_filter(
 );
 
 return [
-    'title' => __('Bigin Appintments', 'forms-bridge'),
+    'title' => __('Bigin Appointments', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#backend',
@@ -164,7 +163,7 @@ return [
             'default' => 'Zoho Bigin API',
         ],
         [
-            'ref' => '#backend/headers[]',
+            'ref' => '#credential',
             'name' => 'organization_id',
             'label' => __('Organization ID', 'form-bridge'),
             'description' => __(
@@ -175,7 +174,7 @@ return [
             'required' => true,
         ],
         [
-            'ref' => '#backend/headers[]',
+            'ref' => '#credential',
             'name' => 'client_id',
             'label' => __('Client ID', 'forms-bridge'),
             'description' => __(
@@ -186,7 +185,7 @@ return [
             'required' => true,
         ],
         [
-            'ref' => '#backend/headers[]',
+            'ref' => '#credential',
             'name' => 'client_secret',
             'label' => __('Client Secret', 'forms-bridge'),
             'description' => __(
@@ -218,10 +217,22 @@ return [
         ],
         [
             'ref' => '#form/fields[]',
+            'name' => 'Owner',
+            'label' => __('Owner ID', 'forms-bridge'),
+            'descritpion' => __(
+                'ID of the owner user of the event',
+                'forms-bridge'
+            ),
+            'type' => 'string',
+            'required' => true,
+        ],
+        [
+            'ref' => '#form/fields[]',
             'name' => 'Event_Title',
             'label' => __('Event title', 'forms-bridge'),
             'type' => 'string',
             'required' => true,
+            'default' => __('Web Appointment', 'forms-bridge'),
         ],
         [
             'ref' => '#form/fields[]',
@@ -233,6 +244,11 @@ return [
     ],
     'form' => [
         'fields' => [
+            [
+                'name' => 'Owner',
+                'type' => 'hidden',
+                'required' => true,
+            ],
             [
                 'name' => 'Event_Title',
                 'type' => 'hidden',
@@ -376,7 +392,7 @@ return [
                 'label' => __('Minute', 'forms-bridge'),
                 'type' => 'options',
                 'options' => [
-                    ['label' => '00', 'value' => '00'],
+                    ['label' => '00', 'value' => '00.0'],
                     ['label' => '05', 'value' => '05'],
                     ['label' => '10', 'value' => '10'],
                     ['label' => '15', 'value' => '15'],
@@ -397,6 +413,13 @@ return [
         'endpoint' => '/bigin/v2/Events',
         'scope' =>
             'ZohoBigin.modules.contacts.CREATE,ZohoBigin.modules.events.CREATE',
+        'mappers' => [
+            [
+                'from' => 'Owner',
+                'to' => 'Owner',
+                'cast' => 'string',
+            ],
+        ],
     ],
     'backend' => [
         'base_url' => 'https://www.zohoapis.com',

@@ -40,7 +40,7 @@ export default function ApiKeys({ apiKeys, setApiKeys }) {
     .concat([
       {
         name: "-1",
-        title: __("Add API Key", "forms-bridge"),
+        title: __("Add API key", "forms-bridge"),
       },
     ]);
 

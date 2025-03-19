@@ -23,7 +23,7 @@ export default function DolibarrSetting() {
       </PanelRow>
       <Spacer paddingY="calc(8px)" />
       <PanelBody
-        title={__("API Keys", "forms-bridge")}
+        title={__("API keys", "forms-bridge")}
         initialOpen={api_keys.length === 0}
       >
         <ApiKeys

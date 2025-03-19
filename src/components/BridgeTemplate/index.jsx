@@ -9,7 +9,7 @@ export default function BridgeTemplate({ templates, template, setTemplate }) {
   const options = [{ label: "", value: "" }].concat(
     templates.map((template) => ({
       label: template.title,
-      name: template.name,
+      value: template.name,
     }))
   );
 
@@ -30,7 +30,7 @@ export default function BridgeTemplate({ templates, template, setTemplate }) {
         >
           <SelectControl
             label={__("Template", "forms-bridge")}
-            value={template}
+            value={template || ""}
             onChange={setTemplate}
             options={options}
             __nextHasNoMarginBottom

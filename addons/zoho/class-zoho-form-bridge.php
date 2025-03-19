@@ -23,11 +23,11 @@ class Zoho_Form_Bridge extends Form_Bridge
     public const http_origin_token = 'zoho-http-origin';
 
     /**
-     * Handles the oauth credentials transient name.
+     * Handles the oauth access token transient name.
      *
      * @var string
      */
-    private const credentials_transient = 'forms-bridge-zoho-oauth-credentials';
+    private const token_transient = 'forms-bridge-zoho-oauth-access-token';
 
     /**
      * Handles the form bridge's template class.
@@ -37,30 +37,81 @@ class Zoho_Form_Bridge extends Form_Bridge
     protected static $template_class = '\FORMS_BRIDGE\Zoho_Form_Bridge_Template';
 
     /**
+     * Parent getter interceptor to short circtuit credentials access.
+     *
+     * @param string $name Attribute name.
+     *
+     * @return mixed Attribute value or null.
+     */
+    public function __get($name)
+    {
+        switch ($name) {
+            case 'credential':
+                return $this->credential();
+            default:
+                return parent::__get($name);
+        }
+    }
+
+    /**
+     * Returns json as static bridge content type.
+     *
+     * @return string.
+     */
+    protected function content_type()
+    {
+        return 'application/json';
+    }
+
+    /**
+     * Intercepts backend access and returns it from the credential.
+     *
+     * @return Http_Backend|null
+     */
+    protected function backend()
+    {
+        return $this->credential()->backend;
+    }
+
+    /**
+     * Bridge's API key private getter.
+     *
+     * @return Zoho_Credentials|null
+     */
+    private function credential()
+    {
+        return apply_filters(
+            'forms_bridge_zoho_credential',
+            null,
+            $this->data['credential'] ?? null
+        );
+    }
+
+    /**
      * Performs an authentication request to the zoho oauth server using
      * the bridge credentials.
      */
     private function get_access_token()
     {
-        $credentials = get_transient(self::credentials_transient);
+        $token = get_transient(self::token_transient);
 
-        if ($credentials) {
+        if ($token) {
             try {
-                $credentials = json_decode($credentials, true);
+                $token = json_decode($token, true);
             } catch (TypeError) {
-                $credentials = false;
+                $token = false;
             }
         }
 
         if (
-            is_array($credentials) &&
-            isset($credentials['access_token'], $credentials['expires_at'])
+            is_array($token) &&
+            isset($token['access_token'], $token['expires_at'])
         ) {
             if (
-                $credentials['expires_at'] < time() - 10 &&
-                $credentials['scope'] === $this->scope
+                $token['expires_at'] < time() - 10 &&
+                $token['scope'] === $this->scope
             ) {
-                return $credentials['access_token'];
+                return $token['access_token'];
             }
         }
 
@@ -82,18 +133,19 @@ class Zoho_Form_Bridge extends Form_Bridge
         $oauth_server = 'https://accounts.zoho.' . $region;
         $url = $oauth_server . '/oauth/v2/token';
 
-        $headers = $this->backend->headers;
+        $credential = $this->credential();
+
         $scope = $this->scope ?: 'ZohoCRM.';
         $service = explode('.', $scope)[0] ?? 'ZohoCRM';
 
         $query = http_build_query([
-            'client_id' => $headers['client_id'] ?? '',
-            'client_secret' => $headers['client_secret'] ?? '',
+            'client_id' => $credential->client_id ?? '',
+            'client_secret' => $credential->client_secret ?? '',
             'grant_type' => 'client_credentials',
             'scope' => $scope,
             'soid' => implode('.', [
                 $service,
-                $headers['organization_id'] ?? '',
+                $credential->organization_id ?? '',
             ]),
         ]);
 
@@ -106,7 +158,7 @@ class Zoho_Form_Bridge extends Form_Bridge
         }
 
         set_transient(
-            self::credentials_transient,
+            self::token_transient,
             $response['body'],
             $response['data']['expires_in'] - 30
         );
@@ -121,9 +173,9 @@ class Zoho_Form_Bridge extends Form_Bridge
      *
      * @return array|WP_Error Http request response.
      */
-    public function do_submit($payload, $attachments = [])
+    protected function do_submit($payload, $attachments = [])
     {
-        $access_token = self::get_access_token();
+        $access_token = $this->get_access_token();
 
         add_filter(
             'http_request_args',
