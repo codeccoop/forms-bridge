@@ -4,33 +4,6 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-add_filter(
-    'forms_bridge_payload',
-    function ($payload, $bridge) {
-        if ($bridge->template === 'brevo-contacts-doi') {
-            $list_ids = is_string($payload['includeListIds'])
-                ? explode(',', $payload['includeListIds'])
-                : (array) $payload['includeListIds'];
-
-            $payload['includeListIds'] = array_map('intval', $list_ids);
-
-            $site_url = get_site_url();
-            $url = parse_url($payload['redirectionUrl'] ?? $site_url);
-
-            if (!isset($url['host'])) {
-                $payload['redirectionUrl'] =
-                    $site_url .
-                    '/' .
-                    preg_replace('/^\//', '', $payload['redirectionUrl']);
-            }
-        }
-
-        return $payload;
-    },
-    90,
-    2
-);
-
 return [
     'title' => __('Brevo Contacts DOI', 'forms-bridge'),
     'fields' => [
@@ -177,6 +150,11 @@ return [
                 'to' => 'attributes.LNAME',
                 'cast' => 'string',
             ],
+        ],
+        'workflow' => [
+            'rest-api-brevo-doi-include-list-ids',
+            'rest-api-brevo-doi-contact-attributes',
+            'rest-api-brevo-doi-redirection-url',
         ],
     ],
 ];
