@@ -210,10 +210,6 @@ class Integration extends BaseIntegration
      */
     public function serialize_form($form)
     {
-        if ($form['title'] === 'Debug') {
-            $debug = true;
-        }
-
         $form_id = (int) $form['id'];
         $fields = array_reduce(
             $form['fields'],
