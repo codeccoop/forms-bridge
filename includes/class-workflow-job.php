@@ -22,6 +22,7 @@ class Workflow_Job
                         'type' => 'string',
                         'enum' => [
                             'string',
+                            'integer',
                             'number',
                             'array',
                             'object',
@@ -44,6 +45,7 @@ class Workflow_Job
                         'type' => 'string',
                         'enum' => [
                             'string',
+                            'integer',
                             'number',
                             'array',
                             'object',
