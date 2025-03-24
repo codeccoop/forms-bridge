@@ -9,7 +9,7 @@ export default function RestSetting() {
   const [{ bridges, templates, workflow_jobs }, save] = useRestApi();
 
   const update = (field) =>
-    save({ bridges, workflow_jobs, templates, ...field });
+    save({ bridges, templates, workflow_jobs, ...field });
 
   return (
     <PanelRow>

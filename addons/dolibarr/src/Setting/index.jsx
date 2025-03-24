@@ -8,9 +8,11 @@ const { PanelBody, PanelRow, __experimentalSpacer: Spacer } = wp.components;
 const { __ } = wp.i18n;
 
 export default function DolibarrSetting() {
-  const [{ api_keys, bridges, templates }, save] = useDolibarrApi();
+  const [{ api_keys, bridges, templates, workflow_jobs }, save] =
+    useDolibarrApi();
 
-  const update = (field) => save({ api_keys, bridges, templates, ...field });
+  const update = (field) =>
+    save({ api_keys, bridges, templates, workflow_jobs, ...field });
 
   return (
     <>

@@ -8,6 +8,7 @@ export default function useGSApi() {
         authorized: false,
         bridges: [],
         templates: [],
+        workflow_jobs: [],
       },
     },
     patch,

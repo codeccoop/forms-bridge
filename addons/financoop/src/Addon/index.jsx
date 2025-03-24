@@ -2,6 +2,7 @@
 import SettingsProvider from "../../../../src/providers/Settings";
 import FormsProvider from "../../../../src/providers/Forms";
 import TemplatesProvider from "../../../../src/providers/Templates";
+import WorkflowJobsProvider from "../../../../src/providers/WorkflowJobs";
 import Setting from "../Setting";
 
 // assets
@@ -42,7 +43,9 @@ export default function Addon() {
     <FormsProvider>
       <SettingsProvider handle={["financoop"]}>
         <TemplatesProvider>
-          <div>{root && createPortal(<Setting />, root)}</div>
+          <WorkflowJobsProvider>
+            <div>{root && createPortal(<Setting />, root)}</div>
+          </WorkflowJobsProvider>
         </TemplatesProvider>
       </SettingsProvider>
     </FormsProvider>

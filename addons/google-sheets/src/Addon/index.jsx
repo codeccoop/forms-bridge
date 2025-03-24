@@ -2,6 +2,7 @@
 import SettingsProvider from "../../../../src/providers/Settings";
 import FormsProvider from "../../../../src/providers/Forms";
 import TemplatesProvider from "../../../../src/providers/Templates";
+import WorkflowJobsProvider from "../../../../src/providers/WorkflowJobs";
 import SpreadsheetsProvider from "../providers/Spreadsheets";
 import Setting from "../Setting";
 
@@ -42,7 +43,9 @@ export default function Addon() {
       <FormsProvider>
         <SpreadsheetsProvider>
           <TemplatesProvider>
-            <div>{root && createPortal(<Setting />, root)}</div>
+            <WorkflowJobsProvider>
+              <div>{root && createPortal(<Setting />, root)}</div>
+            </WorkflowJobsProvider>
           </TemplatesProvider>
         </SpreadsheetsProvider>
       </FormsProvider>

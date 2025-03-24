@@ -8,9 +8,11 @@ const { PanelBody, PanelRow, __experimentalSpacer: Spacer } = wp.components;
 const { __ } = wp.i18n;
 
 export default function ZohoSetting() {
-  const [{ bridges, templates, credentials }, save] = useZohoApi();
+  const [{ bridges, templates, credentials, workflow_jobs }, save] =
+    useZohoApi();
 
-  const update = (field) => save({ bridges, templates, credentials, ...field });
+  const update = (field) =>
+    save({ bridges, templates, credentials, workflow_job, ...field });
 
   return (
     <>
