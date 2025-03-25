@@ -19,7 +19,7 @@ function forms_bridge_mailchimp_backend_headers($headers)
     return $headers;
 }
 
-function forms_bridge_mailchimp_authorization($payload, $bridge)
+function forms_bridge_mailchimp_authorization()
 {
     add_filter(
         'http_bridge_backend_headers',
@@ -27,8 +27,6 @@ function forms_bridge_mailchimp_authorization($payload, $bridge)
         10,
         1
     );
-
-    return $payload;
 }
 
 return [
@@ -37,7 +35,9 @@ return [
         'Intercepts http headers and sets up MailChimp basic authorization credentials.',
         'forms-bridge'
     ),
-    'method' => 'forms_bridge_mailchimp_authorization',
     'input' => [],
     'output' => [],
+    'submission_callbacks' => [
+        'before' => 'forms_bridge_mailchimp_authorization',
+    ],
 ];

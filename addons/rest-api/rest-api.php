@@ -158,10 +158,15 @@ class Rest_Addon extends Addon
                 })
             );
 
+            $bridge['workflow'] = array_map(
+                'sanitize_text_field',
+                (array) $bridge['workflow']
+            );
+
             $is_valid = true;
             unset($bridge['is_valid']);
             foreach ($bridge as $field => $value) {
-                if ($field === 'mappers') {
+                if ($field === 'mappers' || $field === 'workflow') {
                     continue;
                 }
 

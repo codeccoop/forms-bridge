@@ -1,11 +1,21 @@
 <?php
 
-function forms_bridge_brevo_contact_attributes(
-    $payload,
-    $bridge,
-    $schema = ['listIds', 'email', 'attributes']
-) {
+if (!defined('ABSPATH')) {
+    exit();
+}
+
+function forms_bridge_brevo_contact_attributes($payload)
+{
     $payload['attributes'] = $payload['attributes'] ?? [];
+
+    $schema = [
+        'email',
+        'listIds',
+        'updateEnabled',
+        'emailBlacklisted',
+        'smsBalcklisted',
+        'attributes',
+    ];
 
     foreach ($payload as $field => $value) {
         if (!in_array($field, $schema)) {
@@ -18,12 +28,59 @@ function forms_bridge_brevo_contact_attributes(
 }
 
 return [
-    'title' => __('Brevo list IDs', 'forms-bridge'),
+    'title' => __('Brevo contact attributes', 'forms-bridge'),
     'description' => __(
-        'Formats the submission payload and place all non well known fields as uppercased attributes.',
+        'Place all non well known fields as uppercased fields of the attributes object',
         'forms-bridge'
     ),
     'method' => 'forms_bridge_brevo_contact_attributes',
-    'input' => [],
-    'output' => ['attributes'],
+    'input' => [
+        [
+            'name' => 'email',
+            'type' => 'string',
+            'required' => true,
+        ],
+        [
+            'name' => 'listIds',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'updateEnabled',
+            'type' => 'boolean',
+        ],
+        [
+            'name' => 'emailBlacklisted',
+            'type' => 'boolean',
+        ],
+        [
+            'name' => 'smsBalcklisted',
+            'type' => 'boolean',
+        ],
+    ],
+    'output' => [
+        [
+            'name' => 'email',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'listIds',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'updateEnabled',
+            'type' => 'boolean',
+        ],
+        [
+            'name' => 'emailBlacklisted',
+            'type' => 'boolean',
+        ],
+        [
+            'name' => 'smsBalcklisted',
+            'type' => 'boolean',
+        ],
+        [
+            'name' => 'attributes',
+            'type' => 'object',
+        ],
+    ],
 ];

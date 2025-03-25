@@ -1,23 +1,87 @@
 <?php
 
-function forms_bridge_brevo_doi_contact_attributes($payload, $bridge)
+if (!defined('ABSPATH')) {
+    exit();
+}
+
+function forms_bridge_brevo_doi_contact_attributes($payload)
 {
-    return forms_bridge_brevo_contact_attributes($payload, $bridge, [
+    $payload['attributes'] = $payload['attributes'] ?? [];
+
+    $schema = [
         'email',
         'includeListIds',
-        'redirectionUrl',
+        'excludeListIds',
         'templateId',
+        'redirectionUrl',
         'attributes',
-    ]);
+    ];
+
+    foreach ($payload as $field => $value) {
+        if (!in_array($field, $schema)) {
+            $payload['attributes'][strtoupper($field)] = $value;
+            unset($payload[$field]);
+        }
+    }
+
+    return $payload;
 }
 
 return [
     'title' => __('Brevo DOI contact attributes', 'forms-bridge'),
     'description' => __(
-        'Formats the submission payload and place all non well known fields as uppercased attributes.',
+        'Place all non well known fields as uppercased fields of the attributes object',
         'forms-bridge'
     ),
     'method' => 'forms_bridge_brevo_doi_contact_attributes',
-    'input' => [],
-    'output' => ['attributes'],
+    'input' => [
+        [
+            'name' => 'email',
+            'type' => 'string',
+            'required' => true,
+        ],
+        [
+            'name' => 'includeListIds',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'excludeListIds',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'templateId',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'redirectionUrl',
+            'type' => 'string',
+        ],
+    ],
+    'output' => [
+        [
+            'name' => 'email',
+            'type' => 'string',
+            'required' => true,
+        ],
+        [
+            'name' => 'includeListIds',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'excludeListIds',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'templateId',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'redirectionUrl',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'attributes',
+            'type' => 'object',
+        ],
+    ],
 ];

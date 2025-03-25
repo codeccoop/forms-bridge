@@ -151,7 +151,7 @@ return [
             'required' => true,
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge',
             'name' => 'list_id',
             'label' => __('Audience ID', 'forms-bridge'),
             'description' => __(
@@ -201,11 +201,6 @@ return [
                 'required' => true,
             ],
             [
-                'name' => 'list_id',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
                 'name' => 'status',
                 'type' => 'hidden',
                 'required' => true,
@@ -238,11 +233,6 @@ return [
             [
                 'from' => 'datacenter',
                 'to' => 'datacenter',
-                'cast' => 'null',
-            ],
-            [
-                'from' => 'list_id',
-                'to' => 'list_id',
                 'cast' => 'null',
             ],
         ],

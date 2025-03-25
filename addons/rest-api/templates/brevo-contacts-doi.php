@@ -152,9 +152,9 @@ return [
             ],
         ],
         'workflow' => [
-            'rest-api-brevo-doi-include-list-ids',
-            'rest-api-brevo-doi-contact-attributes',
+            'rest-api-brevo-list-ids',
             'rest-api-brevo-doi-redirection-url',
+            'rest-api-brevo-doi-contact-attributes',
         ],
     ],
 ];
