@@ -66,9 +66,7 @@ class JSON_Finger
                     if (strlen($index) === 0) {
                         $index = -1;
                     } elseif (!((int) $index == $index)) {
-                        throw new ValueError(
-                            'Invalid array index at ' . esc_attr($from)
-                        );
+                        return [$finger];
                     }
 
                     $index = (int) $index;
@@ -76,9 +74,7 @@ class JSON_Finger
                     $i += 1;
                     if (strlen($finger) > $i) {
                         if ($finger[$i] !== '.') {
-                            throw new ValueError(
-                                'Invalid finger syntax at ' . (int) $i
-                            );
+                            return [$finger];
                         }
                     }
                 } else {
@@ -162,13 +158,8 @@ class JSON_Finger
 
             $value = $this->data;
             foreach ($keys as $key) {
-                if (wp_is_numeric_array($value) && $key === -1) {
-                    $key = count($value) - 1;
-                }
-
                 if (!isset($value[$key])) {
-                    $value = null;
-                    break;
+                    return;
                 }
 
                 $value = $value[$key];
@@ -203,14 +194,16 @@ class JSON_Finger
             $partial = &$data;
             for ($i = 0; $i < count($keys) - 1; $i++) {
                 if (!is_array($partial)) {
-                    throw new TypeError(
-                        'Finger points to a non traversable value'
-                    );
+                    return;
                 }
 
                 $key = $keys[$i];
                 if ($key === -1 && wp_is_numeric_array($partial)) {
-                    $key = count($partial) - 1;
+                    if (count($keys) - 1 === $i) {
+                        $key = count($partial) - 1;
+                    } else {
+                        return;
+                    }
                 }
 
                 if (!isset($partial[$key])) {
