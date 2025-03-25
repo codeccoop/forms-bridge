@@ -639,6 +639,13 @@ class Form_Bridge_Template
         $data['fields'] = $fields;
         $data = apply_filters('forms_bridge_template_data', $data, $this->name);
 
+        if (empty($data) || is_wp_error($data)) {
+            throw new Form_Bridge_Template_Exception(
+                'template_creation_error',
+                __('There is a problem with the template data', 'forms-bridge')
+            );
+        }
+
         $integration_instance = Integration::integrations()[$integration];
 
         do_action(
