@@ -178,7 +178,7 @@ class Workflow_Job
 
     public function start()
     {
-        add_filter('forms_bridge_payload', [$this, 'run'], 90, 2);
+        add_filter('forms_bridge_payload', [$this, 'run'], 999, 2);
     }
 
     public function run($payload, $bridge)
