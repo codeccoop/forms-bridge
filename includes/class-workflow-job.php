@@ -185,12 +185,11 @@ class Workflow_Job
     {
         $original = $payload;
 
-        $method = $this->method;
-
         if ($this->missing_requireds($payload)) {
             return $payload;
         }
 
+        $method = $this->method;
         $payload = $method($payload, $bridge);
 
         if (empty($payload)) {
@@ -200,6 +199,8 @@ class Workflow_Job
             do_action('forms_bridge_on_failure', $bridge, $error, $original);
             return;
         }
+
+        $payload = $this->output_payload($payload);
 
         if ($next_job = $this->next) {
             $payload = $next_job->run($payload, $bridge);
@@ -322,5 +323,24 @@ class Workflow_Job
         }
 
         return false;
+    }
+
+    private function output_payload($payload)
+    {
+        foreach ($this->input as $input_field) {
+            $persist = false;
+            foreach ($this->output as $output_field) {
+                if ($input_field === $output_field) {
+                    $persist = true;
+                    break;
+                }
+            }
+
+            if (!$persist) {
+                unset($payload[$input_field['name']]);
+            }
+        }
+
+        return $payload;
     }
 }
