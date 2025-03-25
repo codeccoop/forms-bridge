@@ -76,7 +76,7 @@ export default function WorkflowStage() {
           />
         </div>
         <p style={{ marginTop: "0.5em" }}>{workflowJob?.description}</p>
-        <div style={{ display: "flex", gap: "5px" }}>
+        <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
           <strong>{__("Job interface", "forms-bridge")}:&nbsp;</strong>
           {inputFields.map((field) => (
             <InputField key={field.name} {...field} />

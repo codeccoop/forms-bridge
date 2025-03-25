@@ -4,79 +4,6 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-add_filter(
-    'forms_bridge_payload',
-    function ($payload, $bridge) {
-        if ($bridge->template !== 'dolibarr-individual-prospects') {
-            return $payload;
-        }
-
-        $payload['name'] = "{$payload['firstname']} {$payload['lastname']}";
-
-        $backend = $bridge->backend;
-        $dolapikey = $bridge->api_key->key;
-
-        $response = $backend->get(
-            '/api/index.php/thirdparties',
-            [
-                'limit' => '1',
-                'sqlfilters' => "(t.fk_typent:=:8) and (t.email:=:'{$payload['email']}')",
-            ],
-            ['DOLAPIKEY' => $dolapikey]
-        );
-
-        if (is_wp_error($response)) {
-            $error_code = $response->get_error_data()['response']['response'][
-                'code'
-            ];
-
-            if ($error_code !== 404) {
-                do_action(
-                    'forms_bridge_on_failure',
-                    $bridge,
-                    $response,
-                    $payload
-                );
-
-                return;
-            }
-        }
-
-        if (!is_wp_error($response)) {
-            return;
-        }
-
-        $response = $backend->get(
-            '/api/index.php/thirdparties',
-            [
-                'sortfield' => 't.rowid',
-                'sortorder' => 'DESC',
-                'limit' => 1,
-            ],
-            ['DOLAPIKEY' => $dolapikey]
-        );
-
-        if (is_wp_error($response)) {
-            do_action('forms_bridge_on_failure', $bridge, $response, $payload);
-            return;
-        }
-
-        $previus_code_client = $response['data'][0]['code_client'];
-        [$prefix, $number] = explode('-', $previus_code_client);
-
-        $next = strval($number + 1);
-        while (strlen($next) < strlen($number)) {
-            $next = '0' . $next;
-        }
-
-        $payload['code_client'] = $prefix . '-' . $next;
-
-        return $payload;
-    },
-    90,
-    2
-);
-
 return [
     'title' => __('Prospects', 'forms-bridge'),
     'fields' => [
@@ -212,6 +139,7 @@ return [
             ],
         ],
         'workflow' => [
+            'dolibarr-individual-thirdparty-name',
             'dolibarr-skip-if-thirdparty-exists',
             'dolibarr-next-client-code',
         ],

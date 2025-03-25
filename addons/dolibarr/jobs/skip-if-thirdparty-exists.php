@@ -6,13 +6,13 @@ if (!defined('ABSPATH')) {
 
 function forms_bridge_dolibarr_skip_thirdparty($payload, $bridge)
 {
-    $payload = forms_bridge_dolibarr_search_thirdparty($payload, $bridge);
+    $thirdparty = forms_bridge_dolibarr_search_thirdparty($payload, $bridge);
 
-    if (is_wp_error($payload)) {
-        return $payload;
+    if (is_wp_error($thirdparty)) {
+        return $thirdparty;
     }
 
-    if (isset($payload['socid'])) {
+    if ($thirdparty) {
         return;
     }
 
@@ -26,6 +26,32 @@ return [
         'forms-bridge'
     ),
     'method' => 'forms_bridge_dolibarr_skip_thirdparty',
-    'input' => ['email'],
-    'output' => [],
+    'input' => [
+        [
+            'name' => 'email',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'name',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'idprof1',
+            'type' => 'string',
+        ],
+    ],
+    'output' => [
+        [
+            'name' => 'email',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'name',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'idprof1',
+            'type' => 'string',
+        ],
+    ],
 ];

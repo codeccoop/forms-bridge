@@ -37,7 +37,14 @@ function applyMappers(fields, mappers) {
 
       return field;
     })
-    .filter((field) => field.name);
+    .filter((field) => field.name)
+    .reduce((fields, field) => {
+      if (!fields.map(({ name }) => name).includes(field.name)) {
+        fields.push(field);
+      }
+
+      return fields;
+    }, []);
 }
 
 function applyJob(fields, job) {

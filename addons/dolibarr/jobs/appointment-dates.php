@@ -1,14 +1,19 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit();
+}
+
 function forms_bridge_dolibarr_appointment_dates($payload, $bridge)
 {
-    $payload = forms_bridge_dolibarr_format_date($payload, $bridge);
+    $time = forms_bridge_dolibarr_date_to_time($payload, $bridge);
 
-    $payload['datep'] = $payload['date'];
-    unset($payload['date']);
+    if (is_wp_error($time)) {
+        return $time;
+    }
 
+    $payload['datep'] = (string) $time;
     $payload['duration'] = floatval($payload['duration'] ?? 1);
-
     $payload['datef'] = $payload['duration'] * 3600 + $payload['datep'];
 
     return $payload;
@@ -17,10 +22,41 @@ function forms_bridge_dolibarr_appointment_dates($payload, $bridge)
 return [
     'title' => __('Appointment dates', 'forms-bridge'),
     'description' => __(
-        'Sets appointment start and end time from "date", "hour", "minute" and "duration" fields.',
+        'Sets appointment start, end time and duration from "date", "hour", "minute" and "duration" fields.',
         'forms-bridge'
     ),
     'method' => 'forms_bridge_dolibarr_appointment_dates',
-    'input' => ['date*', 'hour', 'minute', 'duration'],
-    'output' => ['datep', 'datef', 'duration'],
+    'input' => [
+        [
+            'name' => 'date',
+            'required' => true,
+            'type' => 'string',
+        ],
+        [
+            'name' => 'hour',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'minute',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'duration',
+            'type' => 'number',
+        ],
+    ],
+    'output' => [
+        [
+            'name' => 'datep',
+            'type' => 'number',
+        ],
+        [
+            'name' => 'datef',
+            'type' => 'number',
+        ],
+        [
+            'name' => 'duration',
+            'type' => 'number',
+        ],
+    ],
 ];

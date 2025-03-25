@@ -6,13 +6,13 @@ if (!defined('ABSPATH')) {
 
 function forms_bridge_dolibarr_skip_contact($payload, $bridge)
 {
-    $payload = forms_bridge_dolibarr_search_contact($payload, $bridge);
+    $contact = forms_bridge_dolibarr_search_contact($payload, $bridge);
 
-    if (is_wp_error($payload)) {
-        return $payload;
+    if (is_wp_error($contact)) {
+        return $contact;
     }
 
-    if (isset($payload['contact_id'])) {
+    if ($contact) {
         return;
     }
 
@@ -26,6 +26,40 @@ return [
         'forms-bridge'
     ),
     'method' => 'forms_bridge_dolibarr_skip_contact',
-    'input' => ['email'],
-    'output' => [],
+    'input' => [
+        [
+            'name' => 'email',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'firstname',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'lastname',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'socid',
+            'type' => 'string',
+        ],
+    ],
+    'output' => [
+        [
+            'name' => 'email',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'firstname',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'lastname',
+            'type' => 'string',
+        ],
+        [
+            'name' => 'socid',
+            'type' => 'string',
+        ],
+    ],
 ];

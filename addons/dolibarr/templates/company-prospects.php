@@ -187,7 +187,7 @@ return [
         ],
         'workflow' => [
             'dolibarr-country-id',
-            'dolibarr-company-id',
+            'dolibarr-thirdparty-id',
             'dolibarr-skip-if-contact-exists',
         ],
     ],

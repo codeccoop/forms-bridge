@@ -330,7 +330,7 @@ class Workflow_Job
         foreach ($this->input as $input_field) {
             $persist = false;
             foreach ($this->output as $output_field) {
-                if ($input_field === $output_field) {
+                if ($input_field['name'] === $output_field['name']) {
                     $persist = true;
                     break;
                 }

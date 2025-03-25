@@ -1,34 +1,21 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit();
+}
+
 function forms_bridge_dolibarr_next_code_client($payload, $bridge)
 {
-    $backend = $bridge->backend;
-    $dolapikey = $bridge->api_key->key;
-
-    $response = $backend->get(
-        '/api/index.php/thirdparties',
-        [
-            'sortfield' => 't.rowid',
-            'sortorder' => 'DESC',
-            'limit' => 1,
-        ],
-        ['DOLAPIKEY' => $dolapikey]
+    $code_client = forms_bridge_dolibarr_get_next_code_client(
+        $payload,
+        $bridge
     );
 
-    if (is_wp_error($response)) {
-        return $response;
+    if (is_wp_error($code_client)) {
+        return $code_client;
     }
 
-    $previus_code_client = $response['data'][0]['code_client'];
-
-    [$prefix, $number] = explode('-', $previus_code_client);
-
-    $next = strval($number + 1);
-    while (strlen($next) < strlen($number)) {
-        $next = '0' . $next;
-    }
-
-    $payload['code_client'] = $prefix . '-' . $next;
+    $payload['code_client'] = $code_client;
     return $payload;
 }
 
@@ -40,5 +27,10 @@ return [
     ),
     'method' => 'forms_bridge_dolibarr_next_code_client',
     'input' => [],
-    'output' => ['code_client'],
+    'output' => [
+        [
+            'name' => 'code_client',
+            'type' => 'string',
+        ],
+    ],
 ];

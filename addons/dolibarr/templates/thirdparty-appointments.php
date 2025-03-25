@@ -7,16 +7,14 @@ if (!defined('ABSPATH')) {
 add_filter(
     'forms_bridge_template_data',
     function ($data, $template_name) {
-        if ($template_name === 'dolibarr-appointments') {
+        if ($template_name === 'dolibarr-thirdparty-appointments') {
             $index = array_search(
                 'owner',
                 array_column($data['form']['fields'], 'name')
             );
 
-            if ($index !== false) {
-                $field = &$data['form']['fields'][$index];
-                $field['value'] = base64_encode($field['value']);
-            }
+            $field = &$data['form']['fields'][$index];
+            $field['value'] = base64_encode($field['value']);
         }
 
         return $data;
@@ -28,7 +26,7 @@ add_filter(
 add_filter(
     'forms_bridge_payload',
     function ($payload, $bridge) {
-        if ($bridge->template === 'dolibarr-appointments') {
+        if ($bridge->template === 'dolibarr-thirdparty-appointments') {
             if (isset($payload['owner_email'])) {
                 $payload['owner_email'] = base64_decode(
                     $payload['owner_email']
@@ -45,7 +43,7 @@ add_filter(
 );
 
 return [
-    'title' => __('Appointments', 'forms-bridge'),
+    'title' => __('Company Appointments', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#bridge',
@@ -144,6 +142,12 @@ return [
                 'required' => true,
             ],
             [
+                'name' => 'name',
+                'label' => __('Company name', 'forms-bridge'),
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
                 'name' => 'firstname',
                 'label' => __('First name', 'forms-bridge'),
                 'type' => 'text',
@@ -159,6 +163,12 @@ return [
                 'name' => 'email',
                 'label' => __('Email', 'forms-bridge'),
                 'type' => 'email',
+                'required' => true,
+            ],
+            [
+                'name' => 'poste',
+                'label' => __('Job position', 'forms-bridge'),
+                'type' => 'text',
                 'required' => true,
             ],
             [
@@ -327,6 +337,7 @@ return [
         'workflow' => [
             'dolibarr-get-owner-by-email',
             'dolibarr-appointment-dates',
+            'dolibarr-thirdparty-id',
             'dolibarr-appointment-attendee',
         ],
     ],

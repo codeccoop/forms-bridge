@@ -84,6 +84,7 @@ abstract class Addon extends Singleton
                             'required' => ['from', 'to', 'cast'],
                         ],
                     ],
+                    'template' => ['type' => 'string'],
                     'workflow' => [
                         'type' => 'array',
                         'items' => ['type' => 'string'],

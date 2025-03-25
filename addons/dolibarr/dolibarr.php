@@ -10,6 +10,8 @@ require_once 'class-dolibarr-api-key.php';
 require_once 'class-dolibarr-form-bridge.php';
 require_once 'class-dolibarr-form-bridge-template.php';
 
+require_once 'api-functions.php';
+
 require_once 'country-codes.php';
 // require_once 'state-codes.php';
 
@@ -116,7 +118,7 @@ class Dolibarr_Addon extends Addon
     {
         return [
             self::$api,
-            [
+            self::merge_setting_config([
                 'api_keys' => [
                     'type' => 'array',
                     'items' => [
@@ -142,7 +144,7 @@ class Dolibarr_Addon extends Addon
                         'required' => ['api_key', 'endpoint'],
                     ],
                 ],
-            ],
+            ]),
             [
                 'api_keys' => [],
                 'bridges' => [],
@@ -278,10 +280,15 @@ class Dolibarr_Addon extends Addon
                 })
             );
 
+            $bridge['workflow'] = array_map(
+                'sanitize_text_field',
+                (array) $bridge['workflow']
+            );
+
             $is_valid = true;
             unset($bridge['is_valid']);
             foreach ($bridge as $field => $value) {
-                if ($field === 'mappers') {
+                if ($field === 'mappers' || $field === 'workflow') {
                     continue;
                 }
 
