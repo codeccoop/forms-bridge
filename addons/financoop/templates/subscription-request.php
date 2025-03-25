@@ -14,7 +14,7 @@ add_filter(
         $campaign_id = $data['bridge']['campaign_id'];
         $backend_params = $data['backend'];
 
-        // $campaign = Finan_Coop_Addon::fetch_campaign($campaign_id, $backend_params);
+        // $campaign = \FORMS_BRIDGE\Finan_Coop_Addon::fetch_campaign($campaign_id, $backend_params);
 
         // if (is_wp_error($campaign)) {
         //     throw $campaign;
@@ -36,39 +36,7 @@ add_filter(
     2
 );
 
-add_filter(
-    'forms_bridge_payload',
-    function ($payload, $bridge) {
-        if ($bridge->template !== 'financoop-subscription-request') {
-            return $payload;
-        }
-
-        global $forms_bridge_odoo_countries;
-
-        if (!isset($forms_bridge_odoo_countries[$payload['country_code']])) {
-            $countries_by_label = array_reduce(
-                array_keys($forms_bridge_odoo_countries),
-                function ($labels, $country_code) {
-                    global $forms_bridge_odoo_countries;
-                    $label = $forms_bridge_odoo_countries[$country_code];
-                    $labels[$label] = $country_code;
-                    return $labels;
-                },
-                []
-            );
-
-            $payload['country_code'] =
-                $countries_by_label[$payload['country_code']];
-        }
-
-        $payload['vat'] =
-            strtoupper($payload['country_code']) . $payload['vat'];
-
-        return $payload;
-    },
-    10,
-    2
-);
+global $forms_bridge_odoo_countries;
 
 return [
     'title' => __('Subscription Requests', 'forms-bridge'),
@@ -88,6 +56,7 @@ return [
                 'cast' => 'integer',
             ],
         ],
+        'workflow' => ['financoop-country-code', 'financoop-vat-id'],
     ],
     'form' => [
         'fields' => [
@@ -130,7 +99,7 @@ return [
             ],
             [
                 'label' => __('Nationality', 'forms-bridge'),
-                'name' => 'country_code',
+                'name' => 'country',
                 'type' => 'options',
                 'options' => array_map(function ($country_code) {
                     global $forms_bridge_odoo_countries;

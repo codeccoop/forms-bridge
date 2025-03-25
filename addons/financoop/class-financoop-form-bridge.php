@@ -34,7 +34,10 @@ class Finan_Coop_Form_Bridge extends Rest_Form_Bridge
         $result = Odoo_Form_Bridge::rpc_response($response);
 
         if (isset($result['error'])) {
-            return new WP_Error($result['status'], $result['error'], $payload);
+            return new WP_Error($result['status'], $result['error'], [
+                'respons' => $response,
+                'payload' => $payload,
+            ]);
         }
 
         return $result;
