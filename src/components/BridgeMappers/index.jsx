@@ -19,7 +19,7 @@ export default function BridgeMappers({ form, mappers, setMappers }) {
   return (
     <>
       <Button
-        variant="secondary"
+        variant={mappers.length ? "primary" : "secondary"}
         onClick={() => setOpen(true)}
         style={{ width: "150px", justifyContent: "center" }}
         __next40pxDefaultSize
