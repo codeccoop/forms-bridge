@@ -88,6 +88,14 @@ return [
             'type' => 'boolean',
             'default' => false,
         ],
+        [
+            'ref' => '#form/fields[]',
+            'name' => 'duration',
+            'label' => __('Duration', 'forms-bridge'),
+            'description' => __('Duration in hours', 'forms-bridge'),
+            'type' => 'number',
+            'default' => '1',
+        ],
     ],
     'form' => [
         'fields' => [
@@ -105,6 +113,12 @@ return [
                 'name' => 'All_day',
                 'type' => 'hidden',
                 'required' => true,
+            ],
+            [
+                'name' => 'duration',
+                'type' => 'hidden',
+                'required' => true,
+                'value' => '1',
             ],
             [
                 'name' => 'First_Name',

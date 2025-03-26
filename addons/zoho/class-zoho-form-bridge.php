@@ -191,7 +191,7 @@ class Zoho_Form_Bridge extends Form_Bridge
 
         $payload = wp_is_numeric_array($payload) ? $payload : [$payload];
 
-        return $this->backend->post(
+        $response = $this->backend->post(
             $this->endpoint,
             ['data' => $payload],
             [
@@ -202,5 +202,20 @@ class Zoho_Form_Bridge extends Form_Bridge
             ],
             $attachments
         );
+
+        if (is_wp_error($response)) {
+            $data = json_decode(
+                $response->get_error_data()['response']['body'],
+                true
+            );
+
+            if ($data['data'][0]['code'] !== 'DUPLICATE_DATA') {
+                return $response;
+            }
+
+            return $response->get_error_data()['response'];
+        }
+
+        return $response;
     }
 }

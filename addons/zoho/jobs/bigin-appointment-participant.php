@@ -6,17 +6,19 @@ if (!defined('ABSPATH')) {
 
 function forms_bridge_bigin_appointment_participant($payload, $bridge)
 {
-    $contact_id = forms_bridge_zoho_bigin_contact_id($payload, $bridge);
+    $payload = forms_bridge_zoho_bigin_contact_name($payload, $bridge);
 
-    if (is_wp_error($contact_id)) {
-        return $contact_id;
+    if (is_wp_error($payload)) {
+        return $payload;
     }
 
     $payload['Participants'] = $payload['Participants'] ?? [];
     $payload['Participants'][] = [
         'type' => 'contact',
-        'participant' => $contact_id,
+        'participant' => $payload['Contact_Name']['id'],
     ];
+
+    unset($payload['Contact_Name']);
 
     return $payload;
 }

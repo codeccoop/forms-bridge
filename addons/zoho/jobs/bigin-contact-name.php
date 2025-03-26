@@ -8,7 +8,7 @@ function forms_bridge_zoho_bigin_contact_name($payload, $bridge)
 {
     $contact = [
         'Email' => $payload['Email'],
-        'First_Name' => $payload['First_name'],
+        'First_Name' => $payload['First_Name'],
         'Last_Name' => $payload['Last_Name'],
     ];
 
