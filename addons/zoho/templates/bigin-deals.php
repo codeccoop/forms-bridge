@@ -4,95 +4,16 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-add_filter(
-    'forms_bridge_prune_empties',
-    function ($prune, $bridge) {
-        if ($bridge->template === 'zoho-bigin-companies') {
-            return true;
-        }
-
-        return $prune;
-    },
-    10,
-    2
-);
-
-add_filter(
-    'forms_bridge_payload',
-    function ($payload, $bridge) {
-        if ($bridge->template !== 'zoho-bigin-companies') {
-            return $payload;
-        }
-
-        $company = [];
-        $company_fields = [
-            'Account_Name',
-            'Billing_Street',
-            'Billing_Code',
-            'Billing_City',
-            'Billing_State',
-            'Billing_Country',
-            'Description',
-        ];
-
-        foreach ($company_fields as $field) {
-            if (isset($payload[$field])) {
-                $company[$field] = $payload[$field];
-            }
-        }
-
-        $response = $bridge
-            ->patch([
-                'name' => 'zoho-bigin-company-contact',
-                'endpoint' => '/bigin/v2/Accounts',
-                'template' => null,
-            ])
-            ->submit($company);
-
-        if (is_wp_error($response)) {
-            $data = json_decode(
-                $response->get_error_data()['response']['body'],
-                true
-            );
-
-            if ($data['data'][0]['code'] !== 'DUPLICATE_DATA') {
-                do_action(
-                    'forms_bridge_on_failure',
-                    $bridge,
-                    $response,
-                    $payload
-                );
-
-                return;
-            }
-
-            $account_id = $data['data'][0]['details']['duplicate_record']['id'];
-        } else {
-            $account_id = $response['data']['data'][0]['details']['id'];
-        }
-
-        foreach (array_keys($company) as $field) {
-            unset($payload[$field]);
-        }
-
-        $payload['Account_Name'] = [
-            'id' => $account_id,
-        ];
-
-        return $payload;
-    },
-    90,
-    2
-);
-
 return [
-    'title' => __('Bigin Companies', 'forms-bridge'),
+    'title' => __('Bigin Deals', 'forms-bridge'),
+    'description' => __(
+        'Creates new deals on your Bigin pipelines',
+        'forms-bridge'
+    ),
     'fields' => [
         [
             'ref' => '#backend',
             'name' => 'name',
-            'label' => __('Backend name', 'forms-bridge'),
-            'type' => 'string',
             'default' => 'Zoho Bigin API',
         ],
         [
@@ -109,18 +30,15 @@ return [
         [
             'ref' => '#credential',
             'name' => 'client_id',
-            'label' => __('Client ID', 'forms-bridge'),
             'description' => __(
                 'You have to create a Self-Client Application on the Zoho Developer Console and get the Client ID',
                 'forms-bridge'
             ),
-            'type' => 'string',
-            'required' => true,
         ],
         [
             'ref' => '#credential',
             'name' => 'client_secret',
-            'label' => __('Client secret', 'forms-bridge'),
+            'label' => __('Client Secret', 'forms-bridge'),
             'description' => __(
                 'You have to create a Self-Client Application on the Zoho Developer Console and get the Client Secret',
                 'forms-bridge'
@@ -133,7 +51,7 @@ return [
             'name' => 'endpoint',
             'label' => __('Endpoint', 'forms-bridge'),
             'type' => 'string',
-            'value' => '/bigin/v2/Contacts',
+            'value' => '/bigin/v2/Pipelines',
         ],
         [
             'ref' => '#bridge',
@@ -141,16 +59,109 @@ return [
             'label' => __('Scope', 'forms-bridge'),
             'type' => 'string',
             'value' =>
-                'ZohoBigin.modules.accounts.CREATE,ZohoBigin.modules.contacts.CREATE',
+                'ZohoBigin.modules.contacts.CREATE,ZohoBigin.modules.accounts.CREATE,ZohoBigin.modules.pipelines.CREATE',
         ],
         [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('Companies', 'forms-bridge'),
+            'default' => __('Bigin Deals', 'forms-bridge'),
+        ],
+        [
+            'ref' => '#form/fields[]',
+            'name' => 'Owner',
+            'label' => __('Owner ID', 'forms-bridge'),
+            'descritpion' => __(
+                'ID of the owner user of the deal',
+                'forms-bridge'
+            ),
+            'type' => 'string',
+            'required' => true,
+        ],
+        [
+            'ref' => '#form/fields[]',
+            'name' => 'Deal_Name',
+            'label' => __('Deal name', 'forms-bridge'),
+            'description' => __('Name of the pipeline deals', 'forms-bridge'),
+            'type' => 'string',
+            'required' => true,
+        ],
+        [
+            'ref' => '#form/fields[]',
+            'name' => 'Stage',
+            'label' => __('Deal stage', 'forms-bridge'),
+            'type' => 'options',
+            'options' => [
+                [
+                    'value' => 'Qualification',
+                    'label' => __('Qualification', 'forms-bridge'),
+                ],
+                [
+                    'value' => 'Needs Analysis',
+                    'label' => __('Needs Analysis', 'forms-bridge'),
+                ],
+                [
+                    'value' => 'Proposal/Price Quote',
+                    'label' => __('Proposal/Price Quote', 'forms-bridge'),
+                ],
+                [
+                    'value' => 'Negotation/Review',
+                    'label' => __('Negotiation/Review', 'forms-bridge'),
+                ],
+                [
+                    'value' => 'Closed Won',
+                    'label' => __('Closed Won', 'forms-bridge'),
+                ],
+                [
+                    'value' => 'Closed Lost',
+                    'label' => __('Closed Lost', 'forms-bridge'),
+                ],
+            ],
+            'required' => true,
+        ],
+        [
+            'ref' => '#form/fields[]',
+            'name' => 'Sub_Pipeline',
+            'label' => __('Pipeline name', 'forms-bridge'),
+            'type' => 'string',
+            'required' => true,
+        ],
+        [
+            'ref' => '#form/fields[]',
+            'name' => 'Tag',
+            'label' => __('Deal tags', 'forms-bridge'),
+            'description' => __(
+                'Tag names separated by commas',
+                'forms-bridge'
+            ),
+            'type' => 'string',
         ],
     ],
     'form' => [
         'fields' => [
+            [
+                'name' => 'Owner',
+                'type' => 'hidden',
+                'required' => true,
+            ],
+            [
+                'name' => 'Deal_Name',
+                'type' => 'hidden',
+                'required' => true,
+            ],
+            [
+                'name' => 'Stage',
+                'type' => 'hidden',
+                'required' => true,
+            ],
+            [
+                'name' => 'Sub_Pipeline',
+                'type' => 'hidden',
+                'required' => true,
+            ],
+            [
+                'name' => 'Tag',
+                'type' => 'hidden',
+            ],
             [
                 'name' => 'Account_Name',
                 'label' => __('Company name', 'forms-bridge'),
@@ -218,11 +229,6 @@ return [
             ],
         ],
     ],
-    'bridge' => [
-        'endpoint' => '/bigin/v2/Contacts',
-        'scope' =>
-            'ZohoBigin.modules.accounts.CREATE,ZohoBigin.modules.contacts.CREATE',
-    ],
     'backend' => [
         'base_url' => 'https://www.zohoapis.com',
         'headers' => [
@@ -230,6 +236,16 @@ return [
                 'name' => 'Accept',
                 'value' => 'application/json',
             ],
+        ],
+    ],
+    'bridge' => [
+        'endpoint' => '/bigin/v2/Pipelines',
+        'scope' =>
+            'ZohoBigin.modules.contacts.CREATE,ZohoBigin.modules.accounts.CREATE,ZohoBigin.modules.pipelines.CREATE',
+        'workflow' => [
+            'zoho-bigin-account-name',
+            'zoho-bigin-contact-name',
+            'zoho-bigin-tags',
         ],
     ],
 ];

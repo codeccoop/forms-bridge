@@ -4,28 +4,13 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-add_filter(
-    'forms_bridge_prune_empties',
-    function ($prune, $bridge) {
-        if ($bridge->template === 'zoho-crm-contacts') {
-            return true;
-        }
-
-        return $prune;
-    },
-    10,
-    2
-);
-
 return [
-    'title' => __('CRM Contacts', 'forms-bridge'),
+    'title' => __('Bigin Contacts', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#backend',
             'name' => 'name',
-            'label' => __('Backend name', 'forms-bridge'),
-            'type' => 'string',
-            'default' => 'Zoho CRM API',
+            'default' => 'Zoho Bigin API',
         ],
         [
             'ref' => '#credential',
@@ -52,7 +37,7 @@ return [
         [
             'ref' => '#credential',
             'name' => 'client_secret',
-            'label' => __('Client secret', 'forms-bridge'),
+            'label' => __('Client Secret', 'forms-bridge'),
             'description' => __(
                 'You have to create a Self-Client Application on the Zoho Developer Console and get the Client Secret',
                 'forms-bridge'
@@ -65,19 +50,19 @@ return [
             'name' => 'endpoint',
             'label' => __('Endpoint', 'forms-bridge'),
             'type' => 'string',
-            'value' => '/crm/v7/Contacts',
+            'value' => '/bigin/v2/Contacts',
         ],
         [
             'ref' => '#bridge',
             'name' => 'scope',
             'label' => __('Scope', 'forms-bridge'),
             'type' => 'string',
-            'value' => 'ZohoCRM.modules.contacts.CREATE',
+            'value' => 'ZohoBigin.modules.contacts.CREATE',
         ],
         [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('CRM Contacts', 'forms-bridge'),
+            'default' => __('Contacts', 'forms-bridge'),
         ],
     ],
     'form' => [
@@ -113,8 +98,8 @@ return [
         ],
     ],
     'bridge' => [
-        'endpoint' => '/crm/v7/Contacts',
-        'scope' => 'ZohoCRM.modules.contacts.CREATE',
+        'endpoint' => '/bigin/v2/Contacts',
+        'scope' => 'ZohoBigin.modules.contacts.CREATE',
     ],
     'backend' => [
         'base_url' => 'https://www.zohoapis.com',

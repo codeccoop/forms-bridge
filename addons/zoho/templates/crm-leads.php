@@ -4,28 +4,69 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-add_filter(
-    'forms_bridge_prune_empties',
-    function ($prune, $bridge) {
-        if ($bridge->template === 'zoho-bigin-contacts') {
-            return true;
-        }
-
-        return $prune;
-    },
-    10,
-    2
-);
-
 return [
-    'title' => __('Bigin Contacts', 'forms-bridge'),
+    'title' => __('CRM Leads', 'forms-bridge'),
     'fields' => [
+        [
+            'ref' => '#form/fields[]',
+            'name' => 'Lead_Source',
+            'label' => __('Lead source', 'forms-bridge'),
+            'description' => __(
+                'Label to identify your website sourced leads',
+                'forms-bridge'
+            ),
+            'type' => 'string',
+            'required' => true,
+            'default' => 'WordPress',
+        ],
+        [
+            'ref' => '#form/fields[]',
+            'name' => 'Lead_Status',
+            'label' => __('Lead status', 'forms-bridge'),
+            'type' => 'options',
+            'options' => [
+                [
+                    'label' => __('New lead', 'forms-bridge'),
+                    'value' => 'New Lead',
+                ],
+                [
+                    'label' => __('Connected', 'forms-bridge'),
+                    'value' => 'Connected',
+                ],
+                [
+                    'label' => __('Not connected', 'forms-bridge'),
+                    'value' => 'Not Connected',
+                ],
+                [
+                    'label' => __('Qualified', 'forms-bridge'),
+                    'value' => 'Qualified',
+                ],
+                [
+                    'label' => __('Not qualified', 'forms-bridge'),
+                    'value' => 'Not Qualified',
+                ],
+                [
+                    'label' => __('Pre-qualified', 'forms-bridge'),
+                    'value' => 'Pre-Qualified',
+                ],
+                [
+                    'label' => __('Lead source', 'forms-bridge'),
+                    'value' => 'Lead Source',
+                ],
+                [
+                    'label' => __('Contact in future', 'forms-bridge'),
+                    'value' => 'Contact in Future',
+                ],
+            ],
+            'required' => true,
+            'default' => 'New Lead',
+        ],
         [
             'ref' => '#backend',
             'name' => 'name',
             'label' => __('Backend name', 'forms-bridge'),
             'type' => 'string',
-            'default' => 'Zoho Bigin API',
+            'default' => 'Zoho CRM API',
         ],
         [
             'ref' => '#credential',
@@ -65,23 +106,33 @@ return [
             'name' => 'endpoint',
             'label' => __('Endpoint', 'forms-bridge'),
             'type' => 'string',
-            'value' => '/bigin/v2/Contacts',
+            'value' => '/crm/v7/Leads',
         ],
         [
             'ref' => '#bridge',
             'name' => 'scope',
             'label' => __('Scope', 'forms-bridge'),
             'type' => 'string',
-            'value' => 'ZohoBigin.modules.contacts.CREATE',
+            'value' => 'ZohoCRM.modules.leads.CREATE',
         ],
         [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('Contacts', 'forms-bridge'),
+            'default' => __('CRM Leads', 'forms-bridge'),
         ],
     ],
     'form' => [
         'fields' => [
+            [
+                'name' => 'Lead_Source',
+                'type' => 'hidden',
+                'required' => true,
+            ],
+            [
+                'name' => 'Lead_Status',
+                'type' => 'hidden',
+                'required' => true,
+            ],
             [
                 'name' => 'First_Name',
                 'label' => __('First name', 'forms-bridge'),
@@ -106,6 +157,11 @@ return [
                 'type' => 'text',
             ],
             [
+                'name' => 'Company',
+                'label' => __('Company', 'forms-bridge'),
+                'type' => 'text',
+            ],
+            [
                 'name' => 'Description',
                 'label' => __('Comments', 'forms-bridge'),
                 'type' => 'textarea',
@@ -113,8 +169,8 @@ return [
         ],
     ],
     'bridge' => [
-        'endpoint' => '/bigin/v2/Contacts',
-        'scope' => 'ZohoBigin.modules.contacts.CREATE',
+        'endpoint' => '/crm/v7/Leads',
+        'scope' => 'ZohoCRM.modules.leads.CREATE',
     ],
     'backend' => [
         'base_url' => 'https://www.zohoapis.com',

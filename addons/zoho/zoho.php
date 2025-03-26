@@ -10,6 +10,8 @@ require_once 'class-zoho-credential.php';
 require_once 'class-zoho-form-bridge.php';
 require_once 'class-zoho-form-bridge-template.php';
 
+require_once 'api-functions.php';
+
 /**
  * Zoho Addon class.
  */
@@ -84,6 +86,19 @@ class Zoho_Addon extends Addon
                         return $credential;
                     }
                 }
+            },
+            10,
+            2
+        );
+
+        add_filter(
+            'forms_bridge_prune_empties',
+            static function ($prune, $bridge) {
+                if ($bridge instanceof Zoho_Form_Bridge) {
+                    return true;
+                }
+
+                return $prune;
             },
             10,
             2
@@ -285,10 +300,15 @@ class Zoho_Addon extends Addon
                 })
             );
 
+            $bridge['workflow'] = array_map(
+                'sanitize_text_field',
+                (array) $bridge['workflow']
+            );
+
             $is_valid = true;
             unset($bridge['is_valid']);
             foreach ($bridge as $field => $value) {
-                if ($field === 'mappers') {
+                if ($field === 'mappers' || $field === 'workflow') {
                     continue;
                 }
 

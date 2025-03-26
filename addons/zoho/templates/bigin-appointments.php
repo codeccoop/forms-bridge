@@ -4,167 +4,12 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-add_filter(
-    'forms_bridge_prune_empties',
-    function ($prune, $bridge) {
-        if ($bridge->template === 'zoho-bigin-appointments') {
-            return true;
-        }
-
-        return $prune;
-    },
-    10,
-    2
-);
-
-add_filter(
-    'forms_bridge_payload',
-    function ($payload, $bridge) {
-        if ($bridge->template !== 'zoho-bigin-appointments') {
-            return $payload;
-        }
-
-        if (isset($payload['Owner'])) {
-            $payload['Owner'] = [
-                'id' => $payload['Owner'],
-            ];
-        }
-
-        $contact = [];
-        $contact_fields = [];
-
-        foreach ($contact_fields as $field) {
-            if (isset($payload[$field])) {
-                $contact[$field] = $payload[$field];
-            }
-        }
-
-        $response = $bridge
-            ->patch([
-                'name' => 'zoho-bigin-appointment-contact',
-                'endpoint' => '/bigin/v2/Contacts',
-                'template' => null,
-            ])
-            ->submit($contact);
-
-        if (is_wp_error($response)) {
-            $data = json_decode(
-                $response->get_error_data()['response']['body'],
-                true
-            );
-
-            if ($data['data'][0]['code'] !== 'DUPLICATE_DATA') {
-                do_action(
-                    'forms_bridge_on_failure',
-                    $bridge,
-                    $response,
-                    $payload
-                );
-
-                return;
-            }
-
-            $contact_id = $data['data'][0]['details']['duplicate_record']['id'];
-        } else {
-            $contact_id = $response['data'][0]['details']['id'];
-        }
-
-        $payload['Participants'] = $payload['Participants'] ?? [];
-
-        $payload['Participants'][] = [
-            'type' => 'contact',
-            'participant' => $contact_id,
-        ];
-
-        foreach (array_keys($contact) as $field) {
-            unset($payload[$field]);
-        }
-
-        $date = $payload['date'];
-        $hour = $payload['h'];
-        $minute = $payload['m'];
-
-        $form_data = apply_filters('forms_bridge_form', null);
-        $date_index = array_search(
-            'date',
-            array_column($form_data['fields'], 'name')
-        );
-        $date_format = $form_data['fields'][$date_index]['format'] ?? '';
-
-        if (strstr($date_format, '-')) {
-            $separator = '-';
-        } elseif (strstr($date_format, '.')) {
-            $separator = '.';
-        } elseif (strstr($date_format, '/')) {
-            $separator = '/';
-        }
-
-        switch (substr($date_format, 0, 1)) {
-            case 'y':
-                [$year, $month, $day] = explode($separator, $date);
-                break;
-            case 'm':
-                [$month, $day, $year] = explode($separator, $date);
-                break;
-            case 'd':
-                [$day, $month, $year] = explode($separator, $date);
-                break;
-        }
-
-        $date = "{$year}-{$month}-{$day}";
-
-        if (preg_match('/(am|pm)/i', $hour, $matches)) {
-            $hour = (int) $hour;
-            if (strtolower($matches[0]) === 'pm') {
-                $hour += 12;
-            }
-        }
-
-        $time = strtotime("{$date} {$hour}:{$minute}");
-
-        if ($time === false) {
-            do_action(
-                'forms_bridge_on_failure',
-                $bridge,
-                new WP_Error('Invalid date format'),
-                $payload
-            );
-
-            return;
-        }
-
-        unset($payload['date']);
-        unset($payload['h']);
-        unset($payload['m']);
-
-        $payload['Start_DateTime'] = date('c', $time);
-        $payload['End_DateTime'] = date('c', $time + 3600);
-
-        $payload['Remind_At'] = $payload['Remind_At'] ?? [
-            [
-                'unit' => 1,
-                'period' => 'hours',
-            ],
-            [
-                'unit' => 30,
-                'period' => 'minutes',
-            ],
-        ];
-
-        return $payload;
-    },
-    90,
-    2
-);
-
 return [
     'title' => __('Bigin Appointments', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#backend',
             'name' => 'name',
-            'label' => __('Backend name', 'forms-bridge'),
-            'type' => 'string',
             'default' => 'Zoho Bigin API',
         ],
         [
@@ -181,13 +26,10 @@ return [
         [
             'ref' => '#credential',
             'name' => 'client_id',
-            'label' => __('Client ID', 'forms-bridge'),
             'description' => __(
                 'You have to create a Self-Client Application on the Zoho Developer Console and get the Client ID',
                 'forms-bridge'
             ),
-            'type' => 'string',
-            'required' => true,
         ],
         [
             'ref' => '#credential',
@@ -289,7 +131,7 @@ return [
                 'required' => true,
             ],
             [
-                'name' => 'h',
+                'name' => 'hour',
                 'label' => __('Hour', 'forms-bridge'),
                 'type' => 'options',
                 'options' => [
@@ -393,7 +235,7 @@ return [
                 'required' => 'true',
             ],
             [
-                'name' => 'm',
+                'name' => 'minute',
                 'label' => __('Minute', 'forms-bridge'),
                 'type' => 'options',
                 'options' => [
@@ -421,9 +263,13 @@ return [
         'mappers' => [
             [
                 'from' => 'Owner',
-                'to' => 'Owner',
+                'to' => 'Owner.id',
                 'cast' => 'string',
             ],
+        ],
+        'workflow' => [
+            'zoho-bigin-appointment-participant',
+            'zoho-appointment-dates',
         ],
     ],
     'backend' => [

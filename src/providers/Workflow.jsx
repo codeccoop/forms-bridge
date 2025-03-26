@@ -74,13 +74,8 @@ function applyJob(fields, job) {
     })
     .concat(
       job.output
-        .filter(
-          (field) => fields.findIndex(({ name }) => name === field.name) === -1
-        )
-        .filter(
-          (field) =>
-            job.input.findIndex(({ name }) => name === field.name) === -1
-        )
+        .filter((field) => !fields.find(({ name }) => name === field.name))
+        .filter((field) => !job.input.find(({ name }) => name === field.name))
         .map(clone)
         .map((field) => {
           field.isNew = true;

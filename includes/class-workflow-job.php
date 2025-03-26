@@ -226,8 +226,6 @@ class Workflow_Job
             );
         }
 
-        remove_filter('forms_bridge_payload', [$this, 'run'], 90, 2);
-
         return $payload;
     }
 

@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit();
+}
+
 function forms_bridge_dolibarr_search_contact($payload, $bridge)
 {
     $backend = $bridge->backend;
