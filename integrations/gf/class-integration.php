@@ -215,14 +215,12 @@ class Integration extends BaseIntegration
             $form['fields'],
             function ($fields, $field) {
                 $field = $this->serialize_field($field);
-                if (!$field) {
-                    return $fields;
+                if ($field) {
+                    $field = wp_is_numeric_array($field) ? $field : [$field];
+                    $fields = array_merge($fields, $field);
                 }
 
-                return array_merge(
-                    $fields,
-                    wp_is_numeric_array($field) ? $field : [$field]
-                );
+                return $fields;
             },
             []
         );
@@ -271,58 +269,53 @@ class Integration extends BaseIntegration
 
         $allowsPrepopulate = $field->allowsPrepopulate ?? false;
 
-        $options = [];
-        if (is_array($field->choices)) {
-            $options = array_map(function ($opt) {
+        $options = array_map(
+            function ($opt) {
                 return ['value' => $opt['value'], 'label' => $opt['text']];
-            }, $field->choices);
-        }
+            },
+            $field->choices ?: []
+        );
 
-        try {
-            $inputs = array_filter(
-                array_map(function ($input) use ($allowsPrepopulate) {
-                    $input['name'] = $allowsPrepopulate ? $input['name'] : '';
-                    return $input;
-                }, $field->get_entry_inputs()),
-                function ($input) {
-                    return !($input['isHidden'] ?? false);
-                }
-            );
+        $inputs = array_map(
+            static function ($input) use ($allowsPrepopulate) {
+                $input['name'] = $allowsPrepopulate ? $input['name'] : '';
+                return $input;
+            },
+            $field->get_entry_inputs() ?: []
+        );
 
-            $inputs = array_values($inputs);
-        } catch (Error) {
-            $inputs = null;
-        }
+        $inputs = array_values(
+            array_filter($inputs, static function ($input) {
+                return !isset($input['isHidden']) || !$input['isHidden'];
+            })
+        );
 
-        if (is_array($inputs)) {
-            $named_inputs = array_filter($inputs, function ($input) {
-                return !empty($input['name']);
-            });
+        $named_inputs = array_filter($inputs, function ($input) {
+            return !empty($input['name']);
+        });
 
-            if (count($named_inputs)) {
-                $subfields = [];
-                for ($i = 1; $i <= count($inputs); $i++) {
-                    $input = $inputs[$i - 1];
+        $subfields = [];
+        if (count($named_inputs)) {
+            for ($i = 1; $i <= count($inputs); $i++) {
+                $input = $inputs[$i - 1];
 
-                    $input_label = implode(' ', [
-                        $label,
-                        $input['label'] ? "({$input['label']})" : "($i)",
-                    ]);
-                    $input_name = $input['name'] ?: $input_label;
+                $input_label = implode(' ', [
+                    $label,
+                    $input['label'] ? "({$input['label']})" : "($i)",
+                ]);
 
-                    $subfields[] = $this->serialize_field(
-                        (object) array_merge((array) $field, $input, [
-                            'id' => $input['id'],
-                            'inputName' => $input_name,
-                            'label' => $input_label,
-                            'adminLabel' => $input_label,
-                        ])
-                    );
-                }
+                $input_name = $input['name'] ?: $input_label;
+
+                $subfields[] = $this->serialize_field(
+                    (object) array_merge((array) $field, $input, [
+                        'id' => $input['id'],
+                        'inputName' => $input_name,
+                        'label' => $input_label,
+                        'adminLabel' => $input_label,
+                        'type' => 'text',
+                    ])
+                );
             }
-        } else {
-            $inputs = [];
-            $subfields = [];
         }
 
         $field = [
@@ -335,16 +328,17 @@ class Integration extends BaseIntegration
             'inputs' => $inputs,
             'is_file' => $field->type === 'fileupload',
             'is_multi' => $this->is_multi_field($field),
-            'conditional' =>
-                isset($field->conditionalLogic) &&
-                is_array($field->conditionalLogic) &&
-                $field->conditionalLogic['enabled'],
+            'conditional' => $field->conditionalLogic['enabled'] ?? false,
             'format' => $field->type === 'date' ? 'yyyy-mm-dd' : '',
+            'schema' => $this->field_value_schema($field),
         ];
 
         if (!empty($subfields) && $allowsPrepopulate) {
             return array_map(function ($subfield) use ($field) {
-                return array_merge($subfield, ['parent' => $field]);
+                return array_merge($subfield, [
+                    'parent' => $field,
+                    'schema' => ['type' => 'string'],
+                ]);
             }, $subfields);
         }
 
@@ -361,9 +355,13 @@ class Integration extends BaseIntegration
             return true;
         }
 
-        if (isset($field->choiceLimit) && $field->choiceLimit === 'unlimited') {
-            return true;
-        }
+        // if (isset($field->choiceLimit)) {
+        //     if ($field->choiceLimit === 'unlimited') {
+        //         return true;
+        //     } elseif ($field->choiceLimit === 'exactly' && $field->choiceLimitNumber > 1) {
+        //         return true;
+        //     }
+        // }
 
         if (in_array($field->inputType, ['list', 'checkbox'])) {
             return true;
@@ -372,35 +370,69 @@ class Integration extends BaseIntegration
         return false;
     }
 
-    // private function norm_field_type($type)
-    // {
-    //     switch ($type) {
-    //         case 'multi_choice':
-    //         case 'image_choice':
-    //         case 'multiselect':
-    //         case 'list':
-    //         case 'option':
-    //         case 'select':
-    //         case 'radio':
-    //         case 'checkbox':
-    //             return 'options';
-    //         case 'address':
-    //         case 'website':
-    //         case 'product':
-    //         case 'email':
-    //         case 'textarea':
-    //         case 'name':
-    //         case 'shipping':
-    //             return 'text';
-    //         case 'total':
-    //         case 'quantity':
-    //             return 'number';
-    //         case 'fileupload':
-    //             return 'file';
-    //         default:
-    //             return $type;
-    //     }
-    // }
+    private function field_value_schema($field)
+    {
+        switch ($field->type) {
+            case 'list':
+                if (!empty($field->choices)) {
+                    return [
+                        'type' => 'array',
+                        'items' => [
+                            'type' => 'object',
+                            'properties' => array_reduce(
+                                $field->choices,
+                                static function ($choices, $choice) {
+                                    $choices[$choice['value']] = [
+                                        'type' => 'string',
+                                    ];
+                                    return $choices;
+                                },
+                                []
+                            ),
+                        ],
+                    ];
+                }
+            // no break
+            case 'list':
+            case 'checkbox':
+            case 'multiselect':
+                return [
+                    'type' => 'array',
+                    'tiems' => ['type' => 'string'],
+                ];
+            case 'multi_choice':
+            case 'image_choice':
+            case 'option':
+                if ($this->is_multi_field($field)) {
+                    return [
+                        'type' => 'array',
+                        'items' => ['type' => 'string'],
+                    ];
+                }
+
+                return ['type' => 'string'];
+            case 'select':
+            case 'radio':
+            case 'address':
+            case 'website':
+            case 'product':
+            case 'email':
+            case 'textarea':
+            case 'name':
+            case 'shipping':
+                return ['type' => 'string'];
+            case 'number':
+            case 'total':
+            case 'quantity':
+                return ['type' => 'number'];
+            case 'fileupload':
+                return;
+            case 'consent':
+                return ['type' => 'boolean'];
+            default:
+                return ['type' => 'string'];
+        }
+    }
 
     /**
      * Serializes the current form's submission data.
