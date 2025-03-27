@@ -416,12 +416,8 @@ class Form_Bridge_Template
 
         add_filter(
             'forms_bridge_template',
-            function ($template, $name, $api = null) {
+            function ($template, $name) {
                 if ($template instanceof Form_Bridge_Template) {
-                    return $template;
-                }
-
-                if ($api && $api !== $this->api) {
                     return $template;
                 }
 
@@ -434,7 +430,7 @@ class Form_Bridge_Template
                 }
             },
             10,
-            3
+            2
         );
 
         add_action('forms_bridge_use_template', function ($data) {
