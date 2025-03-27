@@ -3,6 +3,7 @@ import {
   useWorkflowStage,
   useWorkflowStepper,
 } from "../../providers/Workflow";
+import WorkflowStageField from "./StageField";
 
 const {
   __experimentalItemGroup: ItemGroup,
@@ -12,16 +13,6 @@ const {
 } = wp.components;
 const { useState, useMemo } = wp.element;
 const { __ } = wp.i18n;
-
-function fieldStyle(field, diff) {
-  if (!diff) {
-    return { color: "inherit" };
-  }
-
-  return {
-    color: field.isNew ? CHECK.color : field.exit ? ALERT.color : "inherit",
-  };
-}
 
 export default function WorkflowStage() {
   const [step] = useWorkflowStepper();
@@ -87,7 +78,7 @@ export default function WorkflowStage() {
         <ItemGroup size="large" isSeparated>
           {fields.map((field, i) => (
             <Item key={field.name + i}>
-              <div style={fieldStyle(field, diff)}>{field.name}</div>
+              <WorkflowStageField {...field} diff={diff} />
             </Item>
           ))}
         </ItemGroup>

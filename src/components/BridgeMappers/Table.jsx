@@ -1,3 +1,5 @@
+import JsonFinger from "./JsonFinger";
+
 const {
   SelectControl,
   TextControl,
@@ -45,93 +47,6 @@ const castOptions = [
     label: __("Ignore", "forms-bridge"),
   },
 ];
-
-function buildFinger(keys) {
-  return keys
-    .reduce((finger, key) => {
-      const isArray = +key === key;
-      if (isArray) {
-        if (key === -1) {
-          key = "";
-        }
-
-        key = `[${key}]`;
-      } else {
-        key = "." + key;
-      }
-
-      return finger + key;
-    }, "")
-    .slice(1);
-}
-
-const fingerCache = new Map();
-
-function parseFinger(finger) {
-  if (fingerCache.has(finger)) {
-    return fingerCache.get(finger);
-  }
-
-  const len = finger.length;
-  const keys = [];
-  let key = "";
-  let closured = false;
-  let index = 0;
-
-  for (let i = 0; i < len; i++) {
-    const char = finger[i];
-    if (closured) {
-      if (char === '"') {
-        closured = false;
-      } else {
-        key += char;
-      }
-    } else {
-      if (char === '"') {
-        closured = true;
-      } else if (char === ".") {
-        keys.push(key);
-        key = "";
-      } else if (char === "[") {
-        keys.push(key);
-        key = "";
-
-        i = from = i + 1;
-        index = "";
-        while (finger[i] !== "]" && i < len) {
-          index += finger[i];
-          i += 1;
-        }
-
-        if (index.length === 0) {
-          index = -1;
-        } else if (isNaN(index)) {
-          fingerCache.set(finger, [finger]);
-          return [finger];
-        }
-
-        index = +index;
-        keys.push(index);
-        i += 1;
-        if (finger.length > i) {
-          if (finger[i] !== ".") {
-            fingerCache.set(finger, [finger]);
-            return [finger];
-          }
-        }
-      } else {
-        key += char;
-      }
-    }
-  }
-
-  if (key) {
-    keys.push(key);
-  }
-
-  fingerCache.set(finger, keys);
-  return keys;
-}
 
 function chainedFromOptions(options, mappers, index) {
   const mutations = mappers.slice(0, index);
@@ -188,15 +103,16 @@ function chainedFromOptions(options, mappers, index) {
     }, [])
     .filter((opt) => !opt.value.endsWith("[]"));
 
+  console.log(fingerOptions(mutatedOptions, mutations));
   return mutatedOptions
     .filter((opt) => {
-      const keys = parseFinger(opt.value);
+      const keys = JsonFinger.parse(opt.value);
       if (keys.length === 1) {
         return true;
       }
 
       for (let i = 0; i < keys.length; i++) {
-        const finger = buildFinger(keys.slice(0, i + 1));
+        const finger = JsonFinger.build(keys.slice(0, i + 1));
 
         const mutation = mutations.find(({ from }) => from === finger);
         if (mutation && mutation.cast !== "copy") {
@@ -214,12 +130,12 @@ function fingerOptions(options, mutations) {
   const uniques = new Set();
 
   return options
-    .map((opt) => parseFinger(opt.value))
+    .map((opt) => JsonFinger.parse(opt.value))
     .filter((keys) => keys.length > 1)
     .reduce((options, keys) => {
       keys.forEach((_, i, keys) => {
         const fingerKeys = keys.slice(0, i + 1);
-        let finger = buildFinger(fingerKeys);
+        let finger = JsonFinger.build(fingerKeys);
 
         if (!values.has(finger) && !uniques.has(finger)) {
           uniques.add(finger);

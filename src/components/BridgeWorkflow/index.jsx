@@ -1,7 +1,7 @@
 // source
 import WorkflowProvider from "../../providers/Workflow";
-import WorkflowPipeline from "./WorkflowPipeline";
-import WorkflowStage from "./WorkflowStage";
+import WorkflowPipeline from "./Pipeline";
+import WorkflowStage from "./Stage";
 
 const { Button, Modal } = wp.components;
 const { useState } = wp.element;

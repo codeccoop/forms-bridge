@@ -164,8 +164,7 @@ class JSON_Finger
 
                 $value = $value[$key];
             }
-        } catch (Error $e) {
-            error_log($e->getMessage());
+        } catch (Error) {
             return null;
         }
 

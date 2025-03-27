@@ -1,3 +1,4 @@
+import JsonFinger from "../components/BridgeMappers/JsonFinger";
 import { useForms } from "./Forms";
 import { useWorkflowJobs } from "./WorkflowJobs";
 
@@ -10,47 +11,94 @@ function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-// function fieldJsonType(field) {
-//   switch (type) {
-//     case "email":
-//     case "url":
-//     case "text":
-//     case "textarea":
-//     case "date":
-//     case "hidden":
-//       return "string";
-//     case "options":
-//     default:
-//       return type;
-//   }
-// }
+function mapperJsonType(cast) {
+  switch (cast) {
+    case "json":
+    case "concat":
+    case "csv":
+    case "string":
+      return "string";
+    case "null":
+      return null;
+    default:
+      return cast;
+  }
+}
 
-function applyMappers(fields, mappers) {
-  return fields
+function applyMutations(fields, mappers) {
+  const mutadedFields = fields
     .map(clone)
-    .map((field) => {
-      mappers.forEach((mapper) => {
+    .reduce((fields, field) => {
+      mappers.forEach((mapper, i) => {
         if (mapper.from === field.name) {
+          if (mapper.cast === "copy" && mapper.to !== field.name) {
+            const ignoreAfter =
+              mappers.slice(i + 1).find(({ to }) => to === field.name)?.cast ===
+              "null";
+
+            if (!ignoreAfter) {
+              fields.push(clone(field));
+            }
+          }
+
           field.name = mapper.cast === "null" ? null : mapper.to;
+          if (mapper.cast !== "copy") {
+            field.type = mapperJsonType(mapper.cast);
+          }
         }
       });
 
-      return field;
-    })
-    .filter((field) => field.name)
+      if (!field.name) {
+        return fields;
+      }
+
+      const keys = JsonFinger.parse(field.name);
+      if (keys.length > 1) {
+        for (let i = 0; i < keys.length; i++) {
+          const finger = JsonFinger.build(keys.slice(0, i + 1));
+
+          const mapper = mappers.find(({ from }) => from === finger);
+          if (mapper && mapper.cast !== "copy") {
+            return fields;
+          }
+        }
+
+        field.name = keys[0];
+
+        const fieldType = field.type;
+        if (typeof keys[1] === "string") {
+          field.type = "object";
+          field.properties = { [keys[1]]: { type: fieldType } };
+        } else {
+          field.type = "array";
+          field.items = { type: fieldType };
+        }
+      }
+
+      fields.push(field);
+      return fields;
+    }, [])
+    .reduce((fields, field) => {
+      return [field].concat(fields);
+    }, [])
     .reduce((fields, field) => {
       if (!fields.map(({ name }) => name).includes(field.name)) {
         fields.push(field);
       }
 
       return fields;
+    }, [])
+    .reduce((fields, field) => {
+      return [field].concat(fields);
     }, []);
+
+  const mutatedNames = new Set(mutadedFields.map((field) => field.name));
 }
 
 function applyJob(fields, job) {
   if (!job) return fields;
 
-  if (job.mappers) return applyMappers(fields, job.mappers);
+  if (job.mappers) return applyMutations(fields, job.mappers);
 
   const missing = job.input.filter(
     (field) => field.required && !fields.find(({ name }) => name === field.name)
@@ -59,15 +107,16 @@ function applyJob(fields, job) {
   if (missing.length) return fields;
 
   return fields
-    .filter((field) => field.exit !== true)
+    .filter((field) => field.exit !== true && field.schema)
     .map(clone)
     .map((field) => {
-      field.isInput =
-        job.input.findIndex(({ name }) => name === field.name) !== -1;
+      const inputField = job.input.find(({ name }) => name === field.name);
+      const outputField = job.output.find(({ name }) => name === field.name);
 
-      field.exit =
-        field.isInput &&
-        job.output.findIndex(({ name }) => name === field.name) === -1;
+      field.isInput = inputField !== undefined;
+      field.exit = inputField && !outputField;
+      field.mutated =
+        inputField && outputField && inputField.type !== outputField.type;
 
       field.isNew = false;
       return field;
@@ -118,7 +167,12 @@ export default function WorkflowProvider({
   }, [formId, forms]);
 
   const stage = useMemo(() => {
-    let stage = formFields;
+    let stage = formFields
+      .filter((field) => field.schema)
+      .map((field) => ({
+        ...field,
+        ...field.schema,
+      }));
 
     for (let i = 0; i <= step; i++) {
       stage = applyJob(stage, workflowJobs[i]);
