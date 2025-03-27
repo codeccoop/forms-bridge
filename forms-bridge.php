@@ -548,6 +548,8 @@ class Forms_Bridge extends Base_Plugin
      */
     private static function do_migrations()
     {
+        Addon::lazy_load();
+
         $from = get_option(self::db_version, '1.0.0');
 
         if (!preg_match('/^\d+\.\d+\.\d+$/', $from)) {
