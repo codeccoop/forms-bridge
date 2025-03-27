@@ -77,6 +77,7 @@ abstract class Addon extends Singleton
                                         'json',
                                         'csv',
                                         'concat',
+                                        'copy',
                                         'null',
                                     ],
                                 ],
