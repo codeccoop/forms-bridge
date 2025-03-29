@@ -51,7 +51,6 @@ JsonFinger.parse = function (pointer) {
       }
 
       if (key.length === 0) {
-        // key = -1;
         cache.set(pointer, []);
         return [];
       } else if (isNaN(key)) {
@@ -101,23 +100,14 @@ JsonFinger.sanitizeKey = function (key) {
   return key;
 };
 
-JsonFinger.validate = function (pointer = "", mode = "get") {
+JsonFinger.validate = function (pointer = "") {
   pointer = "" + pointer;
 
   if (!pointer.length) {
     return false;
   }
 
-  const keys = JsonFinger.parse(pointer);
-  if (!keys.length) {
-    return false;
-  }
-
-  if (mode === "set") {
-    return keys.filter((k) => k === -1).length === 0;
-  }
-
-  return true;
+  return JsonFinger.parse(pointer).length > 0;
 };
 
 JsonFinger.pointer = function (keys) {
@@ -128,10 +118,6 @@ JsonFinger.pointer = function (keys) {
   return keys.reduce((pointer, key) => {
     const isArray = +key === key;
     if (isArray) {
-      // if (key === -1) {
-      //   key = "";
-      // }
-
       key = `[${key}]`;
     } else {
       key = JsonFinger.sanitizeKey(key);
@@ -149,19 +135,12 @@ JsonFinger.prototype.getData = function () {
   return JSON.parse(JSON.stringify(this.data));
 };
 
-// JsonFinger.prototype.get = function (pointer, expansion = []) {
 JsonFinger.prototype.get = function (pointer) {
   pointer = "" + pointer;
 
   if (isset(this.data, pointer)) {
     return this.getData()[pointer];
   }
-
-  // if (pointer.includes("[]")) {
-  //   return this.getExpansionList(pointer, expansion);
-  // } else {
-  //   expansion.push(pointer);
-  // }
 
   let value = null;
   try {
@@ -181,26 +160,6 @@ JsonFinger.prototype.get = function (pointer) {
 
   return value;
 };
-
-// JsonFinger.prototype.getExpansionList = function (pointer, expansion = []) {
-//   const parts = pointer.split("[]");
-//   const before = parts[0];
-//   const after = parts.slice(1).join("[]");
-
-//   const items = this.get(before);
-
-//   if (!Array.isArray(items)) {
-//     expansion.splice(0, expansion.length);
-//     return [];
-//   }
-
-//   for (let i = 0; i < items.length; i++) {
-//     const pointer = `${before}[${i}]${after}`;
-//     items[i] = this.get(pointer, expansion);
-//   }
-
-//   return items;
-// };
 
 JsonFinger.prototype.set = function (pointer, value, unset = false) {
   if (isset(this.data, pointer)) {
@@ -226,10 +185,6 @@ JsonFinger.prototype.set = function (pointer, value, unset = false) {
         if (!Array.isArray(partial)) {
           return data;
         }
-
-        // if (key === -1) {
-        //   return data;
-        // }
       }
 
       if (!isset(partial, key)) {
@@ -248,9 +203,6 @@ JsonFinger.prototype.set = function (pointer, value, unset = false) {
 
     let key = keys[i];
     if (unset) {
-      /* if (key === -1 && Array.isArray(partial)) {
-        partial.pop();
-      } else */
       if (Array.isArray(partial)) {
         partial.splice(key, 1);
       } else if (partial && typeof partial === "object") {
@@ -271,11 +223,6 @@ JsonFinger.prototype.set = function (pointer, value, unset = false) {
         }
       }
     } else {
-      // if (key === -1 && Array.isArray(partial)) {
-      //   partial.push(value);
-      // } else {
-      //   partial[key] = value;
-      // }
       partial[key] = value;
     }
   } catch {
@@ -311,52 +258,11 @@ JsonFinger.prototype.isset = function (pointer) {
       return false;
     case 1:
       key = keys[0];
-
-      // if (+key === key) {
-      //   if (!Array.isArray(this.data)) {
-      //     return false;
-      //   }
-
-      //   if (key === -1) {
-      //     return true;
-      //   }
-      // }
-
       return isset(this.data, key);
     default:
       key = keys.pop();
       const pointer = JsonFinger.pointer(keys);
       const parent = this.get(pointer);
-
-      // pointer = JsonFinger.pointer(
-      //   keys.map((key) => {
-      //     if (+key === key) {
-      //       return Math.max(0, key);
-      //     }
-
-      //     return key;
-      //   })
-      // );
-
-      // const expansion = [];
-      // let parent = this.get(pointer, expansion);
-
-      // if (!expansion.length) {
-      //   return false;
-      // } else if (expansion.length > 1) {
-      //   parent = this.get(expansion[0]);
-      // }
-
-      // if (+key === key) {
-      //   if (!Array.isArray(parent)) {
-      //     return false;
-      //   }
-
-      //   if (key === -1) {
-      //     return true;
-      //   }
-      // }
-
       return isset(parent, key);
   }
 };

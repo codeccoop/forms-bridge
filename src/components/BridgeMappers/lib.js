@@ -15,7 +15,7 @@ function optionsToPayload(options) {
     let partial = payload;
 
     for (let i = 0; i < keys.length; i++) {
-      const key = keys[i] === -1 ? 0 : keys[i];
+      const key = keys[i];
       const nextKey = keys[i + 1] === undefined ? "no-key" : keys[i + 1];
 
       if (+nextKey === nextKey) {
@@ -32,7 +32,7 @@ function optionsToPayload(options) {
   return payload;
 }
 
-function payloadToOptions(payload, fields) {
+function payloadToOptions(payload) {
   return Object.keys(payload).reduce((options, key) => {
     let sKey;
     if (Array.isArray(payload)) {
@@ -44,11 +44,6 @@ function payloadToOptions(payload, fields) {
     options.push({ value: sKey, label: sKey });
 
     if (Array.isArray(payload[key])) {
-      // options.push({
-      //   value: sKey + "[]",
-      //   label: sKey + "[]",
-      // });
-
       payload[key].forEach((item, i) => {
         if (Object.keys(item).length === 0) {
           options.push({
@@ -106,8 +101,7 @@ export function getFromOptions(fields, mappers, index) {
 
   for (const mutation of mutations) {
     const isValid =
-      JsonFinger.validate(mutation.from, "get") &&
-      JsonFinger.validate(mutation.to, "set");
+      JsonFinger.validate(mutation.from) && JsonFinger.validate(mutation.to);
 
     if (!isValid) {
       continue;
@@ -118,92 +112,22 @@ export function getFromOptions(fields, mappers, index) {
       continue;
     }
 
-    const expansion = [];
-    const value = finger.get(mutation.from, expansion);
+    const value = finger.get(mutation.from);
 
-    if (mutation.from.includes("[]")) {
-      for (const pointer of expansion) {
-        let item = value;
-        const matches = pointer.matchAll(/\[(\d+)\]/g);
-        for (let i = 0; i < matches.length; i++) {
-          const index = +matches[i][1];
-          item = item[index];
+    if (mutation.cast !== "copy") {
+      finger.unset(mutation.from);
+    }
 
-          if (item === undefined) {
-            break;
-          }
-        }
-
-        if (item === undefined) {
-          continue;
-        }
-
-        if (mutation.cast !== "copy") {
-          finger.unset(pointer);
-        }
-
-        if (mutation.cast !== "null") {
-          if (mutation.cast === "copy" || mutation.cast === "inherit") {
-            finger.set(mutation.to, value);
-          } else {
-            finger.set(mutation.to, {});
-          }
-        }
-      }
-    } else {
-      if (mutation.cast !== "copy") {
-        finger.unset(mutation.from);
-      }
-
-      if (mutation.cast !== "null") {
-        if (mutation.cast === "copy" || mutation.cast === "inherit") {
-          finger.set(mutation.to, JSON.parse(JSON.stringify(value)));
-        } else {
-          finger.set(mutation.to, {});
-        }
+    if (mutation.cast !== "null") {
+      if (mutation.cast === "copy" || mutation.cast === "inherit") {
+        finger.set(mutation.to, JSON.parse(JSON.stringify(value)));
+      } else {
+        finger.set(mutation.to, {});
       }
     }
   }
 
-  const mutatedOptions = payloadToOptions(finger.getData()); /*.reduce(
-    (options, opt) => {
-      const upstream = { ...opt };
-      const upstreamKeys = JsonFinger.parse(upstream.value);
-      upstream.value = upstreamKeys[0];
-
-      mutations.reverse().forEach((mutation) => {
-        if (mutation.to === upstream.value) {
-          upstream.value = mutation.from;
-        }
-      });
-
-      const fromField = fields.find((field) => {
-        const fieldKey = JsonFinger.sanitizeKey(field.name);
-        return fieldKey === upstream.value;
-      });
-
-      console.log({ opt, fromField });
-      if (
-        fromField &&
-        fromField.schema.type === "array" &&
-        fromField.schema.additionalItems
-      ) {
-        const unindexed = opt.value.replace(/\[\d+\]/g, "[]");
-        opt.value = unindexed;
-        opt.label = unindexed;
-
-        if (!options.find((opt) => opt.value === unindexed)) {
-          options.push(opt);
-        }
-      } else {
-        options.push(opt);
-      }
-
-      return options;
-    },
-    []
-  ); */
-
+  const mutatedOptions = payloadToOptions(finger.getData());
   return [{ label: "", value: "" }].concat(mutatedOptions);
 }
 
@@ -224,11 +148,6 @@ function fieldsToOptions(fields, options = []) {
         value: name,
       });
 
-      // fields.push({
-      //   label: `${name}[]`,
-      //   value: `${name}[]`,
-      // });
-
       if (schema.maxItems || Array.isArray(schema.items)) {
         const items = schema.maxItems || schema.items.length;
         for (let i = 0; i < items; i++) {
@@ -237,17 +156,7 @@ function fieldsToOptions(fields, options = []) {
             value: `${name}[${i}]`,
           });
         }
-      } /* else if (schema.additionalItems) {
-        fieldsToOptions(
-          [
-            {
-              name: `${name}[]`,
-              schema: schema.items,
-            },
-          ],
-          options
-        );
-      } */
+      }
     } else if (schema.type === "object") {
       fields.push({
         label: name,
