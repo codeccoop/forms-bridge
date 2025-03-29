@@ -45,6 +45,18 @@ export default function Bridge({
     return forms.find((form) => form._id == data.form_id);
   }, [data.form_id]);
 
+  const backend = useMemo(() => {
+    return backends.find((backend) => backend.name === data.backend);
+  }, [data.backend]);
+
+  const isMultipart = useMemo(
+    () =>
+      backend.headers.find((header) => header.name === "Content-Type")
+        ?.value === "multipart/form-data",
+
+    [backend]
+  );
+
   const [name, setName] = useState(data.name);
   const initialName = useRef(data.name);
 
@@ -136,6 +148,7 @@ export default function Bridge({
           form={form}
           mappers={data.mappers}
           setMappers={(mappers) => update({ ...data, mappers })}
+          includeFiles={!isMultipart}
         />
         <BridgeWorkflow
           formId={data.form_id}

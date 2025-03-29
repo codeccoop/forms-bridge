@@ -59,5 +59,5 @@ function ObjectProperties({ properties }) {
 }
 
 function ArrayItems({ items }) {
-  return "array";
+  return items;
 }

@@ -5,7 +5,12 @@ const { Button, Modal } = wp.components;
 const { useState } = wp.element;
 const { __ } = wp.i18n;
 
-export default function BridgeMappers({ form, mappers, setMappers }) {
+export default function BridgeMappers({
+  form,
+  mappers,
+  setMappers,
+  includeFiles,
+}) {
   const [open, setOpen] = useState(false);
 
   const handleSetMappers = (mappers) => {
@@ -36,6 +41,7 @@ export default function BridgeMappers({ form, mappers, setMappers }) {
               form={form}
               mappers={mappers.map((pipe, index) => ({ ...pipe, index }))}
               setMappers={handleSetMappers}
+              includeFiles={includeFiles}
               done={() => setOpen(false)}
             />
           </div>

@@ -1,75 +1,81 @@
 const cache = new Map();
 
-function JsonFinger(data) {
-  this.data = data;
-  this.proxy = new Proxy(this, {
-    get(_, attr) {
-      if (Object.prototype.hasOwnProperty.call(this.data, attr)) {
-        return data[attr];
-      }
-    },
-    set(_, attr, val) {
-      this.data[attr] = val;
-    },
-  });
-}
-
-JsonFinger.parse = function (finger) {
-  if (cache.has(finger)) {
-    return cache.get(finger);
+function isset(obj, attr) {
+  if (!obj || typeof obj !== "object") {
+    return false;
   }
 
-  const len = finger.length;
+  if (Array.isArray(obj)) {
+    return obj[+attr] !== undefined;
+  }
+
+  return Object.prototype.hasOwnProperty.call(obj, attr);
+}
+
+function JsonFinger(data) {
+  if (typeof data !== "object" || data === null) {
+    throw new Error("Input data isn't a valid object type");
+  }
+
+  this.data = JSON.parse(JSON.stringify(data));
+}
+
+JsonFinger.parse = function (pointer) {
+  pointer = "" + pointer;
+
+  if (cache.has(pointer)) {
+    return cache.get(pointer).map((k) => k);
+  }
+
+  const len = pointer.length;
   const keys = [];
   let key = "";
-  let closured = false;
-  let index = 0;
 
   for (let i = 0; i < len; i++) {
-    const char = finger[i];
-    if (closured) {
-      if (char === '"') {
-        closured = false;
+    const char = pointer[i];
+    if (char === ".") {
+      if (key.length) {
+        keys.push(key);
+        key = "";
+      }
+    } else if (char === "[") {
+      if (key.length) {
+        keys.push(key);
+        key = "";
+      }
+
+      i = i + 1;
+      while (pointer[i] !== "]" && i < len) {
+        key += pointer[i];
+        i += 1;
+      }
+
+      if (key.length === 0) {
+        // key = -1;
+        cache.set(pointer, []);
+        return [];
+      } else if (isNaN(key)) {
+        if (!/^"[^"]+"$/.test(key)) {
+          cache.set(pointer, []);
+          return [];
+        }
+
+        key = JSON.parse(key);
       } else {
-        key += char;
+        key = +key;
+      }
+
+      keys.push(key);
+      key = "";
+
+      if (pointer.length - 1 > i) {
+        if (pointer[i + 1] !== "." && pointer[i + 1] !== "[") {
+          cache.set(pointer, []);
+          return [];
+        }
       }
     } else {
-      if (char === '"') {
-        closured = true;
-      } else if (char === ".") {
-        keys.push(key);
-        key = "";
-      } else if (char === "[") {
-        keys.push(key);
-        key = "";
-
-        i = from = i + 1;
-        index = "";
-        while (finger[i] !== "]" && i < len) {
-          index += finger[i];
-          i += 1;
-        }
-
-        if (index.length === 0) {
-          index = -1;
-        } else if (isNaN(index)) {
-          cache.set(finger, [finger]);
-          return [finger];
-        }
-
-        index = +index;
-        keys.push(index);
-
-        i += 1;
-        if (finger.length > i) {
-          if (finger[i] !== ".") {
-            cache.set(finger, [finger]);
-            return [finger];
-          }
-        }
-      } else {
-        key += char;
-      }
+      key += char;
     }
   }
 
@@ -77,41 +83,93 @@ JsonFinger.parse = function (finger) {
     keys.push(key);
   }
 
-  cache.set(finger, keys);
-  return keys;
+  cache.set(pointer, keys);
+  return keys.map((k) => k);
 };
 
-JsonFinger.build = function (keys) {
-  return keys
-    .reduce((finger, key) => {
-      const isArray = +key === key;
-      if (isArray) {
-        if (key === -1) {
-          key = "";
-        }
+JsonFinger.sanitizeKey = function (key) {
+  if (+key === key) {
+    return `[${key}]`;
+  } else {
+    key = key.trim();
 
-        key = `[${key}]`;
-      } else {
+    if (/( |\.|")/.test(key) && !/^\["[^"]+"\]$/.test(key)) {
+      return `["${key}"]`;
+    }
+  }
+
+  return key;
+};
+
+JsonFinger.validate = function (pointer = "", mode = "get") {
+  pointer = "" + pointer;
+
+  if (!pointer.length) {
+    return false;
+  }
+
+  const keys = JsonFinger.parse(pointer);
+  if (!keys.length) {
+    return false;
+  }
+
+  if (mode === "set") {
+    return keys.filter((k) => k === -1).length === 0;
+  }
+
+  return true;
+};
+
+JsonFinger.pointer = function (keys) {
+  if (!Array.isArray(keys)) {
+    return "";
+  }
+
+  return keys.reduce((pointer, key) => {
+    const isArray = +key === key;
+    if (isArray) {
+      // if (key === -1) {
+      //   key = "";
+      // }
+
+      key = `[${key}]`;
+    } else {
+      key = JsonFinger.sanitizeKey(key);
+
+      if (key[0] !== "[" && pointer.length > 0) {
         key = "." + key;
       }
+    }
 
-      return finger + key;
-    }, "")
-    .slice(1);
+    return pointer + key;
+  }, "");
 };
 
-JsonFinger.prototype.get = function (finger) {
-  if (this[finger]) {
-    return this[finger];
+JsonFinger.prototype.getData = function () {
+  return JSON.parse(JSON.stringify(this.data));
+};
+
+// JsonFinger.prototype.get = function (pointer, expansion = []) {
+JsonFinger.prototype.get = function (pointer) {
+  pointer = "" + pointer;
+
+  if (isset(this.data, pointer)) {
+    return this.getData()[pointer];
   }
+
+  // if (pointer.includes("[]")) {
+  //   return this.getExpansionList(pointer, expansion);
+  // } else {
+  //   expansion.push(pointer);
+  // }
 
   let value = null;
   try {
-    const keys = this.parse(finger);
+    const keys = JsonFinger.parse(pointer);
 
-    value = this.data;
+    value = this.getData();
     for (const key of keys) {
-      if (!this.has(value, key)) {
+      if (!isset(value, key)) {
         return;
       }
 
@@ -120,39 +178,63 @@ JsonFinger.prototype.get = function (finger) {
   } catch {
     return null;
   }
+
+  return value;
 };
 
-JsonFinger.prototype.has = function (obj, attr) {
-  return Object.prototype.hasOwnProperty.call(obj, attr);
-};
+// JsonFinger.prototype.getExpansionList = function (pointer, expansion = []) {
+//   const parts = pointer.split("[]");
+//   const before = parts[0];
+//   const after = parts.slice(1).join("[]");
 
-JsonFinger.prototype.set = function (finger, value, unset = false) {
-  if (this[finger]) {
-    this[finger] = value;
+//   const items = this.get(before);
+
+//   if (!Array.isArray(items)) {
+//     expansion.splice(0, expansion.length);
+//     return [];
+//   }
+
+//   for (let i = 0; i < items.length; i++) {
+//     const pointer = `${before}[${i}]${after}`;
+//     items[i] = this.get(pointer, expansion);
+//   }
+
+//   return items;
+// };
+
+JsonFinger.prototype.set = function (pointer, value, unset = false) {
+  if (isset(this.data, pointer)) {
+    this.data[pointer] = value;
+    return this.getData();
   }
 
-  let data = this.data;
+  let data = this.getData();
   const breadcrumb = [];
+
   try {
-    const keys = this.parse(finger);
+    const keys = JsonFinger.parse(pointer);
     let partial = data;
 
-    for (let i = 0; i < keys.length - 1; i++) {
+    let i;
+    for (i = 0; i < keys.length - 1; i++) {
       if (!partial || typeof partial !== "object") {
-        return;
+        return data;
       }
 
       let key = keys[i];
-      if (key === -1 && Array.isArray(partial)) {
-        if (keys.length - 1 === i) {
-          key = partial.length - 1;
-        } else {
-          return;
+      if (+key === key) {
+        if (!Array.isArray(partial)) {
+          return data;
         }
+
+        // if (key === -1) {
+        //   return data;
+        // }
       }
 
-      if (this.has(partial, key)) {
-        const isArray = +key === key;
+      if (!isset(partial, key)) {
+        const nextKey = keys[i + 1] === undefined ? "no-key" : keys[i + 1];
+        const isArray = +nextKey === nextKey;
         if (isArray) {
           partial[key] = [];
         } else {
@@ -166,36 +248,117 @@ JsonFinger.prototype.set = function (finger, value, unset = false) {
 
     let key = keys[i];
     if (unset) {
-      if (key === -1 && Array.isArray(partial)) {
+      /* if (key === -1 && Array.isArray(partial)) {
         partial.pop();
-      } else if (Array.isArray(partial)) {
+      } else */
+      if (Array.isArray(partial)) {
+        partial.splice(key, 1);
+      } else if (partial && typeof partial === "object") {
         delete partial[key];
       }
 
       for (let i = breadcrumb.length - 1; i >= 0; i--) {
-        const step = breadcrumb[i];
-        partial = step.partial;
-        key = step.key;
+        const { partial, key } = breadcrumb[i];
 
-        if (!this.has(partial, key)) {
+        if (Object.keys(partial[key]).length) {
           break;
         }
 
-        delete partial[key];
+        if (Array.isArray(partial)) {
+          partial.splice(key, 1);
+        } else {
+          delete partial[key];
+        }
       }
     } else {
-      if (key === -1 && Array.isArray(partial)) {
-        partial.push(value);
-      } else {
-        partial[key] = value;
-      }
+      // if (key === -1 && Array.isArray(partial)) {
+      //   partial.push(value);
+      // } else {
+      //   partial[key] = value;
+      // }
+      partial[key] = value;
     }
-  } catch (Error) {
-    return this.data;
+  } catch {
+    return data;
   }
 
   this.data = data;
   return data;
+};
+
+JsonFinger.prototype.unset = function (pointer) {
+  if (isset(this.data, pointer)) {
+    if (+pointer === pointer) {
+      if (Array.isArray(this.data)) {
+        this.data.splice(pointer, 1);
+      }
+    } else {
+      delete this.data[pointer];
+    }
+
+    return this.getData();
+  }
+
+  return this.set(pointer, null, true);
+};
+
+JsonFinger.prototype.isset = function (pointer) {
+  let key;
+  const keys = JsonFinger.parse(pointer);
+
+  switch (keys.length) {
+    case 0:
+      return false;
+    case 1:
+      key = keys[0];
+
+      // if (+key === key) {
+      //   if (!Array.isArray(this.data)) {
+      //     return false;
+      //   }
+
+      //   if (key === -1) {
+      //     return true;
+      //   }
+      // }
+
+      return isset(this.data, key);
+    default:
+      key = keys.pop();
+      const pointer = JsonFinger.pointer(keys);
+      const parent = this.get(pointer);
+
+      // pointer = JsonFinger.pointer(
+      //   keys.map((key) => {
+      //     if (+key === key) {
+      //       return Math.max(0, key);
+      //     }
+
+      //     return key;
+      //   })
+      // );
+
+      // const expansion = [];
+      // let parent = this.get(pointer, expansion);
+
+      // if (!expansion.length) {
+      //   return false;
+      // } else if (expansion.length > 1) {
+      //   parent = this.get(expansion[0]);
+      // }
+
+      // if (+key === key) {
+      //   if (!Array.isArray(parent)) {
+      //     return false;
+      //   }
+
+      //   if (key === -1) {
+      //     return true;
+      //   }
+      // }
+
+      return isset(parent, key);
+  }
 };
 
 export default JsonFinger;

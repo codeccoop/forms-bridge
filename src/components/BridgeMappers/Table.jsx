@@ -1,4 +1,5 @@
 import JsonFinger from "./JsonFinger";
+import { getFromOptions } from "./lib";
 
 const {
   SelectControl,
@@ -10,6 +11,11 @@ const { useEffect, useMemo } = wp.element;
 const { __ } = wp.i18n;
 
 const castOptions = [
+  {
+    value: "type-cast",
+    label: __("Type mutations", "forms-bridge"),
+    disabled: true,
+  },
   {
     value: "string",
     label: __("String", "forms-bridge"),
@@ -27,6 +33,11 @@ const castOptions = [
     label: __("Boolean", "forms-bridge"),
   },
   {
+    value: "implode",
+    label: __("Implode mutations", "forms-bridge"),
+    disabled: true,
+  },
+  {
     value: "json",
     label: "JSON",
   },
@@ -39,6 +50,15 @@ const castOptions = [
     label: __("Concatenate", "forms-bridge"),
   },
   {
+    value: "structure",
+    label: __("Structure mutations", "forms-bridge"),
+    disabled: true,
+  },
+  {
+    value: "inherit",
+    label: __("Rename", "forms-bridge"),
+  },
+  {
     value: "copy",
     label: __("Copy", "forms-bridge"),
   },
@@ -48,153 +68,48 @@ const castOptions = [
   },
 ];
 
-function chainedFromOptions(options, mappers, index) {
-  const mutations = mappers.slice(0, index);
+const INVALID_TO_STYLE = {
+  "--wp-components-color-accent": "#cc1818",
+  "color":
+    "var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9))",
+  "borderColor":
+    "var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9))",
+};
 
-  const uniques = new Set();
-  const mutatedOptions = options
-    .reduce((options, opt) => {
-      opt = { ...opt };
-      mutations.forEach((mutation, i) => {
-        if (mutation.from === opt.value) {
-          if (mutation.cast === "copy" && mutation.to !== opt.value) {
-            const ignoredAfter =
-              mutations.slice(i + 1).find(({ to }) => to === opt.value)
-                ?.cast === "null";
+function mapperToStyle(pointer = "") {
+  if (pointer.length && !JsonFinger.validate(pointer, "set")) {
+    return INVALID_TO_STYLE;
+  }
 
-            if (!ignoredAfter) {
-              options.push({ ...opt });
-            }
-          }
-
-          opt.value = mutation.cast === "null" ? null : mutation.to;
-          if (opt.value !== null) {
-            opt.label = opt.value;
-          }
-        }
-      });
-
-      if (opt.value === null) {
-        return options;
-      }
-
-      const arrayItems = opt.value.endsWith("[]")
-        ? options.filter(({ value }) => value === opt.value)
-        : [];
-
-      if (arrayItems.length) {
-        mappers
-          .filter(({ to }) => to === opt.value)
-          .forEach((_, i) => {
-            const finger = opt.value.slice(0, -2);
-            const value = `${finger}[${i}]`;
-
-            if (!uniques.has(value)) {
-              uniques.add(value);
-              options.push({ value, label: value });
-            }
-          });
-      } else {
-        uniques.add(opt.value);
-        options.push(opt);
-      }
-
-      return options;
-    }, [])
-    .filter((opt) => !opt.value.endsWith("[]"));
-
-  console.log(fingerOptions(mutatedOptions, mutations));
-  return mutatedOptions
-    .filter((opt) => {
-      const keys = JsonFinger.parse(opt.value);
-      if (keys.length === 1) {
-        return true;
-      }
-
-      for (let i = 0; i < keys.length; i++) {
-        const finger = JsonFinger.build(keys.slice(0, i + 1));
-
-        const mutation = mutations.find(({ from }) => from === finger);
-        if (mutation && mutation.cast !== "copy") {
-          return false;
-        }
-      }
-
-      return true;
-    })
-    .concat(fingerOptions(mutatedOptions, mutations));
+  return {};
 }
 
-function fingerOptions(options, mutations) {
-  const values = new Set(options.map((opt) => opt.value));
-  const uniques = new Set();
-
-  return options
-    .map((opt) => JsonFinger.parse(opt.value))
-    .filter((keys) => keys.length > 1)
-    .reduce((options, keys) => {
-      keys.forEach((_, i, keys) => {
-        const fingerKeys = keys.slice(0, i + 1);
-        let finger = JsonFinger.build(fingerKeys);
-
-        if (!values.has(finger) && !uniques.has(finger)) {
-          uniques.add(finger);
-          options.push({ value: finger, label: finger });
-        }
-      });
-
-      return options;
-    }, [])
-    .reduce((options, opt) => {
-      mutations.forEach((mutation, i) => {
-        if (mutation.from === opt.value) {
-          if (mutation.cast === "copy" && mutation.to !== opt.value) {
-            const ignoredAfter =
-              mutations.slice(i + 1).find(({ to }) => to === opt.value)
-                ?.cast === "null";
-
-            if (!ignoredAfter) {
-              options.push({ ...opt });
-            }
-          }
-
-          if (mutation.cast === "null") {
-            opt.value = null;
-          } else {
-            opt.value = mutation.to;
-          }
-
-          opt.label = opt.value;
-        }
-      });
-
-      if (opt.value === null) {
-        return options;
-      }
-
-      options.push(opt);
-      return options;
-    }, []);
-}
-
-export default function MappersTable({ form, mappers, setMappers, done }) {
+export default function MappersTable({
+  form,
+  mappers,
+  setMappers,
+  includeFiles,
+  done,
+}) {
   const fields = useMemo(() => {
     if (!form) return [];
     return form.fields
-      .filter(({ is_file }) => !is_file)
-      .map(({ name, label }) => ({ name, label }));
-  }, [form]);
+      .filter(({ is_file }) => includeFiles || !is_file)
+      .reduce((fields, { name, label, is_file, schema }) => {
+        if (includeFiles && is_file) {
+          fields.push({ name, label, schema: { type: "string" } });
+          fields.push({
+            name: name + "_filename",
+            label: name + "_filename",
+            schema: { type: "string" },
+          });
+        } else {
+          fields.push({ name, label, schema });
+        }
 
-  const fromOptions = useMemo(
-    () =>
-      [{ label: "", value: "" }].concat(
-        fields.map((field) => ({
-          label: field.label,
-          value: field.name,
-        }))
-      ),
-    [fields]
-  );
+        return fields;
+      }, []);
+  }, [form]);
 
   const setMapper = (attr, index, value) => {
     const newMappers = mappers.map((mapper, i) => {
@@ -252,7 +167,7 @@ export default function MappersTable({ form, mappers, setMappers, done }) {
                   placeholder={__("From", "forms-bridge")}
                   value={from}
                   onChange={(value) => setMapper("from", i, value)}
-                  options={chainedFromOptions(fromOptions, mappers, i)}
+                  options={getFromOptions(fields, mappers, i)}
                   __nextHasNoMarginBottom
                   __next40pxDefaultSize
                 />
@@ -260,6 +175,7 @@ export default function MappersTable({ form, mappers, setMappers, done }) {
               <td>
                 <TextControl
                   placeholder={__("To", "forms-bridge")}
+                  style={mapperToStyle(to)}
                   value={to}
                   onChange={(value) => setMapper("to", i, value)}
                   __nextHasNoMarginBottom
@@ -271,10 +187,7 @@ export default function MappersTable({ form, mappers, setMappers, done }) {
                   placeholder={__("Cast as", "forms-bridge")}
                   value={cast || "string"}
                   onChange={(value) => setMapper("cast", i, value)}
-                  options={castOptions.map(({ label, value }) => ({
-                    label: __(label, "forms-bridge"),
-                    value,
-                  }))}
+                  options={castOptions}
                   __nextHasNoMarginBottom
                   __next40pxDefaultSize
                 />
