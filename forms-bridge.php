@@ -321,8 +321,8 @@ class Forms_Bridge extends Base_Plugin
                     }
                 }
 
-                $payload = $bridge->apply_mappers($submission);
-                Logger::log('Submission payload after mutations');
+                $payload = $bridge->apply_mutation($submission);
+                Logger::log('Submission payload after mutation');
                 Logger::log($payload);
 
                 $prune_empties = apply_filters(
@@ -499,7 +499,7 @@ class Forms_Bridge extends Base_Plugin
             $attachments[$name . '_filename'] = $filename;
         }
 
-        $attachments = $bridge->apply_mappers($attachments);
+        $attachments = $bridge->apply_mutation($attachments);
 
         foreach ($attachments as $field => $value) {
             if (isset($uploads[$field])) {
@@ -515,7 +515,7 @@ class Forms_Bridge extends Base_Plugin
             $value = $attachments[$field];
             unset($attachments[$field]);
 
-            $mutation = $bridge->apply_mappers([$unique_field => $value]);
+            $mutation = $bridge->apply_mutation([$unique_field => $value]);
 
             if (!empty($mutation)) {
                 $attachments[$field] = $mutation[$unique_field];

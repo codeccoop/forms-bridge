@@ -202,10 +202,15 @@ abstract class Form_Bridge
      *
      * @return array Data modified by the bridge's mappers.
      */
-    final public function apply_mappers($data)
+    final public function apply_mutation($data, $mutation = null)
     {
         $finger = new JSON_Finger($data);
-        foreach ($this->mappers as $mapper) {
+
+        if ($mutation === null) {
+            $mutation = $this->mutations[0] ?? [];
+        }
+
+        foreach ($mutation as $mapper) {
             $is_valid =
                 JSON_Finger::validate($mapper['from']) &&
                 JSON_Finger::validate($mapper['to']);

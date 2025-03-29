@@ -183,7 +183,7 @@ class Workflow_Job
         $this->next = $job;
     }
 
-    public function run($payload, $bridge)
+    public function run($payload, $bridge, $mutations = null)
     {
         $original = $payload;
 
@@ -204,8 +204,16 @@ class Workflow_Job
 
         $payload = $this->output_payload($payload);
 
+        if ($mutations === null) {
+            $mutations = $bridge->mutations;
+            $mutations = array_slice($mutations, 1);
+        }
+
+        $mutation = array_shift($mutations) ?: [];
+        $payload = $bridge->apply_mutation($payload, $mutation);
+
         if ($next_job = $this->next) {
-            $payload = $next_job->run($payload, $bridge);
+            $payload = $next_job->run($payload, $bridge, $mutations);
         }
 
         if (isset($this->submission_callbacks['before'])) {
