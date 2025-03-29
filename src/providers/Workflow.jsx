@@ -1,4 +1,4 @@
-import JsonFinger from "../components/BridgeMappers/JsonFinger";
+import JsonFinger from "../components/Mappers/JsonFinger";
 import { useForms } from "./Forms";
 import { useWorkflowJobs } from "./WorkflowJobs";
 
