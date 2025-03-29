@@ -205,16 +205,31 @@ abstract class Form_Bridge
     final public function apply_mappers($data)
     {
         $finger = new JSON_Finger($data);
-        foreach ($this->mappers as $pipe) {
-            extract($pipe);
-            $value = $finger->get($from);
+        foreach ($this->mappers as $mapper) {
+            $is_valid =
+                JSON_Finger::validate($mapper['from']) &&
+                JSON_Finger::validate($mapper['to']);
 
-            if ($cast !== 'copy') {
-                $finger->unset($from);
+            if (!$is_valid) {
+                continue;
             }
 
-            if ($cast !== 'null') {
-                $finger->set($to, $this->cast($value, $cast));
+            $isset = $finger->isset($mapper['from']);
+            if (!$isset) {
+                continue;
+            }
+
+            $value = $finger->get($mapper['from']);
+
+            if ($mapper['cast'] !== 'copy') {
+                $finger->unset($mapper['from']);
+            }
+
+            if ($mapper['cast'] !== 'null') {
+                $finger->set(
+                    $mapper['to'],
+                    $this->cast($value, $mapper['cast'])
+                );
             }
         }
 
@@ -241,19 +256,17 @@ abstract class Form_Bridge
             case 'boolean':
                 return (bool) $value;
             case 'json':
-                try {
-                    return wp_json_encode($value, JSON_UNESCAPED_UNICODE);
-                } catch (TypeError) {
-                    return '';
-                }
+                return wp_json_encode($value, JSON_UNESCAPED_UNICODE);
             case 'csv':
                 return implode(',', (array) $value);
             case 'concat':
                 return implode(' ', (array) $value);
-            case 'null':
-                return null;
+            case 'inherit':
+                return $value;
             case 'copy':
                 return $value;
+            case 'null':
+                return;
             default:
                 return (string) $value;
         }

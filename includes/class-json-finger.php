@@ -2,7 +2,6 @@
 
 namespace FORMS_BRIDGE;
 
-use ValueError;
 use TypeError;
 use Error;
 
@@ -22,64 +21,72 @@ class JSON_Finger
      */
     private $data;
 
+    private static $cache = [];
+
     /**
-     * Parse a json finger and returns it as an array of keys.
+     * Parse a json finger pointer and returns it as an array of keys.
      *
-     * @param string $finger JSON finger.
+     * @param string $pointer JSON finger pointer.
      *
      * @return array Array with finger keys.
      */
-    public static function parse($finger)
+    public static function parse($pointer)
     {
-        $len = strlen($finger);
+        $pointer = (string) $pointer;
+
+        if (isset(self::$cache[$pointer])) {
+            return self::$cache[$pointer];
+        }
+
+        $len = strlen($pointer);
         $keys = [];
         $key = '';
-        $closured = false;
-        $index = 0;
 
-        // Parse finger as a charstring iteration
         for ($i = 0; $i < $len; $i++) {
-            $char = $finger[$i];
-            if ($closured) {
-                if ($char === '"') {
-                    $closured = false;
+            $char = $pointer[$i];
+
+            if ($char === '.') {
+                if (strlen($key)) {
+                    $keys[] = $key;
+                    $key = '';
+                }
+            } elseif ($char === '[') {
+                if (strlen($key)) {
+                    $keys[] = $key;
+                    $key = '';
+                }
+
+                $i = $i + 1;
+                while ($pointer[$i] !== ']' && $i < $len) {
+                    $key .= $pointer[$i];
+                    $i += 1;
+                }
+
+                if (strlen($key) === 0) {
+                    self::$cache[$pointer] = [];
+                    return [];
+                } elseif (intval($key) != $key) {
+                    if (!preg_match('/^"[^"]+"$/', $key, $matches)) {
+                        self::$cache[$pointer] = [];
+                        return [];
+                    }
+
+                    $key = json_decode($key);
                 } else {
-                    $key .= $char;
+                    $key = (int) $key;
+                }
+
+                $keys[] = $key;
+                $key = '';
+
+                if (strlen($pointer) - 1 > $i) {
+                    if ($pointer[$i + 1] !== '.' && $pointer[$i + 1] !== '[') {
+                        self::$cache[$pointer] = [];
+                        return [];
+                    }
                 }
             } else {
-                if ($char === '"') {
-                    $closured = true;
-                } elseif ($char === '.') {
-                    $keys[] = $key;
-                    $key = '';
-                } elseif ($char === '[') {
-                    $keys[] = $key;
-                    $key = '';
-
-                    $i = $from = $i + 1;
-                    $index = '';
-                    while ($finger[$i] !== ']' && $i < $len) {
-                        $index .= $finger[$i];
-                        $i += 1;
-                    }
-
-                    if (strlen($index) === 0) {
-                        $index = -1;
-                    } elseif (!((int) $index == $index)) {
-                        return [$finger];
-                    }
-
-                    $index = (int) $index;
-                    $keys[] = $index;
-                    $i += 1;
-                    if (strlen($finger) > $i) {
-                        if ($finger[$i] !== '.') {
-                            return [$finger];
-                        }
-                    }
-                } else {
-                    $key .= $char;
-                }
+                $key .= $char;
             }
         }
 
@@ -87,7 +94,63 @@ class JSON_Finger
             $keys[] = $key;
         }
 
+        self::$cache[$pointer] = $keys;
         return $keys;
+    }
+
+    public static function sanitizeKey($key)
+    {
+        if (intval($key) === $key) {
+            $key = "[{$key}]";
+        } else {
+            $key = trim($key);
+
+            if (
+                preg_match('/( |\.|")/', $key) &&
+                !preg_match('/^\["[^"]+"\]$/', $key)
+            ) {
+                $key = "[\"{$key}\"]";
+            }
+        }
+
+        return $key;
+    }
+
+    public static function validate($pointer): bool
+    {
+        $pointer = (string) $pointer;
+
+        if (!strlen($pointer)) {
+            return false;
+        }
+
+        return count(self::parse($pointer)) > 0;
+    }
+
+    public static function pointer($keys)
+    {
+        if (!is_array($keys)) {
+            return '';
+        }
+
+        return array_reduce(
+            $keys,
+            static function ($pointer, $key) {
+                $is_array = intval($key) === $key;
+                if ($is_array) {
+                    $key = "[{$key}]";
+                } else {
+                    $key = self::sanitizeKey($key);
+
+                    if ($key[0] !== '[' && strlen($pointer) > 0) {
+                        $key = '.' . $key;
+                    }
+                }
+
+                return $pointer . $key;
+            },
+            ''
+        );
     }
 
     /**
@@ -142,19 +205,22 @@ class JSON_Finger
     /**
      * Gets the attribute from the data.
      *
-     * @param string $finger JSON finger.
+     * @param string $pointer JSON finger pointer.
+     * pointer.
      *
      * @return mixed Attribute value.
      */
-    public function get($finger)
+    public function get($pointer)
     {
-        if ($this->$finger) {
-            return $this->$finger;
+        $pointer = (string) $pointer;
+
+        if ($this->$pointer) {
+            return $this->$pointer;
         }
 
         $value = null;
         try {
-            $keys = static::parse($finger);
+            $keys = self::parse($pointer);
 
             $value = $this->data;
             foreach ($keys as $key) {
@@ -165,7 +231,7 @@ class JSON_Finger
                 $value = $value[$key];
             }
         } catch (Error) {
-            return null;
+            return;
         }
 
         return $value;
@@ -174,34 +240,35 @@ class JSON_Finger
     /**
      * Sets the attribute value on the data.
      *
-     * @param string $finger JSON finger.
+     * @param string $pointer JSON finger pointer.
      * @param mixed $value Attribute value.
      * @param boolean $unset If true, unsets the attribute.
      *
      * @return array Data after the attribute update.
      */
-    public function set($finger, $value, $unset = false)
+    public function set($pointer, $value, $unset = false)
     {
-        if ($this->$finger) {
-            $this->$finger = $value;
+        if ($this->$pointer) {
+            $this->$pointer = $value;
+            return $this->data;
         }
 
         $data = $this->data;
         $breadcrumb = [];
+
         try {
-            $keys = static::parse($finger);
+            $keys = self::parse($pointer);
             $partial = &$data;
+
             for ($i = 0; $i < count($keys) - 1; $i++) {
                 if (!is_array($partial)) {
-                    return;
+                    return $data;
                 }
 
                 $key = $keys[$i];
-                if ($key === -1 && wp_is_numeric_array($partial)) {
-                    if (count($keys) - 1 === $i) {
-                        $key = count($partial) - 1;
-                    } else {
-                        return;
+                if (is_int($key)) {
+                    if (!wp_is_numeric_array($partial)) {
+                        return $data;
                     }
                 }
 
@@ -215,8 +282,8 @@ class JSON_Finger
 
             $key = $keys[$i];
             if ($unset) {
-                if ($key === -1 && wp_is_numeric_array($partial)) {
-                    array_pop($partial);
+                if (wp_is_numeric_array($partial)) {
+                    array_splice($partial, $key, 1);
                 } elseif (is_array($partial)) {
                     unset($partial[$key]);
                 }
@@ -225,21 +292,22 @@ class JSON_Finger
                     $step = $breadcrumb[$i];
                     $partial = &$step['partial'];
                     $key = $step['key'];
+
                     if (!empty($partial[$key])) {
                         break;
                     }
-                    unset($partial[$key]);
+
+                    if (wp_is_numeric_array($partial)) {
+                        array_splice($partial, $key, 1);
+                    } else {
+                        unset($partial[$key]);
+                    }
                 }
             } else {
-                if ($key === -1 && wp_is_numeric_array($partial)) {
-                    $partial[] = $value;
-                } else {
-                    $partial[$key] = $value;
-                }
+                $partial[$key] = $value;
             }
-        } catch (Error $e) {
-            error_log($e->getMessage());
-            return $this->data;
+        } catch (Error) {
+            return $data;
         }
 
         $this->data = $data;
@@ -249,22 +317,47 @@ class JSON_Finger
     /**
      * Unsets the attribute from the data.
      *
-     * @param string $finger JSON finger.
+     * @param string $pointer JSON finger pointer.
      */
-    public function unset($finger)
+    public function unset($pointer)
     {
-        return $this->set($finger, null, true);
+        if (isset($this->data[$pointer])) {
+            if (intval($pointer) === $pointer) {
+                if (wp_is_numeric_array($this->data)) {
+                    array_splice($this->data, $pointer, 1);
+                }
+            } else {
+                unset($this->data[$pointer]);
+            }
+
+            return $this->data;
+        }
+
+        return $this->set($pointer, null, true);
     }
 
     /**
      * Checks if the json finger is set on the data.
      *
-     * @param string $finger JSON finger.
+     * @param string $pointer JSON finger pointer.
      *
      * @return boolean True if attribute is set.
      */
-    public function isset($finger)
+    public function isset($pointer)
     {
-        return !empty($this->get($finger));
+        $keys = self::parse($pointer);
+
+        switch (count($keys)) {
+            case 0:
+                return false;
+            case 1:
+                $key = $keys[0];
+                return isset($this->data[$key]);
+            default:
+                $key = array_pop($keys);
+                $pointer = self::pointer($keys);
+                $parent = $this->get($pointer);
+                return isset($parent[$key]);
+        }
     }
 }

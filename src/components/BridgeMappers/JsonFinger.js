@@ -33,6 +33,7 @@ JsonFinger.parse = function (pointer) {
 
   for (let i = 0; i < len; i++) {
     const char = pointer[i];
+
     if (char === ".") {
       if (key.length) {
         keys.push(key);
@@ -88,12 +89,12 @@ JsonFinger.parse = function (pointer) {
 
 JsonFinger.sanitizeKey = function (key) {
   if (+key === key) {
-    return `[${key}]`;
+    key = `[${key}]`;
   } else {
     key = key.trim();
 
     if (/( |\.|")/.test(key) && !/^\["[^"]+"\]$/.test(key)) {
-      return `["${key}"]`;
+      key = `["${key}"]`;
     }
   }
 
@@ -155,7 +156,7 @@ JsonFinger.prototype.get = function (pointer) {
       value = value[key];
     }
   } catch {
-    return null;
+    return;
   }
 
   return value;
