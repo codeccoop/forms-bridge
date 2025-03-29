@@ -221,7 +221,10 @@ abstract class Form_Bridge
 
             $value = $finger->get($mapper['from']);
 
-            if ($mapper['cast'] !== 'copy') {
+            if (
+                $mapper['cast'] !== 'copy' &&
+                $mapper['from'] !== $mapper['to']
+            ) {
                 $finger->unset($mapper['from']);
             }
 

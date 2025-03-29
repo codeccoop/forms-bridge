@@ -114,7 +114,7 @@ export function getFromOptions(fields, mappers, index) {
 
     const value = finger.get(mutation.from);
 
-    if (mutation.cast !== "copy") {
+    if (mutation.cast !== "copy" && mutation.from !== mutation.to) {
       finger.unset(mutation.from);
     }
 
@@ -148,13 +148,15 @@ function fieldsToOptions(fields, options = []) {
         value: name,
       });
 
-      if (schema.maxItems || Array.isArray(schema.items)) {
-        const items = schema.maxItems || schema.items.length;
-        for (let i = 0; i < items; i++) {
-          fields.push({
-            label: `${name}[${i}]`,
-            value: `${name}[${i}]`,
-          });
+      if (!schema.additionalItems) {
+        if (schema.maxItems || Array.isArray(schema.items)) {
+          const items = schema.maxItems || schema.items.length;
+          for (let i = 0; i < items; i++) {
+            fields.push({
+              label: `${name}[${i}]`,
+              value: `${name}[${i}]`,
+            });
+          }
         }
       }
     } else if (schema.type === "object") {
