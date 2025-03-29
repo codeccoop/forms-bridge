@@ -175,23 +175,28 @@ class Integration extends BaseIntegration
     public function serialize_form($form)
     {
         $form_id = (int) $form->id();
-        return [
-            '_id' => 'wpcf7:' . $form_id,
-            'id' => $form_id,
-            'title' => $form->title(),
-            'bridges' => apply_filters(
-                'forms_bridge_bridges',
-                [],
-                'wpcf7:' . $form_id
-            ),
-            'fields' => array_values(
-                array_filter(
-                    array_map(function ($field) {
-                        return $this->serialize_field($field);
-                    }, $form->scan_form_tags())
-                )
-            ),
-        ];
+        $fields = array_filter(
+            array_map(function ($field) {
+                return $this->serialize_field($field);
+            }, $form->scan_form_tags())
+        );
+
+        return apply_filters(
+            'forms_bridge_form_data',
+            [
+                '_id' => 'wpcf7:' . $form_id,
+                'id' => $form_id,
+                'title' => $form->title(),
+                'bridges' => apply_filters(
+                    'forms_bridge_bridges',
+                    [],
+                    'wpcf7:' . $form_id
+                ),
+                'fields' => array_values($fields),
+            ],
+            $form,
+            'wpcf7'
+        );
     }
 
     /**
@@ -204,7 +209,7 @@ class Integration extends BaseIntegration
      */
     private function serialize_field($field)
     {
-        if (in_array($field->basetype, ['response', 'submit'])) {
+        if (in_array($field->basetype, ['response', 'submit', 'quiz'])) {
             return;
         }
 
@@ -212,8 +217,6 @@ class Integration extends BaseIntegration
         if ($type === 'conditional') {
             $type = $field->get_option('type')[0];
         }
-
-        // $type = $this->norm_field_type($type);
 
         $options = [];
         if (is_array($field->values)) {
@@ -228,48 +231,88 @@ class Integration extends BaseIntegration
 
         $format = $type === 'date' ? 'yyyy-mm-dd' : '';
 
-        return [
-            'id' => $field->get_id_option(),
-            'type' => $type,
-            'name' => $field->raw_name,
-            'label' => $field->name,
-            'required' => $field->is_required(),
-            'options' => $options,
-            'is_file' => $type === 'file',
-            'is_multi' =>
-                ($field->basetype === 'checkbox' &&
-                    !$field->has_option('exclusive')) ||
-                ($field->basetype === 'select' &&
-                    $field->has_option('multiple')),
-            'conditional' =>
-                $field->basetype === 'conditional' ||
-                $field->basetype === 'fileconditional',
-            'format' => $format,
-        ];
+        return apply_filters(
+            'forms_bridge_form_field_data',
+            [
+                'id' => $field->get_id_option(),
+                'type' => $type,
+                'name' => $field->raw_name,
+                'label' => $field->name,
+                'required' => $field->is_required(),
+                'options' => $options,
+                'is_file' => $type === 'file',
+                'is_multi' => $this->is_multi_field($field),
+                'conditional' =>
+                    $field->basetype === 'conditional' ||
+                    $field->basetype === 'fileconditional',
+                'format' => $format,
+                'schema' => $this->field_value_schema($field),
+            ],
+            $field,
+            'wpcf7'
+        );
     }
 
-    // private function norm_field_type($type)
-    // {
-    //     switch ($type) {
-    //         case 'iban':
-    //         case 'vat':
-    //         case 'email':
-    //         case 'url':
-    //         case 'textarea':
-    //         case 'quiz':
-    //             return 'text';
-    //         case 'select':
-    //         case 'checkbox':
-    //         case 'radio':
-    //             return 'options';
-    //         case 'files':
-    //             return 'file';
-    //         case 'acceptance':
-    //             return 'consent';
-    //         default:
-    //             return $type;
-    //     }
-    // }
+    private function is_multi_field($field)
+    {
+        $type = str_replace('*', '', $field->type);
+
+        if ($type === 'checkbox') {
+            return !$field->has_option('exclusive');
+        }
+
+        if ($type === 'select') {
+            return $field->has_option('multiple');
+        }
+
+        return false;
+    }
+
+    private function field_value_schema($field)
+    {
+        $type = str_replace('*', '', $field->type);
+
+        switch ($type) {
+            case 'text':
+            case 'textarea':
+            case 'date':
+            case 'email':
+            case 'url':
+            case 'quiz':
+            case 'radio':
+            case 'iban':
+            case 'vat':
+                return ['type' => 'string'];
+            case 'select':
+                if ($field->has_option('multiple')) {
+                    return [
+                        'type' => 'array',
+                        'items' => ['type' => 'text'],
+                        'maxItems' => count($field->values),
+                    ];
+                }
+
+                return ['type' => 'string'];
+            case 'checkbox':
+                if ($field->has_option('exclusive')) {
+                    return ['type' => 'string'];
+                }
+
+                return [
+                    'type' => 'array',
+                    'items' => ['type' => 'string'],
+                    'maxItems' => count($field->values),
+                ];
+            case 'files':
+                return;
+            case 'acceptance':
+                return ['type' => 'boolean'];
+            case 'numer':
+                return ['type' => 'number'];
+            default:
+                return ['type' => 'string'];
+        }
+    }
 
     /**
      * Serializes the form's submission data.
