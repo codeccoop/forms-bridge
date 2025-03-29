@@ -182,24 +182,28 @@ class Integration extends BaseIntegration
     {
         $form = $form_factory->get();
         $form_id = (int) $form->get_id();
+        $fields = array_filter(
+            array_map(function ($field) {
+                return $this->serialize_field($field);
+            }, $form_factory->get_fields())
+        );
 
-        return [
-            '_id' => 'ninja:' . $form_id,
-            'id' => $form_id,
-            'title' => $form->get_setting('title'),
-            'bridges' => apply_filters(
-                'forms_bridge_bridges',
-                [],
-                'ninja:' . $form_id
-            ),
-            'fields' => array_values(
-                array_filter(
-                    array_map(function ($field) {
-                        return $this->serialize_field($field);
-                    }, $form_factory->get_fields())
-                )
-            ),
-        ];
+        return apply_filters(
+            'forms_bridge_form_data',
+            [
+                '_id' => 'ninja:' . $form_id,
+                'id' => $form_id,
+                'title' => $form->get_setting('title'),
+                'bridges' => apply_filters(
+                    'forms_bridge_bridges',
+                    [],
+                    'ninja:' . $form_id
+                ),
+                'fields' => array_values($fields),
+            ],
+            $form,
+            'ninja'
+        );
     }
 
     /**
@@ -211,13 +215,24 @@ class Integration extends BaseIntegration
      */
     private function serialize_field($field)
     {
-        if (in_array($field->get_setting('type'), ['html', 'hr', 'submit'])) {
+        if (
+            in_array($field->get_setting('type'), [
+                'html',
+                'hr',
+                'confirm',
+                'recaptcha',
+                'spam',
+                'submit',
+            ])
+        ) {
             return;
         }
 
-        return $this->_serialize_field(
-            $field->get_id(),
-            $field->get_settings()
+        return apply_filters(
+            'forms_bridge_form_field_data',
+            $this->_serialize_field($field->get_id(), $field->get_settings()),
+            $field,
+            'ninja'
         );
     }
 
@@ -231,13 +246,21 @@ class Integration extends BaseIntegration
      */
     private function _serialize_field($id, $settings)
     {
+        $name =
+            $settings['custom_name_attribute'] ?? null ?:
+            $settings['admin_label'] ?? null ?:
+            $settings['label'];
+
+        $children = isset($settings['fields'])
+            ? array_map(function ($setting) {
+                return $this->_serialize_field($setting['id'], $setting);
+            }, $settings['fields'])
+            : [];
+
         return [
             'id' => $id,
             'type' => $settings['type'],
-            'name' =>
-                $settings['custom_name_attribute'] ?? null ?:
-                $settings['admin_label'] ?? null ?:
-                $settings['label'],
+            'name' => $name,
             'label' => $settings['label'],
             'required' => isset($settings['required'])
                 ? $settings['required'] === '1'
@@ -251,45 +274,83 @@ class Integration extends BaseIntegration
                 'listcheckbox',
             ]),
             'conditional' => false,
-            'children' => isset($settings['fields'])
-                ? array_map(function ($setting) {
-                    return $this->_serialize_field($setting['id'], $setting);
-                }, $settings['fields'])
-                : [],
+            'children' => $children,
             'format' => strtolower($settings['date_format'] ?? ''),
+            'schema' => $this->field_value_schema($settings, $children),
         ];
     }
 
-    // private function norm_field_type($type)
-    // {
-    //     switch ($type) {
-    //         case 'textbox':
-    //         case 'lastname':
-    //         case 'firstname':
-    //         case 'address':
-    //         case 'zip':
-    //         case 'phone':
-    //         case 'city':
-    //         case 'spam':
-    //         case 'email':
-    //         case 'textarea':
-    //             return 'text';
-    //         case 'listcountry':
-    //         case 'listselect':
-    //         case 'listmultiselect':
-    //         case 'listimage':
-    //         case 'listradio':
-    //         case 'listcheckbox':
-    //         case 'select':
-    //         case 'radio':
-    //         case 'checkbox':
-    //             return 'options';
-    //         case 'starrating':
-    //             return 'number';
-    //         default:
-    //             return $type;
-    //     }
-    // }
+    private function field_value_schema($settings, $children = [])
+    {
+        switch ($settings['type']) {
+            case 'checkbox':
+                return ['type' => 'boolean'];
+            case 'textbox':
+            case 'lastname':
+            case 'firstname':
+            case 'address':
+            case 'zip':
+            case 'city':
+            case 'spam':
+            case 'phone':
+            case 'email':
+            case 'textarea':
+            case 'select':
+            case 'radio':
+            case 'checkbox':
+            case 'date':
+            case 'listradio':
+            case 'listselect':
+            case 'listcountry':
+            case 'liststate':
+                return ['type' => 'string'];
+            case 'listimage':
+                if ($settings['allow_multi_select'] ?? false) {
+                    return [
+                        'type' => 'array',
+                        'items' => ['type' => 'string'],
+                        'maxItems' => count($settings['image_options']),
+                    ];
+                }
+
+                return ['type' => 'string'];
+            case 'listmultiselect':
+            case 'listcheckbox':
+                return [
+                    'type' => 'array',
+                    'items' => ['type' => 'string'],
+                    'maxItems' => count($settings['options']),
+                ];
+            case 'starrating':
+            case 'number':
+                return ['type' => 'number'];
+            case 'repeater':
+                $i = 0;
+                $properties = array_reduce(
+                    $children,
+                    function ($props, $child) use ($settings, &$i) {
+                        $field = $settings['fields'][$i];
+                        $props[$child['name']] = $this->field_value_schema(
+                            $field
+                        );
+                        $i++;
+                        return $props;
+                    },
+                    []
+                );
+
+                return [
+                    'type' => 'array',
+                    'items' => [
+                        'type' => 'object',
+                        'properties' => $properties,
+                    ],
+                    'additionalItems' => true,
+                ];
+            default:
+                return ['type' => 'string'];
+        }
+    }
 
     /**
      * Serialize the form's submission data.
@@ -362,19 +423,19 @@ class Integration extends BaseIntegration
             $number_val = (float) $value;
             if (strval($number_val) === $value) {
                 return $number_val;
-            } else {
-                return $value;
             }
-        } elseif ($type === 'number') {
+
+            return $value;
+        } elseif ($type === 'number' || $type === 'starrating') {
             return (float) $value;
         } elseif ($type === 'date') {
-            if (is_String($value)) {
+            if (is_string($value)) {
                 return $value;
             }
 
             $_value = '';
 
-            if (isset($value['date'])) {
+            if (!empty($value['date'])) {
                 $_value .= $value['date'] . ' ';
             }
 
