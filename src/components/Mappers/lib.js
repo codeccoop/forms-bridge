@@ -2,7 +2,7 @@ import JsonFinger from "./JsonFinger";
 
 const cache = new WeakMap();
 
-function payloadToOptions(payload) {
+function payloadToOptions(payload, fields, mappers) {
   return Object.keys(payload).reduce((options, key) => {
     let sKey;
     if (Array.isArray(payload)) {
@@ -14,7 +14,18 @@ function payloadToOptions(payload) {
     options.push({ value: sKey, label: sKey });
 
     if (Array.isArray(payload[key])) {
-      if (Object.isFrozen(payload[key])) {
+      const field = fields.find((field) => {
+        let name = field.name;
+        mappers.forEach(({ from, to }) => {
+          if (from === name) {
+            name = to;
+          }
+        });
+
+        return name === key;
+      });
+
+      if (!field || !field.schema.additionalItems) {
         payload[key].forEach((item, i) => {
           if (typeof item === "string") {
             options.push({
@@ -23,7 +34,7 @@ function payloadToOptions(payload) {
             });
           } else {
             options = options.concat(
-              payloadToOptions(item).map((opt) => {
+              payloadToOptions(item, fields, mappers).map((opt) => {
                 let value = opt.value;
                 if (+value === value) {
                   value = `${sKey}[${i}][${value}]`;
@@ -43,7 +54,7 @@ function payloadToOptions(payload) {
       }
     } else if (payload[key] && typeof payload[key] === "object") {
       options = options.concat(
-        payloadToOptions(payload[key]).map((opt) => {
+        payloadToOptions(payload[key], fields, mappers).map((opt) => {
           let value = opt.value;
           if (+value === value) {
             value = `${sKey}[${value}]`;
@@ -79,16 +90,10 @@ function schemaToPayload(schema, pointer) {
   } else if (schema.type === "array") {
     const items = schema.maxItems || schema.minItems || 1;
 
-    const payload = Array.from(Array(items)).reduce((payload, _, i) => {
+    return Array.from(Array(items)).reduce((payload, _, i) => {
       const itemPointer = `${pointer}[${i}]`;
       return payload.concat(schemaToPayload(schema.items, itemPointer));
     }, []);
-
-    if (!schema.additionalItems) {
-      Object.freeze(payload);
-    }
-
-    return payload;
   }
 
   return schema.type;
@@ -120,20 +125,11 @@ export function applyMappers(payload, mappers) {
     }
 
     if (mapper.cast !== "null") {
-      if (mapper.cast === "copy" || mapper.cast === "inherit") {
-        const clone = JSON.parse(JSON.stringify(value));
-        if (Object.isFrozen(value)) {
-          Object.freeze(clone);
-        }
-
-        finger.set(mapper.to, clone);
-      } else {
-        finger.set(mapper.to, value);
-      }
+      finger.set(mapper.to, castValue(mapper.cast, value));
     }
   }
 
-  return finger.getData();
+  return finger.data;
 }
 
 export function fieldsToPayload(fields) {
@@ -155,6 +151,20 @@ export function fieldsToPayload(fields) {
 
 export function getFromOptions(fields, mappers) {
   const payload = applyMappers(fieldsToPayload(fields), mappers);
-  const options = payloadToOptions(payload);
+  const options = payloadToOptions(payload, fields, mappers);
   return [{ label: "", value: "" }].concat(options);
+}
+
+export function castValue(cast, from) {
+  switch (cast) {
+    case "json":
+    case "concat":
+    case "csv":
+      return "string";
+    case "copy":
+    case "inherit":
+      return JSON.parse(JSON.stringify(from));
+    default:
+      return cast;
+  }
 }
