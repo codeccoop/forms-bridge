@@ -167,7 +167,7 @@ export default function MappersTable({
                   placeholder={__("From", "forms-bridge")}
                   value={from}
                   onChange={(value) => setMapper("from", i, value)}
-                  options={getFromOptions(fields, mappers, i)}
+                  options={getFromOptions(fields, mappers.slice(0, i))}
                   __nextHasNoMarginBottom
                   __next40pxDefaultSize
                 />
