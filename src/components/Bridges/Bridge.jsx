@@ -156,7 +156,7 @@ export default function Bridge({
           includeFiles={!isMultipart}
         />
         <Workflow
-          formId={data.form_id}
+          form={form}
           mutations={data.mutations}
           workflow={data.workflow}
           setWorkflow={(workflow) => update({ ...data, workflow })}

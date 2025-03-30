@@ -12,7 +12,7 @@ export default function Workflow({
   setWorkflow,
   mutations = [],
   setMutationMappers,
-  formId,
+  form,
   includeFiles,
 }) {
   const [open, setOpen] = useState(false);
@@ -20,7 +20,8 @@ export default function Workflow({
   return (
     <>
       <Button
-        variant={workflow.length ? "primary" : "secondary"}
+        disabled={!form}
+        variant={form && workflow.length ? "primary" : "secondary"}
         onClick={() => setOpen(true)}
         style={{ width: "150px", justifyContent: "center" }}
         __next40pxDefaultSize
@@ -33,7 +34,7 @@ export default function Workflow({
           onRequestClose={() => setOpen(false)}
         >
           <WorkflowProvider
-            formId={formId}
+            form={form}
             mutations={mutations}
             workflow={workflow}
             includeFiles={includeFiles}

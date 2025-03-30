@@ -56,7 +56,8 @@ export default function Mappers({ form, mappers, setMappers, includeFiles }) {
   return (
     <>
       <Button
-        variant={mappers.length ? "primary" : "secondary"}
+        disabled={!form}
+        variant={form && mappers.length ? "primary" : "secondary"}
         onClick={() => setOpen(true)}
         style={{ width: "150px", justifyContent: "center" }}
         __next40pxDefaultSize

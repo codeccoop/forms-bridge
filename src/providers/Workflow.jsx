@@ -1,11 +1,9 @@
-import JsonFinger from "../components/Mappers/JsonFinger";
 import {
   fieldsToPayload,
   schemaToPayload,
   applyMappers,
   payloadToFields,
 } from "../components/Mappers/lib";
-import { useForms } from "./Forms";
 import { useWorkflowJobs } from "./WorkflowJobs";
 
 const { createContext, useContext, useState, useMemo } = wp.element;
@@ -106,7 +104,7 @@ function applyJob(payload, job) {
 
 export default function WorkflowProvider({
   children,
-  formId,
+  form,
   mutations,
   workflow,
   includeFiles,
@@ -140,9 +138,7 @@ export default function WorkflowProvider({
     [mutations, jobs, mappersJob]
   );
 
-  const forms = useForms();
   const formFields = useMemo(() => {
-    const form = forms.find(({ _id }) => _id === formId);
     if (!form) return [];
 
     return form.fields
@@ -161,7 +157,7 @@ export default function WorkflowProvider({
 
         return fields;
       }, []);
-  }, [formId, forms]);
+  }, [form]);
 
   const stepMappers = useMemo(() => {
     return mutations.reduce((acum, mappers, i) => {
