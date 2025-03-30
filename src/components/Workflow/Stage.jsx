@@ -149,7 +149,7 @@ export default function WorkflowStage({ setMappers }) {
         field.exit = false;
       });
 
-      diff.exit.values().map((name) => {
+      diff.exit.values().forEach((name) => {
         output.push({
           name,
           schema: { type: "null" },
@@ -171,7 +171,9 @@ export default function WorkflowStage({ setMappers }) {
         name,
         missing: diff.missing.has(name),
         optional:
-          !required && !outputFields.find((field) => field.name === name),
+          !required &&
+          !diff.exit.has(name) &&
+          !outputFields.find((field) => field.name === name),
         type,
       };
     });
