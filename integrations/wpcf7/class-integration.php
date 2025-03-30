@@ -385,7 +385,9 @@ class Integration extends BaseIntegration
         $form = '';
         foreach ($fields as $field) {
             if ($field['type'] == 'hidden') {
-                $form .= $this->field_to_tag($field) . "\n\n";
+                if (isset($field['value'])) {
+                    $form .= $this->field_to_tag($field) . "\n\n";
+                }
             } else {
                 $form .= "<label> {$field['label']}\n";
                 $form .= '  ' . $this->field_to_tag($field) . " </label>\n\n";
@@ -405,7 +407,7 @@ class Integration extends BaseIntegration
      */
     private function field_to_tag($field)
     {
-        if (!empty($field['value'])) {
+        if (isset($field['value'])) {
             $type = 'hidden';
         } else {
             if ($field['type'] === 'options') {
