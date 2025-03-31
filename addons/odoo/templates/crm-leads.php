@@ -13,14 +13,38 @@ add_filter(
                 array_column($data['form']['fields'], 'name')
             );
 
-            $field = &$data['form']['fields'][$index];
-            $field['value'] = base64_encode($field['value']);
+            if ($index !== false) {
+                $field = &$data['form']['fields'][$index];
+                $field['value'] = base64_encode($field['value']);
+            }
         }
 
         return $data;
     },
     10,
     2
+);
+
+add_filter(
+    'forms_bridge_workflow_job_payload',
+    function ($payload, $job, $bridge) {
+        if (
+            $job->name === 'odoo-lead-owner-id' &&
+            $bridge->template === 'odoo-crm-leads'
+        ) {
+            if (isset($payload['owner_email'])) {
+                $payload['owner_email'] = base64_decode(
+                    $payload['owner_email']
+                );
+            } elseif (isset($payload['owner'])) {
+                $payload['owner'] = base64_decode($payload['owner']);
+            }
+        }
+
+        return $payload;
+    },
+    5,
+    3
 );
 
 return [
@@ -63,16 +87,18 @@ return [
     ],
     'bridge' => [
         'model' => 'crm.lead',
-        'mappers' => [
+        'mutations' => [
             [
-                'from' => 'priority',
-                'to' => 'priority',
-                'cast' => 'string',
-            ],
-            [
-                'from' => 'owner',
-                'to' => 'owner_email',
-                'cast' => 'string',
+                [
+                    'from' => 'priority',
+                    'to' => 'priority',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'owner',
+                    'to' => 'owner_email',
+                    'cast' => 'string',
+                ],
             ],
         ],
         'workflow' => ['odoo-lead-owner-id', 'odoo-contact-id'],

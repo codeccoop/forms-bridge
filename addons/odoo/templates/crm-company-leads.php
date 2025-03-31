@@ -15,8 +15,10 @@ add_filter(
                 array_column($data['form']['fields'], 'name')
             );
 
-            $field = &$data['form']['fields'][$index];
-            $field['value'] = base64_encode($field['value']);
+            if ($index !== false) {
+                $field = &$data['form']['fields'][$index];
+                $field['value'] = base64_encode($field['value']);
+            }
         }
 
         return $data;
@@ -26,9 +28,12 @@ add_filter(
 );
 
 add_filter(
-    'forms_bridge_payload',
-    function ($payload, $bridge) {
-        if ($bridge->template === 'odoo-crm-company-leads') {
+    'forms_bridge_workflow_job_payload',
+    function ($payload, $job, $bridge) {
+        if (
+            $job->name === 'odoo-lead-owner-id' &&
+            $bridge->template === 'odoo-crm-company-leads'
+        ) {
             if (isset($payload['owner_email'])) {
                 $payload['owner_email'] = base64_decode(
                     $payload['owner_email']
@@ -41,7 +46,7 @@ add_filter(
         return $payload;
     },
     5,
-    2
+    3
 );
 
 return [
@@ -84,21 +89,23 @@ return [
     ],
     'bridge' => [
         'model' => 'crm.lead',
-        'mappers' => [
+        'mutations' => [
             [
-                'from' => 'priority',
-                'to' => 'priority',
-                'cast' => 'string',
-            ],
-            [
-                'from' => 'owner',
-                'to' => 'owner_email',
-                'cast' => 'string',
+                [
+                    'from' => 'priority',
+                    'to' => 'priority',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'owner',
+                    'to' => 'owner_email',
+                    'cast' => 'string',
+                ],
             ],
         ],
         'workflow' => [
             'odoo-lead-owner-id',
-            'odoo-country-code',
+            'forms-bridge-country-code',
             'odoo-vat-id',
             'odoo-company-id',
             'odoo-crm-contact',

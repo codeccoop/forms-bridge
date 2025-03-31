@@ -12,6 +12,7 @@ function forms_bridge_odoo_appointment_attendee($payload, $bridge)
         return $payload;
     }
 
+    $payload['partner_ids'] = (array) ($payload['partner_ids'] ?? []);
     $payload['partner_ids'][] = $payload['partner_id'];
     unset($payload['partner_id']);
 
@@ -54,6 +55,7 @@ return [
             'name' => 'partner_ids',
             'type' => 'array',
             'items' => ['type' => 'integer'],
+            'additionalItems' => true,
         ],
     ],
 ];

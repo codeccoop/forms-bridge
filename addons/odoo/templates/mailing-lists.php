@@ -23,7 +23,26 @@ return [
     ],
     'bridge' => [
         'model' => 'mailing.contact',
-        'workflow' => ['odoo-mailing-list-ids', 'mailing-contact'],
+        'workflow' => ['odoo-mailing-list-ids', 'odoo-mailing-contact'],
+        'mutations' => [
+            [
+                [
+                    'from' => 'firstname',
+                    'to' => 'name[0]',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'lastname',
+                    'to' => 'name[1]',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'name',
+                    'to' => 'name',
+                    'cast' => 'concat',
+                ],
+            ],
+        ],
     ],
     'form' => [
         'fields' => [
@@ -34,13 +53,13 @@ return [
             ],
             [
                 'label' => __('First name', 'forms-bridge'),
-                'name' => 'first_name',
+                'name' => 'firstname',
                 'type' => 'text',
                 'required' => true,
             ],
             [
                 'label' => __('Last name', 'forms-bridge'),
-                'name' => 'last_name',
+                'name' => 'lastname',
                 'type' => 'text',
                 'required' => true,
             ],

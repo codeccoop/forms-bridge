@@ -75,7 +75,7 @@ function forms_brige_odoo_mailing_contact($payload, $bridge)
 return [
     'title' => __('Mailing list contact', 'forms-bridge'),
     'description' => __(
-        'Search for a subscrived contact and updates its subscriptions or creates a new one',
+        'Search for a subscribed contact and updates its subscriptions and skips if succeed',
         'forms-bridge'
     ),
     'method' => 'forms_brige_odoo_mailing_contact',
@@ -86,12 +86,7 @@ return [
             'required' => true,
         ],
         [
-            'name' => 'first_name',
-            'type' => 'string',
-            'required' => true,
-        ],
-        [
-            'name' => 'last_name',
+            'name' => 'name',
             'type' => 'string',
             'required' => true,
         ],
@@ -100,12 +95,10 @@ return [
         [
             'name' => 'email',
             'type' => 'string',
-            'required' => true,
         ],
         [
             'name' => 'name',
             'type' => 'string',
-            'required' => true,
         ],
     ],
 ];

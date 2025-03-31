@@ -15,11 +15,13 @@ return [
     ],
     'bridge' => [
         'model' => 'res.partner',
-        'mappers' => [
+        'mutations' => [
             [
-                'from' => 'is_company',
-                'to' => 'is_company',
-                'cast' => 'boolean',
+                [
+                    'from' => 'is_company',
+                    'to' => 'is_company',
+                    'cast' => 'boolean',
+                ],
             ],
         ],
         'workflow' => ['odoo-skip-if-contact-exists'],

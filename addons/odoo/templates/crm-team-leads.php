@@ -4,19 +4,6 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-add_filter(
-    'forms_bridge_payload',
-    function ($payload, $bridge) {
-        if ($bridge->template !== 'odoo-crm-team-leads') {
-            return $payload;
-        }
-
-        return $payload;
-    },
-    90,
-    2
-);
-
 return [
     'title' => __('CRM Team Leads', 'forms-bridge'),
     'fields' => [
@@ -57,11 +44,13 @@ return [
     ],
     'bridge' => [
         'model' => 'crm.lead',
-        'mappers' => [
+        'mutations' => [
             [
-                'from' => 'priority',
-                'to' => 'priority',
-                'cast' => 'string',
+                [
+                    'from' => 'priority',
+                    'to' => 'priority',
+                    'cast' => 'string',
+                ],
             ],
         ],
         'workflow' => ['odoo-team-owner-id', 'odoo-contact-id'],

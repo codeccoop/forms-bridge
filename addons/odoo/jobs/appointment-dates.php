@@ -6,17 +6,11 @@ if (!defined('ABSPATH')) {
 
 function forms_bridge_odoo_appointment_dates($payload)
 {
-    $time = forms_bridge_odoo_date_to_time($payload);
-
-    if (is_wp_error($time)) {
-        return $time;
-    }
-
     $duration = $payload['duration'] ?? 1;
 
-    $payload['start'] = date('Y-m-d H:i:s', $time);
+    $payload['start'] = date('Y-m-d H:i:s', $payload['timestamp']);
 
-    $end = $duration * 3600 + $time;
+    $end = $duration * 3600 + $payload['timestamp'];
     $payload['stop'] = date('Y-m-d H:i:s', $end);
 
     return $payload;
@@ -24,20 +18,15 @@ function forms_bridge_odoo_appointment_dates($payload)
 
 return [
     'title' => __('Appointment dates', 'forms-bridge'),
-    'description' => __('', 'forms-bridge'),
+    'description' => __(
+        'Sets appointment start and stop time from "timestamp" and "duration" fields.',
+        'forms-bridge'
+    ),
     'method' => 'forms_bridge_odoo_appointment_dates',
     'input' => [
         [
-            'name' => 'date',
+            'name' => 'timestamp',
             'required' => true,
-            'type' => 'string',
-        ],
-        [
-            'name' => 'hour',
-            'type' => 'string',
-        ],
-        [
-            'name' => 'minute',
             'type' => 'string',
         ],
         [

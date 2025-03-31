@@ -13,7 +13,8 @@ function forms_bridge_odoo_appointment_owner_by_email($payload, $bridge)
         return $user;
     }
 
-    $payload['partner_ids'] = [$user['commercial_partner_id'][0]];
+    $payload['partner_ids'] = (array) ($payload['partner_ids'] ?? []);
+    $payload['partner_ids'][] = $user['commercial_partner_id'][0];
     return $payload;
 }
 
@@ -36,6 +37,7 @@ return [
             'name' => 'partner_ids',
             'type' => 'array',
             'items' => ['type' => 'integer'],
+            'additionalItems' => true,
         ],
     ],
 ];

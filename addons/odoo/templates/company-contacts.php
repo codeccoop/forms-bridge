@@ -18,7 +18,7 @@ return [
     'bridge' => [
         'model' => 'res.partner',
         'workflow' => [
-            'odoo-country-code',
+            'forms-bridge-country-code',
             'odoo-vat-id',
             'odoo-contact-company-id',
         ],
@@ -32,7 +32,7 @@ return [
                 'required' => true,
             ],
             [
-                'label' => __('Tax ID'),
+                'label' => __('Tax ID', 'forms-bridge'),
                 'name' => 'vat',
                 'type' => 'text',
                 'required' => true,

@@ -34,6 +34,7 @@ return [
             'name' => 'list_ids',
             'type' => 'array',
             'items' => ['type' => 'integer'],
+            'additionalItems' => true,
         ],
     ],
 ];

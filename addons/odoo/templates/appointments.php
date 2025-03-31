@@ -13,14 +13,48 @@ add_filter(
                 array_column($data['form']['fields'], 'name')
             );
 
-            $field = &$data['form']['fields'][$index];
-            $field['value'] = base64_encode($field['value']);
+            if ($index !== false) {
+                $field = &$data['form']['fields'][$index];
+                $field['value'] = base64_encode($field['value']);
+            }
+
+            $index = array_search(
+                'allday',
+                array_column($data['form']['fields'], 'name')
+            );
+
+            if ($index !== false) {
+                $field = &$data['form']['fields'][$index];
+                $field['value'] = $field['value'] ? '1' : '0';
+            }
         }
 
         return $data;
     },
     10,
     2
+);
+
+add_filter(
+    'forms_bridge_workflow_job_payload',
+    function ($payload, $job, $bridge) {
+        if (
+            $job->name === 'odoo-appointment-owner' &&
+            $bridge->template === 'odoo-appointments'
+        ) {
+            if (isset($payload['owner_email'])) {
+                $payload['owner_email'] = base64_decode(
+                    $payload['owner_email']
+                );
+            } elseif (isset($payload['owner'])) {
+                $payload['owner'] = base64_decode($payload['owner']);
+            }
+        }
+
+        return $payload;
+    },
+    5,
+    3
 );
 
 return [
@@ -67,26 +101,29 @@ return [
     ],
     'bridge' => [
         'model' => 'calendar.event',
-        'mappers' => [
+        'mutations' => [
             [
-                'from' => 'allday',
-                'to' => 'allday',
-                'cast' => 'boolean',
-            ],
-            [
-                'from' => 'duration',
-                'to' => 'duration',
-                'cast' => 'number',
-            ],
-            [
-                'from' => 'owner',
-                'to' => 'owner_email',
-                'cast' => 'string',
+                [
+                    'from' => 'allday',
+                    'to' => 'allday',
+                    'cast' => 'boolean',
+                ],
+                [
+                    'from' => 'duration',
+                    'to' => 'duration',
+                    'cast' => 'number',
+                ],
+                [
+                    'from' => 'owner',
+                    'to' => 'owner_email',
+                    'cast' => 'string',
+                ],
             ],
         ],
         'workflow' => [
             'odoo-appointment-owner',
             'odoo-appointment-attendee',
+            'forms-bridge-timestamp',
             'odoo-appointment-dates',
         ],
     ],
