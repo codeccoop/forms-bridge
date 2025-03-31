@@ -93,7 +93,7 @@ export default function Bridges({ bridges, setBridges, Bridge }) {
     const copy = {
       ...bridge,
       workflow: bridge.workflow.map((job) => job),
-      mutations: JSON.parse(JSON.stringify(bridge.mutations || [])),
+      mutations: JSON.parse(JSON.stringify(bridge.mutations || [[]])),
     };
 
     let isUnique = false;

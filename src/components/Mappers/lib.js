@@ -189,7 +189,7 @@ export function fieldsToPayload(fields) {
   });
 
   cache.set(fields, finger.data);
-  return finger.data;
+  return finger.getData();
 }
 
 export function getFromOptions(fields, mappers) {

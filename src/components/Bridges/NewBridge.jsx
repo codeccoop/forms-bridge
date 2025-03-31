@@ -59,7 +59,7 @@ export default function NewBridge({
       name: name.trim(),
       backend,
       form_id: formId,
-      mappers: [],
+      mutations: [[]],
     });
 
     setName("");
