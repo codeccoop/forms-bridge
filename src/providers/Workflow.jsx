@@ -38,6 +38,8 @@ function checkType(a, b) {
   } else if (a.type === "array") {
     return checkType(a.items, b.items);
   }
+
+  return true;
 }
 
 function applyJob(payload, job) {

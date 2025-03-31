@@ -19,7 +19,7 @@ add_filter(
                     'Gets date, hour and minute inputs and transform its values to a timestamp',
                     'forms-bridge'
                 ),
-                'method' => 'forms_bridge_workflow_job_datetime',
+                'method' => 'forms_bridge_workflow_job_timestamp',
                 'input' => [
                     [
                         'name' => 'date',
@@ -51,7 +51,7 @@ add_filter(
     1
 );
 
-function forms_bridge_workflow_job_datetime($payload)
+function forms_bridge_workflow_job_timestamp($payload)
 {
     $date = $payload['date'];
     $hour = $payload['hour'] ?? '00';

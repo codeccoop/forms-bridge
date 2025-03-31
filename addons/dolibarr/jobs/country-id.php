@@ -46,6 +46,7 @@ return [
         [
             'name' => 'country_id',
             'type' => 'integer',
+            'touch' => true,
         ],
     ],
 ];

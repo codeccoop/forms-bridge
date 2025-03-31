@@ -14,7 +14,7 @@ add_filter(
             );
 
             $field = &$data['form']['fields'][$index];
-            $field['value'] = !$field['value'];
+            $field['value'] = $field['value'] ? '0' : '1';
         }
 
         return $data;
@@ -89,18 +89,20 @@ return [
     ],
     'bridge' => [
         'endpoint' => '/api/index.php/contacts',
-        'mappers' => [
+        'mutations' => [
             [
-                'from' => 'status',
-                'to' => 'status',
-                'cast' => 'string',
-            ],
-            [
-                'from' => 'no_email',
-                'to' => 'no_email',
-                'cast' => 'string',
+                [
+                    'from' => 'status',
+                    'to' => 'status',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'no_email',
+                    'to' => 'no_email',
+                    'cast' => 'string',
+                ],
             ],
         ],
+        'workflow' => ['dolibarr-skip-if-contact-exists'],
     ],
-    'workflow' => ['dolibarr-skip-if-contact-exists'],
 ];

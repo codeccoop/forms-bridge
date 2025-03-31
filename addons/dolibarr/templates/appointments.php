@@ -26,9 +26,12 @@ add_filter(
 );
 
 add_filter(
-    'forms_bridge_payload',
-    function ($payload, $bridge) {
-        if ($bridge->template === 'dolibarr-appointments') {
+    'forms_bridge_workflow_job_payload',
+    function ($payload, $job, $bridge) {
+        if (
+            $job->name === 'dolibarr-get-owner-by-email' &&
+            $bridge->template === 'dolibarr-appointments'
+        ) {
             if (isset($payload['owner_email'])) {
                 $payload['owner_email'] = base64_decode(
                     $payload['owner_email']
@@ -41,7 +44,7 @@ add_filter(
         return $payload;
     },
     5,
-    2
+    3
 );
 
 return [
@@ -302,30 +305,33 @@ return [
     'bridge' => [
         'endpoint' => '/api/index.php/agendaevents',
         'method' => 'POST',
-        'mappers' => [
+        'mutations' => [
             [
-                'from' => 'owner',
-                'to' => 'owner_email',
-                'cast' => 'string',
-            ],
-            [
-                'from' => 'type_code',
-                'to' => 'type_code',
-                'cast' => 'string',
-            ],
-            [
-                'from' => 'fulldayevent',
-                'to' => 'fulldayevent',
-                'cast' => 'string',
-            ],
-            [
-                'from' => 'duration',
-                'to' => 'duration',
-                'cast' => 'number',
+                [
+                    'from' => 'owner',
+                    'to' => 'owner_email',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'type_code',
+                    'to' => 'type_code',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'fulldayevent',
+                    'to' => 'fulldayevent',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'duration',
+                    'to' => 'duration',
+                    'cast' => 'number',
+                ],
             ],
         ],
         'workflow' => [
             'dolibarr-get-owner-by-email',
+            'forms-bridge-timestamp',
             'dolibarr-appointment-dates',
             'dolibarr-appointment-attendee',
         ],

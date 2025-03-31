@@ -116,30 +116,46 @@ return [
     'bridge' => [
         'endpoint' => '/api/index.php/thirdparties',
         'method' => 'POST',
-        'mappers' => [
+        'mutations' => [
             [
-                'from' => 'status',
-                'to' => 'status',
-                'cast' => 'string',
-            ],
-            [
-                'from' => 'typent_id',
-                'to' => 'typent_id',
-                'cast' => 'string',
-            ],
-            [
-                'from' => 'client',
-                'to' => 'client',
-                'cast' => 'string',
-            ],
-            [
-                'from' => 'stcomm_id',
-                'to' => 'stcomm_id',
-                'cast' => 'string',
+                [
+                    'from' => 'status',
+                    'to' => 'status',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'typent_id',
+                    'to' => 'typent_id',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'client',
+                    'to' => 'client',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'stcomm_id',
+                    'to' => 'stcomm_id',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'firstname',
+                    'to' => 'name[0]',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'lastname',
+                    'to' => 'name[1]',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'name',
+                    'to' => 'name',
+                    'cast' => 'concat',
+                ],
             ],
         ],
         'workflow' => [
-            'dolibarr-individual-thirdparty-name',
             'dolibarr-skip-if-thirdparty-exists',
             'dolibarr-next-client-code',
         ],

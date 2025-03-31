@@ -4,15 +4,9 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-function forms_bridge_dolibarr_appointment_dates($payload, $bridge)
+function forms_bridge_dolibarr_appointment_dates($payload)
 {
-    $time = forms_bridge_dolibarr_date_to_time($payload, $bridge);
-
-    if (is_wp_error($time)) {
-        return $time;
-    }
-
-    $payload['datep'] = (string) $time;
+    $payload['datep'] = (string) $payload['timestamp'];
     $payload['duration'] = floatval($payload['duration'] ?? 1);
     $payload['datef'] = $payload['duration'] * 3600 + $payload['datep'];
 
@@ -28,16 +22,8 @@ return [
     'method' => 'forms_bridge_dolibarr_appointment_dates',
     'input' => [
         [
-            'name' => 'date',
+            'name' => 'timestamp',
             'required' => true,
-            'type' => 'string',
-        ],
-        [
-            'name' => 'hour',
-            'type' => 'string',
-        ],
-        [
-            'name' => 'minute',
             'type' => 'string',
         ],
         [

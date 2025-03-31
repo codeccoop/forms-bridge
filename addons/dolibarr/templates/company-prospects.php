@@ -163,26 +163,42 @@ return [
     'bridge' => [
         'endpoint' => '/api/index.php/contacts',
         'method' => 'POST',
-        'mappers' => [
+        'mutations' => [
             [
-                'from' => 'status',
-                'to' => 'status',
-                'cast' => 'string',
+                [
+                    'from' => 'status',
+                    'to' => 'status',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'typent_id',
+                    'to' => 'typent_id',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'client',
+                    'to' => 'client',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'stcomm_id',
+                    'to' => 'stcomm_id',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'email',
+                    'to' => 'contact_email',
+                    'cast' => 'copy',
+                ],
             ],
+            [],
+            [],
             [
-                'from' => 'typent_id',
-                'to' => 'typent_id',
-                'cast' => 'string',
-            ],
-            [
-                'from' => 'client',
-                'to' => 'client',
-                'cast' => 'string',
-            ],
-            [
-                'from' => 'stcomm_id',
-                'to' => 'stcomm_id',
-                'cast' => 'string',
+                [
+                    'from' => 'contact_email',
+                    'to' => 'email',
+                    'cast' => 'string',
+                ],
             ],
         ],
         'workflow' => [

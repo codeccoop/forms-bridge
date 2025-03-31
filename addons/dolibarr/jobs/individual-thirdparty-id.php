@@ -6,12 +6,10 @@ if (!defined('ABSPATH')) {
 
 function forms_bridge_dolibarr_individual_thirdparty_id($payload, $bridge)
 {
-    $name = "{$payload['firstname']} {$payload['lastname']}";
-
     $query = [
         'typent_id' => '8',
         'email' => $payload['email'],
-        'name' => $name,
+        'name' => $payload['name'],
     ];
 
     $result = forms_bridge_dolibarr_search_thirdparty($query, $bridge);
@@ -37,7 +35,7 @@ function forms_bridge_dolibarr_individual_thirdparty_id($payload, $bridge)
         'typent_id' => '8',
         'code_client' => $payload['code_client'],
         'email' => $payload['email'],
-        'name' => $name,
+        'name' => $payload['name'],
         'status' => $payload['status'] ?? '1',
         'client' => $payload['client'] ?? '2',
         'stcomm_id' => $payload['stcomm_id'] ?? '0',
@@ -69,12 +67,7 @@ return [
             'required' => true,
         ],
         [
-            'name' => 'firstname',
-            'type' => 'string',
-            'required' => true,
-        ],
-        [
-            'name' => 'lastname',
+            'name' => 'name',
             'type' => 'string',
             'required' => true,
         ],
