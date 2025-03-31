@@ -49,6 +49,8 @@ require_once 'includes/json-schema-utils.php';
 require_once 'integrations/abstract-integration.php';
 require_once 'addons/abstract-addon.php';
 
+require_once 'includes/data/country-codes.php';
+
 /**
  * Forms Bridge plugin.
  */

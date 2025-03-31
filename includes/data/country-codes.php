@@ -4,8 +4,8 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-global $forms_bridge_odoo_countries;
-$forms_bridge_odoo_countries = [
+global $forms_bridge_country_codes;
+$forms_bridge_country_codes = [
     'AD' => __('Andorra', 'forms-bridge'),
     'AE' => __('United Arab Emirates', 'forms-bridge'),
     'AF' => __('Afghanistan', 'forms-bridge'),

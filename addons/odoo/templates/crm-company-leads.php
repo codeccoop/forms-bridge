@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-global $forms_bridge_odoo_countries;
+global $forms_bridge_country_codes;
 
 add_filter(
     'forms_bridge_template_data',
@@ -162,12 +162,12 @@ return [
                 'name' => 'country',
                 'type' => 'options',
                 'options' => array_map(function ($country_code) {
-                    global $forms_bridge_odoo_countries;
+                    global $forms_bridge_country_codes;
                     return [
                         'value' => $country_code,
-                        'label' => $forms_bridge_odoo_countries[$country_code],
+                        'label' => $forms_bridge_country_codes[$country_code],
                     ];
-                }, array_keys($forms_bridge_odoo_countries)),
+                }, array_keys($forms_bridge_country_codes)),
                 'required' => true,
             ],
             [

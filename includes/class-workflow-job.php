@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
+require_once 'workflow-jobs/country-code.php';
 require_once 'workflow-jobs/timestamp.php';
 
 function forms_bridge_workflow_noop_method($payload)

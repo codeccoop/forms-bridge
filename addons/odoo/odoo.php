@@ -11,7 +11,6 @@ require_once 'class-odoo-form-bridge.php';
 require_once 'class-odoo-form-bridge-template.php';
 
 require_once 'api-functions.php';
-require_once 'country-codes.php';
 
 /**
  * Odoo Addon class.
