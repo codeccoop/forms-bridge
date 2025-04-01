@@ -2,6 +2,28 @@ import JsonFinger from "./JsonFinger";
 
 const cache = new WeakMap();
 
+export function clonePayload(payload) {
+  if (!payload) return payload;
+
+  let clone;
+  if (Array.isArray(payload)) {
+    clone = payload.map(clonePayload);
+  } else if (typeof payload === "object") {
+    clone = Object.keys(payload).reduce((clone, key) => {
+      clone[key] = clonePayload(payload[key]);
+      return clone;
+    }, {});
+  } else {
+    clone = payload;
+  }
+
+  if (Object.isFrozen(payload)) {
+    Object.freeze(clone);
+  }
+
+  return clone;
+}
+
 export function payloadToOptions(payload, mappers, fields) {
   return Object.keys(payload).reduce((options, key) => {
     let sKey;
@@ -14,44 +36,35 @@ export function payloadToOptions(payload, mappers, fields) {
     options.push({ value: sKey, label: sKey });
 
     if (Array.isArray(payload[key])) {
-      const field = fields.find((field) => {
-        let name = field.name;
-        mappers.forEach(({ from, to }) => {
-          if (from === name) {
-            name = to;
-          }
-        });
+      payload[key].forEach((item, i) => {
+        i = Object.isFrozen(payload[key]) ? i : "";
 
-        return name === key;
-      });
-
-      if (!field || !field.schema.additionalItems) {
-        payload[key].forEach((item, i) => {
-          if (typeof item === "string") {
+        if (typeof item === "string") {
+          if (i !== "") {
             options.push({
               value: `${sKey}[${i}]`,
               label: `${sKey}[${i}]`,
             });
-          } else {
-            options = options.concat(
-              payloadToOptions(item, fields, mappers).map((opt) => {
-                let value = opt.value;
-                if (+value === value) {
-                  value = `${sKey}[${i}][${value}]`;
-                } else {
-                  if (value[0] === "[") {
-                    value = `${sKey}[${i}]${value}`;
-                  } else {
-                    value = `${sKey}[${i}].${value}`;
-                  }
-                }
-
-                return { value, label: value };
-              })
-            );
           }
-        });
-      }
+        } else {
+          options = options.concat(
+            payloadToOptions(item, fields, mappers).map((opt) => {
+              let value = opt.value;
+              if (+value === value) {
+                value = `${sKey}[${i}][${value}]`;
+              } else {
+                if (value[0] === "[") {
+                  value = `${sKey}[${i}]${value}`;
+                } else {
+                  value = `${sKey}[${i}].${value}`;
+                }
+              }
+
+              return { value, label: value };
+            })
+          );
+        }
+      });
     } else if (payload[key] && typeof payload[key] === "object") {
       options = options.concat(
         payloadToOptions(payload[key], fields, mappers).map((opt) => {
@@ -90,8 +103,8 @@ export function payloadToSchema(payload) {
     case "array":
       return {
         type: "array",
-        items: payloadToSchema(payload[0]),
-        maxItems: payload.length,
+        items: payload.map((item) => payloadToSchema(item)),
+        additionalItems: !Object.isFrozen(payload),
       };
     case "object":
       return {
@@ -100,6 +113,7 @@ export function payloadToSchema(payload) {
           props[key] = payloadToSchema(payload[key]);
           return props;
         }, {}),
+        additionalProperties: !Object.isFrozen(payload),
       };
     default:
       return { type };
@@ -110,7 +124,7 @@ export function schemaToPayload(schema, pointer) {
   if (schema.type === "object") {
     pointer = JsonFinger.parse(pointer);
 
-    return Object.keys(schema.properties).reduce((payload, prop) => {
+    const payload = Object.keys(schema.properties).reduce((payload, prop) => {
       payload[prop] = schemaToPayload(
         schema.properties[prop],
         JsonFinger.pointer(pointer.concat(prop))
@@ -118,20 +132,33 @@ export function schemaToPayload(schema, pointer) {
 
       return payload;
     }, {});
-  } else if (schema.type === "array") {
-    const items = schema.maxItems || schema.minItems || 1;
 
-    return Array.from(Array(items)).reduce((payload, _, i) => {
-      const itemPointer = `${pointer}[${i}]`;
-      return payload.concat(schemaToPayload(schema.items, itemPointer));
-    }, []);
+    if (schema.additionalProperties === false) {
+      Object.freeze(payload);
+    }
+
+    return payload;
+  } else if (schema.type === "array") {
+    const schemaItems = Array.isArray(schema.items)
+      ? schema.items
+      : [schema.items];
+
+    const payload = schemaItems.map((schema, i) => {
+      return schemaToPayload(schema, `${pointer}[${i}]`);
+    });
+
+    if (schema.additionalItems === false) {
+      Object.freeze(payload);
+    }
+
+    return payload;
   }
 
   return schema.type;
 }
 
 export function applyMappers(payload, mappers = []) {
-  if (!mappers.length) return payload;
+  if (!Array.isArray(mappers) || !mappers.length) return payload;
 
   const finger = new JsonFinger(payload);
 
@@ -177,7 +204,7 @@ export function payloadToFields(payload) {
 
 export function fieldsToPayload(fields) {
   if (cache.has(fields)) {
-    return cache.get(fields);
+    return clonePayload(cache.get(fields));
   }
 
   const finger = new JsonFinger({});
@@ -189,7 +216,7 @@ export function fieldsToPayload(fields) {
   });
 
   cache.set(fields, finger.data);
-  return finger.getData();
+  return finger.data;
 }
 
 export function getFromOptions(fields, mappers) {
@@ -206,7 +233,10 @@ export function castValue(cast, from) {
       return "string";
     case "copy":
     case "inherit":
-      return JSON.parse(JSON.stringify(from));
+      const isFrozen = Object.isFrozen(from);
+      value = JSON.parse(JSON.stringify(from));
+      if (isFrozen) Object.freeze(value);
+      return value;
     default:
       return cast;
   }

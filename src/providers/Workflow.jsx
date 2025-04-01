@@ -158,16 +158,6 @@ export default function WorkflowProvider({
       }, []);
   }, [form]);
 
-  const stepMappers = useMemo(() => {
-    return mutations.reduce((acum, mappers, i) => {
-      if (i <= step) {
-        mappers.forEach((mapper) => acum.push(mapper));
-      }
-
-      return acum;
-    }, []);
-  }, [step, mutations]);
-
   const stage = useMemo(() => {
     let payload = fieldsToPayload(formFields);
     let diff;
@@ -176,66 +166,11 @@ export default function WorkflowProvider({
       if (diff?.missing && !diff.missing.values().some(() => true)) {
         payload = applyMappers(payload, workflowJobs[i - 1]?.mappers || []);
       }
+
       [payload, diff] = applyJob(payload, workflowJobs[i]);
     }
 
-    // const fields = payloadToFields(payload).map((field) => {
-    //   if (field.schema.type === "array") {
-    //     delete field.schema.maxItems;
-    //     field.schema.additionalItems = true;
-    //   }
-
-    //   return field;
-    // });
-
-    const fields = payloadToFields(payload);
-
-    fields
-      .filter((field) => field.schema.type === "array")
-      .forEach((field) => {
-        let fromName;
-        stepMappers
-          .map((m) => m)
-          .reverse()
-          .forEach(({ to, from }) => {
-            if (to === field.name) {
-              fromName = from;
-            }
-          });
-        if (fromName && field.schema.type === "array") {
-          const formField = formFields.find(({ name }) => name === fromName);
-          if (
-            formField &&
-            formField.schema.type === "array" &&
-            formField.schema.additionalItems
-          ) {
-            field.schema.additionalItems = true;
-          }
-        }
-      });
-
-    return [fields, diff];
-
-    // workflowJobs[step].mappers.forEach(({ from, to, cast }) => {
-    //   if (cast === "null") {
-    //     diff.exit.add(from);
-    //     return;
-    //   }
-
-    //   if (from !== to) {
-    //     if (diff.enter.has(from)) {
-    //       diff.enter.delete(from);
-    //       diff.enter.add(to);
-    //     }
-
-    //     if (diff.mutated.has(from)) {
-    //       diff.mutated.delete(from);
-    //       diff.mutated.add(to);
-    //     }
-    //   } else if (cast !== "copy" && cast !== "inherit") {
-    //     diff.mutated.add(to);
-    //   }
-    // });
+    return [payloadToFields(payload), diff];
   }, [step, workflowJobs, formFields]);
 
   return (
@@ -262,8 +197,3 @@ export function useWorkflowJob() {
   if (isLoading) return;
   return workflowJobs[step];
 }
-
-// export function useWorkflowStageFields() {
-//   const { stageFields = [] } = useContext(WorkflowContext);
-//   return stageFields;
-// }

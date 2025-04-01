@@ -42,9 +42,6 @@ export default function WorkflowStageField({
 }
 
 function FieldSchema({ data, showDiff, enter, exit, mutated }) {
-  // const display =
-  //   data.type !== "object" && data.type !== "array" ? "inline" : "block";
-
   const content = useMemo(() => {
     switch (data.type) {
       case "object":
@@ -88,48 +85,24 @@ function FieldSchema({ data, showDiff, enter, exit, mutated }) {
 
 function ObjectProperties({ data, showDiff, enter, exit, mutated }) {
   return "object";
-
-  return (
-    <ul>
-      {Object.keys(data).map((key) => (
-        <li>
-          <WorkflowStageField
-            name={key}
-            schema={data[key]}
-            showDiff={showDiff}
-            enter={enter}
-            exit={exit}
-            mutated={mutated}
-          />
-        </li>
-      ))}
-    </ul>
-  );
 }
 
 function ArrayItems({ data, showDiff, enter, exit, mutated }) {
-  return data.type + "[]";
+  if (Array.isArray(data)) {
+    const types = data.reduce((types, { type }) => {
+      if (!types.includes(type)) {
+        types.push(type);
+      }
 
-  const items = Array.from(Array(data.maxItems || data.minItems || 1));
+      return types;
+    }, []);
 
-  if (data.type !== "object" && data.type !== "array") {
-    return data.type + "[]";
+    if (types.length > 1) {
+      return "mixed[]";
+    }
+
+    return types[0] + "[]";
   }
 
-  return (
-    <ol style={{ margin: 0 }}>
-      {items.map(() => (
-        <li>
-          <WorkflowStageField
-            name=""
-            schema={data}
-            showDiff={showDiff}
-            enter={enter}
-            exit={exit}
-            mutated={mutated}
-          />
-        </li>
-      ))}
-    </ol>
-  );
+  return data.type + "[]";
 }

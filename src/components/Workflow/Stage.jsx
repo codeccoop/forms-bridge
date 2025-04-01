@@ -47,8 +47,8 @@ function WorkflowStageHeader({
           <div style={{ width: "max-content", flexShrink: 0 }}>
             <ToggleControl
               __nextHasNoMarginBottom
-              checked={!showMutations && !skipped}
-              label={__("Before mappers", "forms-bridge")}
+              checked={showMutations && !skipped}
+              label={__("After mappers", "forms-bridge")}
               onChange={() => setShowMutations(!showMutations)}
               disabled={skipped}
             />
@@ -88,7 +88,7 @@ export default function WorkflowStage({ setMappers }) {
   const [fields = [], diff] = useWorkflowStage();
 
   const [showDiff, setShowDiff] = useState(false);
-  const [showMutations, setShowMutations] = useState(true);
+  const [showMutations, setShowMutations] = useState(step === 0);
   const [mode, setMode] = useState("payload");
 
   const skipped = useMemo(() => {
@@ -98,6 +98,12 @@ export default function WorkflowStage({ setMappers }) {
   useEffect(() => {
     if (mode === "mappers") {
       setMode("payload");
+    }
+
+    if (step === 0) {
+      setShowMutations(true);
+    } else if (showMutations) {
+      setShowMutations(false);
     }
   }, [step]);
 
@@ -122,34 +128,45 @@ export default function WorkflowStage({ setMappers }) {
     setMappers(step, mappers);
   };
 
+  const outputDiff = useMemo(() => {
+    if (!showMutations) return diff;
+
+    const outputDiff = Object.fromEntries(
+      Object.entries(diff).map(([key, set]) => [key, new Set(set)])
+    );
+
+    mappers
+      .map((m) => m)
+      .reverse()
+      .forEach(({ to, from }) => {
+        if (outputDiff.enter.has(from)) {
+          outputDiff.enter.delete(from);
+          outputDiff.enter.add(to);
+        } else if (outputDiff.mutated.has(from)) {
+          outputDiff.mutated.delete(from);
+          outputDiff.mutated.add(to);
+        }
+      });
+
+    return outputDiff;
+  }, [diff, showMutations, mappers]);
+
   const outputFields = useMemo(() => {
     let output;
-    if (!showMutations) {
+    if (mode === "mappers" || !showMutations) {
       output = fields;
     } else {
       output = payloadToFields(applyMappers(fieldsToPayload(fields), mappers));
-      mappers
-        .map((m) => m)
-        .reverse()
-        .forEach(({ to, from }) => {
-          if (diff.enter.has(from)) {
-            diff.enter.delete(from);
-            diff.enter.add(to);
-          } else if (diff.mutated.has(from)) {
-            diff.mutated.delete(from);
-            diff.mutated.add(to);
-          }
-        });
     }
 
     if (showDiff) {
       output.forEach((field) => {
-        field.enter = diff.enter.has(field.name);
-        field.mutated = diff.mutated.has(field.name);
+        field.enter = outputDiff.enter.has(field.name);
+        field.mutated = outputDiff.mutated.has(field.name);
         field.exit = false;
       });
 
-      diff.exit.values().forEach((name) => {
+      outputDiff.exit.values().forEach((name) => {
         output.push({
           name,
           schema: { type: "null" },
@@ -161,7 +178,7 @@ export default function WorkflowStage({ setMappers }) {
     }
 
     return output;
-  }, [fields, mappers, showMutations, showDiff]);
+  }, [mode, fields, mappers, showMutations, showDiff, outputDiff]);
 
   const jobInputs = useMemo(() => {
     if (!workflowJob) return [];
@@ -173,7 +190,7 @@ export default function WorkflowStage({ setMappers }) {
         optional:
           !required &&
           !diff.exit.has(name) &&
-          !outputFields.find((field) => field.name === name),
+          !fields.find((field) => field.name === name),
         type,
       };
     });

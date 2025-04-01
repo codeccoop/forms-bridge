@@ -6,7 +6,7 @@ function isset(obj, attr) {
   }
 
   if (Array.isArray(obj)) {
-    return obj[+attr] !== undefined;
+    return obj.length > attr;
   }
 
   return Object.prototype.hasOwnProperty.call(obj, attr);
@@ -17,7 +17,7 @@ function JsonFinger(data) {
     throw new Error("Input data isn't a valid object type");
   }
 
-  this.data = JSON.parse(JSON.stringify(data));
+  this.data = data;
 }
 
 JsonFinger.parse = function (pointer) {
@@ -52,8 +52,9 @@ JsonFinger.parse = function (pointer) {
       }
 
       if (key.length === 0) {
-        cache.set(pointer, []);
-        return [];
+        key = Infinity;
+        // cache.set(pointer, []);
+        // return [];
       } else if (isNaN(key)) {
         if (!/^"[^"]+"$/.test(key)) {
           cache.set(pointer, []);
@@ -88,7 +89,9 @@ JsonFinger.parse = function (pointer) {
 };
 
 JsonFinger.sanitizeKey = function (key) {
-  if (+key === key) {
+  if (key === Infinity) {
+    key = "[]";
+  } else if (+key === key) {
     key = `[${key}]`;
   } else {
     key = key.trim();
@@ -117,8 +120,9 @@ JsonFinger.pointer = function (keys) {
   }
 
   return keys.reduce((pointer, key) => {
-    const isArray = +key === key;
-    if (isArray) {
+    if (key === Infinity) {
+      key = "[]";
+    } else if (+key === key) {
       key = `[${key}]`;
     } else {
       key = JsonFinger.sanitizeKey(key);
@@ -133,22 +137,26 @@ JsonFinger.pointer = function (keys) {
 };
 
 JsonFinger.prototype.getData = function () {
-  return JSON.parse(JSON.stringify(this.data));
+  return this.data;
 };
 
 JsonFinger.prototype.get = function (pointer) {
   pointer = "" + pointer;
 
   if (isset(this.data, pointer)) {
-    return this.getData()[pointer];
+    return this.data[pointer];
   }
 
   let value = null;
   try {
     const keys = JsonFinger.parse(pointer);
 
-    value = this.getData();
-    for (const key of keys) {
+    value = this.data;
+    for (let key of keys) {
+      if (key === Infinity) {
+        key = 0;
+      }
+
       if (!isset(value, key)) {
         return;
       }
@@ -165,10 +173,10 @@ JsonFinger.prototype.get = function (pointer) {
 JsonFinger.prototype.set = function (pointer, value, unset = false) {
   if (isset(this.data, pointer)) {
     this.data[pointer] = value;
-    return this.getData();
+    return this.data;
   }
 
-  let data = this.getData();
+  let data = this.data;
   const breadcrumb = [];
 
   try {
@@ -185,6 +193,10 @@ JsonFinger.prototype.set = function (pointer, value, unset = false) {
       if (+key === key) {
         if (!Array.isArray(partial)) {
           return data;
+        }
+
+        if (key === Infinity) {
+          key = 0;
         }
       }
 
@@ -203,9 +215,18 @@ JsonFinger.prototype.set = function (pointer, value, unset = false) {
     }
 
     let key = keys[i];
+    let isInfinity = key === Infinity;
+    if (isInfinity) {
+      key = 0;
+    }
+
     if (unset) {
       if (Array.isArray(partial)) {
-        partial.splice(key, 1);
+        if (isInfinity) {
+          partial.splice(0, partial.length);
+        } else {
+          partial.splice(key, 1);
+        }
       } else if (partial && typeof partial === "object") {
         delete partial[key];
       }
@@ -236,15 +257,17 @@ JsonFinger.prototype.set = function (pointer, value, unset = false) {
 
 JsonFinger.prototype.unset = function (pointer) {
   if (isset(this.data, pointer)) {
-    if (+pointer === pointer) {
-      if (Array.isArray(this.data)) {
-        this.data.splice(pointer, 1);
+    if (+pointer === pointer && Array.isArray(this.data)) {
+      if (pointer === Infinity) {
+        pointer = 0;
       }
+
+      this.data.splice(pointer, 1);
     } else {
       delete this.data[pointer];
     }
 
-    return this.getData();
+    return this.data;
   }
 
   return this.set(pointer, null, true);

@@ -102,6 +102,8 @@ export default function MappersTable({
   setMappers,
   done = null,
 }) {
+  const tableWrapper = useRef();
+
   const setMapper = (attr, index, value) => {
     const newMappers = mappers.map((mapper, i) => {
       if (index === i) {
@@ -118,6 +120,7 @@ export default function MappersTable({
 
   const addMapper = () => {
     const newMappers = mappers.concat([{ from: "", to: "", cast: "string" }]);
+    setTimeout(() => tableWrapper.current.scrollTo(0, 1e5), 100);
     setMappers(newMappers);
   };
 
@@ -154,6 +157,7 @@ export default function MappersTable({
         {title}
       </label>
       <div
+        ref={tableWrapper}
         className="scrollbar-hide"
         style={{ flex: 1, borderTop: "2px outset", borderBottom: "2px inset" }}
       >
