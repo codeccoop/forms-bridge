@@ -10,10 +10,10 @@ add_filter(
         if ($template_name === 'rest-api-mailchimp-contacts') {
             $index = array_search(
                 'datacenter',
-                array_column($data['fields'], 'name')
+                array_column($data['backend']['headers'], 'name')
             );
 
-            $dc = $data['fields'][$index]['value'];
+            $dc = $data['backend']['headers'][$index]['value'];
             $data['backend']['base_url'] = preg_replace(
                 '/\{dc\}/',
                 $dc,
@@ -90,7 +90,7 @@ return [
             'default' => __('Newsletter', 'forms-bridge'),
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#backend/headers[]',
             'name' => 'datacenter',
             'label' => __('Datacenter', 'forms-bridge'),
             'type' => 'options',
@@ -196,11 +196,6 @@ return [
         'title' => __('MailChimp Contacts', 'forms-bridge'),
         'fields' => [
             [
-                'name' => 'datacenter',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
                 'name' => 'status',
                 'type' => 'hidden',
                 'required' => true,
@@ -232,11 +227,6 @@ return [
         'mutations' => [
             [
                 [
-                    'from' => 'datacenter',
-                    'to' => 'datacenter',
-                    'cast' => 'null',
-                ],
-                [
                     'from' => 'fname',
                     'to' => 'merge_fields.FNAME',
                     'cast' => 'string',
@@ -247,10 +237,17 @@ return [
                     'cast' => 'string',
                 ],
             ],
+            [
+                [
+                    'from' => 'locale',
+                    'to' => 'language',
+                    'cast' => 'string',
+                ],
+            ],
         ],
         'workflow' => [
+            'forms-bridge-current-locale',
             'rest-api-mailchimp-contact-status',
-            'rest-api-mailchimp-current-language',
             'rest-api-mailchimp-authorization',
         ],
     ],

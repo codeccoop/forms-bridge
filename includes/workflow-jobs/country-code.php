@@ -44,7 +44,7 @@ add_filter(
         return $jobs;
     },
     20,
-    2
+    1
 );
 
 function forms_bridge_workflow_job_country_code($payload)

@@ -243,9 +243,6 @@ class Workflow_Job
             return $payload;
         }
 
-        $mutation = array_shift($mutations) ?: [];
-        $payload = $bridge->apply_mutation($payload, $mutation);
-
         $payload = apply_filters(
             'forms_bridge_workflow_job_payload',
             $payload,
@@ -265,6 +262,9 @@ class Workflow_Job
         }
 
         $payload = $this->output_payload($payload);
+
+        $mutation = array_shift($mutations) ?: [];
+        $payload = $bridge->apply_mutation($payload, $mutation);
 
         if ($next_job = $this->next) {
             $payload = $next_job->run($payload, $bridge, $mutations);
