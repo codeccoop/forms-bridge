@@ -398,19 +398,29 @@ class Integration extends BaseIntegration
             case 'payment-checkbox':
             case 'select':
                 if ($field['multiple'] ?? false) {
+                    $items = [];
+                    for ($i = 0; $i < count($field['choices']); $i++) {
+                        $items[] = ['type' => 'string'];
+                    }
+
                     return [
                         'type' => 'array',
-                        'items' => ['type' => 'string'],
-                        'maxItems' => count($field['choices']),
+                        'items' => $items,
+                        'additionalItems' => false,
                     ];
                 }
 
                 return ['type' => 'string'];
             case 'checkbox':
+                $items = [];
+                for ($i = 0; $i < count($field['choices']); $i++) {
+                    $items[] = ['type' => 'string'];
+                }
+
                 return [
                     'type' => 'array',
-                    'items' => ['type' => 'string'],
-                    'maxItems' => count($field['choices']),
+                    'items' => $items,
+                    'additionalItems' => false,
                 ];
             case 'date-time':
                 if ($field['format'] === 'date-time') {

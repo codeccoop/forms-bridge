@@ -410,10 +410,15 @@ class Integration extends BaseIntegration
                 ];
             case 'checkbox':
             case 'multiselect':
+                $items = [];
+                for ($i = 0; $i < count($field->choices); $i++) {
+                    $items[] = ['type' => 'string'];
+                }
+
                 return [
                     'type' => 'array',
-                    'items' => ['type' => 'string'],
-                    'maxItems' => count($field->choices),
+                    'items' => $items,
+                    'additionalItems' => false,
                 ];
             case 'multi_choice':
             case 'image_choice':
@@ -427,10 +432,15 @@ class Integration extends BaseIntegration
                         $maxItems = count($field->choices);
                     }
 
+                    $items = [];
+                    for ($i = 0; $i < $maxItems; $i++) {
+                        $items[] = ['type' => 'string'];
+                    }
+
                     return [
                         'type' => 'array',
-                        'items' => ['type' => 'string'],
-                        'maxItems' => $maxItems,
+                        'items' => $items,
+                        'additionalItems' => false,
                     ];
                 }
 

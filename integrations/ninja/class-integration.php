@@ -324,20 +324,30 @@ class Integration extends BaseIntegration
                 return ['type' => 'string'];
             case 'listimage':
                 if ($settings['allow_multi_select'] ?? false) {
+                    $items = [];
+                    for ($i = 0; $i < count($settings['image_options']); $i++) {
+                        $items[] = ['type' => 'string'];
+                    }
+
                     return [
                         'type' => 'array',
-                        'items' => ['type' => 'string'],
-                        'maxItems' => count($settings['image_options']),
+                        'items' => $items,
+                        'additionalItems' => false,
                     ];
                 }
 
                 return ['type' => 'string'];
             case 'listmultiselect':
             case 'listcheckbox':
+                $items = [];
+                for ($i = 0; $i < count($settings['options']); $i++) {
+                    $items[] = ['type' => 'string'];
+                }
+
                 return [
                     'type' => 'array',
-                    'items' => ['type' => 'string'],
-                    'maxItems' => count($settings['options']),
+                    'items' => $items,
+                    'additionalItems' => false,
                 ];
             case 'starrating':
             case 'number':

@@ -285,10 +285,15 @@ class Integration extends BaseIntegration
                 return ['type' => 'string'];
             case 'select':
                 if ($field->has_option('multiple')) {
+                    $items = [];
+                    for ($i = 0; $i < count($field->values); $i++) {
+                        $items[] = ['type' => 'string'];
+                    }
+
                     return [
                         'type' => 'array',
-                        'items' => ['type' => 'text'],
-                        'maxItems' => count($field->values),
+                        'items' => $items,
+                        'additionalItems' => false,
                     ];
                 }
 
@@ -298,16 +303,22 @@ class Integration extends BaseIntegration
                     return ['type' => 'string'];
                 }
 
+                $items = [];
+                for ($i = 0; $i < count($field->values); $i++) {
+                    $items[] = ['type' => 'string'];
+                }
+
                 return [
                     'type' => 'array',
-                    'items' => ['type' => 'string'],
-                    'maxItems' => count($field->values),
+                    'items' => $items,
+                    'additionalItems' => false,
                 ];
+            case 'file':
             case 'files':
                 return;
             case 'acceptance':
                 return ['type' => 'boolean'];
-            case 'numer':
+            case 'number':
                 return ['type' => 'number'];
             default:
                 return ['type' => 'string'];
