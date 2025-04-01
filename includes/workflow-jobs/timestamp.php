@@ -11,7 +11,7 @@ add_filter(
             $jobs = [];
         }
 
-        $jobs[] = new \FORMS_BRIDGE\Workflow_Job(
+        $job = new \FORMS_BRIDGE\Workflow_Job(
             'timestamp',
             [
                 'title' => __('Timestamp', 'forms-bridge'),
@@ -44,6 +44,10 @@ add_filter(
             ],
             'forms-bridge'
         );
+
+        if (!is_wp_error($job->config)) {
+            $jobs[] = $job;
+        }
 
         return $jobs;
     },

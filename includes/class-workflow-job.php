@@ -8,9 +8,6 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-require_once 'workflow-jobs/country-code.php';
-require_once 'workflow-jobs/timestamp.php';
-
 function forms_bridge_workflow_noop_method($payload)
 {
     return $payload;
@@ -414,4 +411,9 @@ class Workflow_Job
 
         return $payload;
     }
+}
+
+$jobs_dir = dirname(__FILE__) . '/workflow-jobs';
+foreach (array_diff(scandir($jobs_dir), ['.', '..']) as $file) {
+    require_once $jobs_dir . '/' . $file;
 }
