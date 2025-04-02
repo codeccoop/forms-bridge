@@ -30,7 +30,10 @@ class Finan_Coop_Form_Bridge extends Rest_Form_Bridge
      */
     protected function do_submit($payload, $attachments = [])
     {
-        $response = $this->backend->post($this->endpoint, $payload);
+        $response = $this->backend->post($this->endpoint, [
+            'jsonrpc' => '2.0',
+            'params' => $payload,
+        ]);
         $result = Odoo_Form_Bridge::rpc_response($response);
 
         if (isset($result['error'])) {

@@ -728,7 +728,7 @@ class Integration extends BaseIntegration
                     break;
                 case 'number':
                     $constraints = [
-                        'default_value' => intval($field['default'] ?? 0),
+                        'default_value' => floatval($field['default'] ?? 0),
                         'min' => $field['min'] ?? '',
                         'max' => $field['max'] ?? '',
                         'step' => $field['step'] ?? '1',

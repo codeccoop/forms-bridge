@@ -705,14 +705,12 @@ class Integration extends BaseIntegration
 
                     break;
                 case 'number':
-                    $constraints = [];
-                    if (isset($field['min'])) {
-                        $constraints['rangeMin'] = $field['min'];
-                    }
-
-                    if (isset($field['max'])) {
-                        $constraints['rangeMax'] = $field['max'];
-                    }
+                    $constraints = [
+                        'rangeMin' => $field['min'] ?? '',
+                        'rangeMax' => $filed['max'] ?? '',
+                        'rangeStep' => $field['step'] ?? '1',
+                        'defaultValue' => floatval($field['default'] ?? 0),
+                    ];
 
                     $args[] = $constraints;
                     $gf_fields[] = $this->number_field(...$args);
@@ -1041,3 +1039,21 @@ class Integration extends BaseIntegration
         );
     }
 }
+
+add_filter(
+    'gform_field_content',
+    function ($field_content, $field, $value, $entry_id, $form_id) {
+        if ($field->type !== 'number') {
+            return $field_content;
+        }
+
+        if (empty($field->rangeStep)) {
+            return $field_content;
+        }
+
+        $step = (int) $field->rangeStep;
+        return str_replace("step='any'", "step='{$step}'", $field_content);
+    },
+    10,
+    5
+);

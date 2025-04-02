@@ -33,6 +33,7 @@ add_filter(
         if (!empty(($min = $campaign['minimal_subscription_amount']))) {
             $parts_field['min'] = $min;
             $parts_field['step'] = $min;
+            $parts_field['default'] = $min;
         }
 
         if (!empty(($max = $campaign['maximal_subscription_amount']))) {
