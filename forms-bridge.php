@@ -84,12 +84,10 @@ class Forms_Bridge extends Base_Plugin
     {
         parent::construct(...$args);
 
-        if (
+        $autoload_addons =
             Menu::is_admin_current_page() ||
-            REST_Settings_Controller::is_doing_rest()
-        ) {
-            Addon::load();
-        }
+            REST_Settings_Controller::is_doing_rest();
+        Addon::load($autoload_addons);
 
         Integration::load();
 

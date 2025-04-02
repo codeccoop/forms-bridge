@@ -172,12 +172,20 @@ abstract class Addon extends Singleton
     /**
      * Public addons loader.
      */
-    final public static function load()
+    final public static function load($autoload = false)
     {
         $registry = self::registry();
         foreach ($registry as $addon => $enabled) {
+            $addon_dir = dirname(__FILE__) . "/{$addon}";
+
             if ($enabled) {
-                require_once dirname(__FILE__) . "/{$addon}/{$addon}.php";
+                if ($autoload) {
+                    require_once "{$addon_dir}/{$addon}.php";
+                }
+
+                if (is_dir("{$addon_dir}/mu")) {
+                    self::autoload_dir("{$addon}/mu", ['php']);
+                }
             }
         }
 
@@ -230,7 +238,7 @@ abstract class Addon extends Singleton
      */
     final public static function lazy_load()
     {
-        static::load();
+        static::load(true);
         do_action('wpct_init_store');
     }
 
@@ -609,8 +617,10 @@ abstract class Addon extends Singleton
      *
      * @return array Array with data from files.
      */
-    private static function autoload_dir($dirname)
-    {
+    private static function autoload_dir(
+        $dirname,
+        $extensions = ['php', 'json']
+    ) {
         $__FILE__ = (new ReflectionClass(static::class))->getFileName();
         $dir = dirname($__FILE__) . '/' . $dirname;
 
@@ -626,7 +636,7 @@ abstract class Addon extends Singleton
         }
 
         $files = [];
-        foreach (array_diff(scandir($dir), ['.', '...']) as $file) {
+        foreach (array_diff(scandir($dir), ['.', '..']) as $file) {
             $file_path = $dir . '/' . $file;
 
             if (is_file($file_path) && is_readable($file_path)) {
@@ -643,6 +653,10 @@ abstract class Addon extends Singleton
             $file = basename($file_path);
             $name = pathinfo($file)['filename'];
             $ext = pathinfo($file)['extension'] ?? null;
+
+            if (!in_array($ext, $extensions)) {
+                continue;
+            }
 
             $data = null;
             if ($ext === 'php') {
