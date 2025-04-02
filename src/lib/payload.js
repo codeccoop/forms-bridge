@@ -217,6 +217,10 @@ export function checkType(from, to, strict = true) {
       return false;
     }
 
+    if (to.additionalProperties) {
+      return true;
+    }
+
     result = fromKeys.reduce((typeCheck, key) => {
       if (!typeCheck) return typeCheck;
       if (!toKeys.includes(key)) return false;

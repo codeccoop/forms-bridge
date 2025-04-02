@@ -22,10 +22,11 @@ const WorkflowContext = createContext({
 function applyJob(payload, job) {
   const exit = new Set();
   const mutated = new Set();
+  const touched = new Set();
   const enter = new Set();
   const missing = new Set();
 
-  if (!job) return [payload, { exit, mutated, enter, missing }];
+  if (!job) return [payload, { exit, mutated, touched, enter, missing }];
 
   job.input
     .filter((field) => field.required)
@@ -46,7 +47,7 @@ function applyJob(payload, job) {
   });
 
   if (missing.values().some(() => true)) {
-    return [payload, { missing, exit, enter, mutated }];
+    return [payload, { missing, exit, enter, mutated, touched }];
   }
 
   job.output.forEach((output) => {
@@ -56,8 +57,14 @@ function applyJob(payload, job) {
     if (input) {
       addToPayload = Object.prototype.hasOwnProperty.call(payload, input.name);
 
-      if (addToPayload && (output.touch || !checkType(input, output))) {
-        mutated.add(output.name);
+      if (addToPayload) {
+        if (output.touch) {
+          touched.add(output.name);
+        }
+
+        if (!checkType(input, output)) {
+          mutated.add(output.name);
+        }
       }
     } else {
       addToPayload = true;
@@ -79,7 +86,7 @@ function applyJob(payload, job) {
     }
   });
 
-  return [payload, { missing, enter, exit, mutated }];
+  return [payload, { missing, enter, exit, mutated, touched }];
 }
 
 export default function WorkflowProvider({

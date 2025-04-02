@@ -11,7 +11,7 @@ function useStyle(state, diff) {
       ? "#4ab866"
       : state.exit
         ? "#cc1818"
-        : state.mutated
+        : state.mutated || state.touched
           ? "#f0b849"
           : "inherit",
   };
@@ -23,9 +23,10 @@ export default function WorkflowStageField({
   showDiff,
   enter,
   mutated,
+  touched,
   exit,
 }) {
-  const style = useStyle({ enter, mutated, exit }, showDiff);
+  const style = useStyle({ enter, mutated, touched, exit }, showDiff);
 
   return (
     <div style={style}>
@@ -36,12 +37,13 @@ export default function WorkflowStageField({
         enter={enter}
         exit={exit}
         mutated={mutated}
+        touched={touched}
       />
     </div>
   );
 }
 
-function FieldSchema({ data, showDiff, enter, exit, mutated }) {
+function FieldSchema({ data, showDiff, enter, exit, mutated, touched }) {
   const content = useMemo(() => {
     switch (data.type) {
       case "object":
@@ -52,6 +54,7 @@ function FieldSchema({ data, showDiff, enter, exit, mutated }) {
             enter={enter}
             exit={exit}
             mutated={mutated}
+            touched={touched}
           />
         );
       case "array":
@@ -62,6 +65,7 @@ function FieldSchema({ data, showDiff, enter, exit, mutated }) {
             enter={enter}
             exit={exit}
             mutated={mutated}
+            touched={touched}
           />
         );
       default:
@@ -83,11 +87,11 @@ function FieldSchema({ data, showDiff, enter, exit, mutated }) {
   );
 }
 
-function ObjectProperties({ data, showDiff, enter, exit, mutated }) {
+function ObjectProperties({ data, showDiff, enter, exit, mutated, touched }) {
   return "object";
 }
 
-function ArrayItems({ data, showDiff, enter, exit, mutated }) {
+function ArrayItems({ data, showDiff, enter, exit, mutated, touched }) {
   if (Array.isArray(data)) {
     const types = data.reduce((types, { type }) => {
       if (!types.includes(type)) {

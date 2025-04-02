@@ -8,7 +8,6 @@ import {
   applyMappers,
   fieldsToPayload,
   payloadToFields,
-  checkType,
 } from "../../lib/payload";
 import WorkflowStageField from "./StageField";
 import WorkflowStageInterface from "./StageInterface";
@@ -107,6 +106,7 @@ export default function WorkflowStage({ setMappers }) {
 
     if (step === 0) {
       setShowMutations(true);
+      setShowDiff(false);
     } else if (showMutations) {
       setShowMutations(false);
     }
@@ -147,9 +147,16 @@ export default function WorkflowStage({ setMappers }) {
         if (outputDiff.enter.has(from)) {
           outputDiff.enter.delete(from);
           outputDiff.enter.add(to);
-        } else if (outputDiff.mutated.has(from)) {
-          outputDiff.mutated.delete(from);
-          outputDiff.mutated.add(to);
+        } else {
+          if (outputDiff.mutated.has(from)) {
+            outputDiff.mutated.delete(from);
+            outputDiff.mutated.add(to);
+          }
+
+          if (outputDiff.touched.has(from)) {
+            outputDiff.touched.delete(from);
+            outputDiff.touched.add(to);
+          }
         }
       });
 
@@ -168,6 +175,7 @@ export default function WorkflowStage({ setMappers }) {
       output.forEach((field) => {
         field.enter = outputDiff.enter.has(field.name);
         field.mutated = outputDiff.mutated.has(field.name);
+        field.touched = outputDiff.touched.has(field.name);
         field.exit = false;
       });
 
@@ -177,11 +185,12 @@ export default function WorkflowStage({ setMappers }) {
           schema: { type: "null" },
           enter: false,
           mutated: false,
+          touched: false,
           exit: true,
         });
       });
     } else {
-      output = output.filter((field) => outputDiff.enter.has(field.name));
+      // output = output.filter((field) => !outputDiff.enter.has(field.name));
     }
 
     return output;
