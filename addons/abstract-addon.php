@@ -660,7 +660,7 @@ abstract class Addon extends Singleton
 
             $data = null;
             if ($ext === 'php') {
-                $data = include $file_path;
+                $data = include_once $file_path;
             } elseif ($ext === 'json') {
                 $content = file_get_contents($file_path);
                 $data = json_decode($content, true);
