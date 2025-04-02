@@ -8,13 +8,24 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
+/**
+ * Noop function definition as a placeholder for workflow config defaults.
+ */
 function forms_bridge_workflow_noop_method($payload)
 {
     return $payload;
 }
 
+/**
+ * Workflow Job class
+ */
 class Workflow_Job
 {
+    /**
+     * Handles the workflow job config schema.
+     *
+     * @var array
+     */
     private static $schema = [
         'title' => ['type' => 'string'],
         'description' => ['type' => 'string'],
@@ -117,18 +128,56 @@ class Workflow_Job
         ],
     ];
 
+    /**
+     * Handles the workflow job api space.
+     *
+     * @var string
+     */
     protected $api;
-    private $file;
+
+    /**
+     * Handles the workflow job name. This should be unique across all the api space.
+     *
+     * @var string
+     */
     private $name;
+
+    /**
+     * Handles the workflow job config data. The data is validated before it's stored. If the validation
+     * fails, the value is a WP_Error instance.
+     *
+     * @var array|WP_Error
+     */
     private $config;
+
+    /**
+     * Pointer to the next workflow job on the workflow chain.
+     *
+     * @var Workflow_Job
+     */
     private $next = null;
 
+    /**
+     * Enqueue the job instance as the last element of the workflow chain.
+     *
+     * @param array $workflow Array with workflow job names.
+     *
+     * @return Workflow_Job $workflow Chain of workflow jobs.
+     */
     public static function from_workflow($workflow)
     {
         $workflow = array_reverse($workflow);
         return self::workflow_chain($workflow);
     }
 
+    /**
+     * Returns a workflow jobs chaing from a workflow names array.
+     *
+     * @param array $workflow Array with workflow names.
+     * @param Workflow_Job $next Optional, the next element of the chain.
+     *
+     * @return array Array with Workflow_Job instances.
+     */
     private static function workflow_chain($workflow, $next = null)
     {
         if (empty($workflow)) {
@@ -151,6 +200,14 @@ class Workflow_Job
         return self::workflow_chain($workflow, $job);
     }
 
+    /**
+     * Sets the job api and name attributes, validates the config data and enqueu themself to the workflow public
+     * filter getters.
+     *
+     * @param string $name Job name.
+     * @param array $config Job config.
+     * @param string $api Api name.
+     */
     public function __construct($name, $config, $api)
     {
         $this->api = $api;
@@ -203,6 +260,13 @@ class Workflow_Job
         );
     }
 
+    /**
+     * Magic method to proxy private attributes.
+     *
+     * @param string $name Attribute name.
+     *
+     * @return mixed Attribute value or null.
+     */
     public function __get($name)
     {
         switch ($name) {
@@ -210,8 +274,6 @@ class Workflow_Job
                 return $this->api;
             case 'name':
                 return $this->name;
-            case 'file':
-                return $this->file;
             case 'next':
                 return $this->next;
             case 'config':
@@ -221,11 +283,25 @@ class Workflow_Job
         }
     }
 
+    /**
+     * Sets the next job on the chain.
+     *
+     * @param Workflow_Job $job Next workflow job instance.
+     */
     public function chain($job)
     {
         $this->next = $job;
     }
 
+    /**
+     * Gets the payload from the previous workflow stage and runs the job against it.
+     *
+     * @param array $payload Payload data.
+     * @param Form_Bridge Workflow's bridge owner instance.
+     * @param array $mutations Bridge's mutations.
+     *
+     * @return array|null Payload after job.
+     */
     public function run($payload, $bridge, $mutations = null)
     {
         $original = $payload;
@@ -291,6 +367,13 @@ class Workflow_Job
         return $payload;
     }
 
+    /**
+     * Before submission callback with auto desregistration.
+     *
+     * @param Form_Bridge $bridge Workflow's bridge owner instance.
+     * @param array $payload Payload data to be submitted.
+     * @param array $attahments Submission files to be submitteds.
+     */
     public function before_submission($bridge, $payload, $attachments = [])
     {
         remove_action(
@@ -304,6 +387,14 @@ class Workflow_Job
         $callback($bridge, $payload, $attachments);
     }
 
+    /**
+     * After submission callback with auto desregistration.
+     *
+     * @param Form_Bridge $bridge Worflow's bridge owner instance.
+     * @param array $response Http response of the bridge submission.
+     * @param array $payload Submission payload.
+     * @param array $attachments Submission attachments.
+     */
     public function after_submission(
         $bridge,
         $response,
@@ -321,6 +412,11 @@ class Workflow_Job
         $callback($bridge, $response, $payload, $attachments);
     }
 
+    /**
+     * Workflow job data serializer to be used on REST API response.
+     *
+     * @return array
+     */
     public function to_json()
     {
         return [
@@ -332,6 +428,13 @@ class Workflow_Job
         ];
     }
 
+    /**
+     * Vaildates the config data against the workflow job schema.
+     *
+     * @param array $data Workflow job config data.
+     *
+     * @return array|WP_Error Validation result.
+     */
     private function validate_config($data)
     {
         $schema = [
@@ -378,6 +481,13 @@ class Workflow_Job
         return $data;
     }
 
+    /**
+     * Checks if payload compains with the required fields of the job.
+     *
+     * @param array $payload Input payload of the job.
+     *
+     * @return boolean
+     */
     private function missing_requireds($payload)
     {
         $requireds = array_filter($this->input, function ($input_field) {
@@ -393,6 +503,13 @@ class Workflow_Job
         return false;
     }
 
+    /**
+     * Removes attributes from the payload that are not present on the job output config.
+     *
+     * @param array $payload Job result payload.
+     *
+     * @return array Filtered payload.
+     */
     private function output_payload($payload)
     {
         foreach ($this->input as $input_field) {
@@ -413,6 +530,7 @@ class Workflow_Job
     }
 }
 
+// Autoload common workflow jobs
 $jobs_dir = dirname(__FILE__) . '/workflow-jobs';
 foreach (array_diff(scandir($jobs_dir), ['.', '..']) as $file) {
     require_once $jobs_dir . '/' . $file;
