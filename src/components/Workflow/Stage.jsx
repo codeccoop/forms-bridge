@@ -154,7 +154,7 @@ export default function WorkflowStage({ setMappers }) {
   const outputFields = useMemo(() => {
     let output;
     if (mode === "mappers" || !showMutations) {
-      output = fields;
+      output = fields.map((f) => f);
     } else {
       output = payloadToFields(applyMappers(fieldsToPayload(fields), mappers));
     }
@@ -175,6 +175,8 @@ export default function WorkflowStage({ setMappers }) {
           exit: true,
         });
       });
+    } else {
+      output = output.filter((field) => outputDiff.enter.has(field.name));
     }
 
     return output;
