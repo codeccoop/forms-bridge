@@ -38,6 +38,7 @@ class Finan_Coop_Form_Bridge extends Rest_Form_Bridge
             'jsonrpc' => '2.0',
             'params' => $payload,
         ]);
+
         $result = Odoo_Form_Bridge::rpc_response($response);
 
         if (isset($result['error'])) {

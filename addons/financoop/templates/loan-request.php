@@ -32,6 +32,7 @@ add_filter(
 
         if (!empty(($min = $campaign['minimal_loan_amount']))) {
             $loan_field['min'] = $min;
+            $loan_field['default'] = $min;
         }
 
         if (!empty(($max = $campaign['maximal_loan_amount']))) {
