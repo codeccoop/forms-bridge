@@ -1,4 +1,4 @@
-import JsonFinger from "./JsonFinger";
+import JsonFinger from "./../../lib/JsonFinger";
 import { getFromOptions } from "./lib";
 
 const {

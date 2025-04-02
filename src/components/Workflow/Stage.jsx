@@ -4,7 +4,12 @@ import {
   useWorkflowStepper,
 } from "../../providers/Workflow";
 import MappersTable from "../Mappers/Table";
-import { applyMappers, fieldsToPayload, payloadToFields } from "../Mappers/lib";
+import {
+  applyMappers,
+  fieldsToPayload,
+  payloadToFields,
+  checkType,
+} from "../../lib/payload";
 import WorkflowStageField from "./StageField";
 import WorkflowStageInterface from "./StageInterface";
 
@@ -185,15 +190,16 @@ export default function WorkflowStage({ setMappers }) {
   const jobInputs = useMemo(() => {
     if (!workflowJob) return [];
 
-    return workflowJob.input.map(({ name, type, required }) => {
+    return workflowJob.input.map(({ name, schema, required }) => {
       return {
         name,
+        schema,
         missing: diff.missing.has(name),
+        mutated: diff.mutated.has(name),
         optional:
           !required &&
           !diff.exit.has(name) &&
           !fields.find((field) => field.name === name),
-        type,
       };
     });
   }, [workflowJob]);

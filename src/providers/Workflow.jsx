@@ -3,7 +3,9 @@ import {
   schemaToPayload,
   applyMappers,
   payloadToFields,
-} from "../components/Mappers/lib";
+  checkType,
+  payloadToSchema,
+} from "../lib/payload";
 import { useWorkflowJobs } from "./WorkflowJobs";
 
 const { createContext, useContext, useState, useMemo } = wp.element;
@@ -16,35 +18,6 @@ const WorkflowContext = createContext({
   setStep: () => {},
   stage: [],
 });
-
-function checkType(a, b, strict = true) {
-  if (!a || !b) {
-    return false;
-  }
-
-  if (a.type !== b.type) {
-    if (strict) {
-      return false;
-    } else {
-      // do some type compatibility checks
-    }
-  }
-
-  if (a.type === "object") {
-    const props = a.properties || {};
-
-    return Object.keys(props).reduce((typeCheck, key) => {
-      if (!typeCheck) return typeCheck;
-      if (!b?.properties?.[key]) return false;
-
-      return typeCheck && checkType(a[key], b[key]);
-    }, true);
-  } else if (a.type === "array") {
-    return checkType(a.items, b.items);
-  }
-
-  return true;
-}
 
 function applyJob(payload, job) {
   const exit = new Set();
@@ -60,7 +33,15 @@ function applyJob(payload, job) {
 
   Object.keys(payload).forEach((key) => {
     if (missing.has(key)) {
-      missing.delete(key);
+      const schema = payloadToSchema(payload[key]);
+      const input = job.input.find((field) => field.name === key);
+      const typeCheck = checkType(schema, input.schema, false);
+      if (typeCheck === true) {
+        missing.delete(key);
+      } else if (typeCheck) {
+        missing.delete(key);
+        mutated.add(key);
+      }
     }
   });
 
@@ -114,6 +95,7 @@ export default function WorkflowProvider({
 
   const formJob = useMemo(
     () => ({
+      name: "form-job",
       title: __("Form submission", "forms-bridge"),
       description: __(
         "Form submission after mappers has been applied",
@@ -162,7 +144,8 @@ export default function WorkflowProvider({
     let payload = fieldsToPayload(formFields);
     let diff;
 
-    for (let i = 0; i <= step; i++) {
+    let i;
+    for (i = 0; i <= step; i++) {
       if (diff?.missing && !diff.missing.values().some(() => true)) {
         payload = applyMappers(payload, workflowJobs[i - 1]?.mappers || []);
       }
@@ -170,7 +153,13 @@ export default function WorkflowProvider({
       [payload, diff] = applyJob(payload, workflowJobs[i]);
     }
 
-    return [payloadToFields(payload), diff];
+    const fields = payloadToFields(payload);
+
+    if (workflowJobs[i - 1]?.name === "form-job") {
+      fields.forEach((field) => diff.enter.add(field.name));
+    }
+
+    return [fields, diff];
   }, [step, workflowJobs, formFields]);
 
   return (

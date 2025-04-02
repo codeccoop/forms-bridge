@@ -1,3 +1,5 @@
+import WorkflowStageField from "./StageField";
+
 const { Tooltip } = wp.components;
 const { __ } = wp.i18n;
 
@@ -76,15 +78,16 @@ const ALERT = {
   ),
 };
 
-function InputField({ name, missing, mutated, optional }) {
+function InputField({ data }) {
+  const { name, schema, missing, mutated, optional } = data;
   const style = missing ? ALERT : mutated ? WARN : optional ? BASE : CHECK;
 
   const feedback = missing
     ? __("Field is required", "forms-bridge")
     : mutated
-      ? __("Field type does not match", "forms-bridge")
+      ? __("Field type mutation", "forms-bridge")
       : optional
-        ? __("Field is optional", "forms-bridge")
+        ? __("Field is optional or type not match", "forms-bridge")
         : "";
 
   return (
@@ -104,7 +107,14 @@ function InputField({ name, missing, mutated, optional }) {
         }}
       >
         {style.icon}
-        <span>{name}</span>
+        <WorkflowStageField
+          name={name}
+          schema={schema}
+          showDiff={false}
+          enter={false}
+          exit={false}
+          mutated={false}
+        />
       </span>
     </Tooltip>
   );
@@ -115,7 +125,7 @@ export default function WorkflowStageInterface({ fields }) {
     <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
       <strong>{__("Job interface", "forms-bridge")}:&nbsp;</strong>
       {fields.map((field) => (
-        <InputField key={field.name} {...field} />
+        <InputField key={field.name} data={field} />
       ))}
     </div>
   );
