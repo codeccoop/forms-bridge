@@ -65,8 +65,22 @@ return [
                     'cast' => 'integer',
                 ],
             ],
+            [],
+            [],
+            [
+                [
+                    'from' => 'locale',
+                    'to' => 'lang',
+                    'cast' => 'string',
+                ],
+            ],
         ],
-        'workflow' => ['forms-bridge-country-code', 'financoop-vat-id'],
+        'workflow' => [
+            'forms-bridge-country-code',
+            'financoop-vat-id',
+            'forms-bridge-current-locale',
+            'financoop-campaign-id',
+        ],
     ],
     'form' => [
         'fields' => [
@@ -129,6 +143,12 @@ return [
             [
                 'label' => __('Zip code', 'forms-bridge'),
                 'name' => 'zip_code',
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
+                'label' => __('City', 'forms-bridge'),
+                'name' => 'city',
                 'type' => 'text',
                 'required' => true,
             ],

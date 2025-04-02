@@ -10,19 +10,29 @@ function forms_bridge_financoop_vat_id($payload)
 
     $prefixed = preg_match('/^[A-Z]{2}/', $payload['vat'], $matches);
 
+    $country_code = $payload['country_code'] ?? null;
+
     if ($prefixed) {
         $vat_prefix = $matches[0];
-    } elseif (isset($payload['country_code'])) {
-        $vat_prefix = strtoupper($payload['country_code']);
+    } elseif ($country_code) {
+        $vat_prefix = strtoupper($country_code);
     } else {
         $vat_prefix = strtoupper(explode('_', get_locale())[0]);
     }
 
     if (!isset($forms_bridge_country_codes[$vat_prefix])) {
-        return new WP_Error(
-            'invalid_country_code',
-            __('The vat ID prefix is invalid', 'forms-bridge')
-        );
+        if (
+            !$country_code ||
+            !isset($forms_bridge_country_codes[$country_code])
+        ) {
+            return new WP_Error(
+                'invalid_country_code',
+                __('The vat ID prefix is invalid', 'forms-bridge')
+            );
+        }
+
+        $prefixed = false;
+        $vat_prefix = $country_code;
     }
 
     if (!$prefixed) {

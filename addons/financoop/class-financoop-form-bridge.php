@@ -30,6 +30,10 @@ class Finan_Coop_Form_Bridge extends Rest_Form_Bridge
      */
     protected function do_submit($payload, $attachments = [])
     {
+        if (isset($payload['lang']) && $payload['lang'] === 'ca') {
+            $payload['lang'] = 'ca_ES';
+        }
+
         $response = $this->backend->post($this->endpoint, [
             'jsonrpc' => '2.0',
             'params' => $payload,
