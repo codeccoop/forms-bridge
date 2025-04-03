@@ -96,7 +96,7 @@ export default function WorkflowStage({ setMappers }) {
   const [mode, setMode] = useState("payload");
 
   const skipped = useMemo(() => {
-    return diff.missing.values().some(() => true);
+    return Array.from(diff.missing).length > 0;
   }, [diff]);
 
   useEffect(() => {

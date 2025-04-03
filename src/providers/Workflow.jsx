@@ -46,7 +46,7 @@ function applyJob(payload, job) {
     }
   });
 
-  if (missing.values().some(() => true)) {
+  if (Array.from(missing).length) {
     return [payload, { missing, exit, enter, mutated, touched }];
   }
 
@@ -155,7 +155,7 @@ export default function WorkflowProvider({
 
     let i;
     for (i = 0; i <= step; i++) {
-      if (diff?.missing && !diff.missing.values().some(() => true)) {
+      if (diff?.missing && !Array.from(diff.missing).length) {
         payload = applyMappers(payload, workflowJobs[i - 1]?.mappers || []);
       }
 
