@@ -172,16 +172,14 @@ abstract class Addon extends Singleton
     /**
      * Public addons loader.
      */
-    final public static function load($autoload = false)
+    final public static function load()
     {
         $registry = self::registry();
         foreach ($registry as $addon => $enabled) {
             $addon_dir = dirname(__FILE__) . "/{$addon}";
 
             if ($enabled) {
-                if ($autoload) {
-                    require_once "{$addon_dir}/{$addon}.php";
-                }
+                require_once "{$addon_dir}/{$addon}.php";
 
                 if (is_dir("{$addon_dir}/mu")) {
                     self::autoload_dir("{$addon}/mu", ['php']);
@@ -231,15 +229,6 @@ abstract class Addon extends Singleton
             9,
             2
         );
-    }
-
-    /**
-     * Loads the addon and registers its settings on the store.
-     */
-    final public static function lazy_load()
-    {
-        static::load(true);
-        do_action('wpct_init_store');
     }
 
     /**
@@ -346,7 +335,7 @@ abstract class Addon extends Singleton
         }
 
         add_action(
-            'after_setup_theme',
+            'init',
             static function () {
                 static::load_templates();
                 static::load_workflow_jobs();

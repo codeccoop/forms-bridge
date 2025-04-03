@@ -186,7 +186,7 @@ abstract class Form_Bridge
     {
         $data = array_merge($this->data, $partial);
 
-        if ($data['name'] === $this->name) {
+        if (empty($data['name']) || $data['name'] === $this->name) {
             $data['name'] = 'bridge-' . time();
         }
 

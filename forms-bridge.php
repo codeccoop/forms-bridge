@@ -84,10 +84,7 @@ class Forms_Bridge extends Base_Plugin
     {
         parent::construct(...$args);
 
-        $autoload_addons =
-            Menu::is_admin_current_page() ||
-            REST_Settings_Controller::is_doing_rest();
-        Addon::load($autoload_addons);
+        Addon::load();
 
         Integration::load();
 
@@ -256,8 +253,6 @@ class Forms_Bridge extends Base_Plugin
      */
     public static function do_submission()
     {
-        Addon::lazy_load();
-
         $form_data = apply_filters('forms_bridge_form', null);
         if (!$form_data) {
             return;
@@ -576,8 +571,6 @@ class Forms_Bridge extends Base_Plugin
      */
     private static function do_migrations()
     {
-        Addon::lazy_load();
-
         $from = get_option(self::db_version, '1.0.0');
 
         if (!preg_match('/^\d+\.\d+\.\d+$/', $from)) {
