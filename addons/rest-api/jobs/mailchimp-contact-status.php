@@ -10,19 +10,21 @@ function forms_bridge_mailchimp_contact_status($payload)
         'transactional',
     ])
         ? $payload['status']
-        : 'pending';
+        : 'subscribed';
 
     return $payload;
 }
 
 return [
     'title' => __('MailChimp contact status', 'forms-bridge'),
-    'description' => __('Validates contact status value', 'forms-bridge'),
+    'description' => __(
+        'Validates contact status value or sets subscribed as its default value',
+        'forms-bridge'
+    ),
     'method' => 'forms_bridge_mailchimp_contact_status',
     'input' => [
         [
             'name' => 'status',
-            'required' => true,
             'schema' => ['type' => 'string'],
         ],
     ],
@@ -30,6 +32,7 @@ return [
         [
             'name' => 'status',
             'schema' => ['type' => 'string'],
+            'touch' => true,
         ],
     ],
 ];
