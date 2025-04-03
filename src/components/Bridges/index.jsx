@@ -18,6 +18,9 @@ function TabTitle({ name, focus, setFocus, copy }) {
   );
 }
 
+const CSS = `.bridges-tabs-panel .components-tab-panel__tabs{overflow-x:auto;}
+.bridges-tabs-panel .components-tab-panel__tabs>button{flex-shrink:0;}`;
+
 export default function Bridges({ bridges, setBridges, Bridge }) {
   const [currentTab, setCurrentTab] = useState(String(bridges.length ? 0 : -1));
   const [tabFocus, setTabFocus] = useState(null);
@@ -105,6 +108,16 @@ export default function Bridges({ bridges, setBridges, Bridge }) {
     setBridges(bridges.concat(copy));
   };
 
+  const style = useRef(document.createElement("style"));
+  useEffect(() => {
+    style.current.appendChild(document.createTextNode(CSS));
+    document.head.appendChild(style.current);
+
+    return () => {
+      document.head.removeChild(style.current);
+    };
+  }, []);
+
   return (
     <div style={{ width: "100%" }}>
       <label
@@ -122,6 +135,7 @@ export default function Bridges({ bridges, setBridges, Bridge }) {
         tabs={tabs}
         onSelect={setCurrentTab}
         initialTabName={currentTab}
+        className="bridges-tabs-panel"
       >
         {(bridge) => {
           bridge.name = bridge.name >= 0 ? bridges[+bridge.name].name : "add";
