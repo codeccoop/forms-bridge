@@ -85,7 +85,6 @@ class Forms_Bridge extends Base_Plugin
         parent::construct(...$args);
 
         Addon::load();
-
         Integration::load();
 
         self::http_hooks();
