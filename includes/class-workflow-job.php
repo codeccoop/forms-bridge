@@ -414,7 +414,7 @@ class Workflow_Job
             4
         );
 
-        $callback = $this->submission_callback['after'];
+        $callback = $this->submission_callbacks['after'];
         $callback($bridge, $response, $payload, $attachments);
     }
 
