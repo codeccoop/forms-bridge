@@ -103,7 +103,7 @@ export default function Backends({ backends, setBackends, Backend }) {
     <div style={{ width: "100%" }}>
       <p>
         {__(
-          "Configure your backend connexions and reuse them across your form bridges",
+          "Configure your backend connexions and reuse them on your form bridges",
           "forms-bridge"
         )}
       </p>
