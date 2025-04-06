@@ -23,7 +23,14 @@ export default function Exporter() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     const date = new Date();
-    link.download = `${date.getFullYear()}${date.getMonth() + 1}${date.getDate()}-forms-bridge.json`;
+
+    let year = String(date.getFullYear());
+    let month = String(date.getMonth() + 1);
+    if (month.length === 1) month = "0" + month;
+    let day = String(date.getDate());
+    if (day.length === 1) day = "0" + day;
+
+    link.download = `${year}${month}${day}-forms-bridge.json`;
     link.href = url;
     document.body.appendChild(link);
     link.click();
