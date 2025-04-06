@@ -132,7 +132,12 @@ function PipelineStep({ name, title, index, options, append, update, remove }) {
           />
         )) || (
           <p
-            style={{ cursor: "pointer", textIndent: "12px", margin: "10px 0" }}
+            style={{
+              cursor: "pointer",
+              textIndent: "12px",
+              margin: "10px 0",
+              whiteSpace: "nowrap",
+            }}
             onClick={() => setStep(index)}
           >
             {title || __("Add new step", "forms-bridge")}
