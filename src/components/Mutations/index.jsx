@@ -1,5 +1,5 @@
 // source
-import MappersTable from "./Table";
+import MutationLayers from "./Layers";
 
 const { Button, Modal } = wp.components;
 const { useState, useMemo, useEffect, useRef } = wp.element;
@@ -12,7 +12,7 @@ const CSS = `.components-modal__frame.no-scrollable .components-modal__content {
   height: 100%;
 }`;
 
-export default function Mappers({ form, mappers, setMappers, includeFiles }) {
+export default function Mutations({ form, mappers, setMappers, includeFiles }) {
   const [open, setOpen] = useState(false);
 
   const fields = useMemo(() => {
@@ -64,7 +64,7 @@ export default function Mappers({ form, mappers, setMappers, includeFiles }) {
         style={{ width: "150px", justifyContent: "center" }}
         __next40pxDefaultSize
       >
-        {__("Mappers", "forms-bridge")}
+        {__("Mutations", "forms-bridge")}
       </Button>
       {open && (
         <Modal
@@ -81,8 +81,7 @@ export default function Mappers({ form, mappers, setMappers, includeFiles }) {
               flexDirection: "column",
             }}
           >
-            <MappersTable
-              title={__("Form mapper", "forms-bridge")}
+            <MutationLayers
               fields={fields}
               mappers={mappers.map((mapper, index) => ({ ...mapper, index }))}
               setMappers={handleSetMappers}

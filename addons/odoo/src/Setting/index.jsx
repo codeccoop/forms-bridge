@@ -15,6 +15,12 @@ export default function OdooSetting() {
 
   return (
     <>
+      <p style={{ marginTop: 0 }}>
+        {__(
+          "Bridge your forms to Odoo and convert user responses to registries on your ERP",
+          "forms-bridge"
+        )}
+      </p>
       <PanelRow>
         <Bridges
           bridges={bridges}
@@ -27,6 +33,12 @@ export default function OdooSetting() {
         title={__("Databases", "forms-bridge")}
         initialOpen={databases.length === 0}
       >
+        <p>
+          {__(
+            "Configure RPC credentials to access your ERP database models",
+            "forms-bridge"
+          )}
+        </p>
         <Databases
           databases={databases}
           setDatabases={(databases) => update({ databases })}

@@ -71,14 +71,16 @@ export default function Exporter() {
             .then(() => setError(false))
             .catch(() =>
               setError(
-                __("It has been an error on config import", "forms-bridge")
+                __("It has been an error with config import", "forms-bridge")
               )
             )
         );
       };
 
       reader.onerror = () =>
-        setError(__("Somthing went wrong on the file upload", "forms-bridge"));
+        setError(
+          __("Somthing went wrong with the file upload", "forms-bridge")
+        );
 
       reader.readAsText(file);
     });
@@ -101,6 +103,12 @@ export default function Exporter() {
           {error}
         </Notice>
       )}
+      <p>
+        {__(
+          "Export or import your configuration as a JSON to migrate your bridges to, or from, any other WordPress instance",
+          "forms-bridge"
+        )}
+      </p>
       <div style={{ display: "flex", gap: "0.5rem" }}>
         <Button
           variant="primary"
@@ -125,6 +133,7 @@ export default function Exporter() {
         <Modal
           title={__("Config import warning", "forms-bridge")}
           onRequestClose={() => setShowModal(false)}
+          size="small"
         >
           <p>
             {__(
@@ -133,7 +142,9 @@ export default function Exporter() {
             )}
           </p>
           <p>{__("Are you sure to continue?", "forms-bridge")}</p>
-          <div style={{ display: "flex", gap: "0.5rem" }}>
+          <div
+            style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}
+          >
             <Button
               variant="primary"
               description={__("Continue with the import", "forms-bridge")}

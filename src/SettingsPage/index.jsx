@@ -50,15 +50,21 @@ function SaveButton({ error, loading }) {
   const submit = useStoreSubmit();
 
   return (
-    <Button
-      variant="primary"
-      onClick={() => submit()}
-      style={{ minWidth: "150px", justifyContent: "center" }}
-      disabled={loading || error}
-      __next40pxDefaultSize
-    >
-      {__("Save", "forms-bridge")}
-    </Button>
+    <div style={{ textAlign: "right" }}>
+      <Button
+        variant="primary"
+        onClick={() => submit()}
+        style={{
+          minWidth: "200px",
+          justifyContent: "center",
+          marginLeft: "auto",
+        }}
+        disabled={loading || error}
+        __next40pxDefaultSize
+      >
+        {__("Save", "forms-bridge")}
+      </Button>
+    </div>
   );
 }
 

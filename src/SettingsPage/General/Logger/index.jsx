@@ -3,7 +3,12 @@ import useDebug from "../../../hooks/useDebug";
 import useLogs from "../../../hooks/useLogs";
 
 const { useEffect, useRef } = wp.element;
-const { __experimentalSpacer: Spacer, ToggleControl, PanelRow } = wp.components;
+const {
+  __experimentalSpacer: Spacer,
+  ToggleControl,
+  PanelBody,
+  PanelRow,
+} = wp.components;
 const { __ } = wp.i18n;
 
 export default function Logger() {
@@ -18,13 +23,19 @@ export default function Logger() {
   }, [logs]);
 
   return (
-    <>
-      <Spacer paddyngY="calc(3px)" />
+    <PanelBody title={__("Debug", "forms-bridge")} initialOpen={!!debug}>
+      <p>
+        {__(
+          "Activate the debug mode and open the loggin console to see bridged form submissions' logs",
+          "forms-bridge"
+        )}
+      </p>
+      <Spacer paddingY="calc(3px)" />
       <PanelRow>
         <ToggleControl
           label={__("Logging", "forms-bridge")}
           help={__(
-            "When logging is activated, logs will be write to `wp-content/uploads/.forms-bridge.log` and read from them. If your server is not hardened, this file could be public to the web with confidencial data. Make sure to deactivate debugging once you've done.",
+            "When debug mode is activated, logs will be write to the log file and readed from there. Make sure to deactivate the debug mode once you've done to erase this file contents.",
             "forms-bridge"
           )}
           checked={!!debug}
@@ -59,6 +70,6 @@ export default function Logger() {
           </PanelRow>
         </>
       )}
-    </>
+    </PanelBody>
   );
 }

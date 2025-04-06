@@ -1,7 +1,5 @@
 import JsonFinger from "./JsonFinger";
 
-const cache = new WeakMap();
-
 export function clonePayload(payload) {
   if (!payload) return payload;
 
@@ -139,10 +137,6 @@ export function payloadToFields(payload) {
 }
 
 export function fieldsToPayload(fields) {
-  if (cache.has(fields)) {
-    return clonePayload(cache.get(fields));
-  }
-
   const finger = new JsonFinger({});
 
   fields.forEach(({ name, schema }) => {
@@ -151,7 +145,6 @@ export function fieldsToPayload(fields) {
     finger.set(pointer, schemaToPayload(schema, pointer));
   });
 
-  cache.set(fields, finger.data);
   return finger.data;
 }
 

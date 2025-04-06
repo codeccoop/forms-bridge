@@ -16,6 +16,12 @@ export default function DolibarrSetting() {
 
   return (
     <>
+      <p style={{ marginTop: 0 }}>
+        {__(
+          "Bridge your forms to Dolibarr and convert user responses to registries on your ERP",
+          "forms-bridge"
+        )}
+      </p>
       <PanelRow>
         <Bridges
           bridges={bridges}
@@ -28,6 +34,12 @@ export default function DolibarrSetting() {
         title={__("API keys", "forms-bridge")}
         initialOpen={api_keys.length === 0}
       >
+        <p>
+          {__(
+            "Store your Dolibarr API keys and reuse them on your Dolibarr bridges",
+            "forms-bridge"
+          )}
+        </p>
         <ApiKeys
           apiKeys={api_keys}
           setApiKeys={(api_keys) => update({ api_keys })}

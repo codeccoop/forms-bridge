@@ -124,9 +124,9 @@ export default function WorkflowStageInterface({ fields }) {
   return (
     <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
       <strong>{__("Job interface", "forms-bridge")}:&nbsp;</strong>
-      {fields.map((field) => (
-        <InputField key={field.name} data={field} />
-      ))}
+      {(fields.length &&
+        fields.map((field) => <InputField key={field.name} data={field} />)) ||
+        __("No input fields", "forms-bridge")}
     </div>
   );
 }

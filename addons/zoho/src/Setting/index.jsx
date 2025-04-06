@@ -16,6 +16,12 @@ export default function ZohoSetting() {
 
   return (
     <>
+      <p style={{ marginTop: 0 }}>
+        {__(
+          "Use WordPress as the frontend of your CRM and don't let any lead slip through your fingers",
+          "forms-bridge"
+        )}
+      </p>
       <PanelRow>
         <Bridges
           bridges={bridges}

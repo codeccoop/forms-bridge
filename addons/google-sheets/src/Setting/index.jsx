@@ -7,11 +7,11 @@ import useAjaxGrant from "../hooks/useAjaxGrant";
 const {
   PanelBody,
   PanelRow,
-  ToggleControl,
   FormFileUpload,
+  Button,
   __experimentalSpacer: Spacer,
 } = wp.components;
-const { useState, useEffect } = wp.element;
+const { useEffect } = wp.element;
 const { __ } = wp.i18n;
 
 export default function GoogleSheetsSetting() {
@@ -19,15 +19,8 @@ export default function GoogleSheetsSetting() {
 
   const { grant, revoke, loading, result } = useAjaxGrant();
 
-  const [file, setFile] = useState(null);
-
   const update = (field) =>
     save({ authorized, bridges, templates, workflow_jobs, ...field });
-
-  const onGrant = () => {
-    if (file) grant(file);
-    else revoke();
-  };
 
   useEffect(() => {
     if (loading || result === null) return;
@@ -38,6 +31,12 @@ export default function GoogleSheetsSetting() {
 
   return (
     <>
+      <p style={{ marginTop: 0 }}>
+        {__(
+          "Syncrhonize your form submission with Google Sheets and work with your web leads out of the WordPress admin site",
+          "forms-bridge"
+        )}
+      </p>
       <PanelRow>
         <Bridges
           bridges={bridges}
@@ -50,41 +49,37 @@ export default function GoogleSheetsSetting() {
         title={__("Google Service Credentials", "forms-bridge")}
         initialOpen={!authorized}
       >
-        <Spacer paddingY="calc(8px)" />
-        <ToggleControl
-          disabled={!(authorized || file)}
-          checked={authorized}
-          onChange={onGrant}
-          label={
-            authorized
-              ? __("Revoke access", "forms-bridge")
-              : __("Grant access", "forms-bridge")
-          }
-          help={__(
-            "You have to create a service account credentials to grant Forms Bridge access to your spreadhseets",
-            "forms-bridge"
-          )}
-          __nextHasNoMarginBottom
-          __next40pxDefaultSize
-        />
-        <Spacer paddingY="calc(8px)" />
-        {!authorized && (
-          <FormFileUpload
-            __next40pxDefaultSize
-            accept="application/json"
-            onChange={({ target }) => setFile(target.files[0])}
-          >
-            {__("Upload credentials", "forms-bridge")}
-          </FormFileUpload>
-        )}
         <p
           dangerouslySetInnerHTML={{
             __html: __(
-              "Follow <a href='https://github.com/juampynr/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>example</a> if do you need help with the process.",
+              "You have to create a service account credentials to grant Forms Bridge access to your spreadsheets. Follow this <a href='https://github.com/juampynr/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>example</a> if you need help with the process.",
               "forms-bridge"
             ),
           }}
         />
+        <div style={{ display: "flex", alignItems: "center", gap: "1em" }}>
+          {authorized ? (
+            <Button
+              variant="primary"
+              isDestructive
+              onClick={revoke}
+              style={{ width: "150px", justifyContent: "center" }}
+              __next40pxDefaultSize
+            >
+              {__("Revoke credentials", "forms-bridge")}
+            </Button>
+          ) : (
+            <FormFileUpload
+              __next40pxDefaultSize
+              variant="secondary"
+              accept="application/json"
+              style={{ width: "150px", justifyContent: "center" }}
+              onChange={({ target }) => grant(target.files[0])}
+            >
+              {__("Upload credentials", "forms-bridge")}
+            </FormFileUpload>
+          )}
+        </div>
       </PanelBody>
     </>
   );

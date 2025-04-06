@@ -99,6 +99,12 @@ export default function Credentials({ credentials, setCredentials }) {
 
   return (
     <div style={{ width: "100%" }}>
+      <p>
+        {__(
+          "Store your Zoho API credentials and reuse them on your Zoho bridges",
+          "forms-bridge"
+        )}
+      </p>
       <TabPanel
         tabs={tabs}
         onSelect={setCurrentTab}
@@ -121,6 +127,14 @@ export default function Credentials({ credentials, setCredentials }) {
           );
         }}
       </TabPanel>
+      <p
+        dangerouslySetInnerHTML={{
+          __html: __(
+            "Forms Bridge needs Zoho OAuth Self Client credentials to work properly. Get more info about the process of creation of such credentials on the <a href='https://www.zoho.com/accounts/protocol/oauth/self-client/overview.html' target='_blank'>Zoho OAuth documentation</a>",
+            "forms-bridge"
+          ),
+        }}
+      ></p>
     </div>
   );
 }

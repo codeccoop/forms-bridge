@@ -33,7 +33,7 @@ export default function GeneralSettings() {
     <>
       <PanelRow>
         <TextControl
-          label={__("Notification receiver", "forms-bridge")}
+          label={__("Error notification receiver", "forms-bridge")}
           onChange={(notification_receiver) =>
             update({ notification_receiver })
           }
@@ -48,7 +48,6 @@ export default function GeneralSettings() {
         title={__("Backends", "forms-bridge")}
         initialOpen={backends.length === 0}
       >
-        <Spacer paddingY="calc(8px)" />
         <PanelRow>
           <Backends
             backends={backends}
@@ -59,9 +58,7 @@ export default function GeneralSettings() {
       </PanelBody>
       <Integrations />
       <Addons />
-      <PanelBody title={__("Debug", "forms-bridge")} initialOpen={!!debug}>
-        <Logger />
-      </PanelBody>
+      <Logger />
       <PanelBody
         title={__("Import / Export", "forms-bridge")}
         initialOpen={false}

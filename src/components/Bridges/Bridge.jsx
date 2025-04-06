@@ -2,7 +2,7 @@
 import { useForms } from "../../providers/Forms";
 import { useGeneral } from "../../providers/Settings";
 import useBridgeNames from "../../hooks/useBridgeNames";
-import Mappers from "../Mappers";
+import Mutations from "../Mutations";
 import Workflow from "../Workflow";
 import NewBridge from "./NewBridge";
 
@@ -144,7 +144,7 @@ export default function Bridge({
           flexWrap: "wrap",
         }}
       >
-        <Mappers
+        <Mutations
           form={form}
           mappers={data.mutations[0]}
           setMappers={(mappers) =>

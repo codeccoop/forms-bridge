@@ -3,7 +3,7 @@ import {
   useWorkflowStage,
   useWorkflowStepper,
 } from "../../providers/Workflow";
-import MappersTable from "../Mappers/Table";
+import MutationLayers from "../Mutations/Layers";
 import {
   applyMappers,
   fieldsToPayload,
@@ -16,7 +16,7 @@ const {
   __experimentalItemGroup: ItemGroup,
   __experimentalItem: Item,
   ToggleControl,
-  Button,
+  __experimentalSpacer: Spacer,
 } = wp.components;
 const { useState, useMemo, useEffect } = wp.element;
 const { __ } = wp.i18n;
@@ -32,6 +32,7 @@ function WorkflowStageHeader({
   skipped,
   step,
   mode,
+  mappers,
 }) {
   if (skipped) {
     title += ` (${__("Skipped", "forms-bridge")})`;
@@ -53,9 +54,13 @@ function WorkflowStageHeader({
             <ToggleControl
               __nextHasNoMarginBottom
               checked={showMutations && !skipped && mode === "payload"}
-              label={__("After mappers", "forms-bridge")}
+              label={__("After mutations", "forms-bridge")}
               onChange={() => setShowMutations(!showMutations)}
-              disabled={skipped || mode === "mappers"}
+              disabled={
+                skipped ||
+                mode === "mappers" ||
+                mappers.filter((m) => m.from && m.to).length === 0
+              }
             />
           </div>
         )}
@@ -82,7 +87,9 @@ function WorkflowStageHeader({
           </div>
         )}
       </div>
-      {step > 0 && <WorkflowStageInterface fields={jobInputs} />}
+      {(step > 0 && <WorkflowStageInterface fields={jobInputs} />) || (
+        <Spacer marginBottom="1.4em" />
+      )}
     </div>
   );
 }
@@ -232,6 +239,7 @@ export default function WorkflowStage({ setMappers }) {
         setShowMutations={setShowMutations}
         step={step}
         mode={mode}
+        mappers={mappers}
       />
       <div
         style={{
@@ -243,7 +251,7 @@ export default function WorkflowStage({ setMappers }) {
         }}
       >
         {(mode === "mappers" && (
-          <MappersTable
+          <MutationLayers
             title={__("Stage mapper", "forms-bridge")}
             fields={fields}
             mappers={mappers.map((mapper, index) => ({ ...mapper, index }))}
@@ -261,21 +269,30 @@ export default function WorkflowStage({ setMappers }) {
           </div>
         )}
       </div>
-      {step > 0 && (
-        <div style={{ marginTop: "1rem" }}>
-          <Button
-            variant={mode === "mappers" ? "primary" : "secondary"}
-            disabled={skipped}
-            onClick={switchMode}
-            style={{ width: "150px", justifyContent: "center" }}
-            __next40pxDefaultSize
-          >
-            {mode === "mappers"
-              ? __("Payload", "forms-bridge")
-              : __("Mappers", "forms-bridge")}
-          </Button>
-        </div>
-      )}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "right",
+          gap: "1.5em",
+          padding: "1rem 16px",
+          borderTop: "1px solid",
+        }}
+      >
+        <p style={{ margin: 0 }}>
+          {__("Output mutations: %s", "forms-bridge").replace(
+            "%s",
+            mappers.filter((m) => m.to && m.from).length
+          )}
+        </p>
+        <ToggleControl
+          disabled={skipped}
+          checked={mode === "mappers"}
+          onChange={switchMode}
+          label={__("Show", "forms-bridge")}
+          style={{ marginTop: "1px" }}
+          __nextHasNoMarginBottom
+        />
+      </div>
     </div>
   );
 }

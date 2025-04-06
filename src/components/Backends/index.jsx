@@ -101,6 +101,12 @@ export default function Backends({ backends, setBackends, Backend }) {
 
   return (
     <div style={{ width: "100%" }}>
+      <p>
+        {__(
+          "Configure your backend connexions and reuse them across your form bridges",
+          "forms-bridge"
+        )}
+      </p>
       <TabPanel
         tabs={tabs}
         onSelect={setCurrentTab}

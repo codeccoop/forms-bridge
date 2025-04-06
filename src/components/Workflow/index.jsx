@@ -63,21 +63,6 @@ export default function Workflow({
                   workflow={workflow}
                   setWorkflow={setWorkflow}
                 />
-                <div
-                  style={{
-                    paddingTop: "1em",
-                    display: "flex",
-                  }}
-                >
-                  <Button
-                    variant="primary"
-                    onClick={() => setOpen(false)}
-                    style={{ width: "150px", justifyContent: "center" }}
-                    __next40pxDefaultSize
-                  >
-                    {__("Save", "forms-bridge")}
-                  </Button>
-                </div>
               </div>
               <div
                 style={{
