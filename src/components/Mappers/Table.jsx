@@ -47,7 +47,11 @@ const castOptions = [
   },
   {
     value: "concat",
-    label: __("Concatenate", "forms-bridge"),
+    label: __("Spaced", "forms-bridge"),
+  },
+  {
+    value: "join",
+    label: __("Join", "forms-bridge"),
   },
   {
     value: "structure",
@@ -159,19 +163,37 @@ export default function MappersTable({
       <div
         ref={tableWrapper}
         className="scrollbar-hide"
-        style={{ flex: 1, borderTop: "2px outset", borderBottom: "2px inset" }}
+        style={{
+          flex: 1,
+          borderTop: "2px solid #ccc",
+          borderBottom: "2px solid #ccc",
+        }}
       >
         <table
           style={{
             width: "calc(100% + 10px)",
-            borderSpacing: "5px",
             margin: "0 -5px",
+            borderSpacing: "0px",
           }}
         >
           <tbody>
             {mappers.map(({ from, to, cast }, i) => (
               <tr key={i}>
-                <td>
+                <td
+                  style={{
+                    padding: "1em 0.5em 1em 5px",
+                    textAlign: "right",
+                    borderBottom: "1px solid #ccc",
+                  }}
+                >
+                  {i + 1}.
+                </td>
+                <td
+                  style={{
+                    borderBottom: "1px solid #ccc",
+                    padding: "1em 0.25em",
+                  }}
+                >
                   <SelectControl
                     placeholder={__("From", "forms-bridge")}
                     value={from}
@@ -181,7 +203,12 @@ export default function MappersTable({
                     __next40pxDefaultSize
                   />
                 </td>
-                <td>
+                <td
+                  style={{
+                    borderBottom: "1px solid #ccc",
+                    padding: "1em 0.25em",
+                  }}
+                >
                   <TextControl
                     placeholder={__("To", "forms-bridge")}
                     style={mapperToStyle(to)}
@@ -191,7 +218,12 @@ export default function MappersTable({
                     __next40pxDefaultSize
                   />
                 </td>
-                <td>
+                <td
+                  style={{
+                    borderBottom: "1px solid #ccc",
+                    padding: "1em 0.25em",
+                  }}
+                >
                   <SelectControl
                     placeholder={__("Cast as", "forms-bridge")}
                     value={cast || "string"}
@@ -201,7 +233,12 @@ export default function MappersTable({
                     __next40pxDefaultSize
                   />
                 </td>
-                <td>
+                <td
+                  style={{
+                    borderBottom: "1px solid #ccc",
+                    padding: "1em 10px 1em 0.25em",
+                  }}
+                >
                   <Button
                     isDestructive
                     variant="secondary"

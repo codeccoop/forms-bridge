@@ -68,7 +68,7 @@ export default function Mappers({ form, mappers, setMappers, includeFiles }) {
       </Button>
       {open && (
         <Modal
-          title={__("Bridge mappers", "forms-bridge")}
+          title={__("Mutation layers", "forms-bridge")}
           onRequestClose={() => setOpen(false)}
           className="no-scrollable"
         >

@@ -79,6 +79,7 @@ abstract class Addon extends Singleton
                                             'json',
                                             'csv',
                                             'concat',
+                                            'join',
                                             'inherit',
                                             'copy',
                                             'null',
@@ -100,7 +101,7 @@ abstract class Addon extends Singleton
                 'required' => [
                     'name',
                     'form_id',
-                    'mappers',
+                    'mutations',
                     'workflow',
                     'is_valid',
                 ],

@@ -29,8 +29,9 @@ function WorkflowStageHeader({
   setShowDiff,
   showMutations,
   setShowMutations,
-  showControls,
   skipped,
+  step,
+  mode,
 }) {
   if (skipped) {
     title += ` (${__("Skipped", "forms-bridge")})`;
@@ -47,14 +48,14 @@ function WorkflowStageHeader({
         }}
       >
         <h2 style={{ margin: 0, paddingRight: "1rem" }}>{title}</h2>
-        {showControls && (
+        {step > 0 && (
           <div style={{ width: "max-content", flexShrink: 0 }}>
             <ToggleControl
               __nextHasNoMarginBottom
-              checked={showMutations && !skipped}
+              checked={showMutations && !skipped && mode === "payload"}
               label={__("After mappers", "forms-bridge")}
               onChange={() => setShowMutations(!showMutations)}
-              disabled={skipped}
+              disabled={skipped || mode === "mappers"}
             />
           </div>
         )}
@@ -69,19 +70,19 @@ function WorkflowStageHeader({
         <p style={{ marginTop: "0.5em", paddingRight: "1rem" }}>
           {description}
         </p>
-        {showControls && (
+        {step > 0 && (
           <div style={{ margin: "6.5px", width: "max-content", flexShrink: 0 }}>
             <ToggleControl
               __nextHasNoMarginBottom
-              checked={showDiff && !skipped}
+              checked={showDiff && !skipped && mode === "payload"}
               label={__("Show diff", "forms-bridge")}
               onChange={() => setShowDiff(!showDiff)}
-              disabled={skipped}
+              disabled={skipped || mode === "mappers"}
             />
           </div>
         )}
       </div>
-      <WorkflowStageInterface fields={jobInputs} />
+      {step > 0 && <WorkflowStageInterface fields={jobInputs} />}
     </div>
   );
 }
@@ -229,7 +230,8 @@ export default function WorkflowStage({ setMappers }) {
         setShowDiff={setShowDiff}
         showMutations={showMutations}
         setShowMutations={setShowMutations}
-        showControls={step > 0}
+        step={step}
+        mode={mode}
       />
       <div
         style={{

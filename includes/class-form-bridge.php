@@ -272,6 +272,8 @@ abstract class Form_Bridge
                 return implode(',', (array) $value);
             case 'concat':
                 return implode(' ', (array) $value);
+            case 'join':
+                return implode('', (array) $value);
             case 'inherit':
                 return $value;
             case 'copy':

@@ -180,6 +180,7 @@ class Form_Bridge_Template
                                         'json',
                                         'csv',
                                         'concat',
+                                        'join',
                                         'inherit',
                                         'copy',
                                         'null',
