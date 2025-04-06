@@ -49,6 +49,7 @@ return [
                 ],
                 'additionalItems' => true,
             ],
+            'touch' => true,
         ],
     ],
 ];

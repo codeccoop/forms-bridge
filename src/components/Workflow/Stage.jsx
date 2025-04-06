@@ -56,11 +56,7 @@ function WorkflowStageHeader({
               checked={showMutations && !skipped && mode === "payload"}
               label={__("After mutations", "forms-bridge")}
               onChange={() => setShowMutations(!showMutations)}
-              disabled={
-                skipped ||
-                mode === "mappers" ||
-                mappers.filter((m) => m.from && m.to).length === 0
-              }
+              disabled={skipped || mode === "mappers" || mappers.length === 0}
             />
           </div>
         )}
@@ -125,6 +121,11 @@ export default function WorkflowStage({ setMappers }) {
     return workflowJob.mappers;
   }, [workflowJob]);
 
+  const validMappers = useMemo(
+    () => mappers.filter((mapper) => mapper.from && mapper.to),
+    [mappers]
+  );
+
   const switchMode = () => {
     if (mode === "payload") {
       setMode("mappers");
@@ -174,7 +175,7 @@ export default function WorkflowStage({ setMappers }) {
   const outputFields = useMemo(() => {
     let output;
     if (mode === "mappers" || !showMutations) {
-      output = fields.map((f) => f);
+      output = fields.map((field) => ({ ...field }));
     } else {
       output = payloadToFields(applyMappers(fieldsToPayload(fields), mappers));
     }
@@ -197,8 +198,6 @@ export default function WorkflowStage({ setMappers }) {
           exit: true,
         });
       });
-    } else {
-      // output = output.filter((field) => !outputDiff.enter.has(field.name));
     }
 
     return output;
@@ -239,7 +238,7 @@ export default function WorkflowStage({ setMappers }) {
         setShowMutations={setShowMutations}
         step={step}
         mode={mode}
-        mappers={mappers}
+        mappers={validMappers}
       />
       <div
         style={{
@@ -260,8 +259,8 @@ export default function WorkflowStage({ setMappers }) {
         )) || (
           <div style={{ overflowY: "auto" }}>
             <ItemGroup size="large" isSeparated>
-              {outputFields.map((field) => (
-                <Item key={field.name}>
+              {outputFields.map((field, i) => (
+                <Item key={field.name + i}>
                   <WorkflowStageField {...field} showDiff={showDiff} />
                 </Item>
               ))}
@@ -278,10 +277,17 @@ export default function WorkflowStage({ setMappers }) {
           borderTop: "1px solid",
         }}
       >
-        <p style={{ margin: 0 }}>
+        <p
+          style={{
+            margin: 0,
+            color: validMappers.length
+              ? "var(--wp-components-color-accent,var(--wp-admin-theme-color,#3858e9))"
+              : "inherit",
+          }}
+        >
           {__("Output mutations: %s", "forms-bridge").replace(
             "%s",
-            mappers.filter((m) => m.to && m.from).length
+            validMappers.length
           )}
         </p>
         <ToggleControl
