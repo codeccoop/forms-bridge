@@ -1,7 +1,11 @@
 // source
 import { useGeneral } from "../../providers/Settings";
 
-const { PanelBody, PanelRow, ToggleControl } = wp.components;
+const {
+  PanelBody,
+  ToggleControl,
+  __experimentalSpacer: Spacer,
+} = wp.components;
 const { useMemo } = wp.element;
 const { __ } = wp.i18n;
 
@@ -41,11 +45,11 @@ export default function Integrations() {
       title={__("Integrations", "forms-bridge")}
       initialOpen={isEmpty || isUnconfigured}
     >
-      {isEmpty && (
+      {(isEmpty && (
         <>
           <p>
             {__(
-              "It seems you have no available integrations. If you want to use Forms Bridge, you should install one of the following plugins before you go.",
+              "It seems you have no available integrations. If you want to use Forms Bridge, you should install, at least one of the following plugins before you can create form bridges.",
               "forms-bridge"
             )}
           </p>
@@ -70,25 +74,28 @@ export default function Integrations() {
             </li>
           </ul>
         </>
-      )}
-      {isUnconfigured && (
+      )) || (
         <p>
           {__(
-            "👋 Welcome! It seems you have more than one forms builder plugin installed. Before you continue, please, select which plugins do you want to integrate with Forms Bridge.",
+            "Select which plugins you want to integrate with Forms Bridge",
             "forms-bridge"
           )}
         </p>
       )}
+      <Spacer paddingBottom="5px" />
       {Object.entries(general.integrations).map(([integration, enabled]) => {
         return (
-          <PanelRow key={integration}>
+          <div
+            key={integration}
+            style={{ display: "flex", justifyContent: "left", height: "2em" }}
+          >
             <ToggleControl
               __nextHasNoMarginBottom
               label={__(integration, "forms-bridge")}
               checked={enabled}
               onChange={() => toggle(integration)}
             />
-          </PanelRow>
+          </div>
         );
       })}
     </PanelBody>

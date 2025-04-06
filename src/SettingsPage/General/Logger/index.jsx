@@ -30,7 +30,7 @@ export default function Logger() {
           "forms-bridge"
         )}
       </p>
-      <Spacer paddingY="calc(3px)" />
+      <Spacer paddingBottom="5px" />
       <PanelRow>
         <ToggleControl
           label={__("Logging", "forms-bridge")}

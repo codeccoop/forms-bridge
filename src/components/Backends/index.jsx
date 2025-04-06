@@ -1,7 +1,7 @@
 // source
 import CopyIcon from "../CopyIcon";
 
-const { TabPanel } = wp.components;
+const { TabPanel, __experimentalSpacer: Spacer } = wp.components;
 const { useState, useEffect, useRef } = wp.element;
 const { __ } = wp.i18n;
 
@@ -107,6 +107,7 @@ export default function Backends({ backends, setBackends, Backend }) {
           "forms-bridge"
         )}
       </p>
+      <Spacer paddingBottom="5px" />
       <TabPanel
         tabs={tabs}
         onSelect={setCurrentTab}

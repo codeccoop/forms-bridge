@@ -79,6 +79,8 @@ export default function Mutations({ form, mappers, setMappers, includeFiles }) {
               height: "100%",
               display: "flex",
               flexDirection: "column",
+              borderTop: "1px solid",
+              borderBottom: "1px solid",
             }}
           >
             <MutationLayers

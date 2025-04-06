@@ -34,6 +34,10 @@ export default function GeneralSettings() {
       <PanelRow>
         <TextControl
           label={__("Error notification receiver", "forms-bridge")}
+          help={__(
+            "Email address where submission errors will be sent with the error log and the submission data",
+            "forms-bridge"
+          )}
           onChange={(notification_receiver) =>
             update({ notification_receiver })
           }
