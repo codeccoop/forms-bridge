@@ -43,7 +43,7 @@ class Logger extends Singleton
 
     /**
      * Log file path getter.
-     * 
+     *
      * @return string
      */
     private static function log_path()
@@ -58,21 +58,11 @@ class Logger extends Singleton
      */
     private static function logs($lines = 500)
     {
-        if (
-            defined('WP_DEBUG') &&
-            WP_DEBUG &&
-            defined('WP_DEBUG_LOG') &&
-            (bool) WP_DEBUG_LOG
-        ) {
-            $log_path = ini_get('error_log');
-        } else {
-            $log_path = self::log_path();
+        if (!self::is_active()) {
+            return [];
         }
 
-        if (!is_file($log_path) || !is_readable($log_path)) {
-            return '';
-        }
-
+        $log_path = self::log_path();
         $socket = fopen($log_path, 'r');
         $cursor = -1;
         fseek($socket, $cursor, SEEK_END);
@@ -177,7 +167,7 @@ class Logger extends Singleton
 
     /**
      * Logger's setup method. Initializes php log configurations.
-     * 
+     *
      * @return Logger
      */
     public static function setup()

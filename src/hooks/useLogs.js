@@ -22,17 +22,15 @@ export default function useLogs({ debug }) {
     if (!debug) return;
 
     fetch();
-
     interval.current = setInterval(() => fetch(), 1e4);
+
     return () => {
       clearInterval(interval.current);
     };
   }, [debug]);
 
   useEffect(() => {
-    if (error) {
-      setLogs([]);
-    }
+    if (error) setLogs([]);
   }, [error]);
 
   return {

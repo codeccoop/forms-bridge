@@ -1,6 +1,6 @@
 // source
-import useDebug from "../../../hooks/useDebug";
-import useLogs from "../../../hooks/useLogs";
+import useDebug from "../../hooks/useDebug";
+import useLogs from "../../hooks/useLogs";
 
 const { useEffect, useRef } = wp.element;
 const {
@@ -53,7 +53,7 @@ export default function Logger() {
                 height: "300px",
                 width: "100%",
                 background: "black",
-                color: "white",
+                color: error ? "red" : "white",
                 overflowY: "auto",
                 fontSize: "1.5rem",
                 lineHeight: 2.5,
@@ -61,15 +61,29 @@ export default function Logger() {
                 padding: "0 1rem",
               }}
             >
-              {logs.map((line, i) => (
-                <p key={i} style={{ margin: 0 }}>
-                  {line}
-                </p>
-              ))}
+              <LogLines logs={logs} error={error} loading={loading} />
             </div>
           </PanelRow>
         </>
       )}
     </PanelBody>
   );
+}
+
+function LogLines({ loading, error, logs }) {
+  if (error) {
+    return <p style={{ textAlign: "center" }}>{error}</p>;
+  }
+
+  if (loading) {
+    return (
+      <p style={{ textAlign: "center" }}>{__("Loading...", "forms-bridge")}</p>
+    );
+  }
+
+  return logs.map((line, i) => (
+    <p key={i} style={{ margin: 0 }}>
+      {line}
+    </p>
+  ));
 }

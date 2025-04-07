@@ -4,8 +4,8 @@ import Backends from "../../components/Backends";
 import Backend from "../../components/Backends/Backend";
 import Integrations from "../../components/Integrations";
 import Addons from "../../components/Addons";
-import Logger from "./Logger";
-import Exporter from "./Exporter";
+import Logger from "../../components/Logger";
+import Exporter from "../../components/Exporter";
 
 const {
   PanelBody,
