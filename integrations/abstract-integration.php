@@ -30,6 +30,7 @@ abstract class Integration extends Singleton
         'wpforms' => null,
         'wpcf7' => null,
         'ninja' => null,
+        'woo' => null,
         // 'formidable' => null,
         // 'forminator' => null,
     ];
@@ -48,6 +49,9 @@ abstract class Integration extends Singleton
                 break;
             case 'ninja':
                 $plugin = 'ninja-forms/ninja-forms.php';
+                break;
+            case 'woo':
+                $plugin = 'woocommerce/woocommerce.php';
                 break;
             // case 'formidable':
             //     $plugin = 'formidable/formidable.php';

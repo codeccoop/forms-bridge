@@ -229,17 +229,22 @@ class Integration extends BaseIntegration
             []
         );
 
-        return apply_filters('forms_bridge_form_data', [
-            '_id' => 'gf:' . $form_id,
-            'id' => $form_id,
-            'title' => $form['title'],
-            'bridges' => apply_filters(
-                'forms_bridge_bridges',
-                [],
-                'gf:' . $form_id
-            ),
-            'fields' => $fields,
-        ]);
+        return apply_filters(
+            'forms_bridge_form_data',
+            [
+                '_id' => 'gf:' . $form_id,
+                'id' => $form_id,
+                'title' => $form['title'],
+                'bridges' => apply_filters(
+                    'forms_bridge_bridges',
+                    [],
+                    'gf:' . $form_id
+                ),
+                'fields' => $fields,
+            ],
+            $form,
+            'gf'
+        );
     }
 
     /**
