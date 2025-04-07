@@ -27,10 +27,12 @@ export default function Templates({ Wizard }) {
   const integrations = useIntegrations();
   const [integration, setIntegration] = useState(integrations[0]?.name || "");
 
-  const integrationOptions = integrations.map(({ name, label }) => ({
-    value: name,
-    label,
-  }));
+  const integrationOptions = integrations
+    .filter(({ name }) => name !== "woo")
+    .map(({ name, label }) => ({
+      value: name,
+      label,
+    }));
 
   const [isOpen, setIsOpen] = useState(false);
 
