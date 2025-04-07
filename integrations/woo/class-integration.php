@@ -20,15 +20,15 @@ class Integration extends BaseIntegration
                 self::$order_id = $order_id;
                 self::$order_status = $new_status;
 
-                $trigger_status = apply_filters(
-                    'forms_bridge_woo_order_trigger_status',
-                    'completed',
+                $trigger_submission = apply_filters(
+                    'forms_bridge_woo_trigger_submission',
+                    $new_status === 'completed',
                     $order_id,
                     $new_status,
                     $old_status
                 );
 
-                if ($new_status === $trigger_status) {
+                if ($trigger_submission) {
                     Forms_Bridge::do_submission();
                 }
             },
