@@ -11,6 +11,7 @@ import {
 } from "../../lib/payload";
 import WorkflowStageField from "./StageField";
 import WorkflowStageInterface from "./StageInterface";
+import JsonFinger from "../../lib/JsonFinger";
 
 const {
   __experimentalItemGroup: ItemGroup,
@@ -20,76 +21,6 @@ const {
 } = wp.components;
 const { useState, useMemo, useEffect } = wp.element;
 const { __ } = wp.i18n;
-
-function WorkflowStageHeader({
-  title = "",
-  description = "",
-  jobInputs,
-  showDiff,
-  setShowDiff,
-  showMutations,
-  setShowMutations,
-  skipped,
-  showInterface,
-  isOutput,
-  mode,
-  mappers,
-}) {
-  if (skipped) {
-    title += ` (${__("Skipped", "forms-bridge")})`;
-  }
-
-  return (
-    <div style={{ borderBottom: "1px solid", paddingBottom: "1.5em" }}>
-      <div
-        style={{
-          display: "inline-flex",
-          width: "100%",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <h2 style={{ margin: 0, paddingRight: "1rem" }}>{title}</h2>
-        {!isOutput && (
-          <div style={{ width: "max-content", flexShrink: 0 }}>
-            <ToggleControl
-              __nextHasNoMarginBottom
-              checked={showMutations && !skipped && mode === "payload"}
-              label={__("After mutations", "forms-bridge")}
-              onChange={() => setShowMutations(!showMutations)}
-              disabled={skipped || mode === "mappers" || mappers.length === 0}
-            />
-          </div>
-        )}
-      </div>
-      <div
-        style={{
-          display: "inline-flex",
-          width: "100%",
-          justifyContent: "space-between",
-        }}
-      >
-        <p style={{ marginTop: "0.5em", paddingRight: "1rem" }}>
-          {description}
-        </p>
-        {!isOutput && (
-          <div style={{ margin: "6.5px", width: "max-content", flexShrink: 0 }}>
-            <ToggleControl
-              __nextHasNoMarginBottom
-              checked={showDiff && !skipped && mode === "payload"}
-              label={__("Show diff", "forms-bridge")}
-              onChange={() => setShowDiff(!showDiff)}
-              disabled={skipped || mode === "mappers"}
-            />
-          </div>
-        )}
-      </div>
-      {(showInterface && <WorkflowStageInterface fields={jobInputs} />) || (
-        <Spacer marginBottom="1.4em" />
-      )}
-    </div>
-  );
-}
 
 export default function WorkflowStage({ setMappers }) {
   const [step, _, outputStep] = useWorkflowStepper();
@@ -219,26 +150,74 @@ export default function WorkflowStage({ setMappers }) {
     });
   }, [workflowJob]);
 
+  const jobTitle = useMemo(() => {
+    if (!workflowJob) return "";
+
+    if (skipped) {
+      return `${workflowJob.title} (${__("Skipped", "forms-bridge")})`;
+    }
+
+    return workflowJob.title;
+  }, [skipped, workflowJob]);
+
   if (!workflowJob && step > 0 && step < outputStep) {
     return <p>{__("Loading", "forms-bridge")}</p>;
   }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <WorkflowStageHeader
-        skipped={skipped}
-        title={workflowJob?.title}
-        description={workflowJob?.description}
-        jobInputs={jobInputs}
-        showDiff={showDiff}
-        setShowDiff={setShowDiff}
-        showMutations={showMutations}
-        setShowMutations={setShowMutations}
-        isOutput={step === outputStep}
-        showInterface={step > 0 && step < outputStep}
-        mode={mode}
-        mappers={validMappers}
-      />
+      <div style={{ borderBottom: "1px solid", paddingBottom: "1.5em" }}>
+        <div
+          style={{
+            display: "inline-flex",
+            width: "100%",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <h2 style={{ margin: 0, paddingRight: "1rem" }}>{jobTitle}</h2>
+          {step < outputStep && (
+            <div style={{ width: "max-content", flexShrink: 0 }}>
+              <ToggleControl
+                __nextHasNoMarginBottom
+                checked={showMutations && !skipped && mode === "payload"}
+                label={__("After mutations", "forms-bridge")}
+                onChange={() => setShowMutations(!showMutations)}
+                disabled={
+                  skipped || mode === "mappers" || validMappers.length === 0
+                }
+              />
+            </div>
+          )}
+        </div>
+        <div
+          style={{
+            display: "inline-flex",
+            width: "100%",
+            justifyContent: "space-between",
+          }}
+        >
+          <p style={{ marginTop: "0.5em", paddingRight: "1rem" }}>
+            {workflowJob?.description || ""}
+          </p>
+          {step < outputStep && (
+            <div
+              style={{ margin: "6.5px", width: "max-content", flexShrink: 0 }}
+            >
+              <ToggleControl
+                __nextHasNoMarginBottom
+                checked={showDiff && !skipped && mode === "payload"}
+                label={__("Show diff", "forms-bridge")}
+                onChange={() => setShowDiff(!showDiff)}
+                disabled={skipped || mode === "mappers"}
+              />
+            </div>
+          )}
+        </div>
+        {(step > 0 && step < outputStep && (
+          <WorkflowStageInterface fields={jobInputs} />
+        )) || <Spacer marginBottom="1.4em" />}
+      </div>
       <div
         style={{
           flex: 1,

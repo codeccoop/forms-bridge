@@ -91,10 +91,11 @@ function ObjectProperties({
       <div>{type}</div>
       <ul
         style={{
-          paddingLeft: "15px",
+          paddingLeft: "25px",
           marginBottom: 0,
           marginTop: "5px",
           marginLeft: "3px",
+          paddingTop: "5px",
           borderLeft: "1px dashed",
         }}
       >

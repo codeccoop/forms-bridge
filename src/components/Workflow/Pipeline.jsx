@@ -26,10 +26,6 @@ export default function WorkflowPipeline({ workflow, setWorkflow }) {
   );
 
   const workflowJobs = useMemo(() => {
-    if (!workflow.length) {
-      return [{ title: "", name: "" }];
-    }
-
     return workflow.map((name) => ({
       name,
       title: apiJobs.find((job) => job.name === name)?.title || name,
@@ -115,6 +111,35 @@ function PipelineStep({ name, title, index, options, append, update, remove }) {
   const isCurrent = step === index;
   const isFocus = isCurrent && name !== "form" && name !== "output";
 
+  if (name === "output") {
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          color: isCurrent
+            ? "var(--wp-components-color-accent,var(--wp-admin-theme-color,#3858e9))"
+            : "inherit",
+        }}
+      >
+        <div style={{ padding: "0.25em 0.5em" }}>
+          <strong>🚀</strong>
+        </div>
+        <p
+          style={{
+            cursor: "pointer",
+            textIndent: "12px",
+            margin: "10px 0",
+            whiteSpace: "nowrap",
+          }}
+          onClick={() => setStep(index)}
+        >
+          {title}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div
       style={{
@@ -151,7 +176,7 @@ function PipelineStep({ name, title, index, options, append, update, remove }) {
           </p>
         )}
       </div>
-      {name !== "form" && name !== "output" && (
+      {name !== "output" && (
         <div
           style={{
             display: "inline-flex",
@@ -172,7 +197,7 @@ function PipelineStep({ name, title, index, options, append, update, remove }) {
             size="compact"
             variant="secondary"
             isDestructive
-            disabled={!name}
+            disabled={!name || name === "form"}
             onClick={() => remove(index - 1)}
           >
             -

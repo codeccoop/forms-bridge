@@ -37,7 +37,10 @@ export default function WorkflowJobsProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (!workflow.length) return;
+    if (!workflow.length) {
+      setWorkflowJobs([]);
+      return;
+    }
 
     const newJobNames = workflow
       .filter((jobName) => {
