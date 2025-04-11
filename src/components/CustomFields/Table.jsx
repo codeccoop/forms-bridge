@@ -334,9 +334,13 @@ function TagSelector({ tags, onChange, onFocusOutside }) {
   const [focus, setFocus] = useState(0);
 
   return (
-    <Popover onFocusOutside={onFocusOutside} offset={5} placement="right-start">
+    <Popover
+      onFocusOutside={onFocusOutside}
+      offset={5}
+      placement="bottom-start"
+    >
       <div
-        style={{ position: "relative", paddingTop: "2.2em", height: "300px" }}
+        style={{ position: "relative", paddingTop: "2.6em", height: "300px" }}
       >
         <label
           for="bridge-tags-list"
@@ -345,7 +349,7 @@ function TagSelector({ tags, onChange, onFocusOutside }) {
             top: "0px",
             left: "0px",
             width: "100%",
-            padding: "0.25em 0.5em",
+            padding: "0.5em 0.75em",
             borderBottom: "1px solid",
             backgroundColor: "white",
           }}
@@ -355,7 +359,7 @@ function TagSelector({ tags, onChange, onFocusOutside }) {
         <ul
           id="bridge-tags-list"
           style={{
-            width: "120px",
+            width: "140px",
             height: "100%",
             overflowY: "auto",
             margin: 0,
@@ -363,7 +367,7 @@ function TagSelector({ tags, onChange, onFocusOutside }) {
         >
           {tags.map(({ label, value }, i) => (
             <li
-              style={{ padding: "0.25em 0.5em", cursor: "pointer" }}
+              style={{ padding: "0.25em 0.75em", cursor: "pointer" }}
               tabIndex="0"
               role="button"
               onKeyDown={(ev) => {

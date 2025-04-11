@@ -231,25 +231,42 @@ export default function MutationLayers({ fields, mappers, setMappers }) {
                   />
                 </td>
                 <td>
-                  <Button
-                    size="compact"
-                    variant="secondary"
-                    style={{ margin: "0 0.45em" }}
-                    disabled={!to || !from}
-                    onClick={() => addMapper(i + 1)}
-                    __next40pxDefaultSize
+                  <div
+                    style={{
+                      display: "flex",
+                      marginLeft: "0.45em",
+                      gap: "0.45em",
+                    }}
                   >
-                    +
-                  </Button>
-                  <Button
-                    size="compact"
-                    isDestructive
-                    variant="secondary"
-                    onClick={() => dropMapper(i)}
-                    __next40pxDefaultSize
-                  >
-                    -
-                  </Button>
+                    <Button
+                      size="compact"
+                      variant="secondary"
+                      disabled={!to || !from}
+                      onClick={() => addMapper(i + 1)}
+                      style={{
+                        width: "40px",
+                        height: "40px",
+                        justifyContent: "center",
+                      }}
+                      __next40pxDefaultSize
+                    >
+                      +
+                    </Button>
+                    <Button
+                      size="compact"
+                      isDestructive
+                      variant="secondary"
+                      onClick={() => dropMapper(i)}
+                      style={{
+                        width: "40px",
+                        height: "40px",
+                        justifyContent: "center",
+                      }}
+                      __next40pxDefaultSize
+                    >
+                      -
+                    </Button>
+                  </div>
                 </td>
               </tr>
             ))}
