@@ -40,10 +40,17 @@ export default function WorkflowPipeline({ workflow, setWorkflow }) {
     () =>
       [
         {
-          title: __("Initial state", "forms-bridge"),
+          title: __("Form submission", "forms-bridge"),
           name: "form",
         },
-      ].concat(workflowJobs),
+      ]
+        .concat(workflowJobs)
+        .concat([
+          {
+            title: __("Output payload", "forms-bridge"),
+            name: "output",
+          },
+        ]),
     [workflowJobs]
   );
 
@@ -106,7 +113,7 @@ function PipelineStep({ name, title, index, options, append, update, remove }) {
   const [step, setStep] = useWorkflowStepper();
 
   const isCurrent = step === index;
-  const isFocus = isCurrent && name !== "form";
+  const isFocus = isCurrent && name !== "form" && name !== "output";
 
   return (
     <div
@@ -144,7 +151,7 @@ function PipelineStep({ name, title, index, options, append, update, remove }) {
           </p>
         )}
       </div>
-      {name !== "form" && (
+      {name !== "form" && name !== "output" && (
         <div
           style={{
             display: "inline-flex",

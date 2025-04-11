@@ -30,7 +30,8 @@ function WorkflowStageHeader({
   showMutations,
   setShowMutations,
   skipped,
-  step,
+  showInterface,
+  isOutput,
   mode,
   mappers,
 }) {
@@ -49,7 +50,7 @@ function WorkflowStageHeader({
         }}
       >
         <h2 style={{ margin: 0, paddingRight: "1rem" }}>{title}</h2>
-        {step > 0 && (
+        {!isOutput && (
           <div style={{ width: "max-content", flexShrink: 0 }}>
             <ToggleControl
               __nextHasNoMarginBottom
@@ -71,7 +72,7 @@ function WorkflowStageHeader({
         <p style={{ marginTop: "0.5em", paddingRight: "1rem" }}>
           {description}
         </p>
-        {step > 0 && (
+        {!isOutput && (
           <div style={{ margin: "6.5px", width: "max-content", flexShrink: 0 }}>
             <ToggleControl
               __nextHasNoMarginBottom
@@ -83,7 +84,7 @@ function WorkflowStageHeader({
           </div>
         )}
       </div>
-      {(step > 0 && <WorkflowStageInterface fields={jobInputs} />) || (
+      {(showInterface && <WorkflowStageInterface fields={jobInputs} />) || (
         <Spacer marginBottom="1.4em" />
       )}
     </div>
@@ -91,12 +92,12 @@ function WorkflowStageHeader({
 }
 
 export default function WorkflowStage({ setMappers }) {
-  const [step] = useWorkflowStepper();
+  const [step, _, outputStep] = useWorkflowStepper();
   const workflowJob = useWorkflowJob();
   const [fields = [], diff] = useWorkflowStage();
 
   const [showDiff, setShowDiff] = useState(false);
-  const [showMutations, setShowMutations] = useState(step === 0);
+  const [showMutations, setShowMutations] = useState(false);
   const [mode, setMode] = useState("payload");
 
   const skipped = useMemo(() => {
@@ -108,10 +109,7 @@ export default function WorkflowStage({ setMappers }) {
       setMode("payload");
     }
 
-    if (step === 0) {
-      setShowMutations(true);
-      setShowDiff(false);
-    } else if (showMutations) {
+    if (showMutations) {
       setShowMutations(false);
     }
   }, [step]);
@@ -221,7 +219,7 @@ export default function WorkflowStage({ setMappers }) {
     });
   }, [workflowJob]);
 
-  if (!workflowJob && step > 0) {
+  if (!workflowJob && step > 0 && step < outputStep) {
     return <p>{__("Loading", "forms-bridge")}</p>;
   }
 
@@ -236,7 +234,8 @@ export default function WorkflowStage({ setMappers }) {
         setShowDiff={setShowDiff}
         showMutations={showMutations}
         setShowMutations={setShowMutations}
-        step={step}
+        isOutput={step === outputStep}
+        showInterface={step > 0 && step < outputStep}
         mode={mode}
         mappers={validMappers}
       />
@@ -277,27 +276,31 @@ export default function WorkflowStage({ setMappers }) {
           borderTop: "1px solid",
         }}
       >
-        <p
-          style={{
-            margin: 0,
-            color: validMappers.length
-              ? "var(--wp-components-color-accent,var(--wp-admin-theme-color,#3858e9))"
-              : "inherit",
-          }}
-        >
-          {__("Output mutations: %s", "forms-bridge").replace(
-            "%s",
-            validMappers.length
-          )}
-        </p>
-        <ToggleControl
-          disabled={skipped}
-          checked={mode === "mappers"}
-          onChange={switchMode}
-          label={__("Show", "forms-bridge")}
-          style={{ marginTop: "1px" }}
-          __nextHasNoMarginBottom
-        />
+        {step < outputStep && (
+          <>
+            <p
+              style={{
+                margin: 0,
+                color: validMappers.length
+                  ? "var(--wp-components-color-accent,var(--wp-admin-theme-color,#3858e9))"
+                  : "inherit",
+              }}
+            >
+              {__("Output mutations: %s", "forms-bridge").replace(
+                "%s",
+                validMappers.length
+              )}
+            </p>
+            <ToggleControl
+              disabled={skipped}
+              checked={mode === "mappers"}
+              onChange={switchMode}
+              label={__("Show", "forms-bridge")}
+              style={{ marginTop: "1px" }}
+              __nextHasNoMarginBottom
+            />
+          </>
+        )}
       </div>
     </div>
   );

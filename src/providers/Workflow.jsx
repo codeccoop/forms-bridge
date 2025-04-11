@@ -102,30 +102,38 @@ export default function WorkflowProvider({
 
   const [jobs, isLoading] = useWorkflowJobs(workflow);
 
-  const formJob = useMemo(
-    () => ({
-      name: "form-job",
-      title: __("Form submission", "forms-bridge"),
-      description: __(
-        "Form submission after mappers has been applied",
-        "forms-bridge"
-      ),
-      mappers: mutations[0] || [],
-      input: [],
-      output: [],
-    }),
-    [mutations]
-  );
-
   const workflowJobs = useMemo(
     () =>
-      [formJob].concat(
-        jobs.map((job, i) => ({
-          ...job,
-          mappers: mutations[i + 1] || [],
-        }))
-      ),
-    [mutations, jobs, formJob]
+      [
+        {
+          name: "form-job",
+          title: __("Form submission", "forms-bridge"),
+          description: __(
+            "Form submission after mappers has been applied",
+            "forms-bridge"
+          ),
+          mappers: mutations[0] || [],
+          input: [],
+          output: [],
+        },
+      ]
+        .concat(
+          jobs.map((job, i) => ({
+            ...job,
+            mappers: mutations[i + 1] || [],
+          }))
+        )
+        .concat([
+          {
+            name: "output-job",
+            title: __("Output payload", "forms-bridge"),
+            description: __("Workflow output payload", "forms-bridge"),
+            mappers: [],
+            input: [],
+            output: [],
+          },
+        ]),
+    [mutations, jobs]
   );
 
   const formFields = useMemo(() => {
@@ -186,8 +194,8 @@ export function useWorkflowStage() {
 }
 
 export function useWorkflowStepper() {
-  const { step, setStep } = useContext(WorkflowContext);
-  return [step, setStep];
+  const { step, setStep, workflowJobs = [] } = useContext(WorkflowContext);
+  return [step, setStep, workflowJobs.length - 1];
 }
 
 export function useWorkflowJob() {
