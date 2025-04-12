@@ -8,18 +8,17 @@ return [
     'title' => __('CRM Company Leads', 'forms-bridge'),
     'fields' => [
         [
-            'ref' => '#form/fields[]',
-            'name' => 'Owner',
+            'ref' => '#bridge/custom_fields[]',
+            'name' => 'Owner.id',
             'label' => __('Owner ID', 'forms-bridge'),
             'description' => __(
                 'ID of the owner user of the deal',
                 'forms-bridge'
             ),
             'type' => 'string',
-            'required' => true,
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'Lead_Source',
             'label' => __('Lead source', 'forms-bridge'),
             'description' => __(
@@ -27,11 +26,10 @@ return [
                 'forms-bridge'
             ),
             'type' => 'string',
-            'required' => true,
             'default' => 'WordPress',
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'Lead_Status',
             'label' => __('Lead status', 'forms-bridge'),
             'type' => 'options',
@@ -69,11 +67,10 @@ return [
                     'value' => 'Lost Lead',
                 ],
             ],
-            'required' => true,
             'default' => 'Not Contacted',
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'Tag',
             'label' => __('Lead tags', 'forms-bridge'),
             'description' => __(
@@ -105,7 +102,7 @@ return [
             'name' => 'client_id',
             'label' => __('Client ID', 'forms-bridge'),
             'description' => __(
-                'You have to create a Self-Client Application on the Zoho Developer Console and get the Client ID',
+                'You have to create a Self-Client Application on the <a href="https://api-console.zoho.com" target="_blank">Zoho Developer Console</a> and get the Client ID',
                 'forms-bridge'
             ),
             'type' => 'string',
@@ -116,7 +113,7 @@ return [
             'name' => 'client_secret',
             'label' => __('Client Secret', 'forms-bridge'),
             'description' => __(
-                'You have to create a Self-Client Application on the Zoho Developer Console and get the Client Secret',
+                'You have to create a Self-Client Application on the <a href="https://api-console.zoho.com" target="_blank">Zoho Developer Console</a> and get the Client Secret',
                 'forms-bridge'
             ),
             'type' => 'string',
@@ -145,25 +142,6 @@ return [
     ],
     'form' => [
         'fields' => [
-            [
-                'name' => 'Owner',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'Lead_Source',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'Lead_Status',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'Tag',
-                'type' => 'hidden',
-            ],
             [
                 'name' => 'Company',
                 'label' => __('Company', 'forms-bridge'),
@@ -234,16 +212,6 @@ return [
     'bridge' => [
         'endpoint' => '/crm/v7/Leads/upsert',
         'scope' => 'ZohoCRM.modules.leads.CREATE',
-        'workflow' => ['zoho-tags'],
-        'mutations' => [
-            [
-                [
-                    'from' => 'Owner',
-                    'to' => 'Owner.id',
-                    'cast' => 'string',
-                ],
-            ],
-        ],
     ],
     'backend' => [
         'base_url' => 'https://www.zohoapis.com',

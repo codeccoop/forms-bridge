@@ -30,19 +30,45 @@ return [
     'method' => 'forms_bridge_crm_meeting_participant',
     'input' => [
         [
-            'name' => 'Email',
+            'name' => 'Last_Name',
             'schema' => ['type' => 'string'],
             'required' => true,
         ],
         [
             'name' => 'First_Name',
             'schema' => ['type' => 'string'],
-            'required' => true,
         ],
         [
-            'name' => 'Last_Name',
+            'name' => 'Full_Name',
             'schema' => ['type' => 'string'],
-            'required' => true,
+        ],
+        [
+            'name' => 'Designation',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'Email',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'Secondary_Email',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'Phone',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'Mobile',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'Fax',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'Website',
+            'schema' => ['type' => 'string'],
         ],
         [
             'name' => 'Lead_Source',
@@ -53,12 +79,54 @@ return [
             'schema' => ['type' => 'string'],
         ],
         [
-            'name' => 'Phone',
+            'name' => 'Description',
             'schema' => ['type' => 'string'],
         ],
         [
-            'name' => 'Description',
+            'name' => 'Company',
             'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'No_of_Employees',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'Industry',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'Annual_Revenue',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'Street',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'City',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'State',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'Zip_Code',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'Tag',
+            'schema' => [
+                'type' => 'array',
+                'items' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'name' => ['type' => 'string'],
+                    ],
+                    'additionalProperties' => false,
+                    'required' => ['name'],
+                ],
+            ],
         ],
     ],
     'output' => [

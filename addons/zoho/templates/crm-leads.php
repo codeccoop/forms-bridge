@@ -4,11 +4,46 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
+add_filter(
+    'forms_bridge_template_data',
+    function ($data, $template_name) {
+        if ($template_name === 'zoho-crm-leads') {
+            $index = array_search(
+                'Tag',
+                array_column($data['bridge']['custom_fields'], 'name')
+            );
+
+            if ($index !== false) {
+                $field = &$data['bridge']['custom_fields'][$index];
+
+                $tags = array_filter(
+                    array_map('trim', explode(',', strval($field['value'])))
+                );
+                for ($i = 0; $i < count($tags); $i++) {
+                    $data['bridge']['custom_fields'][] = [
+                        'name' => "Tag[{$i}].name",
+                        'value' => $tags[$i],
+                    ];
+                }
+
+                array_splice($data['bridge']['custom_fields'], $index, 1);
+                $data['bridge']['custom_fields'] = array_values(
+                    $data['bridge']['custom_fields']
+                );
+            }
+        }
+
+        return $data;
+    },
+    10,
+    2
+);
+
 return [
     'title' => __('CRM Leads', 'forms-bridge'),
     'fields' => [
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'Owner',
             'label' => __('Owner ID', 'forms-bridge'),
             'description' => __(
@@ -16,10 +51,9 @@ return [
                 'forms-bridge'
             ),
             'type' => 'string',
-            'required' => true,
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'Lead_Source',
             'label' => __('Lead source', 'forms-bridge'),
             'description' => __(
@@ -27,11 +61,10 @@ return [
                 'forms-bridge'
             ),
             'type' => 'string',
-            'required' => true,
             'default' => 'WordPress',
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'Lead_Status',
             'label' => __('Lead status', 'forms-bridge'),
             'type' => 'options',
@@ -69,11 +102,10 @@ return [
                     'value' => 'Lost Lead',
                 ],
             ],
-            'required' => true,
             'default' => 'Not Contacted',
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'Tag',
             'label' => __('Lead tags', 'forms-bridge'),
             'description' => __(
@@ -145,25 +177,6 @@ return [
     'form' => [
         'fields' => [
             [
-                'name' => 'Owner',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'Lead_Source',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'Tag',
-                'type' => 'hidden',
-            ],
-            [
-                'name' => 'Lead_Status',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
                 'name' => 'First_Name',
                 'label' => __('First name', 'forms-bridge'),
                 'type' => 'text',
@@ -196,16 +209,6 @@ return [
     'bridge' => [
         'endpoint' => '/crm/v7/Leads/upsert',
         'scope' => 'ZohoCRM.modules.leads.CREATE',
-        'workflow' => ['zoho-tags'],
-        'mutations' => [
-            [
-                [
-                    'from' => 'Owner',
-                    'to' => 'Owner.id',
-                    'cast' => 'string',
-                ],
-            ],
-        ],
     ],
     'backend' => [
         'base_url' => 'https://www.zohoapis.com',
