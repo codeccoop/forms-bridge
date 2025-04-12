@@ -187,6 +187,38 @@ class Odoo_Form_Bridge extends Form_Bridge
         );
     }
 
+    protected function api_fields()
+    {
+        $db = $this->database();
+
+        $session = self::rpc_login($db);
+
+        if (is_wp_error($session)) {
+            return [];
+        }
+
+        [$sid, $uid] = $session;
+
+        $payload = self::rpc_payload($sid, 'object', 'execute', [
+            $db->name,
+            $uid,
+            $db->password,
+            $this->model,
+            'fields_get',
+            [],
+            [],
+        ]);
+
+        $response = $this->backend()->post(self::endpoint, $payload);
+
+        $result = self::rpc_response($response);
+        if (is_wp_error($result)) {
+            return $result;
+        }
+
+        return array_keys($result);
+    }
+
     /**
      * Submits submission to the backend.
      *
