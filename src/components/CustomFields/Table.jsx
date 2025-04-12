@@ -143,12 +143,21 @@ const INVALID_TO_STYLE = {
     "var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9))",
 };
 
-function useStyle(name = "") {
+function useInputStyle(name = "") {
+  const inputStyle = {
+    height: "40px",
+    paddingLeft: "12px",
+    paddingRight: "12px",
+    fontSize: "13px",
+    borderRadius: "2px",
+    width: "100%",
+  };
+
   if (name.length && !JsonFinger.validate(name, "set")) {
-    return INVALID_TO_STYLE;
+    return { ...inputStyle, ...INVALID_TO_STYLE };
   }
 
-  return {};
+  return inputStyle;
 }
 
 export default function CustomFieldsTable({ customFields, setCustomFields }) {
@@ -254,14 +263,7 @@ export default function CustomFieldsTable({ customFields, setCustomFields }) {
                       onChange={(ev) =>
                         setCustomField("name", i, ev.target.value)
                       }
-                      style={{
-                        height: "40px",
-                        paddingLeft: "12px",
-                        paddingRight: "12px",
-                        fontSize: "13px",
-                        borderRadius: "2px",
-                        width: "100%",
-                      }}
+                      style={useInputStyle(name)}
                     />
                   </BaseControl>
                 </td>

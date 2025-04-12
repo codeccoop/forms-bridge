@@ -1,7 +1,8 @@
 import JsonFinger from "./../../lib/JsonFinger";
+import { useApiFields } from "../../providers/ApiSchema";
 import { getFromOptions } from "./lib";
 
-const { SelectControl, TextControl, Button } = wp.components;
+const { BaseControl, SelectControl, Button } = wp.components;
 const { useEffect, useRef } = wp.element;
 const { __ } = wp.i18n;
 
@@ -103,15 +104,26 @@ const INVALID_TO_STYLE = {
     "var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9))",
 };
 
-function mapperToStyle(pointer = "") {
+function useInputStyle(pointer = "") {
+  const inputStyle = {
+    height: "40px",
+    paddingLeft: "12px",
+    paddingRight: "12px",
+    fontSize: "13px",
+    borderRadius: "2px",
+    width: "100%",
+  };
+
   if (pointer.length && !JsonFinger.validate(pointer, "set")) {
-    return INVALID_TO_STYLE;
+    return { ...inputStyle, ...INVALID_TO_STYLE };
   }
 
-  return {};
+  return inputStyle;
 }
 
 export default function MutationLayers({ fields, mappers, setMappers }) {
+  const apiFields = useApiFields();
+
   const tableWrapper = useRef();
 
   const setMapper = (attr, index, value) => {
@@ -167,6 +179,11 @@ export default function MutationLayers({ fields, mappers, setMappers }) {
   return (
     <>
       <div ref={tableWrapper} className="scrollbar-hide" style={{ flex: 1 }}>
+        <datalist id="api-fields-list">
+          {apiFields.map((field) => (
+            <option value={field}></option>
+          ))}
+        </datalist>
         <table
           style={{
             width: "calc(100% + 10px)",
@@ -213,13 +230,15 @@ export default function MutationLayers({ fields, mappers, setMappers }) {
                   />
                 </td>
                 <td>
-                  <TextControl
-                    style={mapperToStyle(to)}
-                    value={to}
-                    onChange={(value) => setMapper("to", i, value)}
-                    __nextHasNoMarginBottom
-                    __next40pxDefaultSize
-                  />
+                  <BaseControl __nextHasNoMarginBottom>
+                    <input
+                      type="text"
+                      list="api-fields-list"
+                      value={to}
+                      onChange={(ev) => setMapper("to", i, ev.target.value)}
+                      style={useInputStyle(to)}
+                    />
+                  </BaseControl>
                 </td>
                 <td>
                   <SelectControl
