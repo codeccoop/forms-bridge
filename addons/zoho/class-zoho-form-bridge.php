@@ -84,7 +84,7 @@ class Zoho_Form_Bridge extends Form_Bridge
      * Performs an authentication request to the zoho oauth server using
      * the bridge credentials.
      */
-    private function get_access_token()
+    protected function get_access_token()
     {
         $token = get_transient(self::token_transient);
 
@@ -170,21 +170,16 @@ class Zoho_Form_Bridge extends Form_Bridge
     protected function do_submit($payload, $attachments = [])
     {
         $access_token = $this->get_access_token();
+        if (empty($access_token)) {
+            return new WP_Error(
+                'unauthorized',
+                __('OAuth invalid response', 'forms-bridge')
+            );
+        }
 
         add_filter(
             'http_request_args',
-            static function ($args) {
-                $origin = $args['headers']['Origin'] ?? null;
-
-                if ($origin === self::http_origin_token) {
-                    unset($args['headers']['Origin']);
-                    unset($args['headers']['Client-Id']);
-                    unset($args['headers']['Client-Secret']);
-                    unset($args['headers']['Organization-Id']);
-                }
-
-                return $args;
-            },
+            '\FORMS_BRIDGE\Zoho_Form_Bridge::cleanup_headers',
             10,
             1
         );
@@ -218,5 +213,78 @@ class Zoho_Form_Bridge extends Form_Bridge
         }
 
         return $response;
+    }
+
+    protected function api_fields()
+    {
+        $original_scope = $this->scope;
+        $this->data['scope'] = 'ZohoCRM.settings.layouts.READ';
+        $access_token = $this->get_access_token();
+        $this->data['scope'] = $original_scope;
+
+        if (empty($access_token)) {
+            return [];
+        }
+
+        if (!preg_match('/\/([A-Z].+$)/', $this->endpoint, $matches)) {
+            return [];
+        }
+
+        $module = str_replace('/upsert', '', $matches[1]);
+
+        add_filter(
+            'http_request_args',
+            '\FORMS_BRIDGE\Zoho_Form_Bridge::cleanup_headers',
+            10,
+            1
+        );
+
+        $response = $this->backend->get(
+            '/crm/v7/settings/layouts',
+            [
+                'module' => $module,
+            ],
+            [
+                'Origin' => self::http_origin_token,
+                // 'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => 'Zoho-oauthtoken ' . $access_token,
+            ]
+        );
+
+        if (is_wp_error($response)) {
+            return [];
+        }
+
+        $fields = [];
+        foreach ($response['data']['layouts'] as $layout) {
+            foreach ($layout['sections'] as $section) {
+                foreach ($section['fields'] as $field) {
+                    $fields[] = $field['api_name'];
+                }
+            }
+        }
+
+        return $fields;
+    }
+
+    public static function cleanup_headers($args)
+    {
+        $origin = $args['headers']['Origin'] ?? null;
+
+        if ($origin === self::http_origin_token) {
+            unset($args['headers']['Origin']);
+            unset($args['headers']['Client-Id']);
+            unset($args['headers']['Client-Secret']);
+            unset($args['headers']['Organization-Id']);
+        }
+
+        remove_filter(
+            'http_request_args',
+            '\FORMS_BRIDGE\Zoho_Form_Bridge::cleanup_headers',
+            10,
+            1
+        );
+        return $args;
     }
 }
