@@ -12,14 +12,26 @@ function forms_bridge_zoho_crm_create_lead($payload, $bridge)
 
     $lead_fields = [
         'Owner',
+        'Company',
         'First_Name',
+        'Full_Name',
         'Email',
         'Phone',
-        'Title',
-        'Company',
-        'Description',
-        'Lead_Status',
+        'Fax',
+        'Mobile',
+        'Website',
         'Lead_Source',
+        'Lead_Status',
+        'Industry',
+        'No_of_Employees',
+        'Annual_Revenue',
+        'Street',
+        'City',
+        'Zip_Code',
+        'State',
+        'Country',
+        'Description',
+        'Tag',
     ];
 
     foreach ($lead_fields as $field) {
@@ -31,6 +43,7 @@ function forms_bridge_zoho_crm_create_lead($payload, $bridge)
     $response = $bridge
         ->patch([
             'name' => 'zoho-crm-create-lead',
+            'scope' => 'ZohoCRM.modules.leads.CREATE',
             'endpoint' => '/crm/v7/Leads/upsert',
             'template' => null,
         ])
@@ -54,12 +67,24 @@ function forms_bridge_zoho_crm_create_contact($payload, $bridge)
     ];
 
     $contact_fields = [
+        'Owner',
+        'Lead_Source',
         'First_Name',
+        'Full_Name',
         'Email',
+        'Fax',
+        'Mobile',
         'Phone',
         'Title',
+        'Department',
         'Account_Name',
+        'Mailing_Street',
+        'Mailing_City',
+        'Mailing_Zip',
+        'Mailing_State',
+        'Mailing_Country',
         'Description',
+        'Tag',
     ];
 
     foreach ($contact_fields as $field) {
@@ -84,6 +109,7 @@ function forms_bridge_zoho_crm_create_contact($payload, $bridge)
     $response = $bridge
         ->patch([
             'name' => 'zoho-crm-create-contact',
+            'scope' => 'ZohoCRM.modules.contacts.CREATE',
             'endpoint' => '/crm/v7/Contacts/upsert',
             'template' => null,
         ])
@@ -112,7 +138,16 @@ function forms_bridge_zoho_crm_create_account($payload, $bridge)
         'Billing_City',
         'Billing_State',
         'Billing_Country',
+        'Phone',
+        'Fax',
+        'Mobile',
+        'Website',
+        'Owner',
+        'Industry',
+        'Ownership',
+        'Employees',
         'Description',
+        'Tag',
     ];
 
     foreach ($company_fields as $field) {
@@ -124,6 +159,7 @@ function forms_bridge_zoho_crm_create_account($payload, $bridge)
     $response = $bridge
         ->patch([
             'name' => 'zoho-crm-create-account',
+            'scope' => 'ZohoCRM.modules.accounts.CREATE',
             'endpoint' => '/crm/v7/Accounts/upsert',
             'template' => null,
         ])

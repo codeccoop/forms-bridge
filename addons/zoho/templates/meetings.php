@@ -5,11 +5,11 @@ if (!defined('ABSPATH')) {
 }
 
 return [
-    'title' => __('CRM Meetings', 'forms-bridge'),
+    'title' => __('Meetings', 'forms-bridge'),
     'fields' => [
         [
-            'ref' => '#form/fields[]',
-            'name' => 'Owner',
+            'ref' => '#bridge/custom_fields[]',
+            'name' => 'Owner.id',
             'label' => __('Owner ID', 'forms-bridge'),
             'description' => __(
                 'ID of the owner user of the deal',
@@ -19,7 +19,7 @@ return [
             'required' => true,
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'Event_Title',
             'label' => __('Event title', 'forms-bridge'),
             'type' => 'string',
@@ -27,7 +27,7 @@ return [
             'default' => __('Web Meetting', 'forms-bridge'),
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'Lead_Source',
             'label' => __('Lead source', 'forms-bridge'),
             'description' => __(
@@ -39,7 +39,7 @@ return [
             'default' => 'WordPress',
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'Lead_Status',
             'label' => __('Lead status', 'forms-bridge'),
             'type' => 'options',
@@ -81,11 +81,18 @@ return [
             'default' => 'Not Contacted',
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'All_day',
             'label' => __('Is all day event?', 'forms-bridge'),
             'type' => 'boolean',
             'default' => false,
+        ],
+        [
+            'ref' => '#bridge/custom_fields[]',
+            'name' => 'duration',
+            'label' => __('Meeting duration', 'forms-bridge'),
+            'type' => 'number',
+            'default' => 1,
         ],
         [
             'ref' => '#backend',
@@ -145,42 +152,11 @@ return [
         [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('CRM Meetings', 'forms-bridge'),
+            'default' => __('Meetings', 'forms-bridge'),
         ],
     ],
     'form' => [
         'fields' => [
-            [
-                'name' => 'Owner',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'Event_Title',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'Lead_Source',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'Lead_Status',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'All_day',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'duration',
-                'type' => 'hidden',
-                'required' => true,
-                'value' => 1,
-            ],
             [
                 'name' => 'First_Name',
                 'label' => __('First name', 'forms-bridge'),
@@ -312,7 +288,7 @@ return [
                         'value' => '24',
                     ],
                 ],
-                'required' => 'true',
+                'required' => true,
             ],
             [
                 'name' => 'minute',
@@ -351,11 +327,6 @@ return [
         ],
         'mutations' => [
             [
-                [
-                    'from' => 'Owner',
-                    'to' => 'Owner.id',
-                    'cast' => 'string',
-                ],
                 [
                     'from' => 'All_day',
                     'to' => 'All_day',

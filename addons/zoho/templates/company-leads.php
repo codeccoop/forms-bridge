@@ -4,8 +4,43 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
+add_filter(
+    'forms_bridge_template_data',
+    function ($data, $template_name) {
+        if ($template_name === 'zoho-company-leads') {
+            $index = array_search(
+                'Tag',
+                array_column($data['bridge']['custom_fields'], 'name')
+            );
+
+            if ($index !== false) {
+                $field = &$data['bridge']['custom_fields'][$index];
+
+                $tags = array_filter(
+                    array_map('trim', explode(',', strval($field['value'])))
+                );
+                for ($i = 0; $i < count($tags); $i++) {
+                    $data['bridge']['custom_fields'][] = [
+                        'name' => "Tag[{$i}].name",
+                        'value' => $tags[$i],
+                    ];
+                }
+
+                array_splice($data['bridge']['custom_fields'], $index, 1);
+                $data['bridge']['custom_fields'] = array_values(
+                    $data['bridge']['custom_fields']
+                );
+            }
+        }
+
+        return $data;
+    },
+    10,
+    2
+);
+
 return [
-    'title' => __('CRM Company Leads', 'forms-bridge'),
+    'title' => __('Company Leads', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#bridge/custom_fields[]',
@@ -137,7 +172,7 @@ return [
         [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('CRM Company Leads', 'forms-bridge'),
+            'default' => __('Company Leads', 'forms-bridge'),
         ],
     ],
     'form' => [

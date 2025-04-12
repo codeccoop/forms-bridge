@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 add_filter(
     'forms_bridge_template_data',
     function ($data, $template_name) {
-        if ($template_name === 'zoho-crm-leads') {
+        if ($template_name === 'zoho-leads') {
             $index = array_search(
                 'Tag',
                 array_column($data['bridge']['custom_fields'], 'name')
@@ -40,11 +40,11 @@ add_filter(
 );
 
 return [
-    'title' => __('CRM Leads', 'forms-bridge'),
+    'title' => __('Leads', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#bridge/custom_fields[]',
-            'name' => 'Owner',
+            'name' => 'Owner.id',
             'label' => __('Owner ID', 'forms-bridge'),
             'description' => __(
                 'ID of the owner user of the deal',
@@ -171,7 +171,7 @@ return [
         [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('CRM Leads', 'forms-bridge'),
+            'default' => __('Leads', 'forms-bridge'),
         ],
     ],
     'form' => [

@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 }
 
 return [
-    'title' => __('CRM Contacts', 'forms-bridge'),
+    'title' => __('Contacts', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#backend',

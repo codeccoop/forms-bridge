@@ -80,6 +80,19 @@ class Zoho_Form_Bridge extends Form_Bridge
         );
     }
 
+    private function check_oauth_scope($scope, $required)
+    {
+        $scopes = array_map('trim', explode(',', $scope));
+        $requireds = array_map('trim', explode(',', $scope));
+
+        $is_valid = true;
+        foreach ($requireds as $required) {
+            $is_valid = $is_valid && in_array($required, $scopes);
+        }
+
+        return $is_valid;
+    }
+
     /**
      * Performs an authentication request to the zoho oauth server using
      * the bridge credentials.
@@ -102,7 +115,7 @@ class Zoho_Form_Bridge extends Form_Bridge
         ) {
             if (
                 $token['expires_at'] < time() - 10 &&
-                $token['scope'] === $this->scope
+                $this->check_oauth_scope($token['scope'], $this->scope)
             ) {
                 return $token['access_token'];
             }
@@ -285,6 +298,7 @@ class Zoho_Form_Bridge extends Form_Bridge
             10,
             1
         );
+
         return $args;
     }
 }
