@@ -1,11 +1,12 @@
 const { useMemo } = wp.element;
 
-function useStyle(state, diff) {
+function useStyle(state, diff, simple) {
   if (!diff) {
-    return { color: "inherit" };
+    return { color: "inherit", display: simple ? "flex" : "block" };
   }
 
   return {
+    display: simple ? "flex" : "block",
     color: state.enter
       ? "#4ab866"
       : state.exit
@@ -24,13 +25,26 @@ export default function WorkflowStageField({
   mutated,
   touched,
   exit,
+  simple = false,
 }) {
-  const style = useStyle({ enter, mutated, touched, exit }, showDiff);
+  const style = useStyle({ enter, mutated, touched, exit }, showDiff, simple);
 
   return (
     <div style={style}>
       <span>
-        <strong>{name}</strong>
+        <span
+          style={
+            simple
+              ? {
+                  paddingRight: "0.5em",
+                  margin: "1px 0.5em 1px 0",
+                  borderRight: "1px solid",
+                }
+              : {}
+          }
+        >
+          <strong>{name}</strong>
+        </span>
       </span>
       <FieldSchema
         data={schema}
@@ -39,12 +53,21 @@ export default function WorkflowStageField({
         exit={exit}
         mutated={mutated}
         touched={touched}
+        simple={simple}
       />
     </div>
   );
 }
 
-function FieldSchema({ data, showDiff, enter, exit, mutated, touched }) {
+function FieldSchema({
+  data,
+  showDiff,
+  enter,
+  exit,
+  mutated,
+  touched,
+  simple,
+}) {
   return useMemo(() => {
     switch (data.type) {
       case "object":
@@ -56,6 +79,7 @@ function FieldSchema({ data, showDiff, enter, exit, mutated, touched }) {
             exit={exit}
             mutated={mutated}
             touched={touched}
+            simple={simple}
           />
         );
       case "array":
@@ -67,6 +91,7 @@ function FieldSchema({ data, showDiff, enter, exit, mutated, touched }) {
             exit={exit}
             mutated={mutated}
             touched={touched}
+            simple={simple}
           />
         );
       default:
@@ -83,8 +108,11 @@ function ObjectProperties({
   mutated,
   touched,
   arrayItem = false,
+  simple = false,
 }) {
   const type = arrayItem ? "object[]" : "object";
+
+  if (simple) return <div>{type}</div>;
 
   return (
     <>

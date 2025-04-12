@@ -114,6 +114,7 @@ function InputField({ data }) {
           enter={false}
           exit={false}
           mutated={false}
+          simple={true}
         />
       </span>
     </Tooltip>

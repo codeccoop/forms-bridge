@@ -81,7 +81,10 @@ export default function WorkflowStage({ setMappers }) {
     mappers
       .map((m) => m)
       .reverse()
-      .forEach(({ to, from }) => {
+      .forEach((mapper) => {
+        const [from] = JsonFinger.parse(mapper.from);
+        const [to] = JsonFinger.parse(mapper.to);
+
         if (outputDiff.enter.has(from)) {
           outputDiff.enter.delete(from);
           outputDiff.enter.add(to);
@@ -145,7 +148,7 @@ export default function WorkflowStage({ setMappers }) {
           !required &&
           !diff.exit.has(name) &&
           (!fields.find((field) => field.name === name) ||
-            diff.touched.has(name)),
+            diff.enter.has(name)),
       };
     });
   }, [workflowJob]);

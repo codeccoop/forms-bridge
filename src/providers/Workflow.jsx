@@ -34,13 +34,13 @@ function applyJob(payload, job) {
 
   Object.keys(payload).forEach((key) => {
     if (missing.has(key)) {
+      missing.delete(key);
+
       const schema = payloadToSchema(payload[key]);
       const input = job.input.find((field) => field.name === key);
       const typeCheck = checkType(schema, input.schema, false);
-      if (typeCheck === true) {
-        missing.delete(key);
-      } else if (typeCheck) {
-        missing.delete(key);
+
+      if (typeCheck && typeCheck !== true) {
         mutated.add(key);
       }
     }
@@ -52,21 +52,19 @@ function applyJob(payload, job) {
 
   job.output.forEach((output) => {
     const input = job.input.find((field) => field.name === output.name);
+    const exists = Object.prototype.hasOwnProperty.call(payload, output.name);
 
     let addToPayload;
     if (input) {
-      addToPayload =
-        Object.prototype.hasOwnProperty.call(payload, input.name) ||
-        output.touch === true;
+      if (!exists) {
+        addToPayload = true;
+        enter.add(output.name);
+      } else if (output.touch) {
+        addToPayload = true;
+      }
 
-      if (addToPayload) {
-        if (output.touch) {
-          touched.add(output.name);
-        }
-
-        if (!checkType(input, output)) {
-          mutated.add(output.name);
-        }
+      if (!checkType(input, output)) {
+        mutated.add(output.name);
       }
     } else {
       addToPayload = true;
