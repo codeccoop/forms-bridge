@@ -265,7 +265,7 @@ export default function CustomFieldsTable({ customFields, setCustomFields }) {
                         marginLeft: "2px",
                       }}
                       size="compact"
-                      variant="primary"
+                      variant="secondary"
                       onClick={() => setTagSelector(i)}
                       __next40pxDefaultSize
                     >

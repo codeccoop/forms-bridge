@@ -21,7 +21,7 @@ return [
             'default' => __('Prospects', 'forms-bridge'),
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'stcomm_id',
             'label' => __('Prospect status', 'forms-bridge'),
             'required' => true,
@@ -54,29 +54,6 @@ return [
     'form' => [
         'title' => __('Prospects', 'forms-bridge'),
         'fields' => [
-            [
-                'name' => 'status',
-                'value' => '1',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'typent_id',
-                'value' => '8',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'client',
-                'value' => '2',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'stcomm_id',
-                'type' => 'hidden',
-                'required' => true,
-            ],
             [
                 'name' => 'firstname',
                 'label' => __('First name', 'forms-bridge'),
@@ -116,28 +93,22 @@ return [
     'bridge' => [
         'endpoint' => '/api/index.php/thirdparties',
         'method' => 'POST',
+        'custom_fields' => [
+            [
+                'name' => 'status',
+                'value' => '1',
+            ],
+            [
+                'name' => 'typent_id',
+                'value' => '8',
+            ],
+            [
+                'name' => 'client',
+                'value' => '2',
+            ],
+        ],
         'mutations' => [
             [
-                [
-                    'from' => 'status',
-                    'to' => 'status',
-                    'cast' => 'string',
-                ],
-                [
-                    'from' => 'typent_id',
-                    'to' => 'typent_id',
-                    'cast' => 'string',
-                ],
-                [
-                    'from' => 'client',
-                    'to' => 'client',
-                    'cast' => 'string',
-                ],
-                [
-                    'from' => 'stcomm_id',
-                    'to' => 'stcomm_id',
-                    'cast' => 'string',
-                ],
                 [
                     'from' => 'firstname',
                     'to' => 'name[0]',

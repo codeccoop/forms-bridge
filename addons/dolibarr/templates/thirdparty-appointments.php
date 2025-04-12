@@ -4,49 +4,6 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-add_filter(
-    'forms_bridge_template_data',
-    function ($data, $template_name) {
-        if ($template_name === 'dolibarr-thirdparty-appointments') {
-            $index = array_search(
-                'owner',
-                array_column($data['form']['fields'], 'name')
-            );
-
-            if ($index !== false) {
-                $field = &$data['form']['fields'][$index];
-                $field['value'] = base64_encode($field['value']);
-            }
-        }
-
-        return $data;
-    },
-    10,
-    2
-);
-
-add_filter(
-    'forms_bridge_workflow_job_payload',
-    function ($payload, $job, $bridge) {
-        if (
-            $bridge->template === 'dolibarr-thirdparty-appointments' &&
-            $job->name === 'dolibarr-get-owner-by-email'
-        ) {
-            if (isset($payload['owner_email'])) {
-                $payload['owner_email'] = base64_decode(
-                    $payload['owner_email']
-                );
-            } elseif (isset($payload['owner'])) {
-                $payload['owner'] = base64_decode($payload['owner']);
-            }
-        }
-
-        return $payload;
-    },
-    5,
-    3
-);
-
 return [
     'title' => __('Company Appointments', 'forms-bridge'),
     'fields' => [
@@ -59,19 +16,14 @@ return [
             'value' => '/api/index.php/agendaevents',
         ],
         [
-            'ref' => '#form',
-            'name' => 'title',
-            'default' => __('Web Appointments', 'forms-bridge'),
-        ],
-        [
-            'ref' => '#form/fields[]',
-            'name' => 'owner',
+            'ref' => '#bridge/custom_fields[]',
+            'name' => 'owner_email',
             'label' => __('Owner email', 'forms-bridge'),
             'type' => 'string',
             'required' => true,
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'type_code',
             'label' => __('Event type', 'forms-bridge'),
             'type' => 'options',
@@ -97,7 +49,7 @@ return [
             'required' => true,
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'label',
             'label' => __('Event label', 'forms-bridge'),
             'type' => 'string',
@@ -105,47 +57,27 @@ return [
             'default' => __('Web Appointment', 'forms-bridge'),
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'fulldayevent',
             'label' => __('Is all day event?', 'forms-bridge'),
             'type' => 'boolean',
             'default' => false,
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'duration',
             'label' => __('Duration (Hours)', 'forms-bridge'),
             'type' => 'number',
             'default' => 1,
         ],
+        [
+            'ref' => '#form',
+            'name' => 'title',
+            'default' => __('Web Appointments', 'forms-bridge'),
+        ],
     ],
     'form' => [
         'fields' => [
-            [
-                'name' => 'type_code',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'label',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'fulldayevent',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'owner',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'duration',
-                'type' => 'hidden',
-                'required' => true,
-            ],
             [
                 'name' => 'name',
                 'label' => __('Company name', 'forms-bridge'),
@@ -320,11 +252,6 @@ return [
         'mutations' => [
             [
                 [
-                    'from' => 'owner',
-                    'to' => 'owner_email',
-                    'cast' => 'string',
-                ],
-                [
                     'from' => 'type_code',
                     'to' => 'type_code',
                     'cast' => 'string',
@@ -347,8 +274,6 @@ return [
             ],
             [],
             [],
-            [],
-            [],
             [
                 [
                     'from' => 'contact_email',
@@ -356,10 +281,10 @@ return [
                     'cast' => 'string',
                 ],
             ],
+            [],
         ],
         'workflow' => [
             'dolibarr-get-owner-by-email',
-            'forms-bridge-timestamp',
             'dolibarr-appointment-dates',
             'dolibarr-thirdparty-id',
             'dolibarr-appointment-attendee',

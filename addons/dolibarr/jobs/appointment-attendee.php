@@ -102,15 +102,12 @@ return [
                     [
                         'type' => 'object',
                         'properties' => [
-                            'type' => 'object',
-                            'properties' => [
-                                'id' => ['type' => 'string'],
-                                'mandatory' => ['type' => 'string'],
-                                'answer_status' => ['type' => 'string'],
-                                'transparency' => ['type' => 'string'],
-                            ],
-                            'additionalProperties' => false,
+                            'id' => ['type' => 'string'],
+                            'mandatory' => ['type' => 'string'],
+                            'answer_status' => ['type' => 'string'],
+                            'transparency' => ['type' => 'string'],
                         ],
+                        'additionalProperties' => false,
                     ],
                 ],
             ],

@@ -10,11 +10,11 @@ add_filter(
         if ($template_name === 'dolibarr-contacts') {
             $index = array_search(
                 'no_email',
-                array_column($data['form']['fields'], 'name')
+                array_column($data['bridge']['custom_fields'], 'name')
             );
 
             if ($index !== false) {
-                $field = &$data['form']['fields'][$index];
+                $field = &$data['bridge']['custom_fields'][$index];
                 $field['value'] = $field['value'] ? '0' : '1';
             }
         }
@@ -42,7 +42,7 @@ return [
             'default' => __('Contacts', 'forms-bridge'),
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'no_email',
             'label' => __('Subscrive to email', 'forms-bridge'),
             'type' => 'boolean',
@@ -52,17 +52,6 @@ return [
     'form' => [
         'title' => __('Contacts', 'forms-bridge'),
         'fields' => [
-            [
-                'name' => 'status',
-                'value' => '1',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'no_email',
-                'type' => 'hidden',
-                'required' => true,
-            ],
             [
                 'name' => 'firstname',
                 'label' => __('First name', 'forms-bridge'),
@@ -91,6 +80,12 @@ return [
     ],
     'bridge' => [
         'endpoint' => '/api/index.php/contacts',
+        'custom_fields' => [
+            [
+                'name' => 'status',
+                'value' => '1',
+            ],
+        ],
         'mutations' => [
             [
                 [

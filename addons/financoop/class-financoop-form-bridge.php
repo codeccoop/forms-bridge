@@ -21,6 +21,16 @@ class Finan_Coop_Form_Bridge extends Rest_Form_Bridge
     public const allowed_methods = ['POST'];
 
     /**
+     * Returns json as static bridge content type.
+     *
+     * @return string.
+     */
+    protected function content_type()
+    {
+        return 'application/json';
+    }
+
+    /**
      * Performs an http request to Odoo REST API.
      *
      * @param array $payload Payload data.

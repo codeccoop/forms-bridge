@@ -1,42 +1,23 @@
 // source
 import Bridge from "../../../../src/components/Bridges/Bridge";
-import useDolibarrApi from "../hooks/useDolibarrApi";
 import NewDolibarrBridge from "./NewBridge";
 
 const { TextControl, SelectControl } = wp.components;
 const { __ } = wp.i18n;
 
 export default function DolibarrBridge({ data, update, remove }) {
-  const [{ api_keys }] = useDolibarrApi();
-  const keyOptions = [{ label: "", value: "" }].concat(
-    api_keys.map(({ name }) => ({
-      label: name,
-      value: name,
-    }))
-  );
-
   return (
     <Bridge
       data={data}
       update={update}
       remove={remove}
-      schema={["name", "form_id", "api_key", "endpoint"]}
+      schema={["name", "backend", "form_id", "endpoint"]}
       template={({ add, schema }) => (
         <NewDolibarrBridge add={(data) => add(data)} schema={schema} />
       )}
     >
       {({ data, update }) => (
         <>
-          <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
-            <SelectControl
-              label={__("API Key", "forms-bridge")}
-              value={data.api_key || ""}
-              onChange={(api_key) => update({ ...data, api_key })}
-              options={keyOptions}
-              __nextHasNoMarginBottom
-              __next40pxDefaultSize
-            />
-          </div>
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
             <TextControl
               label={__("Endpoint", "forms-bridge")}

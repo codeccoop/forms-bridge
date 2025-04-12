@@ -616,7 +616,10 @@ class Form_Bridge_Template
             }
 
             // Format backend headers' values
-            if ($field['ref'] === '#backend/headers[]') {
+            if (
+                $field['ref'] === '#backend/headers[]' ||
+                $field['ref'] === '#bridge/custom_fields[]'
+            ) {
                 $field['value'] = [
                     'name' => $field['name'],
                     'value' => $field['value'],

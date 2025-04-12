@@ -23,7 +23,7 @@ return [
             'default' => __('Company Prospects', 'forms-bridge'),
         ],
         [
-            'ref' => '#form/fields[]',
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'stcomm_id',
             'label' => __('Prospect status', 'forms-bridge'),
             'required' => true,
@@ -56,29 +56,6 @@ return [
     'form' => [
         'title' => __('Company Leads', 'forms-bridge'),
         'fields' => [
-            [
-                'name' => 'status',
-                'value' => '1',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'typent_id',
-                'value' => '2',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'client',
-                'value' => '2',
-                'type' => 'hidden',
-                'required' => true,
-            ],
-            [
-                'name' => 'stcomm_id',
-                'type' => 'hidden',
-                'required' => true,
-            ],
             [
                 'name' => 'name',
                 'label' => __('Company name', 'forms-bridge'),
@@ -163,35 +140,28 @@ return [
     'bridge' => [
         'endpoint' => '/api/index.php/contacts',
         'method' => 'POST',
+        'custom_fields' => [
+            [
+                'name' => 'status',
+                'value' => '1',
+            ],
+            [
+                'name' => 'typent_id',
+                'value' => '2',
+            ],
+            [
+                'name' => 'client',
+                'value' => '2',
+            ],
+        ],
         'mutations' => [
             [
-                [
-                    'from' => 'status',
-                    'to' => 'status',
-                    'cast' => 'string',
-                ],
-                [
-                    'from' => 'typent_id',
-                    'to' => 'typent_id',
-                    'cast' => 'string',
-                ],
-                [
-                    'from' => 'client',
-                    'to' => 'client',
-                    'cast' => 'string',
-                ],
-                [
-                    'from' => 'stcomm_id',
-                    'to' => 'stcomm_id',
-                    'cast' => 'string',
-                ],
                 [
                     'from' => 'email',
                     'to' => 'contact_email',
                     'cast' => 'copy',
                 ],
             ],
-            [],
             [],
             [
                 [
@@ -200,6 +170,7 @@ return [
                     'cast' => 'string',
                 ],
             ],
+            [],
         ],
         'workflow' => [
             'dolibarr-country-id',

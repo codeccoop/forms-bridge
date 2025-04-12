@@ -34,11 +34,11 @@ return [
         [
             'name' => 'name',
             'schema' => ['type' => 'string'],
+            'required' => true,
         ],
         [
             'name' => 'idprof1',
             'schema' => ['type' => 'string'],
-            'required' => true,
         ],
     ],
     'output' => [
