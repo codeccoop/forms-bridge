@@ -1,10 +1,28 @@
 // source
 import { useGeneral } from "../../providers/Settings";
 
+// logos
+import dolibarrLogo from "../../../addons/dolibarr/assets/logo.png";
+import financoopLogo from "../../../addons/financoop/assets/logo.png";
+import googleSheetsLogo from "../../../addons/google-sheets/assets/logo.png";
+import odooLogo from "../../../addons/odoo/assets/logo.png";
+import restLogo from "../../../addons/rest-api/assets/logo.png";
+import zohoLogo from "../../../addons/zoho/assets/logo.png";
+
+const LOGOS = {
+  "dolibarr": dolibarrLogo,
+  "financoop": financoopLogo,
+  "google-sheets": googleSheetsLogo,
+  "odoo": odooLogo,
+  "rest-api": restLogo,
+  "zoho": zohoLogo,
+};
+
 const {
   PanelBody,
   ToggleControl,
   __experimentalSpacer: Spacer,
+  Tooltip,
 } = wp.components;
 const { useMemo } = wp.element;
 const { __ } = wp.i18n;
@@ -42,18 +60,28 @@ export default function Addons() {
       </p>
       <Spacer paddingBottom="5px" />
       {table.map((row, i) => (
-        <div
-          key={i}
-          style={{ display: "flex", justifyContent: "left", height: "2em" }}
-        >
+        <div key={i} style={{ display: "flex", justifyContent: "left" }}>
           {Object.entries(row).map(([addon, enabled]) => (
-            <div style={{ width: "300px" }}>
+            <div style={{ width: "300px", display: "flex", padding: "20px 0" }}>
               <ToggleControl
-                label={__(addon, "forms-bridge")}
                 checked={enabled}
                 onChange={() => toggle(addon)}
                 __nextHasNoMarginBottom
               />
+              <Tooltip text={__(addon, "forms-bridge")}>
+                <img
+                  alt={addon}
+                  src={"data:image/png;base64," + LOGOS[addon]}
+                  height="30px"
+                  width="95px"
+                  style={{
+                    marginTop: "-8px",
+                    objectFit: "contain",
+                    objectPosition: "left",
+                    marginLeft: "5px",
+                  }}
+                />
+              </Tooltip>
             </div>
           ))}
         </div>
