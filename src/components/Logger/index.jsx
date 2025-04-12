@@ -75,7 +75,7 @@ function LogLines({ loading, error, logs }) {
     return <p style={{ textAlign: "center" }}>{error}</p>;
   }
 
-  if (loading) {
+  if (loading && !logs.length) {
     return (
       <p style={{ textAlign: "center" }}>{__("Loading...", "forms-bridge")}</p>
     );
