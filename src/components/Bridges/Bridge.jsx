@@ -5,7 +5,6 @@ import useBridgeNames from "../../hooks/useBridgeNames";
 import CustomFields from "../CustomFields";
 import Workflow from "../Workflow";
 import NewBridge from "./NewBridge";
-import { useApiContentType, useApiFields } from "../../providers/ApiSchema";
 
 const {
   TextControl,

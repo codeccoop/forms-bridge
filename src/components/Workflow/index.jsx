@@ -21,7 +21,11 @@ export default function Workflow({
     <>
       <Button
         disabled={!form}
-        variant={form && workflow.length ? "primary" : "secondary"}
+        variant={
+          (form && workflow.length) || mutations[0].length
+            ? "primary"
+            : "secondary"
+        }
         onClick={() => setOpen(true)}
         style={{ width: "150px", justifyContent: "center" }}
         __next40pxDefaultSize

@@ -5,7 +5,7 @@ import useBridgeNames from "../../../hooks/useBridgeNames";
 const { useMemo, useState, useEffect } = wp.element;
 const { __ } = wp.i18n;
 
-const fieldsOrder = ["name", "form_id"];
+const fieldsOrder = ["name"];
 
 export default function BridgeStep({ fields, data, setData }) {
   const bridgeNames = useBridgeNames();

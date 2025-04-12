@@ -31,6 +31,7 @@ function Field({ data, error }) {
           value={data.value}
           onChange={data.onChange}
           options={data.options}
+          multiple={!!data.multiple}
         />
       );
     case "string":
@@ -158,7 +159,16 @@ function OptionsField({
       <select
         name={name}
         value={value || ""}
-        onChange={({ target }) => onChange(target.value)}
+        onChange={({ target }) => {
+          const value = Array.from(target.children)
+            .filter((opt) => opt.selected)
+            .map((opt) => opt.value);
+          if (multiple) {
+            onChange(value);
+          } else {
+            onChange(value[0]);
+          }
+        }}
         style={style}
         multiple={!!multiple}
         {...constraints}
@@ -172,12 +182,14 @@ function OptionsField({
 }
 
 export default function TemplateField({ data, error }) {
+  const isRequired = !!data.required;
   return (
     <label style={{ margin: "0.5rem 0" }} for={data.name}>
       {data.label}
+      {isRequired && <span style={{ marginLeft: "3px", color: "red" }}>*</span>}
       {(data.description && (
         <p style={{ marginTop: 0, opacity: 0.8 }}>
-          <em>{data.description}</em>
+          <em dangerouslySetInnerHTML={{ __html: data.description }}></em>
         </p>
       )) || <br />}
       <Field data={data} error={error} />
