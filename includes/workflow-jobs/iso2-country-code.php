@@ -12,7 +12,7 @@ add_filter(
         }
 
         $job = new \FORMS_BRIDGE\Workflow_Job(
-            'country-code',
+            'iso2-country-code',
             [
                 'title' => __('ISO2 country code', 'forms-bridge'),
                 'description' => __(
