@@ -15,14 +15,6 @@ if (!defined('ABSPATH')) {
 class Zoho_Form_Bridge extends Form_Bridge
 {
     /**
-     * Handles a custom http origin token to be unseted from headers
-     * before submits.
-     *
-     * @var string
-     */
-    public const http_origin_token = 'zoho-http-origin';
-
-    /**
      * Handles the oauth access token transient name.
      *
      * @var string
@@ -203,7 +195,6 @@ class Zoho_Form_Bridge extends Form_Bridge
             $this->endpoint,
             ['data' => $payload],
             [
-                'Origin' => self::http_origin_token,
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
                 'Authorization' => 'Zoho-oauthtoken ' . $access_token,
@@ -258,7 +249,6 @@ class Zoho_Form_Bridge extends Form_Bridge
                 'module' => $module,
             ],
             [
-                'Origin' => self::http_origin_token,
                 // 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
                 'Authorization' => 'Zoho-oauthtoken ' . $access_token,
@@ -283,9 +273,7 @@ class Zoho_Form_Bridge extends Form_Bridge
 
     public static function cleanup_headers($args)
     {
-        $origin = $args['headers']['Origin'] ?? null;
-
-        if ($origin === self::http_origin_token) {
+        if (isset($args['headers']['Organization-Id'])) {
             unset($args['headers']['Origin']);
             unset($args['headers']['Client-Id']);
             unset($args['headers']['Client-Secret']);

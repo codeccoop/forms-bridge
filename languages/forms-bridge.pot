@@ -3918,7 +3918,7 @@ msgstr ""
 #: assets/plugin.bundle.js
 #: addons/zoho/assets/addon.bundle.js:4785
 msgid "zoho"
-msgstr "Zoho"
+msgstr "Zoho CRM"
 
 #: assets/plugin.bundle.js:26
 msgid "Load settings error"

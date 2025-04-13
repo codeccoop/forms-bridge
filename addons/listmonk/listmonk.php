@@ -4,6 +4,7 @@ namespace FORMS_BRIDGE;
 
 use WP_REST_Server;
 use HTTP_BRIDGE\Http_Backend;
+use WP_Error;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -47,6 +48,10 @@ class Listmonk_Addon extends Rest_Addon
      */
     protected static $bridge_template_class = '\FORMS_BRIDGE\Listmonk_Form_Bridge_Template';
 
+    /**
+     * Addon constructor. Inherits from the abstrac addon constructor and initializes
+     * the lists REST API endpoint.
+     */
     protected function construct(...$args)
     {
         parent::construct(...$args);

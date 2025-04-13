@@ -145,7 +145,15 @@ function ObjectProperties({
   );
 }
 
-function ArrayItems({ items, showDiff, enter, exit, mutated, touched }) {
+function ArrayItems({
+  items,
+  showDiff,
+  enter,
+  exit,
+  mutated,
+  touched,
+  simple,
+}) {
   if (Array.isArray(items)) {
     const types = items.reduce((types, { type }) => {
       if (!types.includes(type)) {
@@ -164,11 +172,12 @@ function ArrayItems({ items, showDiff, enter, exit, mutated, touched }) {
         exit={exit}
         mutated={mutated}
         touched={touched}
+        simple={simple}
       />
     );
   }
 
-  if (items.type === "object") {
+  if (items.type === "object" && !simple) {
     return (
       <ObjectProperties
         properties={items.properties || {}}

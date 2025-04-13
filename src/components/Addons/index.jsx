@@ -2,17 +2,25 @@
 import { useGeneral } from "../../providers/Settings";
 
 // logos
+import biginLogo from "../../../addons/bigin/assets/logo.png";
+import brevoLogo from "../../../addons/brevo/assets/logo.png";
 import dolibarrLogo from "../../../addons/dolibarr/assets/logo.png";
 import financoopLogo from "../../../addons/financoop/assets/logo.png";
 import googleSheetsLogo from "../../../addons/google-sheets/assets/logo.png";
+import listmonkLogo from "../../../addons/listmonk/assets/logo.png";
+import mailchimpLogo from "../../../addons/mailchimp/assets/logo.png";
 import odooLogo from "../../../addons/odoo/assets/logo.png";
 import restLogo from "../../../addons/rest-api/assets/logo.png";
 import zohoLogo from "../../../addons/zoho/assets/logo.png";
 
 const LOGOS = {
+  "bigin": biginLogo,
+  "brevo": brevoLogo,
   "dolibarr": dolibarrLogo,
   "financoop": financoopLogo,
   "google-sheets": googleSheetsLogo,
+  "listmonk": listmonkLogo,
+  "mailchimp": mailchimpLogo,
   "odoo": odooLogo,
   "rest-api": restLogo,
   "zoho": zohoLogo,

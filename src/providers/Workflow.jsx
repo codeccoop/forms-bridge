@@ -62,10 +62,12 @@ function applyJob(payload, job) {
         enter.add(output.name);
       } else if (output.touch) {
         addToPayload = true;
+        touched.add(output.name);
       }
 
-      if (!checkType(input, output)) {
-        mutated.add(output.name);
+      if (!checkType(input.schema, output.schema)) {
+        touched.add(output.name);
+        addToPayload = true;
       }
     } else {
       addToPayload = true;

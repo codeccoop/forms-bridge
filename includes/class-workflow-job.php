@@ -65,6 +65,11 @@ class Workflow_Job
                             'minItems' => ['type' => 'integer'],
                             'additionalProperties' => ['type' => 'boolean'],
                             'additionalItems' => ['type' => 'boolean'],
+                            'required' => [
+                                'type' => 'array',
+                                'items' => ['type' => 'string'],
+                                'additionalItems' => true,
+                            ],
                         ],
                         'required' => ['type'],
                         'additionalProperties' => false,
@@ -327,7 +332,7 @@ class Workflow_Job
         );
 
         $method = $this->method;
-        $payload = $method($payload, $bridge);
+        $payload = $method($payload, $bridge, $this);
 
         if (empty($payload)) {
             return;
