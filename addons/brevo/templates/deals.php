@@ -160,7 +160,7 @@ return [
                 ],
                 [
                     'from' => 'website',
-                    'to' => 'attributes.website',
+                    'to' => 'attributes.domain',
                     'cast' => 'string',
                 ],
                 [
