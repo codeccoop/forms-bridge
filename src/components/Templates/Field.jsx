@@ -149,7 +149,7 @@ function OptionsField({
     );
   }
 
-  const style = { width: "100%" };
+  const style = { width: "100%", maxWidth: "unset" };
   if (error) {
     style.border = "1px solid red";
   }

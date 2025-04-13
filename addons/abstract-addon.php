@@ -240,7 +240,8 @@ abstract class Addon extends Singleton
             static function ($custom_field) {
                 if (
                     empty($custom_field['name']) ||
-                    empty($custom_field['value'])
+                    (empty($custom_field['value']) &&
+                        $custom_field['value'] !== '0')
                 ) {
                     return;
                 }

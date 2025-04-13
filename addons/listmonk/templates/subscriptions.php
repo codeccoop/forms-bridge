@@ -88,7 +88,7 @@ return [
             'name' => 'endpoint',
             'label' => __('Bridge endpoint', 'forms-bridge'),
             'type' => 'string',
-            'value' => '/api/subscriptions',
+            'value' => '/api/subscribers',
         ],
         [
             'ref' => '#bridge',
