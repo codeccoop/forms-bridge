@@ -20,6 +20,8 @@ abstract class Form_Bridge
         'properties' => [
             'name' => ['type' => 'string'],
             'form_id' => ['type' => 'string'],
+            'backend' => ['type' => 'string'],
+            'credential' => ['type' => 'string'],
             'custom_fields' => [
                 'type' => 'array',
                 'items' => [
@@ -64,7 +66,6 @@ abstract class Form_Bridge
                     ],
                 ],
             ],
-            'template' => ['type' => 'string'],
             'workflow' => [
                 'type' => 'array',
                 'items' => ['type' => 'string'],
@@ -74,6 +75,7 @@ abstract class Form_Bridge
         'required' => [
             'name',
             'form_id',
+            'backend',
             'constants',
             'mutations',
             'workflow',
@@ -124,8 +126,10 @@ abstract class Form_Bridge
                 return $this->backend();
             case 'content_type':
                 return $this->content_type();
-            case 'api_fields':
-                return $this->api_fields();
+            case 'credential':
+                return $this->credential();
+            case 'api_schema':
+                return $this->api_schema();
             case 'workflow':
                 return $this->workflow();
             default:
@@ -186,9 +190,24 @@ abstract class Form_Bridge
         return $backend->content_type;
     }
 
-    protected function api_fields()
+    /**
+     * Gets bridge's endpoint fields schema.
+     *
+     * @return array<array>
+     */
+    protected function api_schema()
     {
         return [];
+    }
+
+    /**
+     * Gets bridge's backend credential data.
+     *
+     * @return array|null
+     */
+    protected function credential()
+    {
+        return;
     }
 
     /**
