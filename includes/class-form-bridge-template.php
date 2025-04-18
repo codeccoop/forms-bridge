@@ -341,8 +341,8 @@ class Form_Bridge_Template
         ];
 
         $config = self::with_defaults($config, $schema);
-
-        return forms_bridge_validate_with_schema($config, $schema);
+        $config_or_error = forms_bridge_validate_with_schema($config, $schema);
+        return $config_or_error;
     }
 
     /**
@@ -355,9 +355,16 @@ class Form_Bridge_Template
      */
     private static function with_defaults($config, $schema)
     {
-        // merge template defaults with common defaults
-        $default = forms_bridge_merge_object(
+        // merge template config with addon defaults
+        $config = forms_bridge_merge_object(
+            $config,
             static::defaults(),
+            self::$schema
+        );
+
+        // merge template defaults with common defaults
+        $config = forms_bridge_merge_object(
+            $config,
             [
                 'description' => '',
                 'fields' => [
@@ -370,8 +377,15 @@ class Form_Bridge_Template
                     ],
                     [
                         'ref' => '#backend',
-                        'name' => 'backend',
+                        'name' => 'name',
                         'label' => __('Backend', 'forms-bridge'),
+                        'type' => 'string',
+                        'required' => true,
+                    ],
+                    [
+                        'ref' => '#backend',
+                        'name' => 'base_url',
+                        'label' => __('Base URL', 'forms-bridge'),
                         'type' => 'string',
                         'required' => true,
                     ],
@@ -386,6 +400,7 @@ class Form_Bridge_Template
                 'bridge' => [
                     'name' => '',
                     'form_id' => '',
+                    'backend' => '',
                     'custom_fields' => [],
                     'mutations' => [[]],
                     'workflow' => [],
@@ -410,9 +425,6 @@ class Form_Bridge_Template
             ],
             $schema
         );
-
-        // merge config with defaults
-        $config = forms_bridge_merge_object($config, $default, $schema);
 
         // add integrations to config
         return array_merge($config, [
@@ -492,6 +504,10 @@ class Form_Bridge_Template
                     return empty($field['value']);
                 })
             ),
+            'bridge' => $this->config['bridge'],
+            'backend' => $this->config['backend'],
+            'form' => $this->config['form'],
+            'credential' => $this->config['credential'],
         ];
     }
 
@@ -676,6 +692,7 @@ class Form_Bridge_Template
                 $data['form']['id'] ?? null,
                 $data['integration']
             );
+
             if ($create_form) {
                 $form_id = $integration_instance->create_form($data['form']);
 
