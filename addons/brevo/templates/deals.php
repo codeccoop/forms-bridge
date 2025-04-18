@@ -9,23 +9,10 @@ global $forms_bridge_country_phone_codes;
 return [
     'title' => __('Deals', 'forms-bridge'),
     'description' => __(
-        'Creates a company and associate it with a deal',
+        'Creates a contact and associates it with a deal',
         'forms-bridge'
     ),
     'fields' => [
-        [
-            'ref' => '#backend',
-            'name' => 'name',
-            'label' => __(
-                'Label of the Brevo API backend connection',
-                'forms-bridge'
-            ),
-        ],
-        [
-            'ref' => '#bridge',
-            'name' => 'method',
-            'value' => 'POST',
-        ],
         [
             'ref' => '#bridge',
             'name' => 'endpoint',
@@ -54,15 +41,6 @@ return [
             'name' => 'pipeline',
             'label' => __('Pipeline', 'forms-bridge'),
             'type' => 'string',
-        ],
-        [
-            'ref' => '#backend/headers[]',
-            'name' => 'api-key',
-            'label' => __('Brevo API Key', 'forms-bridge'),
-            'description' => __(
-                'Get it from your <a href="https://app.brevo.com/settings/keys/api" target="_blank">account</a>',
-                'forms-bridge'
-            ),
         ],
         [
             'ref' => '#form',

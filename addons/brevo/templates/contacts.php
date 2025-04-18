@@ -44,38 +44,12 @@ add_filter(
 
 return [
     'title' => __('Contacts', 'forms-bridge'),
+    'description' => __('Contact form', 'forms-bridge'),
     'fields' => [
-        [
-            'ref' => '#backend',
-            'name' => 'name',
-            'label' => __(
-                'Label of the Brevo API backend connection',
-                'forms-bridge'
-            ),
-        ],
-        [
-            'ref' => '#bridge',
-            'name' => 'method',
-            'value' => 'POST',
-        ],
         [
             'ref' => '#bridge',
             'name' => 'endpoint',
             'value' => '/v3/contacts',
-        ],
-        [
-            'ref' => '#backend/headers[]',
-            'name' => 'api-key',
-            'label' => __('Brevo API Key', 'forms-bridge'),
-            'description' => __(
-                'Get it from your <a href="https://app.brevo.com/settings/keys/api" target="_blank">account</a>',
-                'forms-bridge'
-            ),
-        ],
-        [
-            'ref' => '#form',
-            'name' => 'title',
-            'default' => __('Contacts', 'forms-bridge'),
         ],
         [
             'ref' => '#bridge/custom_fields[]',
@@ -86,6 +60,11 @@ return [
                 'List IDs separated by commas. Leave it empty if you don\'t want to subscrive contact to any list',
                 'forms-bridge'
             ),
+        ],
+        [
+            'ref' => '#form',
+            'name' => 'title',
+            'default' => __('Contacts', 'forms-bridge'),
         ],
     ],
     'form' => [

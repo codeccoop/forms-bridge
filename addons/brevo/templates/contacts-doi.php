@@ -68,39 +68,16 @@ add_filter(
 );
 
 return [
-    'title' => __('Contacts DOI', 'forms-bridge'),
+    'title' => __('Subscription DOI', 'forms-bridge'),
+    'description' => __(
+        'Subscription form with double opt-in confirmation',
+        'forms-bridge'
+    ),
     'fields' => [
-        [
-            'ref' => '#backend',
-            'name' => 'name',
-            'label' => __(
-                'Label of the Brevo API backend connection',
-                'forms-bridge'
-            ),
-        ],
-        [
-            'ref' => '#bridge',
-            'name' => 'method',
-            'value' => 'POST',
-        ],
         [
             'ref' => '#bridge',
             'name' => 'endpoint',
             'value' => '/v3/contacts/doubleOptinConfirmation',
-        ],
-        [
-            'ref' => '#backend/headers[]',
-            'name' => 'api-key',
-            'label' => __('Brevo API Key', 'forms-bridge'),
-            'description' => __(
-                'Get it from your <a href="https://app.brevo.com/settings/keys/api" target="_blank">account</a>',
-                'forms-bridge'
-            ),
-        ],
-        [
-            'ref' => '#form',
-            'name' => 'title',
-            'default' => __('Contacts DOI', 'forms-bridge'),
         ],
         [
             'ref' => '#bridge/custom_fields[]',
@@ -127,9 +104,14 @@ return [
             ),
             'required' => true,
         ],
+        [
+            'ref' => '#form',
+            'name' => 'title',
+            'default' => __('Subscription DOI', 'forms-bridge'),
+        ],
     ],
     'form' => [
-        'title' => __('Contacts DOI', 'forms-bridge'),
+        'title' => __('Subscription DOI', 'forms-bridge'),
         'fields' => [
             [
                 'name' => 'email',
