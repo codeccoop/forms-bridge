@@ -1,10 +1,9 @@
+import BridgeStep from "../../../../src/components/Templates/Steps/BridgeStep";
 import TemplateStep from "../../../../src/components/Templates/Steps/Step";
 import TemplateField from "../../../../src/components/Templates/Field";
 
 const { useMemo, useEffect } = wp.element;
 const { __ } = wp.i18n;
-
-const fieldsOrder = ["name"];
 
 const API_FIELDS = [
   "listIds",
@@ -15,11 +14,11 @@ const API_FIELDS = [
   "templateId",
 ];
 
-export default function BridgeStep({ fields, data, setData }) {
-  const lists = data._lists || [];
-  const pipelines = data._pipelines || [];
-  const products = data._products || [];
-  const templates = data._templates || [];
+export default function BrevoBridgeStep({ fields, data, setData }) {
+  const lists = useMemo(() => data._lists || [], [data._lists]);
+  const pipelines = useMemo(() => data._pipelines || [], [data._pipelines]);
+  const products = useMemo(() => data._products || [], [data._products]);
+  const templates = useMemo(() => data._templates || [], [data._templates]);
 
   const listOptions = useMemo(
     () =>
@@ -57,28 +56,14 @@ export default function BridgeStep({ fields, data, setData }) {
     [pipelines]
   );
 
-  const sortedFields = useMemo(
-    () =>
-      fields.sort((a, b) => {
-        if (!fieldsOrder.includes(a.name)) {
-          return 1;
-        } else if (!fieldsOrder.includes(b.name)) {
-          return -1;
-        } else {
-          fieldsOrder.indexOf(a.name) - fieldsOrder.indexOf(b.name);
-        }
-      }),
-    [fields]
-  );
-
   const standardFields = useMemo(
-    () => sortedFields.filter(({ name }) => !API_FIELDS.includes(name)),
-    [sortedFields]
+    () => fields.filter(({ name }) => !API_FIELDS.includes(name)),
+    [fields]
   );
 
   const apiFields = useMemo(
     () =>
-      sortedFields
+      fields
         .filter(({ name }) => API_FIELDS.includes(name))
         .map((field) => {
           if (field.name === "listIds" || field.name === "includeListIds") {
@@ -108,21 +93,21 @@ export default function BridgeStep({ fields, data, setData }) {
             };
           }
         }),
-    [sortedFields]
+    [fields, listOptions, productOptions, pipelineOptions, templateOptions]
   );
 
   useEffect(() => {
     const defaults = {};
 
-    if (productOptions.length === 1) {
+    if (productOptions.length > 0 && !data.productId) {
       defaults.product = productOptions[0].value;
     }
 
-    if (templateOptions.length === 1) {
+    if (templateOptions.length > 0 && !data.templateId) {
       defaults.templateId = templateOptions[0].value;
     }
 
-    if (pipelineOptions.length === 1) {
+    if (pipelineOptions.length > 0 && !data.pipeline) {
       defaults.pipeline = pipelines[0].value;
     }
 
@@ -130,35 +115,10 @@ export default function BridgeStep({ fields, data, setData }) {
   }, [productOptions, templateOptions, pipelineOptions]);
 
   return (
-    <TemplateStep
-      name={__("Bridge", "forms-bridge")}
-      description={__("Configure the bridge", "forms-bridge")}
-    >
-      {standardFields.map((field) => (
-        <TemplateField
-          data={{
-            ...field,
-            value: data[field.name] || "",
-            onChange: (value) => setData({ [field.name]: value }),
-          }}
-        />
-      ))}
-      {apiFields.map((field) => (
-        <TemplateField
-          data={{
-            ...field,
-            value: data[field.name] || "",
-            onChange: (value) => setData({ [field.name]: value }),
-            description:
-              field.options.length === 0
-                ? __(
-                    "It seems there is no values for this field. Please, check your backend connection",
-                    "forms-bridge"
-                  )
-                : null,
-          }}
-        />
-      ))}
-    </TemplateStep>
+    <BridgeStep
+      fields={standardFields.concat(apiFields)}
+      data={data}
+      setData={setData}
+    />
   );
 }

@@ -10,9 +10,7 @@ const { useState, useEffect, useMemo, useRef } = wp.element;
 const STEPS = [
   {
     name: "bridge",
-    step: ({ fields, data, setData }) => (
-      <BridgeStep fields={fields} data={data} setData={setData} />
-    ),
+    component: BridgeStep,
     order: 20,
   },
 ];
@@ -92,20 +90,18 @@ export default function BrevoTemplateWizard({ integration, onDone }) {
     customFields.includes("templateId") && fetchTemplates(backend);
   }, [backend, customFields]);
 
-  useEffect(
-    () =>
-      setData({
-        ...data,
-        bridge: {
-          ...(data.bridge || {}),
-          _lists: lists,
-          _products: products,
-          _pipelines: pipelines,
-          _templates: templates,
-        },
-      }),
-    [lists, products, pipelines]
-  );
+  useEffect(() => {
+    setData({
+      ...data,
+      bridge: {
+        ...(data.bridge || {}),
+        _lists: lists,
+        _products: products,
+        _pipelines: pipelines,
+        _templates: templates,
+      },
+    });
+  }, [lists, products, pipelines, templates]);
 
   return (
     <TemplateWizard
