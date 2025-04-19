@@ -25,10 +25,9 @@ export default function Credentials({ credentials, setCredentials }) {
   );
   const [tabFocus, setTabFocus] = useState(null);
   const tabs = credentials
-    .map(({ name, organization_id, client_id, client_secret, backend }, i) => ({
+    .map(({ name, organization_id, client_id, client_secret }, i) => ({
       name: String(i),
       title: name,
-      backend,
       organization_id,
       client_id,
       client_secret,

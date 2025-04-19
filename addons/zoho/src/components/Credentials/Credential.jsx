@@ -1,51 +1,25 @@
 // source
-import { useGeneral } from "../../../../../src/providers/Settings";
 import useCredentialNames from "../../hooks/useCredentialNames";
 import NewCredential from "./NewCredential";
 
-const {
-  TextControl,
-  SelectControl,
-  Button,
-  __experimentalSpacer: Spacer,
-} = wp.components;
-const { useState, useRef, useEffect } = wp.element;
+const { TextControl, Button, __experimentalSpacer: Spacer } = wp.components;
+const { useState, useEffect, useMemo } = wp.element;
 const { __ } = wp.i18n;
 
 export default function Credential({ data, update, remove }) {
   if (data.name === "add") return <NewCredential add={update} />;
 
-  const [{ backends }] = useGeneral();
-  const backendOptions = [{ label: "", value: "" }].concat(
-    backends.map(({ name }) => ({
-      label: name,
-      value: name,
-    }))
+  const [name, setName] = useState(data.name);
+
+  const names = useCredentialNames();
+  const nameConflict = useMemo(
+    () => data.name !== name.trim() && names.has(name.trim()),
+    [names, name]
   );
 
-  const [name, setName] = useState(data.name);
-  const initialName = useRef(data.name);
-
-  const credentialNames = useCredentialNames();
-  const [nameConflict, setNameConflict] = useState(false);
-  const handleSetName = (name) => {
-    setNameConflict(
-      name !== initialName.current && credentialNames.has(name.trim())
-    );
-    setName(name);
-  };
-
-  const timeout = useRef();
   useEffect(() => {
-    clearTimeout(timeout.current);
-    if (!name || nameConflict) return;
-    timeout.current = setTimeout(() => {
-      if (credentialNames.has(name.trim())) return;
-      update({ ...data, name: name.trim() });
-    }, 500);
-  }, [name]);
-
-  useEffect(() => setName(data.name), [data.name]);
+    if (name && !nameConflict) update({ ...data, name });
+  }, [name, nameConflict]);
 
   return (
     <div
@@ -71,17 +45,7 @@ export default function Credential({ data, update, remove }) {
                 : ""
             }
             value={name}
-            onChange={handleSetName}
-            __nextHasNoMarginBottom
-            __next40pxDefaultSize
-          />
-        </div>
-        <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
-          <SelectControl
-            label={__("Backend", "forms-bridge")}
-            value={data.backend}
-            onChange={(backend) => update({ ...data, backend })}
-            options={backendOptions}
+            onChange={setName}
             __nextHasNoMarginBottom
             __next40pxDefaultSize
           />

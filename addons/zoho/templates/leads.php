@@ -211,7 +211,6 @@ return [
         'scope' => 'ZohoCRM.modules.leads.CREATE',
     ],
     'backend' => [
-        'base_url' => 'https://www.zohoapis.com',
         'headers' => [
             [
                 'name' => 'Accept',

@@ -45,56 +45,6 @@ class Zoho_Addon extends Addon
     protected static $bridge_template_class = '\FORMS_BRIDGE\Zoho_Form_Bridge_Template';
 
     /**
-     * Addon constructor. Inherits from the abstract addon and initializes
-     * custom hooks.
-     */
-    protected function construct(...$args)
-    {
-        parent::construct(...$args);
-        static::custom_hooks();
-    }
-
-    /**
-     * Addon custom hooks.
-     */
-    protected static function custom_hooks()
-    {
-        add_filter(
-            'forms_bridge_zoho_credentials',
-            static function ($credentials) {
-                if (!wp_is_numeric_array($credentials)) {
-                    $credentials = [];
-                }
-
-                return array_merge(
-                    $credentials,
-                    self::setting()->credentials ?: []
-                );
-            },
-            10,
-            1
-        );
-
-        add_filter(
-            'forms_bridge_zoho_credential',
-            static function ($credential, $name) {
-                if ($credential) {
-                    return $credential;
-                }
-
-                $credentials = self::setting()->credentials ?: [];
-                foreach ($credentials as $credential) {
-                    if ($credential['name'] === $name) {
-                        return $credential;
-                    }
-                }
-            },
-            10,
-            2
-        );
-    }
-
-    /**
      * Registers the setting and its fields.
      *
      * @return array Addon's settings configuration.
@@ -110,25 +60,23 @@ class Zoho_Addon extends Addon
                         'type' => 'object',
                         'additionalProperties' => false,
                         'properties' => [
-                            'name' => [
-                                'type' => 'string',
-                                'minLength' => 1,
-                            ],
                             'organization_id' => [
                                 'type' => 'string',
                                 'minLength' => 1,
+                                'default' => '',
                             ],
                             'client_id' => [
                                 'type' => 'string',
                                 'minLength' => 1,
+                                'default' => '',
                             ],
                             'client_secret' => [
                                 'type' => 'string',
                                 'minLength' => 1,
+                                'default' => '',
                             ],
                         ],
                         'required' => [
-                            'name',
                             'organization_id',
                             'client_id',
                             'client_secret',
@@ -170,12 +118,51 @@ class Zoho_Addon extends Addon
      */
     protected static function validate_setting($data, $setting)
     {
+        $data['credentials'] = self::validate_credentials($data['credentials']);
+
         $data['bridges'] = self::validate_bridges(
             $data['bridges'],
             $data['credentials']
         );
 
         return $data;
+    }
+
+    /**
+     * Credentials setting field validation. Filters inconsistent keys
+     * based on the Http_Bridge's backends store state.
+     *
+     * @param array $credentials Collection of credentials data.
+     *
+     * @return array Validated credentials.
+     */
+    private static function validate_credentials($credentials)
+    {
+        if (!wp_is_numeric_array($credentials)) {
+            return [];
+        }
+
+        $uniques = [];
+        $validated = [];
+        foreach ($credentials as $credential) {
+            $credential = self::validate_credential(
+                $credential,
+                ['organization_id', 'client_id', 'client_secret'],
+                $uniques
+            );
+
+            if (empty($credential)) {
+                continue;
+            }
+
+            foreach ($credential as $key => $val) {
+                $credential[$key] = (string) $val;
+            }
+
+            $validated[] = $credential;
+        }
+
+        return $validated;
     }
 
     /**
@@ -229,16 +216,18 @@ class Zoho_Addon extends Addon
      * Performs a request against the backend to check the connexion status.
      *
      * @param string $backend Target backend name.
-     * @params WP_REST_Request $request Current REST request.
+     * @params array $credential Current REST request.
      *
      * @return array Ping result.
      */
-    protected function do_ping($backend, $request)
+    protected function do_ping($backend, $credential = [])
     {
-        [$credential] = self::validate_credentials(
-            [$request['credential']],
-            [$backend]
-        );
+        $credential = self::validate_credential($credential, [
+            'organization_id',
+            'client_id',
+            'client_secret',
+        ]);
+
         if (empty($credential)) {
             return ['success' => false];
         }
@@ -248,13 +237,14 @@ class Zoho_Addon extends Addon
         $bridge = new Zoho_Form_Bridge(
             [
                 'credential' => $credential['name'],
+                'backend' => $backend,
                 'endpoint' => '/crm/v7',
                 'scope' => 'ZohoCRM.settings.ALL',
             ],
             'zoho'
         );
 
-        return ['success' => $bridge->check_credentials()];
+        return ['success' => $bridge->check_credential()];
     }
 
     /**
@@ -333,17 +323,24 @@ class Zoho_Addon extends Addon
     private static function temp_register_credentials($data)
     {
         add_filter(
-            'forms_bridge_zoho_credential',
-            static function ($credential, $name) use ($data) {
-                if ($credential instanceof Zoho_Credential) {
-                    return $credential;
+            'wpct_setting_data',
+            static function ($setting, $setting_name) use ($data) {
+                if ($setting_name === 'forms-bridge_zoho') {
+                    foreach ($setting['credentials'] as $candidate) {
+                        if ($candidate['name'] === $data['name']) {
+                            $credential = $candidate;
+                            break;
+                        }
+                    }
+
+                    if (!isset($credential)) {
+                        $setting['credentials'][] = $data;
+                    }
                 }
 
-                if ($name === $data['name']) {
-                    return new Zoho_Credential($data);
-                }
+                return $setting;
             },
-            90,
+            10,
             2
         );
     }

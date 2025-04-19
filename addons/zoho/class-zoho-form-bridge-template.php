@@ -56,8 +56,10 @@ class Zoho_Form_Bridge_Template extends Form_Bridge_Template
                     'ref' => '#bridge',
                     'name' => 'scope',
                     'label' => __('Scope', 'forms-bridge'),
-                    'description' =>
+                    'description' => __(
                         'See <a href="https://www.zoho.com/accounts/protocol/oauth/scope.html">the documentation</a> for more information',
+                        'forms-bridge'
+                    ),
                     'type' => 'string',
                     'required' => true,
                 ],
@@ -104,12 +106,12 @@ class Zoho_Form_Bridge_Template extends Form_Bridge_Template
             ],
             'bridge' => [
                 'form_id' => '',
-                'backend' => '',
+                'backend' => 'Zoho API',
                 'endpoint' => '',
                 'scope' => '',
                 'credential' => '',
                 'custom_fields' => [],
-                'mutations' => [],
+                'mutations' => [[]],
             ],
             'credential' => [
                 'name' => '',

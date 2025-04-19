@@ -1,59 +1,36 @@
 // source
-import { useGeneral } from "../../../../../src/providers/Settings";
 import useCredentialNames from "../../hooks/useCredentialNames";
 
-const {
-  TextControl,
-  SelectControl,
-  Button,
-  __experimentalSpacer: Spacer,
-} = wp.components;
-const { useState } = wp.element;
+const { TextControl, Button, __experimentalSpacer: Spacer } = wp.components;
+const { useState, useMemo } = wp.element;
 const { __ } = wp.i18n;
 
 export default function NewCredential({ add }) {
-  const [{ backends }] = useGeneral();
-  const backendOptions = [{ label: "", value: "" }].concat(
-    backends.map(({ name }) => ({
-      label: name,
-      value: name,
-    }))
-  );
-
-  const credentialNames = useCredentialNames();
+  const names = useCredentialNames();
 
   const [name, setName] = useState("");
-  const [backend, setBackend] = useState("");
-  const [nameConflict, setNameConflict] = useState(false);
   const [organizationId, setOrganizationId] = useState("");
   const [clientId, setClientId] = useState("");
   const [clientSecret, setClientSecret] = useState("");
 
-  const handleSetName = (name) => {
-    setNameConflict(credentialNames.has(name.trim()));
-    setName(name);
-  };
+  const nameConflict = useMemo(() => names.has(name.trim()), [name, names]);
 
   const onClick = () => {
     add({
       name: name.trim(),
-      backend,
       organization_id: organizationId,
       client_id: clientId,
       client_secret: clientSecret,
     });
 
     setName("");
-    setBackend("");
     setOrganizationId("");
     setClientId("");
     setClientSecret("");
-    setNameConflict(false);
   };
 
   const disabled = !(
     name &&
-    backend &&
     organizationId &&
     clientId &&
     clientSecret &&
@@ -84,17 +61,7 @@ export default function NewCredential({ add }) {
                 : ""
             }
             value={name}
-            onChange={handleSetName}
-            __nextHasNoMarginBottom
-            __next40pxDefaultSize
-          />
-        </div>
-        <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
-          <SelectControl
-            label={__("Backend", "forms-bridge")}
-            value={backend}
-            onChange={setBackend}
-            options={backendOptions}
+            onChange={setName}
             __nextHasNoMarginBottom
             __next40pxDefaultSize
           />

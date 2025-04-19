@@ -2,6 +2,7 @@
 
 namespace FORMS_BRIDGE;
 
+use FORMS_BRIDGE\Forms_Bridge as Forms_Bridge;
 use TypeError;
 use WP_Error;
 
@@ -51,27 +52,18 @@ class Zoho_Form_Bridge extends Form_Bridge
     }
 
     /**
-     * Intercepts backend access and returns it from the credential.
-     *
-     * @return Http_Backend|null
-     */
-    protected function backend()
-    {
-        return $this->credential()->backend;
-    }
-
-    /**
      * Bridge's API key private getter.
      *
      * @return Zoho_Credentials|null
      */
     protected function credential()
     {
-        return apply_filters(
-            'forms_bridge_zoho_credential',
-            null,
-            $this->data['credential'] ?? null
-        );
+        $credentials = Forms_Bridge::setting($this->api)->credentials ?: [];
+        foreach ($credentials as $credential) {
+            if ($credential['name'] === $this->data['credential']) {
+                return $credential;
+            }
+        }
     }
 
     private function check_oauth_scope($scope, $required)
@@ -164,6 +156,17 @@ class Zoho_Form_Bridge extends Form_Bridge
         );
 
         return $response['data']['access_token'];
+    }
+
+    /**
+     * Check for credentials validity without publishing the private access token.
+     *
+     * @return boolean
+     */
+    public function check_credential()
+    {
+        $access_token = $this->get_access_token();
+        return $access_token !== null;
     }
 
     /**
