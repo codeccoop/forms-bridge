@@ -51,209 +51,6 @@ class Brevo_Addon extends Rest_Addon
     protected static $bridge_template_class = '\FORMS_BRIDGE\Brevo_Form_Bridge_Template';
 
     /**
-     * Addon constructor. Inherits from the abstrac addon constructor and initializes
-     * REST API endpoints.
-     */
-    protected function construct(...$args)
-    {
-        parent::construct(...$args);
-
-        add_action(
-            'rest_api_init',
-            static function () {
-                $namespace = REST_Settings_Controller::namespace();
-                $version = REST_Settings_Controller::version();
-
-                register_rest_route(
-                    "{$namespace}/v{$version}",
-                    '/brevo/lists',
-                    [
-                        'methods' => WP_REST_Server::CREATABLE,
-                        'callback' => static function ($request) {
-                            $params = $request->get_json_params();
-                            return self::fetch_lists($params);
-                        },
-                        'permission_callback' => static function () {
-                            return REST_Settings_Controller::permission_callback();
-                        },
-                    ]
-                );
-
-                register_rest_route(
-                    "{$namespace}/v{$version}",
-                    '/brevo/pipelines',
-                    [
-                        'methods' => WP_REST_Server::CREATABLE,
-                        'callback' => static function ($request) {
-                            $params = $request->get_json_params();
-                            return self::fetch_pipelines($params);
-                        },
-                        'permission_callback' => static function () {
-                            return REST_Settings_Controller::permission_callback();
-                        },
-                    ]
-                );
-
-                register_rest_route(
-                    "{$namespace}/v{$version}",
-                    '/brevo/products',
-                    [
-                        'methods' => WP_REST_Server::CREATABLE,
-                        'callback' => static function ($request) {
-                            $params = $request->get_json_params();
-                            return self::fetch_products($params);
-                        },
-                        'permission_callback' => static function () {
-                            return REST_Settings_Controller::permission_callback();
-                        },
-                    ]
-                );
-
-                register_rest_route(
-                    "{$namespace}/v{$version}",
-                    '/brevo/templates',
-                    [
-                        'methods' => WP_REST_Server::CREATABLE,
-                        'callback' => static function ($request) {
-                            $params = $request->get_json_params();
-                            return self::fetch_templates($params);
-                        },
-                        'permission_callback' => static function () {
-                            return REST_Settings_Controller::permission_callback();
-                        },
-                    ]
-                );
-            },
-            10,
-            0
-        );
-    }
-
-    /**
-     * Backend instance getter. If backend isn't registered, add a
-     * ephemeral entry on the backends registry.
-     *
-     * @param array $params Backend data.
-     *
-     * @return Http_Backend
-     */
-    private static function get_backend($params)
-    {
-        if (isset($params['name'])) {
-            $backend = apply_filters(
-                'http_bridge_backend',
-                null,
-                $params['name']
-            );
-
-            if ($backend) {
-                return $backend;
-            }
-        }
-
-        $base_url = filter_var(
-            $params['base_url'] ?? null,
-            FILTER_VALIDATE_URL
-        );
-
-        if (!$base_url) {
-            $params['base_url'] = 'https://api.brevo.com';
-        }
-
-        $params['name'] = $params['name'] ?? '__brevo-' . time();
-        return new Http_Backend($params);
-    }
-
-    private static function api_fetch($endpoint, $backend_params)
-    {
-        $backend = self::get_backend($backend_params);
-
-        if (empty($backend)) {
-            return new WP_Error(
-                'bad_request',
-                __('Backend is unkown', 'forms-bridge'),
-                ['params' => $backend_params]
-            );
-        }
-
-        $headers = $backend->headers;
-        $api_key = $headers['api-key'] ?? null;
-
-        if (empty($api_key)) {
-            return new WP_Error(
-                'unauthorized',
-                __('Invalid Brevo API credentials', 'forms-bridge'),
-                ['api_key' => $api_key]
-            );
-        }
-
-        add_filter(
-            'http_request_args',
-            '\FORMS_BRIDGE\Brevo_Form_Bridge::prepare_headers',
-            10,
-            1
-        );
-
-        $response = $backend->get(
-            $endpoint,
-            [],
-            [
-                'api-key' => $api_key,
-                'accept' => 'application/json',
-            ]
-        );
-
-        if (is_wp_error($response)) {
-            return $response;
-        }
-
-        return $response['data'];
-    }
-
-    private static function fetch_lists($backend_params)
-    {
-        $data = self::api_fetch('/v3/contacts/lists', $backend_params);
-        if (is_wp_error($data)) {
-            return [];
-        }
-
-        return $data['lists'];
-    }
-
-    private static function fetch_pipelines($backend_params)
-    {
-        $data = self::api_fetch(
-            '/v3/crm/pipeline/details/all',
-            $backend_params
-        );
-        if (is_wp_error($data)) {
-            return [];
-        }
-
-        return $data;
-    }
-
-    private static function fetch_products($backend_params)
-    {
-        $data = self::api_fetch('/v3/products', $backend_params);
-        if (is_wp_error($data)) {
-            return [];
-        }
-
-        return $data['products'];
-    }
-
-    private static function fetch_templates($backend_params)
-    {
-        $data = self::api_fetch('/v3/smtp/templates', $backend_params);
-        if (is_wp_error($data)) {
-            return [];
-        }
-
-        return $data['templates'];
-    }
-
-    /**
      * Performs a request against the backend to check the connexion status.
      *
      * @param string $backend Target backend name.
@@ -282,21 +79,18 @@ class Brevo_Addon extends Rest_Addon
      *
      * @param string $backend Target backend name.
      * @param string $endpoint Target endpoint name.
-     * @params WP_REST_Request $request Current REST request.
+     * @param null $credential Credential data.
      *
      * @return array Fetched records.
      */
-    protected function do_fetch($backend, $endpoint, $request)
+    protected function do_fetch($backend, $endpoint, $credential)
     {
-        $bridge = new Brevo_Form_Bridge(
-            [
-                'name' => '__brevo-' . time(),
-                'endpoint' => $endpoint,
-                'backend' => $backend,
-                'method' => 'GET',
-            ],
-            self::$api
-        );
+        $bridge = new Brevo_Form_Bridge([
+            'name' => '__brevo-' . time(),
+            'endpoint' => $endpoint,
+            'backend' => $backend,
+            'method' => 'GET',
+        ]);
 
         $response = $bridge->submit([]);
         if (is_wp_error($response)) {
@@ -328,7 +122,7 @@ class Brevo_Addon extends Rest_Addon
             self::$api
         );
 
-        return $bridge->api_fields;
+        return $bridge->api_schema;
     }
 }
 

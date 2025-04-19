@@ -90,7 +90,7 @@ return [
         ],
     ],
     'backend' => [
-        'base_url' => 'https://api.brevo.com/v3/',
+        'base_url' => 'https://api.brevo.com',
         'headers' => [
             [
                 'name' => 'Accept',

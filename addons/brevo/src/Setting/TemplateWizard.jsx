@@ -15,7 +15,12 @@ const STEPS = [
   },
 ];
 
-export default function BrevoTemplateWizard({ integration, onDone }) {
+export default function BrevoTemplateWizard({
+  integration,
+  wired,
+  setWired,
+  onDone,
+}) {
   const [{ backends }] = useGeneral();
 
   const config = useTemplateConfig();
@@ -49,34 +54,49 @@ export default function BrevoTemplateWizard({ integration, onDone }) {
     }
   }, [data.backend, backends]);
 
-  const fetch = useRef((module, then, backend) => {
+  const fetch = useRef((endpoint, then, backend) => {
     apiFetch({
-      path: `forms-bridge/v1/brevo/${module}`,
+      path: `forms-bridge/v1/brevo/fetch`,
       method: "POST",
-      data: backend,
+      data: { backend, endpoint },
     })
       .then(then)
       .catch(() => then([]));
   }).current;
 
   const fetchLists = useRef(
-    debounce((backend) => fetch("lists", setLists, backend), 1e3)
+    debounce(
+      (backend) =>
+        fetch("/v3/contacts/lists", (data) => setLists(data.lists), backend),
+      1e3
+    )
   ).current;
 
   const fetchProducts = useRef(
-    debounce((backend) => fetch("products", setProducts, backend), 1e3)
+    debounce((backend) => fetch("/v3/products", setProducts, backend), 1e3)
   ).current;
 
   const fetchPipelines = useRef(
-    debounce((backend) => fetch("pipelines", setPipelines, backend), 1e3)
+    debounce(
+      (backend) => fetch("/v3/crm/pipeline/details/all", setPipelines, backend),
+      1e3
+    )
   ).current;
 
   const fetchTemplates = useRef(
-    debounce((backend) => fetch("templates", setTemplates, backend), 1e3)
+    debounce(
+      (backend) =>
+        fetch(
+          "/v3/smtp/templates",
+          (data) => setTemplates(data.templates),
+          backend
+        ),
+      1e3
+    )
   ).current;
 
   useEffect(() => {
-    if (!backend) return;
+    if (!backend || !wired) return;
 
     (customFields.includes("listIds") ||
       customFields.includes("includeListIds")) &&
@@ -88,7 +108,7 @@ export default function BrevoTemplateWizard({ integration, onDone }) {
     customFields.includes("pipeline") && fetchPipelines(backend);
 
     customFields.includes("templateId") && fetchTemplates(backend);
-  }, [backend, customFields]);
+  }, [wired, backend, customFields]);
 
   useEffect(() => {
     setData({
@@ -108,6 +128,8 @@ export default function BrevoTemplateWizard({ integration, onDone }) {
       integration={integration}
       data={data}
       setData={setData}
+      wired={wired}
+      setWired={setWired}
       onDone={onDone}
       steps={STEPS}
     />
