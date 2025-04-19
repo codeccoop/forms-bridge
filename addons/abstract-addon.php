@@ -234,15 +234,31 @@ abstract class Addon extends Singleton
             $uniques[] = $bridge['name'];
         }
 
+        $backends =
+            \HTTP_BRIDGE\Settings_Store::setting('general')->backends ?: [];
+
+        $backend = null;
+        foreach ($backends as $candidate) {
+            if ($candidate['name'] === $bridge['backend']) {
+                $backend = $candidate;
+                break;
+            }
+        }
+
+        if (empty($backend)) {
+            $bridge['backend'] = '';
+        }
+
         static $forms;
         if (empty($forms)) {
             $forms = apply_filters('forms_bridge_forms', []);
         }
 
         $form = null;
-        foreach ($forms as $_form) {
-            if ($_form['_id'] === $bridge['form_id']) {
-                $form = $_form;
+        foreach ($forms as $candidate) {
+            if ($candidate['_id'] === $bridge['form_id']) {
+                $form = $candidate;
+                break;
             }
         }
 
@@ -254,14 +270,10 @@ abstract class Addon extends Singleton
             (array) ($bridge['custom_fields'] ?? []),
             static function ($custom_field) {
                 if (
-                    empty($custom_field['name']) ||
+                    !JSON_Finger::validate($custom_field['name']) ||
                     (empty($custom_field['value']) &&
                         $custom_field['value'] !== '0')
                 ) {
-                    return;
-                }
-
-                if (!JSON_Finger::validate($custom_field['name'])) {
                     return;
                 }
 
@@ -280,16 +292,9 @@ abstract class Addon extends Singleton
         foreach ((array) ($bridge['mutations'] ?? []) as $mappers) {
             $mappers = array_filter($mappers, static function ($mapper) {
                 if (
-                    empty($mapper['from']) ||
-                    empty($mapper['to']) ||
-                    empty($mapper['cast'])
-                ) {
-                    return;
-                }
-
-                if (
                     !JSON_Finger::validate($mapper['from']) ||
-                    !JSON_Finger::validate($mapper['to'])
+                    !JSON_Finger::validate($mapper['to']) ||
+                    empty($mapper['cast'])
                 ) {
                     return;
                 }
@@ -310,7 +315,8 @@ abstract class Addon extends Singleton
             $bridge['mutations'][$i] = $bridge['mutations'][$i] ?? [];
         }
 
-        $bridge['is_valid'] = !empty($bridge['form_id']);
+        $bridge['is_valid'] =
+            !empty($bridge['form_id']) && !empty($bridge['backend']);
         return $bridge;
     }
 
