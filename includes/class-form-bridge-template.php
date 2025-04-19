@@ -91,9 +91,18 @@ class Form_Bridge_Template
             'items' => [
                 'type' => 'object',
                 'properties' => [
-                    'ref' => ['type' => 'string'],
-                    'name' => ['type' => 'string'],
-                    'label' => ['type' => 'string'],
+                    'ref' => [
+                        'type' => 'string',
+                        'pattern' => '#.+',
+                    ],
+                    'name' => [
+                        'type' => 'string',
+                        'minLength' => 1,
+                    ],
+                    'label' => [
+                        'type' => 'string',
+                        'minLength' => 1,
+                    ],
                     'description' => ['type' => 'string'],
                     'type' => [
                         'type' => 'string',
@@ -467,6 +476,22 @@ class Form_Bridge_Template
             10,
             2
         );
+
+        add_filter(
+            'forms_bridge_template_data',
+            function ($data, $template_name) {
+                if (
+                    $template_name === $this->name &&
+                    isset($data['bridge']['credential'])
+                ) {
+                    $data['bridge']['credential'] = $data['credential']['name'];
+                }
+
+                return $data;
+            },
+            10,
+            3
+        );
     }
 
     /**
@@ -479,6 +504,8 @@ class Form_Bridge_Template
     public function __get($name)
     {
         switch ($name) {
+            case 'api':
+                return $this->api;
             case 'name':
                 return $this->name;
             case 'config':
@@ -555,11 +582,19 @@ class Form_Bridge_Template
 
         $data = $template;
         foreach ($fields as $field) {
+            $is_required = $field['required'] ?? false;
+
             $field = forms_bridge_validate_with_schema($field, [
                 'type' => 'object',
                 'properties' => [
-                    'ref' => ['type' => 'string'],
-                    'name' => ['type' => 'string'],
+                    'ref' => [
+                        'type' => 'string',
+                        'pattern' => '#.+',
+                    ],
+                    'name' => [
+                        'type' => 'string',
+                        'minLength' => 1,
+                    ],
                     'value' => [
                         'type' => [
                             'number',
@@ -572,10 +607,10 @@ class Form_Bridge_Template
                         ],
                     ],
                 ],
-                'required' => ['ref', 'name', 'value'],
+                'required' => ['ref', 'name'],
             ]);
 
-            if (is_wp_error($field) || ($field['ref'][0] ?? '') !== '#') {
+            if (is_wp_error($field)) {
                 throw new Form_Bridge_Template_Exception(
                     'invalid_field',
                     sprintf(
@@ -584,7 +619,21 @@ class Form_Bridge_Template
                             'Field `%s` does not match the schema',
                             'forms-bridge'
                         ),
-                        $field['name'] ?? ''
+                        $field['name']
+                    )
+                );
+            }
+
+            if (empty($field['value']) && $is_required) {
+                throw new Form_Bridge_Template_Exception(
+                    'required_field',
+                    sprintf(
+                        __(
+                            /* translators: %s: Field name */
+                            'Field `%s` is required',
+                            'forms-bridge'
+                        ),
+                        $field['name']
                     )
                 );
             }
@@ -670,7 +719,12 @@ class Form_Bridge_Template
         }
 
         $data['fields'] = $fields;
-        $data = apply_filters('forms_bridge_template_data', $data, $this->name);
+        $data = apply_filters(
+            'forms_bridge_template_data',
+            $data,
+            $this->name,
+            $this
+        );
 
         if (empty($data) || is_wp_error($data)) {
             throw new Form_Bridge_Template_Exception(
@@ -681,11 +735,11 @@ class Form_Bridge_Template
 
         $integration_instance = Integration::integrations()[$integration];
 
-        do_action(
-            'forms_bridge_before_template_form',
+        do_action_ref_array('forms_bridge_before_template_form', [
             $data['form'],
-            $this->name
-        );
+            $this->name,
+            $this,
+        ]);
 
         try {
             $create_form = !$this->form_exists(
@@ -713,7 +767,8 @@ class Form_Bridge_Template
                 do_action(
                     'forms_bridge_template_form',
                     $data['form'],
-                    $this->name
+                    $this->name,
+                    $this
                 );
             } else {
                 $form_id = $data['form']['id'];
@@ -766,7 +821,6 @@ class Form_Bridge_Template
             $result = $this->create_bridge(
                 array_merge($data['bridge'], [
                     'form_id' => $integration . ':' . $form_id,
-                    'template' => $this->name,
                 ])
             );
 
@@ -867,6 +921,7 @@ class Form_Bridge_Template
         do_action_ref_array('forms_bridge_before_template_backend', [
             $data,
             $this->name,
+            $this,
         ]);
 
         $setting->backends = array_merge($backends, [$data]);
@@ -878,7 +933,7 @@ class Form_Bridge_Template
             return;
         }
 
-        do_action('forms_bridge_template_backend', $data, $this->name);
+        do_action('forms_bridge_template_backend', $data, $this->name, $this);
 
         return true;
     }
@@ -934,6 +989,7 @@ class Form_Bridge_Template
         do_action_ref_array('forms_bridge_before_template_bridge', [
             $data,
             $this->name,
+            $this,
         ]);
 
         $setting->bridges = array_merge($bridges, [$data]);
@@ -944,7 +1000,7 @@ class Form_Bridge_Template
             return;
         }
 
-        do_action('forms_bridge_template_bridge', $data, $this->name);
+        do_action('forms_bridge_template_bridge', $data, $this->name, $this);
 
         return true;
     }
@@ -995,7 +1051,7 @@ class Form_Bridge_Template
         }
 
         $setting = Forms_Bridge::setting($this->api);
-        $credentials = $setting->credentials;
+        $credentials = $setting->credentials ?: [];
 
         if (!is_array($credentials)) {
             return;
@@ -1004,6 +1060,7 @@ class Form_Bridge_Template
         do_action_ref_array('forms_bridge_before_template_credential', [
             $data,
             $this->name,
+            $this,
         ]);
 
         $setting->credentials = array_merge($credentials, [$data]);
@@ -1014,7 +1071,12 @@ class Form_Bridge_Template
             return;
         }
 
-        do_action('forms_bridge_template_credential', $data, $this->name);
+        do_action(
+            'forms_bridge_template_credential',
+            $data,
+            $this->name,
+            $this
+        );
 
         return true;
     }

@@ -64,6 +64,21 @@ abstract class Addon extends Singleton
             'bridges' => [
                 'type' => 'array',
                 'items' => Form_Bridge::$schema,
+                'default' => [],
+            ],
+            'credentials' => [
+                'type' => 'array',
+                'items' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'name' => [
+                            'type' => 'string',
+                            'minLength' => 1,
+                        ],
+                    ],
+                    'required' => ['name'],
+                ],
+                'default' => [],
             ],
         ];
     }
@@ -321,6 +336,39 @@ abstract class Addon extends Singleton
     }
 
     /**
+     * Common credential validation method.
+     *
+     * @param array $credential Credential data.
+     * @param array $fields Credential required fields.
+     * @param array $uniques Carry with already validated unique credential names.
+     *
+     * @return array Validated and sanitized credential data.
+     */
+    protected static function validate_credential(
+        $credential,
+        $fields,
+        &$uniques = []
+    ) {
+        if (empty($credential['name'])) {
+            return;
+        }
+
+        if (in_array($credential['name'], $uniques)) {
+            return;
+        } else {
+            $uniques[] = $credential['name'];
+        }
+
+        foreach ($fields as $field) {
+            if (empty($credential[$field])) {
+                $credential[$field] = '';
+            }
+        }
+
+        return $credential;
+    }
+
+    /**
      * Private class constructor. Add addons scripts as dependency to the
      * plugin's scripts and setup settings hooks.
      */
@@ -388,14 +436,14 @@ abstract class Addon extends Singleton
      *
      * @params string $api Target API name.
      * @params array $backend Backend data to be used on the request.
-     * @params WP_REST_Request $request Current REST request.
+     * @params array|null $credential Credential data.
      *
      * @return array Ping result.
      */
-    final public static function ping($api, $backend, $request)
+    final public static function ping($api, $backend, $credential)
     {
         self::temp_backend_registration($backend);
-        self::$addons[$api]->do_ping($backend['name'], $request);
+        return self::$addons[$api]->do_ping($backend['name'], $credential);
     }
 
     /**

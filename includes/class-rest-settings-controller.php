@@ -139,7 +139,6 @@ class REST_Settings_Controller extends Base_Controller
                                     'forms-bridge'
                                 ),
                                 'type' => 'mixed',
-                                'required' => true,
                             ],
                         ],
                     ],
@@ -278,6 +277,7 @@ class REST_Settings_Controller extends Base_Controller
                     [$backend] = \HTTP_BRIDGE\Settings_Store::validate_backends(
                         [$request['backend']]
                     );
+
                     if (empty($backend)) {
                         return new WP_Error(
                             'bad_request',
@@ -286,7 +286,7 @@ class REST_Settings_Controller extends Base_Controller
                         );
                     }
 
-                    return Addon::ping($api, $backend, $request);
+                    return Addon::ping($api, $backend, $request['credential']);
                 },
                 'permission_callback' => static function () {
                     return self::permission_callback();

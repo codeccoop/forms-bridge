@@ -106,7 +106,7 @@ abstract class Form_Bridge
             'name',
             'form_id',
             'backend',
-            'constants',
+            'custom_fields',
             'mutations',
             'workflow',
             'is_valid',
@@ -179,7 +179,7 @@ abstract class Form_Bridge
             return;
         }
 
-        return apply_filters('http_bridge_backend', null, $backend_name);
+        return apply_filters('forms_bridge_backend', null, $backend_name);
     }
 
     /**
@@ -267,6 +267,7 @@ abstract class Form_Bridge
             $payload,
             $attachments
         );
+
         $response = $this->do_submit($payload, $attachments);
 
         if (is_wp_error($response)) {
