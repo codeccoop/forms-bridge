@@ -1,8 +1,8 @@
 import JsonFinger from "../../lib/JsonFinger";
 import { useApiFields } from "../../providers/ApiSchema";
 
-const { BaseControl, TextControl, Button, Popover } = wp.components;
-const { useEffect, useState, useRef } = wp.element;
+const { TextControl, Button, Popover } = wp.components;
+const { useEffect, useState, useRef, useMemo } = wp.element;
 const { __ } = wp.i18n;
 
 const tagOptions = [
@@ -163,7 +163,15 @@ function useInputStyle(name = "") {
 export default function CustomFieldsTable({ customFields, setCustomFields }) {
   const apiFields = useApiFields();
 
+  const fieldOptions = useMemo(() => {
+    return apiFields.map((field) => ({
+      value: field.name,
+      label: `${field.name} | ${field.schema.type}`,
+    }));
+  }, [apiFields]);
+
   const tableWrapper = useRef();
+  const [fieldSelector, setFieldSelector] = useState(-1);
   const [tagSelector, setTagSelector] = useState(-1);
 
   const setCustomField = (attr, index, value) => {
@@ -220,11 +228,6 @@ export default function CustomFieldsTable({ customFields, setCustomFields }) {
   return (
     <>
       <div ref={tableWrapper} className="scrollbar-hide" style={{ flex: 1 }}>
-        <datalist id="api-fields-list">
-          {apiFields.map((field) => (
-            <option value={field.name}>{field.schema.type}</option>
-          ))}
-        </datalist>
         <table
           style={{
             width: "calc(100% + 10px)",
@@ -255,17 +258,41 @@ export default function CustomFieldsTable({ customFields, setCustomFields }) {
               <tr key={index}>
                 <td style={{ width: 0 }}>{i + 1}.</td>
                 <td>
-                  <BaseControl __nextHasNoMarginBottom>
-                    <input
-                      type="text"
-                      list="api-fields-list"
-                      value={name}
-                      onChange={(ev) =>
-                        setCustomField("name", i, ev.target.value)
-                      }
-                      style={useInputStyle(name)}
-                    />
-                  </BaseControl>
+                  <div style={{ display: "flex" }}>
+                    <div style={{ flex: 1 }}>
+                      <TextControl
+                        value={name}
+                        onChange={(value) => setCustomField("name", i, value)}
+                        __next40pxDefaultSize
+                        __nextHasNoMarginBottom
+                      />
+                    </div>
+                    <Button
+                      style={{
+                        height: "40px",
+                        width: "40px",
+                        justifyContent: "center",
+                        marginLeft: "2px",
+                      }}
+                      size="compact"
+                      variant="secondary"
+                      onClick={() => setFieldSelector(i)}
+                      __next40pxDefaultSize
+                    >
+                      $
+                      {fieldSelector === i && (
+                        <TagSelector
+                          title={__("Fields", "forms-bridge")}
+                          tags={fieldOptions}
+                          onChange={(fieldName) => {
+                            setFieldSelector(-1);
+                            setCustomField("name", i, fieldName);
+                          }}
+                          onFocusOutside={() => setFieldSelector(-1)}
+                        />
+                      )}
+                    </Button>
+                  </div>
                 </td>
                 <td>
                   <div style={{ display: "flex" }}>
@@ -293,6 +320,7 @@ export default function CustomFieldsTable({ customFields, setCustomFields }) {
                       $
                       {tagSelector === i && (
                         <TagSelector
+                          title={__("Tags", "forms-bridge")}
                           tags={tagOptions}
                           onChange={(tag) => {
                             setTagSelector(-1);
@@ -351,7 +379,7 @@ export default function CustomFieldsTable({ customFields, setCustomFields }) {
   );
 }
 
-function TagSelector({ tags, onChange, onFocusOutside }) {
+function TagSelector({ title, tags, onChange, onFocusOutside }) {
   const [focus, setFocus] = useState(0);
 
   return (
@@ -375,12 +403,12 @@ function TagSelector({ tags, onChange, onFocusOutside }) {
             backgroundColor: "white",
           }}
         >
-          <strong>{__("Tags", "forms-bridge")}</strong>
+          <strong>{title}</strong>
         </label>
         <ul
           id="bridge-tags-list"
           style={{
-            width: "140px",
+            width: "max-content",
             height: "100%",
             overflowY: "auto",
             margin: 0,
@@ -388,7 +416,8 @@ function TagSelector({ tags, onChange, onFocusOutside }) {
         >
           {tags.map(({ label, value }, i) => (
             <li
-              style={{ padding: "0.25em 0.75em", cursor: "pointer" }}
+              key={label}
+              style={{ padding: "0.5em 1em", cursor: "pointer" }}
               tabIndex="0"
               role="button"
               onKeyDown={(ev) => {
