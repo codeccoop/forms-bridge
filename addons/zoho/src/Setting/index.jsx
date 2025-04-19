@@ -25,6 +25,7 @@ export default function ZohoSetting() {
       <PanelRow>
         <Bridges
           bridges={bridges}
+          credentials={credentials}
           setBridges={(bridges) => update({ bridges })}
           Bridge={ZohoBridge}
         />

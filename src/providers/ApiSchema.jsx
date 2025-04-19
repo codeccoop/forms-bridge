@@ -1,38 +1,46 @@
+import { useGeneral } from "./Settings";
+import useCurrentApi from "../hooks/useCurrentApi";
+
 const apiFetch = wp.apiFetch;
 const { createContext, useContext, useEffect, useRef, useState, useMemo } =
   wp.element;
 
 const ApiSchemaContext = createContext([]);
 
-export default function ApiSchemaProvider({ children, bridge }) {
+export default function ApiSchemaProvider({ children, bridge, credentials }) {
+  const [{ backends }] = useGeneral();
+  const api = useCurrentApi();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [schema, setSchema] = useState(null);
   const [invalid, invalidate] = useState(true);
 
-  const lastBridge = useRef(bridge);
+  if (error) {
+    setSchema(null);
+  }
+
+  const lastBridge = useRef(bridge.name);
   useEffect(() => {
     setError(false);
-    invalidate(bridge !== "add" && bridge !== lastBridge.current);
+    invalidate(bridge.name !== "add" && bridge.name !== lastBridge.current);
 
     return () => {
-      if (bridge !== "add") {
-        lastBridge.current = bridge;
+      if (bridge.name !== "add") {
+        lastBridge.current = bridge.name;
       }
     };
   }, [bridge]);
 
-  useEffect(() => {
-    if (error) setSchema(null);
-  }, [error]);
-
-  const fetch = (bridge) => {
-    if (bridge === "add") return;
+  const fetch = useRef((api, backend, credential, endpoint) => {
+    if (!backend || !api) return;
 
     setLoading(true);
 
     apiFetch({
-      path: `forms-bridge/v1/schema/${bridge}`,
+      path: `forms-bridge/v1/${api}/schema`,
+      method: "POST",
+      data: { backend, credential, endpoint },
     })
       .then((schema) => {
         setSchema(schema);
@@ -40,12 +48,22 @@ export default function ApiSchemaProvider({ children, bridge }) {
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  };
+  }).current;
+
+  const backend = useMemo(
+    () => backends.find(({ name }) => bridge.backend === name),
+    [backends, bridge]
+  );
+
+  const credential = useMemo(
+    () => credentials.find(({ name }) => bridge.credential === name),
+    [credentials, bridge]
+  );
 
   const value = useMemo(() => {
-    if (!loading && invalid) fetch(bridge);
+    if (!loading && invalid) fetch(api, backend, credential, bridge?.endpoint);
     return schema;
-  }, [bridge, invalid, schema]);
+  }, [loading, bridge, backend, credential, invalid, schema]);
 
   return (
     <ApiSchemaContext.Provider value={value}>
@@ -56,7 +74,7 @@ export default function ApiSchemaProvider({ children, bridge }) {
 
 export function useApiFields() {
   const schema = useContext(ApiSchemaContext);
-  return schema?.fields || [];
+  return schema || [];
 }
 
 export function useApiContentType() {

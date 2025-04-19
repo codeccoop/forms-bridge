@@ -462,17 +462,17 @@ abstract class Addon extends Singleton
      * @param string $api Target API name.
      * @param array $backend Backend data to be used on the request.
      * @param string $endpoint Target endpoint name.
-     * @params WP_REST_Request $request Current REST request.
+     * @params array|null $credential Credential data.
      *
      * @return array Fetched records.
      */
-    final public static function fetch($api, $backend, $endpoint, $request)
+    final public static function fetch($api, $backend, $endpoint, $credential)
     {
         self::temp_backend_registration($backend);
         return self::$addons[$api]->do_fetch(
             $backend['name'],
             $endpoint,
-            $request
+            $credential
         );
     }
 
