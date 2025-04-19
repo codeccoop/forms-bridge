@@ -14,6 +14,14 @@ if (!defined('ABSPATH')) {
 class Listmonk_Form_Bridge extends Rest_Form_Bridge
 {
     /**
+     * Handles a custom http origin token to be unseted from headers
+     * before submits.
+     *
+     * @var array<string>
+     */
+    public const api_headers = ['Accept', 'Content-Type', 'Authorization'];
+
+    /**
      * Gets bridge's default body encoding schema.
      *
      * @return string|null
@@ -33,28 +41,18 @@ class Listmonk_Form_Bridge extends Rest_Form_Bridge
      */
     protected function do_submit($payload, $attachments = [])
     {
-        $backend = $this->backend;
+        add_filter(
+            'http_request_args',
+            '\FORMS_BRIDGE\Listmonk_Form_Bridge::filter_headers',
+            10,
+            1
+        );
 
-        $headers = $backend->headers;
-        $api_user = $headers['api_user'] ?? null;
-        $token = $headers['token'] ?? null;
-
-        if (empty($api_user) || empty($token)) {
-            return new WP_Error(
-                'unauthorized',
-                __('Invalid Listmonk API credentials', 'forms-bridge'),
-                ['api_user' => $api_user, 'token' => $token]
-            );
-        }
-
-        $response = $backend->post($this->endpoint, $payload, [
-            'Authorization' => "token {$api_user}:{$token}",
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-        ]);
+        $response = parent::do_submit($payload, $attachments);
 
         if (is_wp_error($response)) {
             $error_response = $response->get_error_data()['response'];
+
             if ($error_response['response']['code'] !== 409) {
                 return $response;
             }
@@ -66,17 +64,13 @@ class Listmonk_Form_Bridge extends Rest_Form_Bridge
                 return $response;
             }
 
-            $get_response = $backend->get(
-                $this->endpoint,
-                [
-                    'per_page' => '1',
-                    'query' => "subscribers.email = '{$payload['email']}'",
-                ],
-                [
-                    'Authorization' => "token {$api_user}:{$token}",
-                    'Accept' => 'application/json',
-                ]
-            );
+            $get_response = $this->patch([
+                'name' => 'listmonk-get-subscriber-by-email',
+                'method' => 'GET',
+            ])->submit([
+                'per_page' => '1',
+                'query' => "subscribers.email = '{$payload['email']}'",
+            ]);
 
             if (is_wp_error($get_response)) {
                 return $response;
@@ -84,37 +78,95 @@ class Listmonk_Form_Bridge extends Rest_Form_Bridge
 
             $subscriber_id = $get_response['data']['data']['results'][0]['id'];
 
-            return $backend->put(
-                $this->endpoint . '/' . $subscriber_id,
-                $payload,
-                [
-                    'Authorization' => "token {$api_user}:{$token}",
-                    'Accept' => 'application/json',
-                    'Content-Type' => 'application/json',
-                ]
-            );
+            return $this->patch([
+                'name' => 'listmonk-update-subscriber',
+                'method' => 'PUT',
+                'endpoint' => $this->endpoint . '/' . $subscriber_id,
+            ])->submit($payload);
         }
 
         return $response;
     }
 
-    protected function api_fields()
+    protected function api_schema()
     {
-        if (
-            $this->endpoint === '/api/subscribers' &&
-            $this->method === 'POST'
-        ) {
+        if ($this->endpoint === '/api/subscribers') {
             return [
-                'email',
-                'name',
-                'status',
-                'lists',
-                'list_uuids',
-                'preconfirm_subscriptions',
-                'attribs',
+                [
+                    'name' => 'email',
+                    'schema' => ['type' => 'string'],
+                    'required' => true,
+                ],
+                [
+                    'name' => 'name',
+                    'schema' => ['type' => 'string'],
+                ],
+                [
+                    'name' => 'status',
+                    'schema' => ['type' => 'string'],
+                ],
+                [
+                    'name' => 'lists',
+                    'schema' => [
+                        'type' => 'array',
+                        'items' => ['type' => 'number'],
+                    ],
+                ],
+                [
+                    'name' => 'preconfirm_subscriptions',
+                    'schema' => ['type' => 'boolean'],
+                ],
+                [
+                    'name' => 'attribs',
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [],
+                    ],
+                ],
             ];
         }
 
         return [];
+    }
+
+    /**
+     * Filter and decoration of default http headers.
+     *
+     * @param array $args HTTP request args.
+     *
+     * @return array $args Filtered args.
+     */
+    public static function filter_headers($args)
+    {
+        if (
+            isset($args['headers']['Api-User']) &&
+            isset($args['headers']['Token'])
+        ) {
+            $args['headers'][
+                'Authorization'
+            ] = "token {$args['headers']['Api-User']}:{$args['headers']['Token']}";
+        }
+
+        $api_headers = [];
+        foreach ($args['headers'] as $name => $value) {
+            if (in_array($name, self::api_headers)) {
+                $api_headers[$name] = $value;
+            }
+        }
+
+        $args['headers'] = $api_headers;
+
+        if ($args['method'] === 'GET') {
+            unset($args['headers']['Content-Type']);
+        }
+
+        remove_filter(
+            'http_request_args',
+            '\FORMS_BRIDGE\Listmonk_Form_Bridge::filter_headers',
+            10,
+            1
+        );
+
+        return $args;
     }
 }

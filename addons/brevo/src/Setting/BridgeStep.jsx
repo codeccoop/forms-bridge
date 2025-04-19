@@ -1,6 +1,4 @@
 import BridgeStep from "../../../../src/components/Templates/Steps/BridgeStep";
-import TemplateStep from "../../../../src/components/Templates/Steps/Step";
-import TemplateField from "../../../../src/components/Templates/Field";
 
 const { useMemo, useEffect } = wp.element;
 const { __ } = wp.i18n;
@@ -61,40 +59,38 @@ export default function BrevoBridgeStep({ fields, data, setData }) {
     [fields]
   );
 
-  const apiFields = useMemo(
-    () =>
-      fields
-        .filter(({ name }) => API_FIELDS.includes(name))
-        .map((field) => {
-          if (field.name === "listIds" || field.name === "includeListIds") {
-            return {
-              ...field,
-              type: "options",
-              options: listOptions,
-              multiple: true,
-            };
-          } else if (field.name === "product") {
-            return {
-              ...field,
-              type: "options",
-              options: productOptions,
-            };
-          } else if (field.name === "pipeline") {
-            return {
-              ...field,
-              type: "options",
-              options: pipelineOptions,
-            };
-          } else if (field.name === "templateId") {
-            return {
-              ...field,
-              type: "options",
-              options: templateOptions,
-            };
-          }
-        }),
-    [fields, listOptions, productOptions, pipelineOptions, templateOptions]
-  );
+  const apiFields = useMemo(() => {
+    return fields
+      .filter(({ name }) => API_FIELDS.includes(name))
+      .map((field) => {
+        if (field.name === "listIds" || field.name === "includeListIds") {
+          return {
+            ...field,
+            type: "options",
+            options: listOptions,
+            multiple: true,
+          };
+        } else if (field.name === "product") {
+          return {
+            ...field,
+            type: "options",
+            options: productOptions,
+          };
+        } else if (field.name === "pipeline") {
+          return {
+            ...field,
+            type: "options",
+            options: pipelineOptions,
+          };
+        } else if (field.name === "templateId") {
+          return {
+            ...field,
+            type: "options",
+            options: templateOptions,
+          };
+        }
+      });
+  }, [fields, listOptions, productOptions, pipelineOptions, templateOptions]);
 
   useEffect(() => {
     const defaults = {};

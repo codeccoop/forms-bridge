@@ -43,7 +43,7 @@ class Brevo_Form_Bridge extends Rest_Form_Bridge
     {
         add_filter(
             'http_request_args',
-            '\FORMS_BRIDGE\Brevo_Form_Bridge::prepare_headers',
+            '\FORMS_BRIDGE\Brevo_Form_Bridge::filter_headers',
             10,
             1
         );
@@ -301,22 +301,27 @@ class Brevo_Form_Bridge extends Rest_Form_Bridge
         }
     }
 
-    public static function prepare_headers($args)
+    /**
+     * Filter and decoration of default http headers.
+     *
+     * @param array $args HTTP request args.
+     *
+     * @return array $args Filtered args.
+     */
+    public static function filter_headers($args)
     {
-        if (isset($args['headers']['Api-Key'])) {
-            $api_headers = [];
-            foreach ($args['headers'] as $name => $value) {
-                if (in_array($name, self::api_headers)) {
-                    $api_headers[strtolower($name)] = $value;
-                }
+        $api_headers = [];
+        foreach ($args['headers'] as $name => $value) {
+            if (in_array($name, self::api_headers)) {
+                $api_headers[strtolower($name)] = $value;
             }
-
-            $args['headers'] = $api_headers;
         }
+
+        $args['headers'] = $api_headers;
 
         remove_filter(
             'http_request_args',
-            '\FORMS_BRIDGE\Brevo_Form_Bridge::prepare_headers',
+            '\FORMS_BRIDGE\Brevo_Form_Bridge::filter_headers',
             10,
             1
         );

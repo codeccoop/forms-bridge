@@ -281,20 +281,25 @@ abstract class Addon extends Singleton
             $bridge['form_id'] = '';
         }
 
-        $custom_fields = array_filter(
-            (array) ($bridge['custom_fields'] ?? []),
-            static function ($custom_field) {
-                if (
-                    !JSON_Finger::validate($custom_field['name']) ||
-                    (empty($custom_field['value']) &&
-                        $custom_field['value'] !== '0')
-                ) {
-                    return;
-                }
-
-                return true;
+        $custom_fields = [];
+        foreach ($bridge['custom_fields'] ?? [] as $field) {
+            if (!JSON_Finger::validate($field['name'])) {
+                continue;
             }
-        );
+
+            if (
+                empty($field['value']) &&
+                $field['value'] !== '0' &&
+                $field['value'] !== 0
+            ) {
+                continue;
+            }
+
+            $custom_fields[] = [
+                'name' => strval($field['name']),
+                'value' => strval($field['value']),
+            ];
+        }
 
         $bridge['custom_fields'] = $custom_fields;
 
@@ -304,20 +309,25 @@ abstract class Addon extends Singleton
         );
 
         $mutations = [];
-        foreach ((array) ($bridge['mutations'] ?? []) as $mappers) {
-            $mappers = array_filter($mappers, static function ($mapper) {
-                if (
-                    !JSON_Finger::validate($mapper['from']) ||
-                    !JSON_Finger::validate($mapper['to']) ||
-                    empty($mapper['cast'])
-                ) {
-                    return;
+        foreach ($bridge['mutations'] ?? [] as $mappers) {
+            $valids = [];
+            foreach ($mappers as $mapper) {
+                if (!JSON_Finger::validate($mapper['from'])) {
+                    continue;
                 }
 
-                return true;
-            });
+                if (!JSON_Finger::validate($mapper['to'])) {
+                    continue;
+                }
 
-            $mutations[] = array_values($mappers);
+                if (empty($mapper['cast'])) {
+                    continue;
+                }
+
+                $valids[] = $mapper;
+            }
+
+            $mutations[] = array_values($valids);
         }
 
         $bridge['mutations'] = array_slice(

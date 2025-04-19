@@ -2,10 +2,6 @@
 
 namespace FORMS_BRIDGE;
 
-use WP_REST_Server;
-use HTTP_BRIDGE\Http_Backend;
-use WP_Error;
-
 if (!defined('ABSPATH')) {
     exit();
 }
@@ -54,11 +50,11 @@ class Brevo_Addon extends Rest_Addon
      * Performs a request against the backend to check the connexion status.
      *
      * @param string $backend Target backend name.
-     * @params WP_REST_Request $request Current REST request.
+     * @param null $credential Credential data.
      *
      * @return array Ping result.
      */
-    protected function do_ping($backend, $request)
+    protected function do_ping($backend, $credential)
     {
         $bridge = new Brevo_Form_Bridge(
             [
@@ -106,11 +102,11 @@ class Brevo_Addon extends Rest_Addon
      *
      * @param string $backend Target backend name.
      * @param string $endpoint Target endpoint name.
-     * @params WP_REST_Request $request Current REST request.
+     * @params null $credential Credential data.
      *
      * @return array List of fields and content type of the endpoint.
      */
-    protected function get_schema($backend, $endpoint, $request)
+    protected function get_schema($backend, $endpoint, $credential)
     {
         $bridge = new Brevo_Form_Bridge(
             [

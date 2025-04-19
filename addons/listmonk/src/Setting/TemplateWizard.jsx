@@ -1,6 +1,6 @@
 import { useGeneral } from "../../../../src/providers/Settings";
 import TemplateWizard from "../../../../src/components/Templates/Wizard";
-import BridgeStep from "./BridgeStep";
+import ListmonkBridgeStep from "./BridgeStep";
 import { debounce, validateUrl } from "../../../../src/lib/utils";
 import { useTemplateConfig } from "../../../../src/providers/Templates";
 
@@ -12,9 +12,7 @@ const LISTMONK_HEADERS = ["api_user", "token"];
 const STEPS = [
   {
     name: "bridge",
-    step: ({ fields, data, setData }) => (
-      <BridgeStep fields={fields} data={data} setData={setData} />
-    ),
+    component: ListmonkBridgeStep,
     order: 20,
   },
 ];
@@ -27,7 +25,12 @@ function validateBackend(data) {
   }, validateUrl(data.base_url));
 }
 
-export default function ListmonkTemplateWizard({ integration, onDone }) {
+export default function ListmonkTemplateWizard({
+  integration,
+  wired,
+  setWired,
+  onDone,
+}) {
   const [{ backends }] = useGeneral();
 
   const config = useTemplateConfig();
@@ -64,18 +67,22 @@ export default function ListmonkTemplateWizard({ integration, onDone }) {
     }
   }, [data.backend, backends]);
 
-  const fetch = useRef((module, then, backend) => {
+  const fetch = useRef((endpoint, then, backend) => {
     apiFetch({
-      path: `forms-bridge/v1/listmonk/${module}`,
+      path: "forms-bridge/v1/listmonk/fetch",
       method: "POST",
-      data: backend,
+      data: { backend, endpoint },
     })
       .then(then)
       .catch(() => then([]));
   }).current;
 
   const fetchLists = useRef(
-    debounce((backend) => fetch("lists", setLists, backend), 1e3)
+    debounce(
+      (backend) =>
+        fetch("/api/lists", (data) => setLists(data.data.results), backend),
+      1e3
+    )
   ).current;
 
   useEffect(() => {
@@ -98,6 +105,8 @@ export default function ListmonkTemplateWizard({ integration, onDone }) {
       integration={integration}
       data={data}
       setData={setData}
+      wired={wired}
+      setWired={setWired}
       onDone={onDone}
       steps={STEPS}
     />

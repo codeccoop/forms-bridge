@@ -1,6 +1,6 @@
 import { useGeneral } from "../../../../src/providers/Settings";
 import TemplateWizard from "../../../../src/components/Templates/Wizard";
-import BridgeStep from "./BridgeStep";
+import BrevoBridgeStep from "./BridgeStep";
 import { useTemplateConfig } from "../../../../src/providers/Templates";
 import { debounce } from "../../../../src/lib/utils";
 
@@ -10,7 +10,7 @@ const { useState, useEffect, useMemo, useRef } = wp.element;
 const STEPS = [
   {
     name: "bridge",
-    component: BridgeStep,
+    component: BrevoBridgeStep,
     order: 20,
   },
 ];
@@ -56,7 +56,7 @@ export default function BrevoTemplateWizard({
 
   const fetch = useRef((endpoint, then, backend) => {
     apiFetch({
-      path: `forms-bridge/v1/brevo/fetch`,
+      path: "forms-bridge/v1/brevo/fetch",
       method: "POST",
       data: { backend, endpoint },
     })
