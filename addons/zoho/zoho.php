@@ -234,15 +234,12 @@ class Zoho_Addon extends Addon
 
         self::temp_register_credentials($credential);
 
-        $bridge = new Zoho_Form_Bridge(
-            [
-                'credential' => $credential['name'],
-                'backend' => $backend,
-                'endpoint' => '/crm/v7',
-                'scope' => 'ZohoCRM.settings.ALL',
-            ],
-            'zoho'
-        );
+        $bridge = new Zoho_Form_Bridge([
+            'credential' => $credential['name'],
+            'backend' => $backend,
+            'endpoint' => '/crm/v7',
+            'scope' => 'ZohoCRM.settings.ALL',
+        ]);
 
         return ['success' => $bridge->check_credential()];
     }
@@ -268,15 +265,12 @@ class Zoho_Addon extends Addon
 
         self::temp_register_credentials($credential);
 
-        $bridge = new Zoho_Form_Bridge(
-            [
-                'credential' => $credential['name'],
-                'endpoint' => $endpoint,
-                'scope' => 'ZohoCRM.modules.ALL',
-                'method' => 'GET',
-            ],
-            'zoho'
-        );
+        $bridge = new Zoho_Form_Bridge([
+            'credential' => $credential['name'],
+            'endpoint' => $endpoint,
+            'scope' => 'ZohoCRM.modules.ALL',
+            'method' => 'GET',
+        ]);
 
         $response = $bridge->submit([]);
         if (is_wp_error($response)) {
@@ -308,14 +302,11 @@ class Zoho_Addon extends Addon
 
         self::temp_register_credentials($credential);
 
-        $bridge = new Zoho_Form_Bridge(
-            [
-                'credential' => $credential['name'],
-                'endpoint' => $endpoint,
-                'scope' => 'ZohoCRM.settings.layouts.READ',
-            ],
-            'zoho'
-        );
+        $bridge = new Zoho_Form_Bridge([
+            'credential' => $credential['name'],
+            'endpoint' => $endpoint,
+            'scope' => 'ZohoCRM.settings.layouts.READ',
+        ]);
 
         return $bridge->api_fields;
     }

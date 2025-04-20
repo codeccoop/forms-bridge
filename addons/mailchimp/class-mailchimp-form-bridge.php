@@ -45,17 +45,10 @@ class Mailchimp_Form_Bridge extends Rest_Form_Bridge
      */
     protected function do_submit($payload, $attachments = [])
     {
-        add_filter(
-            'http_request_args',
-            '\FORMS_BRIDGE\Mailchimp_Form_Bridge::basic_auth',
-            10,
-            1
-        );
-
         $response = parent::do_submit($payload, $attachments);
 
         if (is_wp_error($response)) {
-            $a = 1;
+            // TODO: handle controled errors
         }
 
         return $response;
@@ -193,6 +186,7 @@ class Mailchimp_Form_Bridge extends Rest_Form_Bridge
 
         $basic_auth =
             'Basic ' . base64_encode('forms-bridge:' . $headers['Api-Key']);
+
         $headers['Authorization'] = $basic_auth;
 
         return $request;

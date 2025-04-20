@@ -9,6 +9,13 @@ if (!defined('ABSPATH')) {
 class Rest_Form_Bridge_Template extends Form_Bridge_Template
 {
     /**
+     * Handles the template api name.
+     *
+     * @var string
+     */
+    protected $api = 'rest-api';
+
+    /**
      * Template default config getter.
      *
      * @return array

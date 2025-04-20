@@ -11,6 +11,11 @@ add_filter(
             return $data;
         }
 
+        $index = array_search(
+            'campaign_id',
+            array_column($data['bridge']['custom_fields'], 'name')
+        );
+
         $campaign_id = $data['bridge']['campaign_id'];
         $backend_params = $data['backend'];
 
@@ -50,6 +55,11 @@ global $forms_bridge_iso2_countries;
 return [
     'title' => __('Loan Requests', 'forms-bridge'),
     'fields' => [
+        [
+            'ref' => '#bridge',
+            'name' => 'endpoint',
+            'value' => '/api/campaign/{campaign_id}/loan_request',
+        ],
         [
             'ref' => '#form',
             'name' => 'title',

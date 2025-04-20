@@ -199,15 +199,12 @@ class Finan_Coop_Addon extends Rest_Addon
      */
     protected function do_ping($backend, $request)
     {
-        $bridge = new Finan_Coop_Form_Bridge(
-            [
-                'name' => '__financoop-' . time(),
-                'endpoint' => '/api/campaigns',
-                'method' => 'GET',
-                'backend' => $backend,
-            ],
-            self::$api
-        );
+        $bridge = new Finan_Coop_Form_Bridge([
+            'name' => '__financoop-' . time(),
+            'endpoint' => '/api/campaigns',
+            'method' => 'GET',
+            'backend' => $backend,
+        ]);
 
         $response = $bridge->submit([]);
         return ['success' => !is_wp_error($response)];
@@ -224,15 +221,12 @@ class Finan_Coop_Addon extends Rest_Addon
      */
     protected function do_fetch($backend, $endpoint, $request)
     {
-        $bridge = new Finan_Coop_Form_Bridge(
-            [
-                'name' => '__financoop-' . time(),
-                'endpoint' => $endpoint,
-                'backend' => $backend,
-                'method' => 'GET',
-            ],
-            self::$api
-        );
+        $bridge = new Finan_Coop_Form_Bridge([
+            'name' => '__financoop-' . time(),
+            'endpoint' => $endpoint,
+            'backend' => $backend,
+            'method' => 'GET',
+        ]);
 
         $response = $bridge->submit([]);
         if (is_wp_error($response)) {
@@ -254,15 +248,12 @@ class Finan_Coop_Addon extends Rest_Addon
      */
     protected function get_schema($backend, $endpoint, $request)
     {
-        $bridge = new Finan_Coop_Form_Bridge(
-            [
-                'name' => '__financoop-' . time(),
-                'endpoint' => $endpoint,
-                'backend' => $backend,
-                'method' => 'GET',
-            ],
-            self::$api
-        );
+        $bridge = new Finan_Coop_Form_Bridge([
+            'name' => '__financoop-' . time(),
+            'endpoint' => $endpoint,
+            'backend' => $backend,
+            'method' => 'GET',
+        ]);
 
         return $bridge->api_fields;
     }

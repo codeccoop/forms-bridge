@@ -56,15 +56,12 @@ class Brevo_Addon extends Rest_Addon
      */
     protected function do_ping($backend, $credential)
     {
-        $bridge = new Brevo_Form_Bridge(
-            [
-                'name' => '__brevo-' . time(),
-                'endpoint' => '/v3/contacts/lists',
-                'method' => 'GET',
-                'backend' => $backend,
-            ],
-            self::$api
-        );
+        $bridge = new Brevo_Form_Bridge([
+            'name' => '__brevo-' . time(),
+            'endpoint' => '/v3/contacts/lists',
+            'method' => 'GET',
+            'backend' => $backend,
+        ]);
 
         $response = $bridge->submit(['limit' => 1]);
         return ['success' => !is_wp_error($response)];
@@ -108,15 +105,12 @@ class Brevo_Addon extends Rest_Addon
      */
     protected function get_schema($backend, $endpoint, $credential)
     {
-        $bridge = new Brevo_Form_Bridge(
-            [
-                'name' => '__brevo-' . time(),
-                'endpoint' => $endpoint,
-                'backend' => $backend,
-                'method' => 'GET',
-            ],
-            self::$api
-        );
+        $bridge = new Brevo_Form_Bridge([
+            'name' => '__brevo-' . time(),
+            'endpoint' => $endpoint,
+            'backend' => $backend,
+            'method' => 'GET',
+        ]);
 
         return $bridge->api_schema;
     }

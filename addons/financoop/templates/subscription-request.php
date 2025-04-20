@@ -52,6 +52,11 @@ return [
     'title' => __('Subscription Requests', 'forms-bridge'),
     'fields' => [
         [
+            'ref' => '#bridge',
+            'name' => 'endpoint',
+            'value' => '/api/campaign/{campaign_id}/subscription_request',
+        ],
+        [
             'ref' => '#form',
             'name' => 'title',
             'default' => __('Subscription Requests', 'forms-bridge'),
@@ -59,6 +64,16 @@ return [
     ],
     'bridge' => [
         'endpoint' => '/api/campaign/{campaign_id}/subscription_request',
+        'custom_fields' => [
+            [
+                'name' => 'source',
+                'value' => 'website',
+            ],
+            [
+                'name' => 'type',
+                'value' => 'increase',
+            ],
+        ],
         'mutations' => [
             [
                 [
@@ -86,18 +101,6 @@ return [
     ],
     'form' => [
         'fields' => [
-            [
-                'name' => 'source',
-                'type' => 'hidden',
-                'required' => true,
-                'value' => 'website',
-            ],
-            [
-                'name' => 'type',
-                'type' => 'hidden',
-                'required' => true,
-                'value' => 'increase',
-            ],
             [
                 'label' => __('Ordered parts', 'forms-bridge'),
                 'name' => 'ordered_parts',

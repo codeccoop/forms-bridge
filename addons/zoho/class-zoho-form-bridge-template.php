@@ -9,6 +9,13 @@ if (!defined('ABSPATH')) {
 class Zoho_Form_Bridge_Template extends Form_Bridge_Template
 {
     /**
+     * Handles the template api name.
+     *
+     * @var string
+     */
+    protected $api = 'zoho';
+
+    /**
      * Template default config getter.
      *
      * @return array
@@ -20,7 +27,7 @@ class Zoho_Form_Bridge_Template extends Form_Bridge_Template
                 [
                     'ref' => '#credential',
                     'name' => 'name',
-                    'label' => __('Credential name', 'forms-bridge'),
+                    'label' => __('Name', 'forms-bridge'),
                     'type' => 'string',
                     'required' => true,
                 ],
@@ -105,13 +112,10 @@ class Zoho_Form_Bridge_Template extends Form_Bridge_Template
                 ],
             ],
             'bridge' => [
-                'form_id' => '',
                 'backend' => 'Zoho API',
                 'endpoint' => '',
                 'scope' => '',
                 'credential' => '',
-                'custom_fields' => [],
-                'mutations' => [[]],
             ],
             'credential' => [
                 'name' => '',

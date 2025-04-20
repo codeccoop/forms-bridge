@@ -9,6 +9,13 @@ if (!defined('ABSPATH')) {
 class Listmonk_Form_Bridge_Template extends Rest_Form_Bridge_Template
 {
     /**
+     * Handles the template api name.
+     *
+     * @var string
+     */
+    protected $api = 'listmonk';
+
+    /**
      * Template default config getter.
      *
      * @return array

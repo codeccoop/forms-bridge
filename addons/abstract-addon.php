@@ -162,10 +162,6 @@ abstract class Addon extends Singleton
 
             if ($enabled) {
                 require_once "{$addon_dir}/{$addon}.php";
-
-                if (is_dir("{$addon_dir}/mu")) {
-                    self::autoload_dir("{$addon}/mu", ['php']);
-                }
             }
         }
 
@@ -594,7 +590,7 @@ abstract class Addon extends Singleton
 
         return array_map(
             static function ($bridge_data) {
-                return new static::$bridge_class($bridge_data, static::$api);
+                return new static::$bridge_class($bridge_data);
             },
             array_filter($bridges, static function ($bridge_data) use (
                 $form_id
@@ -844,7 +840,6 @@ abstract class Addon extends Singleton
                 $loaded[] = [
                     'name' => $name,
                     'data' => $data,
-                    'api' => static::$api,
                 ];
             }
         }
@@ -867,8 +862,7 @@ abstract class Addon extends Singleton
         foreach ($templates as $template) {
             new static::$bridge_template_class(
                 $template['name'],
-                $template['data'],
-                static::$api
+                $template['data']
             );
         }
     }

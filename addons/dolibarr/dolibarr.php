@@ -59,15 +59,12 @@ class Dolibarr_Addon extends Rest_Addon
      */
     protected function do_ping($backend, $request)
     {
-        $bridge = new Dolibarr_Form_Bridge(
-            [
-                'name' => '__dolibarr-' . time(),
-                'endpoint' => '/api/index.php/status',
-                'method' => 'GET',
-                'backend' => $backend,
-            ],
-            self::$api
-        );
+        $bridge = new Dolibarr_Form_Bridge([
+            'name' => '__dolibarr-' . time(),
+            'endpoint' => '/api/index.php/status',
+            'method' => 'GET',
+            'backend' => $backend,
+        ]);
 
         $response = $bridge->submit([]);
         if (is_wp_error($response)) {
@@ -88,15 +85,12 @@ class Dolibarr_Addon extends Rest_Addon
      */
     protected function do_fetch($backend, $endpoint, $request)
     {
-        $bridge = new Dolibarr_Form_Bridge(
-            [
-                'name' => '__dolibarr-' . time(),
-                'endpoint' => $endpoint,
-                'backend' => $backend,
-                'method' => 'GET',
-            ],
-            self::$api
-        );
+        $bridge = new Dolibarr_Form_Bridge([
+            'name' => '__dolibarr-' . time(),
+            'endpoint' => $endpoint,
+            'backend' => $backend,
+            'method' => 'GET',
+        ]);
 
         $response = $bridge->submit([]);
         if (is_wp_error($response)) {
@@ -118,15 +112,12 @@ class Dolibarr_Addon extends Rest_Addon
      */
     protected function get_schema($backend, $endpoint, $request)
     {
-        $bridge = new Dolibarr_Form_Bridge(
-            [
-                'name' => '__dolibarr-' . time(),
-                'endpoint' => $endpoint,
-                'backend' => $backend,
-                'method' => 'GET',
-            ],
-            self::$api
-        );
+        $bridge = new Dolibarr_Form_Bridge([
+            'name' => '__dolibarr-' . time(),
+            'endpoint' => $endpoint,
+            'backend' => $backend,
+            'method' => 'GET',
+        ]);
 
         return $bridge->api_fields;
     }

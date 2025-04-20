@@ -54,15 +54,12 @@ class Listmonk_Addon extends Rest_Addon
      */
     protected function do_ping($backend, $request)
     {
-        $bridge = new Listmonk_Form_Bridge(
-            [
-                'name' => '__listmonk-' . time(),
-                'endpoint' => '/api/lists',
-                'method' => 'GET',
-                'backend' => $backend,
-            ],
-            self::$api
-        );
+        $bridge = new Listmonk_Form_Bridge([
+            'name' => '__listmonk-' . time(),
+            'endpoint' => '/api/lists',
+            'method' => 'GET',
+            'backend' => $backend,
+        ]);
 
         $response = $bridge->submit([]);
         return ['success' => !is_wp_error($response)];
@@ -79,15 +76,12 @@ class Listmonk_Addon extends Rest_Addon
      */
     protected function do_fetch($backend, $endpoint, $credential)
     {
-        $bridge = new Listmonk_Form_Bridge(
-            [
-                'name' => '__listmonk-' . time(),
-                'method' => 'GET',
-                'endpoint' => $endpoint,
-                'backend' => $backend,
-            ],
-            self::$api
-        );
+        $bridge = new Listmonk_Form_Bridge([
+            'name' => '__listmonk-' . time(),
+            'method' => 'GET',
+            'endpoint' => $endpoint,
+            'backend' => $backend,
+        ]);
 
         $response = $bridge->submit([]);
         if (is_wp_error($response)) {
@@ -109,15 +103,12 @@ class Listmonk_Addon extends Rest_Addon
      */
     protected function get_schema($backend, $endpoint, $credential)
     {
-        $bridge = new Listmonk_Form_Bridge(
-            [
-                'name' => '__listmonk-' . time(),
-                'method' => 'GET',
-                'endpoint' => $endpoint,
-                'backend' => $backend,
-            ],
-            self::$api
-        );
+        $bridge = new Listmonk_Form_Bridge([
+            'name' => '__listmonk-' . time(),
+            'method' => 'GET',
+            'endpoint' => $endpoint,
+            'backend' => $backend,
+        ]);
 
         return $bridge->api_schema;
     }

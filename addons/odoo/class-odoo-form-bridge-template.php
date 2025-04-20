@@ -9,133 +9,71 @@ if (!defined('ABSPATH')) {
 class Odoo_Form_Bridge_Template extends Form_Bridge_Template
 {
     private $database_data = null;
+    /**
+     * Handles the template api name.
+     *
+     * @var string
+     */
+    protected $api = 'odoo';
 
     /**
-     * Handles the template default values.
+     * Template default config getter.
      *
-     * @var array
+     * @return array
      */
-    protected static $default = [
-        'fields' => [
-            [
-                'ref' => '#database',
-                'name' => 'name',
-                'label' => 'Name',
-                'type' => 'string',
-                'required' => true,
-            ],
-            [
-                'ref' => '#database',
-                'name' => 'user',
-                'label' => 'User',
-                'type' => 'string',
-            ],
-            [
-                'ref' => '#database',
-                'name' => 'password',
-                'label' => 'Password',
-                'type' => 'string',
-            ],
-            [
-                'ref' => '#backend',
-                'name' => 'name',
-                'label' => 'Name',
-                'type' => 'string',
-                'required' => true,
-                'default' => 'Odoo',
-            ],
-            [
-                'ref' => '#backend',
-                'name' => 'base_url',
-                'label' => 'Base URL',
-                'type' => 'string',
-            ],
-        ],
-        'bridge' => [
-            'name' => '',
-            'form_id' => '',
-            'database' => '',
-            'model' => '',
-            'mutations' => [],
-        ],
-        'backend' => [
-            'name' => 'Odoo',
-            'headers' => [
-                [
-                    'name' => 'Content-Type',
-                    'value' => 'application/json',
-                ],
-                [
-                    'name' => 'Accept',
-                    'value' => 'application/json',
-                ],
-            ],
-        ],
-        'database' => [
-            'name' => '',
-            'backend' => 'Odoo',
-            'user' => '',
-            'password' => '',
-        ],
-    ];
-
-    /**
-     * Store template attribute values, validates config data and binds the
-     * instance to custom forms bridge template hooks.
-     *
-     * @param string $file Source file path of the template config.
-     * @param array $config Template config data.
-     * @param string $api Bridge API name.
-     */
-    public function __construct($file, $config, $api)
+    protected static function defaults()
     {
-        parent::__construct($file, $config, $api);
-
-        add_filter(
-            'forms_bridge_template_data',
-            function ($data, $name) {
-                if ($name === $this->name) {
-                    $this->database_data = array_merge($data['database'], [
-                        'backend' => $data['backend']['name'],
-                    ]);
-
-                    $data['bridge']['database'] = $data['database']['name'];
-                }
-
-                return $data;
-            },
-            10,
-            2
-        );
-
-        add_action(
-            'forms_bridge_before_template_bridge',
-            function ($data, $template_name) {
-                if ($template_name === $this->name && $this->database_data) {
-                    $database_exists = $this->database_exists(
-                        $this->database_data['name']
-                    );
-
-                    if ($database_exists) {
-                        return;
-                    }
-
-                    $result = $this->create_database($this->database_data);
-
-                    if (!$result) {
-                        throw new Form_Bridge_Template_Exception(
-                            'database_creation_error',
-                            __(
-                                'Forms Bridge can\'t create the database',
-                                'forms-bridge'
-                            )
-                        );
-                    }
-                }
-            },
-            10,
-            2
-        );
+        return [
+            'fields' => [
+                [
+                    'ref' => '#credential',
+                    'name' => 'name',
+                    'label' => __('Name', 'forms-bridge'),
+                    'type' => 'string',
+                    'required' => true,
+                ],
+                [
+                    'ref' => '#credential',
+                    'name' => 'user',
+                    'label' => __('User', 'forms-bridge'),
+                    'type' => 'string',
+                    'required' => true,
+                ],
+                [
+                    'ref' => '#credential',
+                    'name' => 'password',
+                    'label' => __('Password', 'forms-bridge'),
+                    'type' => 'string',
+                    'required' => true,
+                ],
+                [
+                    'ref' => '#backend',
+                    'name' => 'name',
+                    'default' => 'Odoo',
+                ],
+            ],
+            'bridge' => [
+                'name' => '',
+                'form_id' => '',
+                'backend' => '',
+                'credential' => '',
+                'model' => '',
+            ],
+            'backend' => [
+                'name' => 'Odoo',
+                'headers' => [
+                    [
+                        'name' => 'Accept',
+                        'value' => 'application/json',
+                    ],
+                ],
+            ],
+            'credential' => [
+                'name' => '',
+                'user' => '',
+                'password' => '',
+            ],
+        ];
     }
 
     /**
@@ -147,72 +85,15 @@ class Odoo_Form_Bridge_Template extends Form_Bridge_Template
      */
     protected static function extend_schema($schema)
     {
-        $schema['database'] = [
-            'type' => 'object',
-            'properties' => [
-                'name' => ['type' => 'string'],
-                'user' => ['type' => 'string'],
-                'password' => ['type' => 'string'],
-                'backend' => ['type' => 'string'],
-            ],
-            'required' => ['name', 'user', 'password', 'backend'],
-            'additionalProperties' => false,
-        ];
+        $schema['credential']['properties']['user'] = ['type' => 'string'];
+        $schema['credential']['required'][] = 'user';
 
-        $schema['bridge']['properties'] = array_merge(
-            $schema['bridge']['properties'],
-            [
-                'database' => ['type' => 'string'],
-                'model' => ['type' => 'string'],
-            ]
-        );
+        $schema['credential']['properties']['password'] = ['type' => 'string'];
+        $schema['credential']['required'][] = 'password';
 
-        $schema['bridge']['required'][] = 'database';
+        $schema['bridge']['properties']['model'] = ['type' => 'string'];
         $schema['bridge']['required'][] = 'model';
 
         return $schema;
-    }
-
-    /**
-     * Checks if a database with the given name exists on the settings store.
-     *
-     * @param string $name Database name.
-     *
-     * @return boolean
-     */
-    private function database_exists($name)
-    {
-        $setting = Forms_Bridge::setting($this->api);
-        $databases = $setting->databases ?: [];
-
-        return array_search($name, array_column($databases, 'name')) !== false;
-    }
-
-    /**
-     * Stores the database data on the settings store.
-     *
-     * @param array $data Database data.
-     *
-     * @return boolean Creation result.
-     */
-    private function create_database($data)
-    {
-        $setting = Forms_Bridge::setting($this->api);
-        $databases = $setting->databases;
-
-        do_action('forms_bridge_before_template_database', $data, $this->name);
-
-        $setting->databases = array_merge($databases, [$data]);
-        $setting->flush();
-
-        $is_valid = $this->database_exists($data['name']);
-
-        if (!$is_valid) {
-            return false;
-        }
-
-        do_action('forms_bridge_template_database', $data, $this->name);
-
-        return true;
     }
 }

@@ -9,68 +9,78 @@ if (!defined('ABSPATH')) {
 class Finan_Coop_Form_Bridge_Template extends Rest_Form_Bridge_Template
 {
     /**
-     * Handles the template default values.
+     * Handles the template api name.
      *
-     * @var array
+     * @var string
      */
-    protected static $default = [
-        'fields' => [
+    protected $api = 'financoop';
+
+    /**
+     * Template default config getter.
+     *
+     * @return array
+     */
+    protected static function defaults()
+    {
+        return forms_bridge_merge_object(
             [
-                'ref' => '#bridge',
-                'name' => 'campaign_id',
-                'label' => 'Campaign ID',
-                'type' => 'number',
-                'required' => true,
+                'fields' => [
+                    [
+                        'ref' => '#bridge',
+                        'name' => 'method',
+                        'value' => 'POST',
+                    ],
+                    [
+                        'ref' => '#bridge/custom_fields',
+                        'name' => 'campaign_id',
+                        'label' => __('Campaign ID', 'forms-bridge'),
+                        'type' => 'number',
+                        'required' => true,
+                    ],
+                    [
+                        'ref' => '#backend',
+                        'name' => 'name',
+                        'default' => 'FinanCoop',
+                    ],
+                    [
+                        'ref' => '#backend/headers[]',
+                        'name' => 'X-Odoo-Db',
+                        'label' => 'Database',
+                        'type' => 'string',
+                        'required' => true,
+                    ],
+                    [
+                        'ref' => '#backend/headers[]',
+                        'name' => 'X-Odoo-Username',
+                        'label' => 'Username',
+                        'type' => 'string',
+                        'required' => true,
+                    ],
+                    [
+                        'ref' => '#backend/headers[]',
+                        'name' => 'X-Odoo-Api-Key',
+                        'label' => 'API Key',
+                        'type' => 'string',
+                        'required' => true,
+                    ],
+                ],
+                'bridge' => [
+                    'backend' => 'FinanCoop',
+                    'method' => 'POST',
+                ],
+                'backend' => [
+                    'headers' => [
+                        [
+                            'name' => 'Accept',
+                            'value' => 'application/json',
+                        ],
+                    ],
+                ],
             ],
-            [
-                'ref' => '#bridge',
-                'name' => 'name',
-                'label' => 'Bridge name',
-                'type' => 'string',
-                'required' => true,
-            ],
-            [
-                'ref' => '#backend',
-                'name' => 'name',
-                'label' => 'Name',
-                'type' => 'string',
-                'required' => true,
-                'default' => 'FinanCoop',
-            ],
-            [
-                'ref' => '#backend',
-                'name' => 'base_url',
-                'label' => 'Base URL',
-                'type' => 'string',
-            ],
-            [
-                'ref' => '#backend/headers[]',
-                'name' => 'X-Odoo-Db',
-                'label' => 'Database',
-                'type' => 'string',
-                'required' => true,
-            ],
-            [
-                'ref' => '#backend/headers[]',
-                'name' => 'X-Odoo-Username',
-                'label' => 'Username',
-                'type' => 'string',
-                'required' => true,
-            ],
-            [
-                'ref' => '#backend/headers[]',
-                'name' => 'X-Odoo-Api-Key',
-                'label' => 'API Key',
-                'type' => 'string',
-                'required' => true,
-            ],
-        ],
-        'bridge' => [
-            'backend' => 'FinanCoop',
-            'endpoint' => '/api/campaign/{campaign_id}',
-            'method' => 'POST',
-        ],
-    ];
+            parent::defaults(),
+            self::$schema
+        );
+    }
 
     /**
      * Sets the template api, extends the common schema and inherits the parent's
@@ -88,28 +98,34 @@ class Finan_Coop_Form_Bridge_Template extends Rest_Form_Bridge_Template
             'forms_bridge_template_data',
             function ($data, $template_name) {
                 if ($template_name === $this->name) {
-                    if (!empty($data['backend']['name'])) {
-                        $data['bridge']['backend'] = $data['backend']['name'];
-                    }
-
                     $index = array_search(
                         'campaign_id',
-                        array_column($data['fields'], 'name')
+                        array_column($data['bridge']['custom_fields'], 'name')
                     );
 
                     if ($index !== false) {
-                        $campaign_id = $data['fields'][$index]['value'];
+                        $campaign_id =
+                            $data['bridge']['custom_fields'][$index]['value'];
                         $data['bridge']['endpoint'] = preg_replace(
                             '/\{campaign_id\}/',
                             $campaign_id,
                             $data['bridge']['endpoint']
+                        );
+
+                        array_splice(
+                            $data['bridge']['custom_fields'],
+                            $index,
+                            1
+                        );
+                        $data['bridge']['custom_fields'] = array_values(
+                            $data['bridge']['custom_fields']
                         );
                     }
                 }
 
                 return $data;
             },
-            9,
+            5,
             2
         );
     }

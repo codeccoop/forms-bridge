@@ -9,36 +9,46 @@ if (!defined('ABSPATH')) {
 class Google_Sheets_Form_Bridge_Template extends Form_Bridge_Template
 {
     /**
-     * Handles the template default values.
+     * Handles the template api name.
      *
-     * @var array
+     * @var string
      */
-    protected static $default = [
-        'fields' => [
-            [
-                'ref' => '#spreadsheet',
-                'name' => 'id',
-                'label' => 'Spreadsheet',
-                'type' => 'string',
-                'required' => true,
+    protected $api = 'google-sheets';
+
+    /**
+     * Template default config getter.
+     *
+     * @return array
+     */
+    protected static function defaults()
+    {
+        return [
+            'fields' => [
+                [
+                    'ref' => '#spreadsheet',
+                    'name' => 'id',
+                    'label' => 'Spreadsheet',
+                    'type' => 'string',
+                    'required' => true,
+                ],
+                [
+                    'ref' => '#spreadsheet',
+                    'name' => 'tab',
+                    'label' => 'Tab',
+                    'type' => 'string',
+                    'required' => true,
+                ],
             ],
-            [
-                'ref' => '#spreadsheet',
-                'name' => 'tab',
-                'label' => 'Tab',
-                'type' => 'string',
-                'required' => true,
+            'bridge' => [
+                'spreadsheet' => '',
+                'tab' => '',
             ],
-        ],
-        'bridge' => [
-            'spreadsheet' => '',
-            'tab' => '',
-        ],
-        'spreadsheet' => [
-            'id' => '',
-            'tab' => '',
-        ],
-    ];
+            'spreadsheet' => [
+                'id' => '',
+                'tab' => '',
+            ],
+        ];
+    }
 
     /**
      * Sets the template api, extends the common schema and inherits the parent's
@@ -46,11 +56,10 @@ class Google_Sheets_Form_Bridge_Template extends Form_Bridge_Template
      *
      * @param string $file Source file path of the template config.
      * @param array $config Template config data.
-     * @param string $api Bridge API name.
      */
-    public function __construct($file, $config, $api)
+    public function __construct($file, $config)
     {
-        parent::__construct($file, $config, $api);
+        parent::__construct($file, $config);
 
         add_filter(
             'forms_bridge_template_data',

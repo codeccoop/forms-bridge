@@ -245,14 +245,11 @@ class Google_Sheets_Addon extends Addon
     {
         $credentials = $request['credentials'];
 
-        $bridge = new Google_Sheets_Form_Bridge(
-            [
-                'name' => '__gs-' . time(),
-                'spreadsheet' => $credentials['spreadsheet'],
-                'tab' => $credentials['tab'],
-            ],
-            self::$api
-        );
+        $bridge = new Google_Sheets_Form_Bridge([
+            'name' => '__gs-' . time(),
+            'spreadsheet' => $credentials['spreadsheet'],
+            'tab' => $credentials['tab'],
+        ]);
 
         return $bridge->api_fields;
     }

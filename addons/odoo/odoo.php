@@ -367,15 +367,12 @@ class Odoo_Addon extends Addon
             2
         );
 
-        $bridge = new Odoo_Form_Bridge(
-            [
-                'name' => "odoo-rpc-{$model}-fetch",
-                'database' => $database_params['name'],
-                'model' => $model,
-                'method' => 'search_read',
-            ],
-            'odoo'
-        );
+        $bridge = new Odoo_Form_Bridge([
+            'name' => "odoo-rpc-{$model}-fetch",
+            'database' => $database_params['name'],
+            'model' => $model,
+            'method' => 'search_read',
+        ]);
 
         $response = $bridge->submit([], $fields);
 
@@ -440,14 +437,11 @@ class Odoo_Addon extends Addon
      */
     protected function do_ping($backend, $request)
     {
-        $bridge = new Odoo_Form_Bridge(
-            [
-                'name' => '__odoo-' . time(),
-                'model' => 'res.users',
-                'database' => $request['database'],
-            ],
-            self::$api
-        );
+        $bridge = new Odoo_Form_Bridge([
+            'name' => '__odoo-' . time(),
+            'model' => 'res.users',
+            'database' => $request['database'],
+        ]);
 
         $response = $bridge->submit([]);
         return ['success' => is_wp_error($response)];
@@ -466,16 +460,13 @@ class Odoo_Addon extends Addon
     {
         $database = $request['credentials'];
 
-        $bridge = new Odoo_Form_Bridge(
-            [
-                'name' => '__odoo-' . time(),
-                'method' => 'search_read',
-                'model' => $endpoint,
-                'backend' => $backend,
-                'database' => $database['name'],
-            ],
-            self::$api
-        );
+        $bridge = new Odoo_Form_Bridge([
+            'name' => '__odoo-' . time(),
+            'method' => 'search_read',
+            'model' => $endpoint,
+            'backend' => $backend,
+            'database' => $database['name'],
+        ]);
 
         $response = $bridge->submit([]);
         if (is_wp_error($response)) {
@@ -498,15 +489,12 @@ class Odoo_Addon extends Addon
      */
     protected function get_schema($backend, $endpoint, $request)
     {
-        $bridge = new Odoo_Form_Bridge(
-            [
-                'name' => '__odoo-' . time(),
-                'model' => $endpoint,
-                'backend' => $backend,
-                'database' => $request['database'],
-            ],
-            self::$api
-        );
+        $bridge = new Odoo_Form_Bridge([
+            'name' => '__odoo-' . time(),
+            'model' => $endpoint,
+            'backend' => $backend,
+            'database' => $request['database'],
+        ]);
 
         return $bridge->api_fields;
     }

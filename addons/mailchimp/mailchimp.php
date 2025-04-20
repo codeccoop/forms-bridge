@@ -54,15 +54,12 @@ class Mailchimp_Addon extends Rest_Addon
      */
     protected function do_ping($backend, $credential)
     {
-        $bridge = new Mailchimp_Form_Bridge(
-            [
-                'name' => '__mailchimp-' . time(),
-                'endpoint' => '/3.0/lists',
-                'method' => 'GET',
-                'backend' => $backend,
-            ],
-            self::$api
-        );
+        $bridge = new Mailchimp_Form_Bridge([
+            'name' => '__mailchimp-' . time(),
+            'endpoint' => '/3.0/lists',
+            'method' => 'GET',
+            'backend' => $backend,
+        ]);
 
         $response = $bridge->submit([]);
         return ['success' => !is_wp_error($response)];
@@ -106,15 +103,12 @@ class Mailchimp_Addon extends Rest_Addon
      */
     protected function get_schema($backend, $endpoint, $credential)
     {
-        $bridge = new Mailchimp_Form_Bridge(
-            [
-                'name' => '__mailchimp-' . time(),
-                'method' => 'GET',
-                'endpoint' => $endpoint,
-                'backend' => $backend,
-            ],
-            self::$api
-        );
+        $bridge = new Mailchimp_Form_Bridge([
+            'name' => '__mailchimp-' . time(),
+            'method' => 'GET',
+            'endpoint' => $endpoint,
+            'backend' => $backend,
+        ]);
 
         return $bridge->api_schema;
     }

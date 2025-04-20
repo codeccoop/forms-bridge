@@ -9,6 +9,13 @@ if (!defined('ABSPATH')) {
 class Brevo_Form_Bridge_Template extends Rest_Form_Bridge_Template
 {
     /**
+     * Handles the template api name.
+     *
+     * @var string
+     */
+    protected $api = 'brevo';
+
+    /**
      * Template default config getter.
      *
      * @return array

@@ -312,7 +312,7 @@ class Form_Bridge_Template
             'properties' => [
                 'name' => ['type' => 'string'],
             ],
-            'additionalProperties' => true,
+            'additionalProperties' => false,
             'required' => ['name'],
         ],
     ];
@@ -330,24 +330,17 @@ class Form_Bridge_Template
     /**
      * Validates input config against the template schema.
      *
-     * @param string $name Template name.
      * @param array $config Input config.
      *
      * @return array|WP_Error Validated config.
      */
-    private static function validate_config($name, $config)
+    private static function validate_config($config)
     {
-        $schema = apply_filters(
-            'forms_bridge_template_schema',
-            self::extend_schema(static::$schema),
-            $name
-        );
-
         $schema = [
             '$schema' => 'https://json-schema.org/draft/2020-12/schema',
             'type' => 'object',
             'additionalProperties' => false,
-            'properties' => $schema,
+            'properties' => static::extend_schema(self::$schema),
             'required' => ['title', 'integrations', 'fields', 'form', 'bridge'],
         ];
 
@@ -449,13 +442,11 @@ class Form_Bridge_Template
      *
      * @param string $name Template name.
      * @param array $config Template config data.
-     * @param string $api Bridge API name.
      */
-    public function __construct($name, $config, $api)
+    public function __construct($name, $config)
     {
-        $this->api = $api;
-        $this->name = $api . '-' . $name;
-        $this->config = self::validate_config($this->name, $config);
+        $this->name = $this->api . '-' . $name;
+        $this->config = self::validate_config($config);
 
         add_filter(
             'forms_bridge_templates',
@@ -477,25 +468,6 @@ class Form_Bridge_Template
             },
             10,
             2
-        );
-
-        add_filter(
-            'forms_bridge_template_data',
-            function ($data, $template_name) {
-                if ($template_name !== $this->name) {
-                    return $data;
-                }
-
-                $data['bridge']['backend'] = $data['backend']['name'];
-
-                if (isset($data['bridge']['credential']['name'])) {
-                    $data['bridge']['credential'] = $data['credential']['name'];
-                }
-
-                return $data;
-            },
-            10,
-            3
         );
     }
 
@@ -752,12 +724,6 @@ class Form_Bridge_Template
 
         $integration_instance = Integration::integrations()[$integration];
 
-        do_action_ref_array('forms_bridge_before_template_form', [
-            $data['form'],
-            $this->name,
-            $this,
-        ]);
-
         try {
             $create_form = !$this->form_exists(
                 $data['form']['id'] ?? null,
@@ -765,6 +731,12 @@ class Form_Bridge_Template
             );
 
             if ($create_form) {
+                do_action_ref_array('forms_bridge_before_template_form', [
+                    $data['form'],
+                    $this->name,
+                    $this,
+                ]);
+
                 $form_id = $integration_instance->create_form($data['form']);
 
                 if (!$form_id) {
@@ -778,8 +750,8 @@ class Form_Bridge_Template
                     );
                 }
 
-                $data['bridge']['form_id'] = $integration . ':' . $form_id;
                 $data['form']['id'] = $form_id;
+                $data['bridge']['form_id'] = $integration . ':' . $form_id;
 
                 do_action(
                     'forms_bridge_template_form',
@@ -788,7 +760,8 @@ class Form_Bridge_Template
                     $this
                 );
             } else {
-                $form_id = $data['form']['id'];
+                $data['bridge']['form_id'] =
+                    $integration . ':' . $data['form']['id'];
             }
 
             $create_backend = !$this->backend_exists($data['backend']['name']);
@@ -796,7 +769,10 @@ class Form_Bridge_Template
                 $result = $this->create_backend($data['backend']);
 
                 if (!$result) {
-                    $integration_instance->remove_form($form_id);
+                    if ($create_form) {
+                        $integration_instance->remove_form($data['form']['id']);
+                    }
+
                     throw new Form_Bridge_Template_Exception(
                         'backend_creation_error',
                         __(
@@ -808,42 +784,47 @@ class Form_Bridge_Template
                 }
             }
 
-            $create_credential =
-                !empty($data['credential']['name']) &&
-                !$this->credential_exists($data['credential']['name']);
+            $data['bridge']['backend'] = $data['backend']['name'];
 
-            if ($create_credential) {
-                $result = $this->create_credential($data['credential']);
+            $create_credential = false;
+            if (!empty($data['credential']['name'])) {
+                $create_credential = !$this->credential_exists(
+                    $data['credential']['name']
+                );
 
-                if (!$result) {
-                    if ($create_form) {
-                        $integration_instance->remove_form($form_id);
+                if ($create_credential) {
+                    $result = $this->create_credential($data['credential']);
+
+                    if (!$result) {
+                        if ($create_form) {
+                            $integration_instance->remove_form(
+                                $data['form']['id']
+                            );
+                        }
+
+                        if ($create_backend) {
+                            $this->remove_backend($data['backend']['name']);
+                        }
+
+                        throw new Form_Bridge_Template_Exception(
+                            'credential_creation_error',
+                            __(
+                                'Forms bridge can\'t create the credential',
+                                'forms-bridge',
+                                ['status' => 400, 'data' => $data['credential']]
+                            )
+                        );
                     }
-
-                    if ($create_backend) {
-                        $this->remove_backend($data['backend']['name']);
-                    }
-
-                    throw new Form_Bridge_Template_Exception(
-                        'credential_creation_error',
-                        __(
-                            'Forms bridge can\'t create the credential',
-                            'forms-bridge',
-                            ['status' => 400, 'data' => $data['credential']]
-                        )
-                    );
                 }
+
+                $data['bridge']['credential'] = $data['credential']['name'];
             }
 
-            $result = $this->create_bridge(
-                array_merge($data['bridge'], [
-                    'form_id' => $integration . ':' . $form_id,
-                ])
-            );
+            $bridge_created = $this->create_bridge($data['bridge']);
 
-            if (!$result) {
+            if (!$bridge_created) {
                 if ($create_form) {
-                    $integration_instance->remove_form($form_id);
+                    $integration_instance->remove_form($data['form_id']);
                 }
 
                 if ($create_backend) {
@@ -866,15 +847,19 @@ class Form_Bridge_Template
         } catch (Form_Bridge_Template_Exception $e) {
             throw $e;
         } catch (Error | Exception $e) {
-            if (isset($form_id)) {
-                $integration_instance->remove_form($form_id);
+            if (isset($create_form) && $create_form) {
+                $integration_instance->remove_form($data['form']['id']);
             }
 
             if (isset($create_backend) && $create_backend) {
                 $this->remove_backend($data['backend']['name']);
             }
 
-            if (isset($result) && $result) {
+            if (isset($create_credential) && $create_credential) {
+                $this->remove_credential($data['credential']['name']);
+            }
+
+            if (isset($bridge_created) && $bridge_created) {
                 $this->remove_bridge($data['bridge']['name']);
             }
 
@@ -904,10 +889,6 @@ class Form_Bridge_Template
         );
         return !empty($form['id']);
     }
-
-    private function create_form($data) {}
-
-    private function remove_form($name) {}
 
     /**
      * Checks if a backend with the given name exists on the settings store.
