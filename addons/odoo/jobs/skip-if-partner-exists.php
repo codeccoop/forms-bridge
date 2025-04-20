@@ -19,12 +19,26 @@ function forms_bridge_odoo_skip_if_partner_exists($payload, $bridge)
     $response = $bridge
         ->patch([
             'name' => 'odoo-search-contact-by-email',
-            'template' => null,
             'method' => 'search',
+            'endpoint' => 'res.partner',
         ])
         ->submit($query);
 
     if (!is_wp_error($response)) {
+        $partner_id = $response['data']['result'][0];
+
+        $response = $bridge
+            ->patch([
+                'name' => 'odoo-update-contact',
+                'method' => 'write',
+                'endpoint' => 'res.partner',
+            ])
+            ->submit([$partner_id], $payload);
+
+        if (is_wp_error($response)) {
+            return $response;
+        }
+
         return;
     }
 

@@ -13,6 +13,11 @@ return [
             'default' => __('Appointments', 'forms-bridge'),
         ],
         [
+            'ref' => '#bridge',
+            'name' => 'endpoint',
+            'value' => 'calendar.event',
+        ],
+        [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'user_id',
             'label' => __('Owner email', 'forms-bridge'),
@@ -47,7 +52,7 @@ return [
         ],
     ],
     'bridge' => [
-        'model' => 'calendar.event',
+        'endpoint' => 'calendar.event',
         'mutations' => [
             [
                 [

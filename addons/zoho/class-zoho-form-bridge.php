@@ -52,8 +52,6 @@ class Zoho_Form_Bridge extends Form_Bridge
     public function __get($name)
     {
         switch ($name) {
-            case 'credential':
-                return $this->credential();
             case 'method':
                 return $this->data['method'] ?? 'POST';
             default:
@@ -94,7 +92,7 @@ class Zoho_Form_Bridge extends Form_Bridge
      *
      * @return boolean
      */
-    private function check_oauth_scope($scope, $required)
+    private static function check_oauth_scope($scope, $required)
     {
         $scopes = array_filter(array_map('trim', explode(',', $scope)));
         $requireds = array_filter(array_map('trim', explode(',', $required)));

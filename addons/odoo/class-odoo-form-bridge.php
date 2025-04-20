@@ -29,6 +29,13 @@ class Odoo_Form_Bridge extends Form_Bridge
     private const endpoint = '/jsonrpc';
 
     /**
+     * Handles the array of accepted HTTP header names of the bridge API.
+     *
+     * @var array<string>
+     */
+    protected static $api_headers = ['Content-Type', 'Accept'];
+
+    /**
      * Handles active RPC session data.
      *
      * @var array Tuple with session and user ids.
@@ -122,23 +129,22 @@ class Odoo_Form_Bridge extends Form_Bridge
     /**
      * JSON RPC login request.
      *
-     * @param Odoo_DB $db Current db instance.
+     * @param array $credential Credential data.
      *
      * @return array|WP_Error Tuple with RPC session id and user id.
      */
-    private static function rpc_login($db)
+    private static function rpc_login($credential, $backend)
     {
         if (self::$session) {
             return self::$session;
         }
 
         $session_id = Forms_Bridge::slug() . '-' . time();
-        $backend = $db->backend;
 
         $payload = self::rpc_payload($session_id, 'common', 'login', [
-            $db->name,
-            $db->user,
-            $db->password,
+            $credential['database'],
+            $credential['user'],
+            $credential['password'],
         ]);
 
         $response = $backend->post(self::endpoint, $payload);
@@ -154,23 +160,6 @@ class Odoo_Form_Bridge extends Form_Bridge
     }
 
     /**
-     * Parent getter interceptor to short circtuit database access.
-     *
-     * @param string $name Attribute name.
-     *
-     * @return mixed Attribute value or null.
-     */
-    public function __get($name)
-    {
-        switch ($name) {
-            case 'database':
-                return $this->database();
-            default:
-                return parent::__get($name);
-        }
-    }
-
-    /**
      * Returns json as static bridge content type.
      *
      * @return string.
@@ -181,58 +170,18 @@ class Odoo_Form_Bridge extends Form_Bridge
     }
 
     /**
-     * Intercepts backend access and returns it from the database.
+     * Bridge's credential data getter.
      *
-     * @return Http_Backend|null
+     * @return array|null
      */
-    protected function backend()
+    protected function credential()
     {
-        return $this->database()->backend;
-    }
-
-    /**
-     * Bridge's database private getter.
-     *
-     * @return Odoo_DB|null
-     */
-    private function database()
-    {
-        return apply_filters(
-            'forms_bridge_odoo_db',
-            null,
-            $this->data['database'] ?? null
-        );
-    }
-
-    protected function api_fields()
-    {
-        $db = $this->database();
-
-        $session = self::rpc_login($db);
-
-        if (is_wp_error($session)) {
-            return [];
+        $credentials = Forms_Bridge::setting($this->api)->credentials ?: [];
+        foreach ($credentials as $credential) {
+            if ($credential['name'] === $this->data['credential']) {
+                return $credential;
+            }
         }
-
-        [$sid, $uid] = $session;
-
-        $payload = self::rpc_payload($sid, 'object', 'execute', [
-            $db->name,
-            $uid,
-            $db->password,
-            $this->model,
-            'fields_get',
-            [],
-        ]);
-
-        $response = $this->backend()->post(self::endpoint, $payload);
-
-        $result = self::rpc_response($response);
-        if (is_wp_error($result)) {
-            return [];
-        }
-
-        return array_keys($result);
     }
 
     /**
@@ -245,9 +194,9 @@ class Odoo_Form_Bridge extends Form_Bridge
      */
     protected function do_submit($payload, $more_args = null)
     {
-        $db = $this->database();
+        $credential = $this->credential();
 
-        $session = self::rpc_login($db);
+        $session = self::rpc_login($credential, $this->backend);
 
         if (is_wp_error($session)) {
             return $session;
@@ -260,17 +209,15 @@ class Odoo_Form_Bridge extends Form_Bridge
             'object',
             'execute',
             [
-                $db->name,
+                $credential['database'],
                 $uid,
-                $db->password,
-                $this->model,
+                $credential['password'],
+                $this->endpoint,
                 $this->method ?? 'create',
                 $payload,
             ],
             $more_args
         );
-
-        $payload = apply_filters('forms_bridge_rpc_payload', $payload, $this);
 
         $response = $this->backend()->post(self::endpoint, $payload);
 
@@ -280,5 +227,44 @@ class Odoo_Form_Bridge extends Form_Bridge
         }
 
         return $response;
+    }
+
+    protected function api_schema()
+    {
+        $response = $this->patch([
+            'name' => 'odoo-api-schema-introspection',
+            'method' => 'fields_get',
+        ])->submit([]);
+
+        if (is_wp_error($response)) {
+            return [];
+        }
+
+        $fields = [];
+        foreach ($response['data']['result'] as $name => $spec) {
+            if ($spec['readonly']) {
+                continue;
+            }
+
+            if ($spec['type'] === 'char') {
+                $type = 'string';
+            } elseif ($spec['type'] === 'html') {
+                $type = 'string';
+            } elseif ($spec['type'] === 'float') {
+                $type = 'number';
+            } else {
+                $type = $spec['type'];
+            }
+
+            $fields[] = [
+                'name' => $name,
+                'schema' => [
+                    'type' => $type,
+                    'required' => $spec['required'],
+                ],
+            ];
+        }
+
+        return $fields;
     }
 }

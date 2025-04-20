@@ -4,7 +4,7 @@ export default function useOdooApi() {
   const [
     {
       odoo: api = {
-        databases: [],
+        credentials: [],
         bridges: [],
         templates: [],
         workflow_jobs: [],

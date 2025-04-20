@@ -7,9 +7,9 @@ const { TextControl, SelectControl } = wp.components;
 const { __ } = wp.i18n;
 
 export default function NewOdooBridge({ add, schema }) {
-  const [{ databases }] = useOdooApi();
-  const dbOptions = [{ label: "", value: "" }].concat(
-    databases.map(({ name }) => ({
+  const [{ credentials }] = useOdooApi();
+  const credentialOptions = [{ label: "", value: "" }].concat(
+    credentials.map(({ name }) => ({
       label: name,
       value: name,
     }))
@@ -21,17 +21,15 @@ export default function NewOdooBridge({ add, schema }) {
         <>
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
             <SelectControl
-              label={__("Database", "forms-bridge")}
+              label={__("Credential", "forms-bridge")}
               help={
-                databases.length === 0
-                  ? __(
-                      "Configure, at least, one database access on the panel below"
-                    )
+                credentials.length === 0
+                  ? __("Configure, at least, one credential on the panel below")
                   : ""
               }
-              value={data.database || ""}
-              onChange={(database) => update({ ...data, database })}
-              options={dbOptions}
+              value={data.credential || ""}
+              onChange={(credential) => update({ ...data, credential })}
+              options={credentialOptions}
               __nextHasNoMarginBottom
               __next40pxDefaultSize
             />
@@ -39,8 +37,8 @@ export default function NewOdooBridge({ add, schema }) {
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
             <TextControl
               label={__("Model", "forms-bridge")}
-              value={data.model || ""}
-              onChange={(model) => update({ ...data, model })}
+              value={data.endpoint || ""}
+              onChange={(endpoint) => update({ ...data, endpoint })}
               __nextHasNoMarginBottom
               __next40pxDefaultSize
             />

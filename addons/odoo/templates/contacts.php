@@ -14,9 +14,14 @@ return [
             'name' => 'title',
             'default' => __('Contacts', 'forms-bridge'),
         ],
+        [
+            'ref' => '#bridge',
+            'name' => 'endpoint',
+            'value' => 'res.partner',
+        ],
     ],
     'bridge' => [
-        'model' => 'res.partner',
+        'endpoint' => 'res.partner',
         'custom_fields' => [
             [
                 'name' => 'is_company',

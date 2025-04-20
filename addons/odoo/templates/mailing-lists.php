@@ -51,6 +51,11 @@ return [
             'default' => __('Mailing Lists', 'forms-bridge'),
         ],
         [
+            'ref' => '#bridge',
+            'name' => 'endpoint',
+            'value' => 'mailing.contact',
+        ],
+        [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'list_ids',
             'label' => __('Mailing lists', 'forms-bridge'),
@@ -59,7 +64,7 @@ return [
         ],
     ],
     'bridge' => [
-        'model' => 'mailing.contact',
+        'endpoint' => 'mailing.contact',
         'workflow' => ['odoo-mailing-contact'],
         'mutations' => [
             [

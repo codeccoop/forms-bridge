@@ -8,7 +8,7 @@ function forms_bridge_odoo_crm_lead_contact($payload, $bridge)
 {
     $partner = forms_bridge_odoo_create_partner($payload, $bridge);
 
-    if (is_wp_error($result)) {
+    if (is_wp_error($partner)) {
         return $partner;
     }
 

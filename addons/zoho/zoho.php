@@ -136,8 +136,7 @@ class Zoho_Addon extends Addon
     }
 
     /**
-     * Credentials setting field validation. Filters inconsistent keys
-     * based on the Http_Bridge's backends store state.
+     * Credentials setting field validation.
      *
      * @param array $credentials Collection of credentials data.
      *

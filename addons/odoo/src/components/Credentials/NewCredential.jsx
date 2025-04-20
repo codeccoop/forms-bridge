@@ -1,54 +1,35 @@
 // source
-import { useGeneral } from "../../../../../src/providers/Settings";
-import useDatabaseNames from "../../hooks/useDatabaseNames";
+import useCredentialNames from "../../hooks/useCredentialNames";
 
-const {
-  TextControl,
-  SelectControl,
-  Button,
-  __experimentalSpacer: Spacer,
-} = wp.components;
-const { useState } = wp.element;
+const { TextControl, Button, __experimentalSpacer: Spacer } = wp.components;
+const { useState, useMemo } = wp.element;
 const { __ } = wp.i18n;
 
-export default function NewDatabase({ add }) {
-  const [{ backends }] = useGeneral();
-  const backendOptions = [{ label: "", value: "" }].concat(
-    backends.map(({ name }) => ({
-      label: name,
-      value: name,
-    }))
-  );
-
-  const dbNames = useDatabaseNames();
+export default function NewCredential({ add }) {
+  const names = useCredentialNames();
 
   const [name, setName] = useState("");
-  const [backend, setBackend] = useState("");
-  const [nameConflict, setNameConflict] = useState(false);
+  const [database, setDatabase] = useState("");
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSetName = (name) => {
-    setNameConflict(dbNames.has(name.trim()));
-    setName(name);
-  };
+  const nameConflict = useMemo(() => names.has(name.trim()), [name, names]);
 
   const onClick = () => {
     add({
       name: name.trim(),
-      backend,
+      database,
       user,
       password,
     });
 
     setName("");
-    setBackend("");
+    setDatabase("");
     setUser("");
     setPassword("");
-    setNameConflict(false);
   };
 
-  const disabled = !(name && backend && user && password && !nameConflict);
+  const disabled = !(name && database && user && password && !nameConflict);
 
   return (
     <div
@@ -74,24 +55,23 @@ export default function NewDatabase({ add }) {
                 : ""
             }
             value={name}
-            onChange={handleSetName}
-            __nextHasNoMarginBottom
-            __next40pxDefaultSize
-          />
-        </div>
-        <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
-          <SelectControl
-            label={__("Backend", "forms-bridge")}
-            value={backend}
-            onChange={setBackend}
-            options={backendOptions}
+            onChange={setName}
             __nextHasNoMarginBottom
             __next40pxDefaultSize
           />
         </div>
         <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
           <TextControl
-            label={__("User", "forms-bridge")}
+            label={__("Database", "forms-bridge")}
+            value={database}
+            onChange={setDatabase}
+            __nextHasNoMarginBottom
+            __next40pxDefaultSize
+          />
+        </div>
+        <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
+          <TextControl
+            label={__("User email", "forms-bridge")}
             value={user}
             onChange={setUser}
             __nextHasNoMarginBottom

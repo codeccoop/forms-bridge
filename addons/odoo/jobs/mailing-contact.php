@@ -11,7 +11,7 @@ function forms_brige_odoo_update_mailing_contact($payload, $bridge)
             'name' => 'odoo-search-mailing-contact-by-email',
             'template' => null,
             'method' => 'search',
-            'model' => 'mailing.contact',
+            'endpoint' => 'mailing.contact',
         ])
         ->submit([['email', '=', $payload['email']]]);
 
@@ -23,14 +23,16 @@ function forms_brige_odoo_update_mailing_contact($payload, $bridge)
             ->patch([
                 'name' => 'odoo-update-mailing-contact-subscriptions',
                 'template' => null,
-                'model' => 'mailing.contact',
+                'endpoint' => 'mailing.contact',
                 'method' => 'write',
             ])
             ->submit([$contact_id], ['list_ids' => $list_ids]);
 
-        if (!is_wp_error($response)) {
-            return;
+        if (is_wp_error($response)) {
+            return $response;
         }
+
+        return;
     }
 
     return $payload;

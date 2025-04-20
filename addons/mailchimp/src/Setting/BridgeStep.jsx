@@ -40,7 +40,7 @@ export default function MailchimpBridgeStep({ fields, data, setData }) {
   useEffect(() => {
     const defaults = {};
 
-    if (listOptions.length === 1) {
+    if (listOptions.length > 0 && !data.list_id) {
       defaults.list_id = listOptions[0].value;
     }
 

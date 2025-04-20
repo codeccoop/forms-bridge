@@ -19,7 +19,7 @@ function forms_bridge_odoo_appointment_attendees($payload, $bridge)
         $user_response = $bridge
             ->patch([
                 'name' => 'odoo-get-user-by-id',
-                'model' => 'res.users',
+                'endpoint' => 'res.users',
                 'method' => 'read',
             ])
             ->submit([$payload['user_id']]);

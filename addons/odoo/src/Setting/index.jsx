@@ -2,16 +2,17 @@
 import Bridges from "../../../../src/components/Bridges";
 import OdooBridge from "./Bridge";
 import useOdooApi from "../hooks/useOdooApi";
-import Databases from "../components/Databases";
+import Credentials from "../components/Credentials";
 
 const { PanelBody, PanelRow, __experimentalSpacer: Spacer } = wp.components;
 const { __ } = wp.i18n;
 
 export default function OdooSetting() {
-  const [{ databases, bridges, templates, workflow_jobs }, save] = useOdooApi();
+  const [{ credentials, bridges, templates, workflow_jobs }, save] =
+    useOdooApi();
 
   const update = (field) =>
-    save({ databases, bridges, templates, workflow_jobs, ...field });
+    save({ credentials, bridges, templates, workflow_jobs, ...field });
 
   return (
     <>
@@ -23,6 +24,7 @@ export default function OdooSetting() {
       </p>
       <PanelRow>
         <Bridges
+          credentials={credentials}
           bridges={bridges}
           setBridges={(bridges) => update({ bridges })}
           Bridge={OdooBridge}
@@ -30,18 +32,12 @@ export default function OdooSetting() {
       </PanelRow>
       <Spacer paddingY="calc(8px)" />
       <PanelBody
-        title={__("Databases", "forms-bridge")}
-        initialOpen={databases.length === 0}
+        title={__("Credentials", "forms-bridge")}
+        initialOpen={credentials.length === 0}
       >
-        <p>
-          {__(
-            "Configure RPC credentials to access your ERP database models",
-            "forms-bridge"
-          )}
-        </p>
-        <Databases
-          databases={databases}
-          setDatabases={(databases) => update({ databases })}
+        <Credentials
+          credentials={credentials}
+          setCredentials={(credentials) => update({ credentials })}
         />
       </PanelBody>
     </>

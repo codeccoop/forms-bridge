@@ -15,11 +15,12 @@ add_filter(
 
             if ($index !== false) {
                 $field = $data['bridge']['custom_fields'][$index];
+                $tags = $field['value'] ?? [];
 
-                for ($i = 0; $i < count($field['value']); $i++) {
+                for ($i = 0; $i < count($tags); $i++) {
                     $data['bridge']['custom_fields'][] = [
                         'name' => "tag_ids[{$i}]",
-                        'value' => $field['value'][$i],
+                        'value' => $tags[$i],
                     ];
 
                     $data['bridge']['mutations'][0][] = [
@@ -49,6 +50,11 @@ return [
             'ref' => '#form',
             'name' => 'title',
             'default' => __('CRM Team Leads', 'forms-bridge'),
+        ],
+        [
+            'ref' => '#bridge',
+            'name' => 'endpoint',
+            'value' => 'crm.lead',
         ],
         [
             'ref' => '#bridge/custom_fields[]',
@@ -86,7 +92,7 @@ return [
         ],
     ],
     'bridge' => [
-        'model' => 'crm.lead',
+        'endpoint' => 'crm.lead',
         'mutations' => [
             [
                 [

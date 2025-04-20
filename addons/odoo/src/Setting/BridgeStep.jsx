@@ -1,5 +1,4 @@
-import TemplateStep from "../../../../src/components/Templates/Steps/Step";
-import TemplateField from "../../../../src/components/Templates/Field";
+import BridgeStep from "../../../../src/components/Templates/Steps/BridgeStep";
 
 const { useMemo, useEffect } = wp.element;
 const { __ } = wp.i18n;
@@ -8,57 +7,47 @@ const fieldsOrder = ["name"];
 
 const API_FIELDS = ["user_id", "product_id", "tag_ids", "team_id", "list_ids"];
 
-export default function BridgeStep({ fields, data, setData }) {
+export default function OdooBridgeStep({ fields, data, setData }) {
   const users = data._users || [];
   const products = data._products || [];
   const tags = data._tags || [];
   const teams = data._teams || [];
   const lists = data._lists || [];
 
-  const userOptions = useMemo(
-    () =>
-      users.map(({ id, email }) => ({
-        value: id,
-        label: email,
-      })),
-    [users]
-  );
+  const userOptions = useMemo(() => {
+    return users.map(({ id, name }) => ({
+      value: id,
+      label: name,
+    }));
+  }, [users]);
 
-  const productOptions = useMemo(
-    () =>
-      products.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      })),
-    [products]
-  );
+  const productOptions = useMemo(() => {
+    return products.map(({ id, name }) => ({
+      value: id,
+      label: name,
+    }));
+  }, [products]);
 
-  const tagOptions = useMemo(
-    () =>
-      tags.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      })),
-    [tags]
-  );
+  const tagOptions = useMemo(() => {
+    return tags.map(({ id, name }) => ({
+      value: id,
+      label: name,
+    }));
+  }, [tags]);
 
-  const teamOptions = useMemo(
-    () =>
-      teams.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      })),
-    [teams]
-  );
+  const teamOptions = useMemo(() => {
+    return teams.map(({ id, name }) => ({
+      value: id,
+      label: name,
+    }));
+  }, [teams]);
 
-  const listOptions = useMemo(
-    () =>
-      lists.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      })),
-    [lists]
-  );
+  const listOptions = useMemo(() => {
+    return lists.map(({ id, name }) => ({
+      value: id,
+      label: name,
+    }));
+  }, [lists]);
 
   const sortedFields = useMemo(
     () =>
@@ -124,15 +113,15 @@ export default function BridgeStep({ fields, data, setData }) {
   useEffect(() => {
     const defaults = {};
 
-    if (productOptions.length === 1) {
+    if (productOptions.length > 0 && !data.product_id) {
       defaults.product_id = productOptions[0].value;
     }
 
-    if (userOptions.length === 1) {
+    if (userOptions.length > 0 && !data.user_id) {
       defaults.user_id = userOptions[0].value;
     }
 
-    if (teamOptions.length === 1) {
+    if (teamOptions.length > 0 && !data.team_id) {
       defaults.team_id = teamOptions[0].value;
     }
 
@@ -140,35 +129,10 @@ export default function BridgeStep({ fields, data, setData }) {
   }, [productOptions, userOptions]);
 
   return (
-    <TemplateStep
-      name={__("Bridge", "forms-bridge")}
-      description={__("Configure the bridge", "forms-bridge")}
-    >
-      {standardFields.map((field) => (
-        <TemplateField
-          data={{
-            ...field,
-            value: data[field.name] || "",
-            onChange: (value) => setData({ [field.name]: value }),
-          }}
-        />
-      ))}
-      {apiFields.map((field) => (
-        <TemplateField
-          data={{
-            ...field,
-            value: data[field.name] || "",
-            onChange: (value) => setData({ [field.name]: value }),
-            description:
-              field.options.length === 0
-                ? __(
-                    "It seems there is no values for this field. Please, check your backend connection",
-                    "forms-bridge"
-                  )
-                : null,
-          }}
-        />
-      ))}
-    </TemplateStep>
+    <BridgeStep
+      fields={standardFields.concat(apiFields)}
+      data={data}
+      setData={setData}
+    />
   );
 }
