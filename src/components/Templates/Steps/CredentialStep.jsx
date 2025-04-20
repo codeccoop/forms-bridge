@@ -3,7 +3,7 @@ import TemplateStep from "./Step";
 import Field from "../Field";
 import { prependEmptyOption, sortByNamesOrder } from "../../../lib/utils";
 
-const { useMemo, useState, useEffect } = wp.element;
+const { useMemo, useState, useEffect, useRef } = wp.element;
 const { SelectControl } = wp.components;
 const { __ } = wp.i18n;
 
@@ -22,8 +22,6 @@ function validateCredential(credential, schema, fields) {
 }
 
 export default function CredentialStep({ credentials, fields, data, setData }) {
-  const [name, setName] = useState("");
-
   const names = useMemo(
     () => new Set(credentials.map(({ name }) => name)),
     [credentials]
@@ -43,21 +41,33 @@ export default function CredentialStep({ credentials, fields, data, setData }) {
     );
   }, [validCredentials]);
 
-  const [reuse, setReuse] = useState("");
-  const [previousReuse, setPreviousReuse] = useState("");
+  const previousReuse = useRef(data.name || "");
+  const [reuse, setReuse] = useState(data.name || "");
 
-  if (reuse !== previousReuse) {
-    setPreviousReuse(reuse);
-    setData();
-  }
-
-  const credential = useMemo(
-    () => validCredentials.find(({ name }) => name === reuse),
-    [reuse]
+  const [name, setName] = useState(data.name || "");
+  const nameConflict = useMemo(
+    () => data.name !== name.trim() && names.has(name.trim()),
+    [names, name]
   );
 
   useEffect(() => {
-    if (!credential) return;
+    if (reuse !== previousReuse.current) {
+      setName("");
+      setData();
+    } else if (!reuse && !nameConflict && data.name !== name) {
+      setData({ name });
+    }
+
+    previousReuse.current = reuse;
+  }, [data.name, reuse, name, nameConflict]);
+
+  const credential = useMemo(
+    () => validCredentials.find(({ name }) => name === reuse),
+    [reuse, validCredentials]
+  );
+
+  useEffect(() => {
+    if (!credential || reuse !== previousReuse.current) return;
     setData({ ...credential });
   }, [credential]);
 
@@ -72,22 +82,6 @@ export default function CredentialStep({ credentials, fields, data, setData }) {
   }, [sortedFields, credential]);
 
   const nameField = useMemo(() => sortedFields[0], [sortedFields]);
-
-  const nameConflict = useMemo(() => names.has(name.trim()), [names, name]);
-
-  useEffect(() => {
-    if (!nameConflict && name) setData({ name });
-  }, [name, nameConflict]);
-
-  useEffect(() => {
-    if (!data.name) return;
-
-    if (data.name && names.has(data.name.trim())) {
-      setReuse(data.name);
-    } else if (data.name !== name) {
-      setName(data.name);
-    }
-  }, [data.name]);
 
   return (
     <TemplateStep

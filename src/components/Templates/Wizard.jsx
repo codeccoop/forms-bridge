@@ -118,7 +118,7 @@ export default function TemplateWizard({
     if (!groupFields.length) return true;
 
     return groupFields.reduce((isValid, field) => {
-      const value = data[group]?.[field.name] || defaults[group]?.[field.name];
+      const value = data[group]?.[field.name]; // || defaults[group]?.[field.name];
       return isValid && (!!value || !field.required);
     }, true);
   }, [fields, step, data]);
@@ -181,6 +181,7 @@ export default function TemplateWizard({
 
     if (patch !== null) {
       patch = {
+        ...groupDefaults,
         ...current,
         ...patch,
       };
@@ -188,39 +189,31 @@ export default function TemplateWizard({
       patch = {};
     }
 
-    const groupData = {
-      ...groupDefaults,
-      ...patch,
-    };
-
-    setData({ ...data, [group]: groupData });
+    setData({ ...data, [group]: patch });
   };
 
-  const pingBackend = useRef(
-    debounce((api, backend, credential = {}) => {
-      if (!backend) return;
+  const pingBackend = useRef((api, backend, credential = {}) => {
+    if (!backend?.name) return;
 
-      backend = {
-        name: backend.name,
-        base_url: backend.base_url,
-        headers: Object.keys(backend)
-          .filter((key) => !["name", "base_url"].includes(key))
-          .map((key) => ({
-            name: key,
-            value: backend[key],
-          })),
-      };
+    backend = {
+      name: backend.name,
+      base_url: backend.base_url,
+      headers: Object.keys(backend)
+        .filter((key) => !["name", "base_url"].includes(key))
+        .map((key) => ({
+          name: key,
+          value: backend[key],
+        })),
+    };
 
-      apiFetch({
-        path: `forms-bridge/v1/${api}/ping`,
-        method: "POST",
-        data: { backend, credential },
-      })
-        .then(({ success }) => setWired(success))
-        .catch(() => setWired(false));
-    }),
-    500
-  ).current;
+    apiFetch({
+      path: `forms-bridge/v1/${api}/ping`,
+      method: "POST",
+      data: { backend, credential },
+    })
+      .then(({ success }) => setWired(success))
+      .catch(() => setWired(false));
+  }).current;
 
   const fromBackend = useRef(data.backend);
   useEffect(() => {
@@ -233,9 +226,16 @@ export default function TemplateWizard({
     };
   }, [data.backend]);
 
+  const timeout = useRef();
   useEffect(() => {
-    if (group !== "backend" || !isStepDone || wired === true) return;
-    pingBackend(api, data.backend, data.credential);
+    clearTimeout(timeout.current);
+
+    if (group !== "backend" || !isStepDone || wired !== null) return;
+
+    timeout.current = setTimeout(
+      () => pingBackend(api, data.backend, data.credential),
+      500
+    );
   }, [wired, isStepDone, data.backend]);
 
   const moveStep = (direction) => {

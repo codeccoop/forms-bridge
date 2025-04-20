@@ -6,12 +6,14 @@ import Field from "../Field";
 import { sortByNamesOrder, prependEmptyOption } from "../../../lib/utils";
 
 const { SelectControl } = wp.components;
-const { useMemo, useState, useEffect } = wp.element;
+const { useMemo, useState, useEffect, useRef } = wp.element;
 const { __ } = wp.i18n;
 
 const FIELDS_ORDER = ["name", "base_url", "headers"];
 
 function validateBackend(backend, schema, fields) {
+  if (!backend?.name) return false;
+
   const isValid = fields.reduce((isValid, { name, ref, required }) => {
     if (!isValid || !required) return isValid;
 
@@ -58,23 +60,33 @@ export default function BackendStep({ fields, data, setData, wired }) {
     );
   }, [validBackends]);
 
-  const [reuse, setReuse] = useState("");
-  const [previousReuse, setPreviousReuse] = useState("");
+  const previousReuse = useRef(data.name || "");
+  const [reuse, setReuse] = useState(data.name || "");
 
-  if (reuse !== previousReuse) {
-    setPreviousReuse(reuse);
-    setData();
-  }
+  const [name, setName] = useState(data.name || "");
+  const nameConflict = useMemo(
+    () => data.name !== name.trim() && names.has(name.trim()),
+    [names, name]
+  );
 
-  const [name, setName] = useState("");
+  useEffect(() => {
+    if (reuse !== previousReuse.current) {
+      setName("");
+      setData();
+    } else if (!reuse && !nameConflict && data.name !== name) {
+      setData({ name });
+    }
+
+    previousReuse.current = reuse;
+  }, [data.name, reuse, name, nameConflict]);
 
   const backend = useMemo(
-    () => validBackends.find(({ name }) => name === reuse),
+    () => validBackends.find((backend) => backend.name === reuse),
     [validBackends, reuse]
   );
 
   useEffect(() => {
-    if (!backend) return;
+    if (!backend || reuse !== previousReuse.current) return;
 
     const headers = backend.headers.reduce(
       (headers, header) => ({
@@ -103,37 +115,26 @@ export default function BackendStep({ fields, data, setData, wired }) {
 
   const nameField = useMemo(() => sortedFields[0], [sortedFields]);
 
-  const nameConflict = useMemo(
-    () => data.name !== name.trim() && names.has(name.trim()),
-    [names, name]
-  );
-
-  useEffect(() => {
-    if (!nameConflict && name) setData({ name: name.trim() });
-  }, [name, nameConflict]);
-
-  useEffect(() => {
-    if (!data.name) return;
-
-    if (data.name && names.has(data.name.trim())) {
-      setReuse(data.name);
-    } else if (data.name !== name) {
-      setName(data.name);
-    }
-  }, [data.name]);
-
-  const title =
-    __("Backend", "forms-bridge") +
-    (wired === true ? " 👌" : wired === false ? " 👎" : " ⏳");
+  let status;
+  if (wired === true) {
+    status = "👌";
+  } else if (wired === false) {
+    status = "👎";
+  } else if (validateBackend(backend, schema, fields)) {
+    status = "⏳";
+  }
 
   return (
     <TemplateStep
-      name={title}
+      name={__("Backend", "forms-bridge")}
       description={__(
         "Configure the backend to bridge your form to",
         "forms-bridge"
       )}
     >
+      <p>
+        <strong>Connection status: {status}</strong>
+      </p>
       {backendOptions.length > 0 && (
         <SelectControl
           label={__("Reuse an existing backend", "forms-bridge")}

@@ -4,7 +4,7 @@ import { sortByNamesOrder, prependEmptyOption } from "../../../lib/utils";
 import { useForms } from "../../../providers/Forms";
 import { useTemplateConfig } from "../../../providers/Templates";
 
-const { useMemo, useState, useEffect } = wp.element;
+const { useMemo, useState, useEffect, useRef } = wp.element;
 const { __ } = wp.i18n;
 const { SelectControl } = wp.components;
 
@@ -58,12 +58,17 @@ export default function FormStep({ fields, data, setData }) {
   }, [validForms]);
 
   const [formId, setFormId] = useState("");
-  const [previousFormId, setPreviousFormId] = useState("");
+  const previousFormId = useRef("");
 
-  if (formId !== previousFormId) {
-    setPreviousFormId(formId);
-    setData();
-  }
+  useEffect(() => {
+    if (formId !== previousFormId.current) {
+      setData();
+    }
+
+    return () => {
+      previousFormId.current = formId;
+    };
+  }, [formId]);
 
   const form = useMemo(
     () => forms.find(({ id }) => id == formId),
