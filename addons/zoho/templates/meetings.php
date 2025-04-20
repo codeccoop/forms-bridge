@@ -98,6 +98,8 @@ return [
             'label' => __('Meeting duration', 'forms-bridge'),
             'type' => 'number',
             'default' => 1,
+            'min' => 0,
+            'max' => 24,
         ],
         [
             'ref' => '#form',

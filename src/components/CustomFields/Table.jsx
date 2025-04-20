@@ -1,7 +1,8 @@
 import JsonFinger from "../../lib/JsonFinger";
 import { useApiFields } from "../../providers/ApiSchema";
+import DropdownSelect from "../DropdownSelect";
 
-const { TextControl, Button, Popover } = wp.components;
+const { BaseControl, TextControl, Button } = wp.components;
 const { useEffect, useState, useRef, useMemo } = wp.element;
 const { __ } = wp.i18n;
 
@@ -151,6 +152,7 @@ function useInputStyle(name = "") {
     fontSize: "13px",
     borderRadius: "2px",
     width: "100%",
+    display: "block",
   };
 
   if (name.length && !JsonFinger.validate(name, "set")) {
@@ -260,38 +262,44 @@ export default function CustomFieldsTable({ customFields, setCustomFields }) {
                 <td>
                   <div style={{ display: "flex" }}>
                     <div style={{ flex: 1 }}>
-                      <TextControl
-                        value={name}
-                        onChange={(value) => setCustomField("name", i, value)}
-                        __next40pxDefaultSize
-                        __nextHasNoMarginBottom
-                      />
-                    </div>
-                    <Button
-                      style={{
-                        height: "40px",
-                        width: "40px",
-                        justifyContent: "center",
-                        marginLeft: "2px",
-                      }}
-                      size="compact"
-                      variant="secondary"
-                      onClick={() => setFieldSelector(i)}
-                      __next40pxDefaultSize
-                    >
-                      $
-                      {fieldSelector === i && (
-                        <TagSelector
-                          title={__("Fields", "forms-bridge")}
-                          tags={fieldOptions}
-                          onChange={(fieldName) => {
-                            setFieldSelector(-1);
-                            setCustomField("name", i, fieldName);
-                          }}
-                          onFocusOutside={() => setFieldSelector(-1)}
+                      <BaseControl __nextHasNoMarginBottom>
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(ev) =>
+                            setCustomField("name", i, ev.target.value)
+                          }
+                          style={useInputStyle(name)}
                         />
-                      )}
-                    </Button>
+                      </BaseControl>
+                    </div>
+                    {fieldOptions.length > 0 && (
+                      <Button
+                        style={{
+                          height: "40px",
+                          width: "40px",
+                          justifyContent: "center",
+                          marginLeft: "2px",
+                        }}
+                        size="compact"
+                        variant="secondary"
+                        onClick={() => setFieldSelector(i)}
+                        __next40pxDefaultSize
+                      >
+                        $
+                        {fieldSelector === i && (
+                          <DropdownSelect
+                            title={__("Fields", "forms-bridge")}
+                            tags={fieldOptions}
+                            onChange={(fieldName) => {
+                              setFieldSelector(-1);
+                              setCustomField("name", i, fieldName);
+                            }}
+                            onFocusOutside={() => setFieldSelector(-1)}
+                          />
+                        )}
+                      </Button>
+                    )}
                   </div>
                 </td>
                 <td>
@@ -376,71 +384,5 @@ export default function CustomFieldsTable({ customFields, setCustomFields }) {
         </table>
       </div>
     </>
-  );
-}
-
-function TagSelector({ title, tags, onChange, onFocusOutside }) {
-  const [focus, setFocus] = useState(0);
-
-  return (
-    <Popover
-      onFocusOutside={onFocusOutside}
-      offset={5}
-      placement="bottom-start"
-    >
-      <div
-        style={{ position: "relative", paddingTop: "2.6em", height: "300px" }}
-      >
-        <label
-          for="bridge-tags-list"
-          style={{
-            position: "fixed",
-            top: "0px",
-            left: "0px",
-            width: "100%",
-            padding: "0.5em 0.75em",
-            borderBottom: "1px solid",
-            backgroundColor: "white",
-          }}
-        >
-          <strong>{title}</strong>
-        </label>
-        <ul
-          id="bridge-tags-list"
-          style={{
-            width: "max-content",
-            height: "100%",
-            overflowY: "auto",
-            margin: 0,
-          }}
-        >
-          {tags.map(({ label, value }, i) => (
-            <li
-              key={label}
-              style={{ padding: "0.5em 1em", cursor: "pointer" }}
-              tabIndex="0"
-              role="button"
-              onKeyDown={(ev) => {
-                if (focus !== i) return;
-
-                if (ev.key === "Enter") {
-                  ev.stopPropagation();
-                  ev.preventDefault();
-                  onChange(value);
-                }
-              }}
-              onFocus={() => setFocus(i)}
-              onClick={(ev) => {
-                ev.preventDefault();
-                ev.stopPropagation();
-                onChange(value);
-              }}
-            >
-              {label}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </Popover>
   );
 }

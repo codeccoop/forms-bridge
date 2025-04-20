@@ -52,7 +52,7 @@ export default function Workflow({
             <div
               style={{
                 marginTop: "2rem",
-                width: "1080px",
+                width: "1280px",
                 maxWidth: "80vw",
                 height: "500px",
                 maxHeight: "80vh",

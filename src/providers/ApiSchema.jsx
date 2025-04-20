@@ -29,10 +29,12 @@ export default function ApiSchemaProvider({ children, bridge, credentials }) {
       if (bridge.name !== "add") {
         lastBridge.current = bridge.name;
       }
-    };
-  }, [bridge]);
 
-  const fetch = useRef((api, backend, credential, endpoint) => {
+      invalidate(true);
+    };
+  }, [api, bridge]);
+
+  const fetch = useRef((api, endpoint, backend, credential = {}) => {
     if (!backend || !api) return;
 
     setLoading(true);
@@ -61,9 +63,10 @@ export default function ApiSchemaProvider({ children, bridge, credentials }) {
   );
 
   const value = useMemo(() => {
-    if (!loading && invalid) fetch(api, backend, credential, bridge?.endpoint);
+    console.log({ loading, invalid });
+    if (!loading && invalid) fetch(api, bridge?.endpoint, backend, credential);
     return schema;
-  }, [loading, bridge, backend, credential, invalid, schema]);
+  }, [api, loading, invalid, schema, bridge.endpoint, backend, credential]);
 
   return (
     <ApiSchemaContext.Provider value={value}>

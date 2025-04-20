@@ -1,9 +1,10 @@
 import JsonFinger from "./../../lib/JsonFinger";
 import { useApiFields } from "../../providers/ApiSchema";
 import { getFromOptions } from "./lib";
+import DropdownSelect from "../DropdownSelect";
 
 const { BaseControl, SelectControl, Button } = wp.components;
-const { useEffect, useRef } = wp.element;
+const { useEffect, useRef, useMemo, useState } = wp.element;
 const { __ } = wp.i18n;
 
 const castOptions = [
@@ -111,6 +112,7 @@ function useInputStyle(pointer = "") {
     paddingRight: "12px",
     fontSize: "13px",
     borderRadius: "2px",
+    display: "block",
     width: "100%",
   };
 
@@ -124,7 +126,15 @@ function useInputStyle(pointer = "") {
 export default function MutationLayers({ fields, mappers, setMappers }) {
   const apiFields = useApiFields();
 
+  const fieldOptions = useMemo(() => {
+    return apiFields.map((field) => ({
+      value: field.name,
+      label: `${field.name} | ${field.schema.type}`,
+    }));
+  }, [apiFields]);
+
   const tableWrapper = useRef();
+  const [fieldSelector, setFieldSelector] = useState(-1);
 
   const setMapper = (attr, index, value) => {
     const newMappers = mappers.map((mapper, i) => {
@@ -179,11 +189,6 @@ export default function MutationLayers({ fields, mappers, setMappers }) {
   return (
     <>
       <div ref={tableWrapper} className="scrollbar-hide" style={{ flex: 1 }}>
-        <datalist id="api-fields-list">
-          {apiFields.map((field) => (
-            <option value={field}></option>
-          ))}
-        </datalist>
         <table
           style={{
             width: "calc(100% + 10px)",
@@ -196,19 +201,31 @@ export default function MutationLayers({ fields, mappers, setMappers }) {
               <th aria-hidden="true"></th>
               <th
                 scope="col"
-                style={{ textAlign: "left", padding: "1em 0 0 0.5em" }}
+                style={{
+                  textAlign: "left",
+                  padding: "1em 0 0 0.5em",
+                  columnWidth: "200px",
+                }}
               >
                 {__("From", "forms-bridge")}
               </th>
               <th
                 scope="col"
-                style={{ textAlign: "left", padding: "1em 0 0 0.5em" }}
+                style={{
+                  textAlign: "left",
+                  padding: "1em 0 0 0.5em",
+                  columnWidth: "200px",
+                }}
               >
                 {__("To", "forms-bridge")}
               </th>
               <th
                 scope="col"
-                style={{ textAlign: "left", padding: "1em 0 0 0.5em" }}
+                style={{
+                  textAlign: "left",
+                  padding: "1em 0 0 0.5em",
+                  columnWidth: "100px",
+                }}
               >
                 {__("Mutation", "forms-bridge")}
               </th>
@@ -220,7 +237,7 @@ export default function MutationLayers({ fields, mappers, setMappers }) {
             {mappers.map(({ from, to, cast }, i) => (
               <tr key={i}>
                 <td>{i + 1}.</td>
-                <td>
+                <td style={{ columnWidth: "200px" }}>
                   <SelectControl
                     value={from}
                     onChange={(value) => setMapper("from", i, value)}
@@ -229,18 +246,48 @@ export default function MutationLayers({ fields, mappers, setMappers }) {
                     __next40pxDefaultSize
                   />
                 </td>
-                <td>
-                  <BaseControl __nextHasNoMarginBottom>
-                    <input
-                      type="text"
-                      list="api-fields-list"
-                      value={to}
-                      onChange={(ev) => setMapper("to", i, ev.target.value)}
-                      style={useInputStyle(to)}
-                    />
-                  </BaseControl>
+                <td style={{ columnWidth: "200px" }}>
+                  <div style={{ display: "flex" }}>
+                    <div style={{ flex: 1 }}>
+                      <BaseControl __nextHasNoMarginBottom>
+                        <input
+                          type="text"
+                          value={to}
+                          onChange={(ev) => setMapper("to", i, ev.target.value)}
+                          style={useInputStyle(to)}
+                        />
+                      </BaseControl>
+                    </div>
+                    {fieldOptions.length > 0 && (
+                      <Button
+                        style={{
+                          height: "40px",
+                          width: "40px",
+                          justifyContent: "center",
+                          marginLeft: "2px",
+                        }}
+                        size="compact"
+                        variant="secondary"
+                        onClick={() => setFieldSelector(i)}
+                        __next40pxDefaultSize
+                      >
+                        $
+                        {fieldSelector === i && (
+                          <DropdownSelect
+                            title={__("Fields", "forms-bridge")}
+                            tags={fieldOptions}
+                            onChange={(fieldName) => {
+                              setFieldSelector(-1);
+                              setMapper("to", i, fieldName);
+                            }}
+                            onFocusOutside={() => setFieldSelector(-1)}
+                          />
+                        )}
+                      </Button>
+                    )}
+                  </div>
                 </td>
-                <td>
+                <td style={{ columnWidth: "100px" }}>
                   <SelectControl
                     value={cast || "string"}
                     onChange={(value) => setMapper("cast", i, value)}

@@ -45,6 +45,8 @@ return [
             'description' => __('Duration in hours', 'forms-bridge'),
             'type' => 'number',
             'default' => '1',
+            'min' => 0,
+            'max' => 24,
         ],
         [
             'ref' => '#form',
