@@ -11,6 +11,11 @@ if (!defined('ABSPATH')) {
  */
 class Dolibarr_Form_Bridge extends Rest_Form_Bridge
 {
+    /**
+     * Handles bridge class API name.
+     *
+     * @var string
+     */
     protected $api = 'dolibarr';
 
     /**
@@ -45,6 +50,26 @@ class Dolibarr_Form_Bridge extends Rest_Form_Bridge
             return [];
         }
 
-        return array_keys($entry);
+        $fields = [];
+        foreach ($entry as $field => $value) {
+            if (wp_is_numeric_array($value)) {
+                $type = 'array';
+            } elseif (is_array($value)) {
+                $type = 'object';
+            } elseif (is_double($value)) {
+                $type = 'number';
+            } elseif (is_int($value)) {
+                $type = 'integer';
+            } else {
+                $type = 'string';
+            }
+
+            $fields[] = [
+                'name' => $field,
+                'schema' => ['type' => $type],
+            ];
+        }
+
+        return $fields;
     }
 }
