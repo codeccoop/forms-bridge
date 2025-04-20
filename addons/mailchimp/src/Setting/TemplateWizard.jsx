@@ -1,7 +1,7 @@
 import { useGeneral } from "../../../../src/providers/Settings";
 import TemplateWizard from "../../../../src/components/Templates/Wizard";
 import { useTemplateConfig } from "../../../../src/providers/Templates";
-import { debounce } from "../../../../src/lib/utils";
+import { debounce, validateUrl } from "../../../../src/lib/utils";
 import MailchimpBridgeStep from "./BridgeStep";
 
 const apiFetch = wp.apiFetch;
@@ -19,6 +19,10 @@ const STEPS = [
 
 function validateBackend(data) {
   if (!data?.name) return false;
+
+  if (data.base_url && !validateUrl(data.base_url)) {
+    return false;
+  }
 
   return MAILCHIMP_HEADERS.reduce((isValid, field) => {
     return isValid && data.headers.find(({ name }) => name === field)?.value;
@@ -55,7 +59,6 @@ export default function MailchimpTemplateWizard({
 
     backend = {
       name: data.backend.name,
-      base_url: data.backend.base_url,
       headers: MAILCHIMP_HEADERS.map((header) => ({
         name: header,
         value: data.backend[header],
@@ -63,6 +66,7 @@ export default function MailchimpTemplateWizard({
     };
 
     if (validateBackend(backend)) {
+      backend.base_url = `https://${data.backend.datacenter}.api.mailchimp.com`;
       return backend;
     }
   }, [data.backend, backends]);

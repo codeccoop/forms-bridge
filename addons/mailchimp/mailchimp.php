@@ -79,15 +79,12 @@ class Mailchimp_Addon extends Rest_Addon
      */
     protected function do_fetch($backend, $endpoint, $credential)
     {
-        $bridge = new Mailchimp_Form_Bridge(
-            [
-                'name' => '__mailchimp-' . time(),
-                'method' => 'GET',
-                'endpoint' => $endpoint,
-                'backend' => $backend,
-            ],
-            self::$api
-        );
+        $bridge = new Mailchimp_Form_Bridge([
+            'name' => '__mailchimp-' . time(),
+            'method' => 'GET',
+            'endpoint' => $endpoint,
+            'backend' => $backend,
+        ]);
 
         $response = $bridge->submit([]);
         if (is_wp_error($response)) {
