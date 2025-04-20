@@ -327,7 +327,7 @@ export default function CustomFieldsTable({ customFields, setCustomFields }) {
                     >
                       $
                       {tagSelector === i && (
-                        <TagSelector
+                        <DropdownSelect
                           title={__("Tags", "forms-bridge")}
                           tags={tagOptions}
                           onChange={(tag) => {

@@ -142,6 +142,7 @@ export default function Bridge({
           }
         />
         <Workflow
+          backend={data.backend}
           form={form}
           customFields={data.custom_fields}
           mutations={data.mutations}

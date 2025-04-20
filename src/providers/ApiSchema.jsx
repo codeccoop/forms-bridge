@@ -79,8 +79,3 @@ export function useApiFields() {
   const schema = useContext(ApiSchemaContext);
   return schema || [];
 }
-
-export function useApiContentType() {
-  const schema = useContext(ApiSchemaContext);
-  return schema?.content_type;
-}

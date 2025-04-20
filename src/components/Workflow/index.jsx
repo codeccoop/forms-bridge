@@ -13,6 +13,7 @@ export default function Workflow({
   mutations = [],
   setMutationMappers,
   form,
+  backend,
   customFields,
 }) {
   const [open, setOpen] = useState(false);
@@ -38,6 +39,7 @@ export default function Workflow({
           onRequestClose={() => setOpen(false)}
         >
           <WorkflowProvider
+            backend={backend}
             form={form}
             mutations={mutations}
             workflow={workflow}

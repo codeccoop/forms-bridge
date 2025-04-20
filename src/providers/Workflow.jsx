@@ -6,7 +6,7 @@ import {
   checkType,
   payloadToSchema,
 } from "../lib/payload";
-import { useApiContentType } from "./ApiSchema";
+import { useGeneral } from "./Settings";
 import { useWorkflowJobs } from "./WorkflowJobs";
 
 const { createContext, useContext, useState, useMemo } = wp.element;
@@ -97,6 +97,7 @@ function applyJob(payload, job) {
 export default function WorkflowProvider({
   children,
   form,
+  backend,
   customFields,
   mutations,
   workflow,
@@ -104,8 +105,16 @@ export default function WorkflowProvider({
   const [step, setStep] = useState(0);
 
   const [jobs, isLoading] = useWorkflowJobs(workflow);
-  const contentType = useApiContentType();
-  const includeFiles = contentType !== "multipart/form-data";
+
+  const [{ backends }] = useGeneral();
+  const includeFiles = useMemo(() => {
+    const headers =
+      backends.find(({ name }) => name === backend)?.headers || [];
+    const contentType = headers.find(
+      (header) => header.name === "Content-Type"
+    )?.value;
+    return contentType !== undefined && contentType !== "multipart/form-data";
+  }, [backends, backend]);
 
   const workflowJobs = useMemo(
     () =>
