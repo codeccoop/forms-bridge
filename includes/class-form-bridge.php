@@ -281,7 +281,7 @@ abstract class Form_Bridge
 
         add_filter(
             'forms_bridge_http_request',
-            '\FORMS_BRIDGE\Form_Bridge::filter_request',
+            static::class . '::filter_request',
             10,
             1
         );
@@ -331,7 +331,7 @@ abstract class Form_Bridge
         $request = self::do_filter_request($request);
         $headers = &$request['args']['headers'];
 
-        if (count(static::$api_headers)) {
+        if (count(static::$api_headers) > 0) {
             $api_headers = [];
             foreach ($headers as $header => $value) {
                 if (in_array($header, static::$api_headers)) {

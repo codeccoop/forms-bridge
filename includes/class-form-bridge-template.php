@@ -382,7 +382,7 @@ class Form_Bridge_Template
                     [
                         'ref' => '#backend',
                         'name' => 'name',
-                        'label' => __('Backend', 'forms-bridge'),
+                        'label' => __('Name', 'forms-bridge'),
                         'type' => 'string',
                         'required' => true,
                     ],
