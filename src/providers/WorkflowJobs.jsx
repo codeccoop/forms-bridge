@@ -1,5 +1,6 @@
 // source
 import { useApis } from "./Settings";
+import useCurrentApi from "../hooks/useCurrentApi";
 
 const apiFetch = wp.apiFetch;
 const { createContext, useContext, useEffect, useState, useMemo, useRef } =
@@ -16,8 +17,8 @@ const WorkflowJobsContext = createContext({
 export default function WorkflowJobsProvider({ children }) {
   const [apis] = useApis();
 
+  const api = useCurrentApi();
   const [isLoading, setIsLoading] = useState(false);
-  const [api, setApi] = useState(null);
   const [workflow, setWorkflow] = useState([]);
   const [workflowJobs, setWorkflowJobs] = useState([]);
 
@@ -25,16 +26,6 @@ export default function WorkflowJobsProvider({ children }) {
     if (!api) return [];
     return apis[api]?.workflow_jobs || [];
   }, [api, apis]);
-
-  const onApi = useRef((api) => setApi(api)).current;
-
-  useEffect(() => {
-    wpfb.on("api", onApi);
-
-    return () => {
-      wpfb.off("api", onApi);
-    };
-  }, []);
 
   useEffect(() => {
     if (!workflow.length) {
@@ -84,10 +75,12 @@ export default function WorkflowJobsProvider({ children }) {
   }, [workflow]);
 
   const fetchJobs = (workflow) => {
+    if (!api) return;
+
     setIsLoading(true);
 
     return apiFetch({
-      path: "forms-bridge/v1/workflow_jobs",
+      path: `forms-bridge/v1/${api}/workflow_jobs`,
       method: "POST",
       data: { workflow, api },
     })

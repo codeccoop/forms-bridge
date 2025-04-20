@@ -169,7 +169,8 @@ function forms_bridge_zoho_crm_create_account($payload, $bridge)
         return $response;
     }
 
-    if ($response['data']['data'][0]['code'] === 'DUPLICATE_DATA') {
+    $code = $response['data']['data'][0]['code'] ?? null;
+    if ($code === 'DUPLICATE_DATA') {
         return $response['data']['data'][0]['details']['duplicate_record'];
     } else {
         return $response['data']['data'][0]['details'];
