@@ -65,7 +65,6 @@ class Mailchimp_Addon extends Rest_Addon
         );
 
         $response = $bridge->submit([]);
-        return ['success' => is_wp_error($response)];
         return ['success' => !is_wp_error($response)];
     }
 

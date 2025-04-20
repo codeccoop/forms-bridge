@@ -11,15 +11,19 @@ if (!defined('ABSPATH')) {
  */
 class Brevo_Form_Bridge extends Rest_Form_Bridge
 {
+    /**
+     * Handles bridge class API name.
+     *
+     * @var string
+     */
     protected $api = 'brevo';
 
     /**
-     * Handles a custom http origin token to be unseted from headers
-     * before submits.
+     * Handles the array of accepted HTTP header names of the bridge API.
      *
      * @var array<string>
      */
-    public const api_headers = ['Accept', 'Content-Type', 'Api-Key'];
+    public const api_headers = ['accept', 'content-type', 'api-key'];
 
     /**
      * Gets bridge's default body encoding schema.
@@ -302,30 +306,20 @@ class Brevo_Form_Bridge extends Rest_Form_Bridge
     }
 
     /**
-     * Filter and decoration of default http headers.
+     * Filters HTTP request args just before it is sent.
      *
-     * @param array $args HTTP request args.
+     * @param array $request Request arguments.
      *
-     * @return array $args Filtered args.
+     * @return array
      */
-    public static function filter_headers($args)
+    public static function do_filter_request($request)
     {
-        $api_headers = [];
-        foreach ($args['headers'] as $name => $value) {
-            if (in_array($name, self::api_headers)) {
-                $api_headers[strtolower($name)] = $value;
-            }
+        $headers = &$request['args']['headers'];
+        foreach ($headers as $name => $value) {
+            unset($headers[$name]);
+            $headers[strtolower($name)] = $value;
         }
 
-        $args['headers'] = $api_headers;
-
-        remove_filter(
-            'http_request_args',
-            '\FORMS_BRIDGE\Brevo_Form_Bridge::filter_headers',
-            10,
-            1
-        );
-
-        return $args;
+        return $request;
     }
 }

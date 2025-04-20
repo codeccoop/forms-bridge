@@ -11,6 +11,11 @@ if (!defined('ABSPATH')) {
  */
 class Google_Sheets_Form_Bridge extends Form_Bridge
 {
+    /**
+     * Handles bridge class API name.
+     *
+     * @var string
+     */
     protected $api = 'google-sheets';
 
     /**

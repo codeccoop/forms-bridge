@@ -178,6 +178,15 @@ class Forms_Bridge extends Base_Plugin
         );
 
         add_filter(
+            'http_bridge_request',
+            static function ($request) {
+                return apply_filters('forms_bridge_http_request', $request);
+            },
+            99,
+            1
+        );
+
+        add_filter(
             'http_bridge_response',
             static function ($response, $request) {
                 return apply_filters(

@@ -19,6 +19,13 @@ class Dolibarr_Form_Bridge extends Rest_Form_Bridge
     protected $api = 'dolibarr';
 
     /**
+     * Handles the array of accepted HTTP header names of the bridge API.
+     *
+     * @var array<string>
+     */
+    protected static $api_headers = ['DOLAPIKEY', 'Accept', 'Content-Type'];
+
+    /**
      * Handles allowed HTTP method.
      *
      * @var array

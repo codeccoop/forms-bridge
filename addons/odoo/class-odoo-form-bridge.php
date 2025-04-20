@@ -14,6 +14,11 @@ if (!defined('ABSPATH')) {
  */
 class Odoo_Form_Bridge extends Form_Bridge
 {
+    /**
+     * Handles bridge class API name.
+     *
+     * @var string
+     */
     protected $api = 'odoo';
 
     /**

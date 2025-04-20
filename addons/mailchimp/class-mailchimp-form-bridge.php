@@ -11,7 +11,19 @@ if (!defined('ABSPATH')) {
  */
 class Mailchimp_Form_Bridge extends Rest_Form_Bridge
 {
+    /**
+     * Handles bridge class API name.
+     *
+     * @var string
+     */
     protected $api = 'mailchimp';
+
+    /**
+     * Handles the array of accepted HTTP header names of the bridge API.
+     *
+     * @var array<string>
+     */
+    protected static $api_headers = ['Accept', 'Content-Type', 'Authorization'];
 
     /**
      * Gets bridge's default body encoding schema.
@@ -164,23 +176,25 @@ class Mailchimp_Form_Bridge extends Rest_Form_Bridge
         return [];
     }
 
-    public static function basic_auth($args)
+    /**
+     * Filters HTTP request args just before it is sent.
+     *
+     * @param array $request Request arguments.
+     *
+     * @return array
+     */
+    public static function do_filter_request($request)
     {
-        if (isset($args['headers']['Api-Key'])) {
-            $basic_auth =
-                'Basic ' .
-                base64_encode('forms-bridge:' . $args['headers']['Api-Key']);
-            unset($args['headers']['Api-Key']);
-            $args['headers']['Authorization'] = $basic_auth;
+        $headers = &$request['args']['headers'];
+
+        if (empty($headers['Api-Key'])) {
+            return $request;
         }
 
-        remove_filter(
-            'http_request_args',
-            '\FORMS_BRIDGE\Mailchimp_Form_Bridge::basic_auth',
-            10,
-            1
-        );
+        $basic_auth =
+            'Basic ' . base64_encode('forms-bridge:' . $headers['Api-Key']);
+        $headers['Authorization'] = $basic_auth;
 
-        return $args;
+        return $request;
     }
 }

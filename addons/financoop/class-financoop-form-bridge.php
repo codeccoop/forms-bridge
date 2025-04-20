@@ -13,6 +13,11 @@ if (!defined('ABSPATH')) {
  */
 class Finan_Coop_Form_Bridge extends Rest_Form_Bridge
 {
+    /**
+     * Handles bridge class API name.
+     *
+     * @var string
+     */
     protected $api = 'financoop';
 
     /**

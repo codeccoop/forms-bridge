@@ -13,6 +13,11 @@ if (!defined('ABSPATH')) {
  */
 class Listmonk_Form_Bridge extends Rest_Form_Bridge
 {
+    /**
+     * Handles bridge class API name.
+     *
+     * @var string
+     */
     protected $api = 'listmonk';
 
     /**
@@ -134,41 +139,23 @@ class Listmonk_Form_Bridge extends Rest_Form_Bridge
     /**
      * Filter and decoration of default http headers.
      *
-     * @param array $args HTTP request args.
+     * @param array $request HTTP request args.
      *
-     * @return array $args Filtered args.
+     * @return array
      */
-    public static function filter_headers($args)
+    public static function do_filter_request($request)
     {
-        if (
-            isset($args['headers']['Api-User']) &&
-            isset($args['headers']['Token'])
-        ) {
-            $args['headers'][
-                'Authorization'
-            ] = "token {$args['headers']['Api-User']}:{$args['headers']['Token']}";
+        $headers = &$request['args']['headers'];
+
+        $user = $headers['Api-User'] ?? null;
+        $token = $headers['Token'] ?? null;
+
+        if (empty($user) || empty($token)) {
+            return $request;
         }
 
-        $api_headers = [];
-        foreach ($args['headers'] as $name => $value) {
-            if (in_array($name, self::api_headers)) {
-                $api_headers[$name] = $value;
-            }
-        }
+        $headers['Authorization'] = "token {$user}:{$token}";
 
-        $args['headers'] = $api_headers;
-
-        if ($args['method'] === 'GET') {
-            unset($args['headers']['Content-Type']);
-        }
-
-        remove_filter(
-            'http_request_args',
-            '\FORMS_BRIDGE\Listmonk_Form_Bridge::filter_headers',
-            10,
-            1
-        );
-
-        return $args;
+        return $request;
     }
 }

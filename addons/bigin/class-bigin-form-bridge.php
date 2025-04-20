@@ -11,23 +11,14 @@ if (!defined('ABSPATH')) {
  */
 class Bigin_Form_Bridge extends Zoho_Form_Bridge
 {
+    /**
+     * Handles bridge class API name.
+     *
+     * @var string
+     */
     protected $api = 'bigin';
 
-    /**
-     * Bridge's API key private getter.
-     *
-     * @return Bigin_Credentials|null
-     */
-    protected function credential()
-    {
-        return apply_filters(
-            'forms_bridge_bigin_credential',
-            null,
-            $this->data['credential'] ?? null
-        );
-    }
-
-    protected function api_fields()
+    protected function api_schema()
     {
         $original_scope = $this->scope;
         $this->data['scope'] = 'ZohoBigin.settings.layouts.READ';
@@ -43,13 +34,6 @@ class Bigin_Form_Bridge extends Zoho_Form_Bridge
         }
 
         $module = str_replace('/upsert', '', $matches[1]);
-
-        add_filter(
-            'http_request_args',
-            '\FORMS_BRIDGE\Zoho_Form_Bridge::cleanup_headers',
-            10,
-            1
-        );
 
         $response = $this->backend->get(
             '/bigin/v2/settings/layouts',
