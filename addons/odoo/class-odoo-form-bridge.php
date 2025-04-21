@@ -212,7 +212,7 @@ class Odoo_Form_Bridge extends Form_Bridge
                 $credential['database'],
                 $uid,
                 $credential['password'],
-                $this->model,
+                $this->endpoint,
                 $this->method ?? 'create',
                 $payload,
             ],

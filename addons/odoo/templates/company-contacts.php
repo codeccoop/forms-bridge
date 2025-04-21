@@ -16,12 +16,12 @@ return [
         ],
         [
             'ref' => '#bridge',
-            'name' => 'model',
+            'name' => 'endpoint',
             'value' => 'res.partner',
         ],
     ],
     'bridge' => [
-        'model' => 'res.partner',
+        'endpoint' => 'res.partner',
         'workflow' => [
             'forms-bridge-iso2-country-code',
             'odoo-vat-id',

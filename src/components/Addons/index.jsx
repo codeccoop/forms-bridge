@@ -6,7 +6,7 @@ import biginLogo from "../../../addons/bigin/assets/logo.png";
 import brevoLogo from "../../../addons/brevo/assets/logo.png";
 import dolibarrLogo from "../../../addons/dolibarr/assets/logo.png";
 import financoopLogo from "../../../addons/financoop/assets/logo.png";
-import googleSheetsLogo from "../../../addons/google-sheets/assets/logo.png";
+import googleSheetsLogo from "../../../addons/gsheets/assets/logo.png";
 import listmonkLogo from "../../../addons/listmonk/assets/logo.png";
 import mailchimpLogo from "../../../addons/mailchimp/assets/logo.png";
 import odooLogo from "../../../addons/odoo/assets/logo.png";
@@ -18,7 +18,7 @@ const LOGOS = {
   "brevo": brevoLogo,
   "dolibarr": dolibarrLogo,
   "financoop": financoopLogo,
-  "google-sheets": googleSheetsLogo,
+  "gsheets": googleSheetsLogo,
   "listmonk": listmonkLogo,
   "mailchimp": mailchimpLogo,
   "odoo": odooLogo,

@@ -53,7 +53,7 @@ return [
         ],
         [
             'ref' => '#bridge',
-            'name' => 'model',
+            'name' => 'endpoint',
             'value' => 'crm.lead',
         ],
         [
@@ -92,7 +92,7 @@ return [
         ],
     ],
     'bridge' => [
-        'model' => 'crm.lead',
+        'endpoint' => 'crm.lead',
         'mutations' => [
             [
                 [

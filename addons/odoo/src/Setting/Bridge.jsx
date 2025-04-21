@@ -20,7 +20,7 @@ export default function OdooBridge({ data, update, remove }) {
       data={data}
       update={update}
       remove={remove}
-      schema={["name", "form_id", "backend", "credential", "model"]}
+      schema={["name", "form_id", "backend", "credential", "endpoint"]}
       template={({ add, schema }) => (
         <NewOdooBridge add={add} schema={schema} />
       )}
@@ -40,8 +40,8 @@ export default function OdooBridge({ data, update, remove }) {
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
             <TextControl
               label={__("Model", "forms-bridge")}
-              value={data.model || ""}
-              onChange={(model) => update({ ...data, model })}
+              value={data.endpoint || ""}
+              onChange={(endpoint) => update({ ...data, endpoint })}
               __nextHasNoMarginBottom
               __next40pxDefaultSize
             />

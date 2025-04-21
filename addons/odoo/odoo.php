@@ -75,9 +75,9 @@ class Odoo_Addon extends Addon
                         'additionalProperties' => false,
                         'properties' => [
                             'credential' => ['type' => 'string'],
-                            'model' => ['type' => 'string'],
+                            'endpoint' => ['type' => 'string'],
                         ],
-                        'required' => ['credential', 'model'],
+                        'required' => ['credential', 'endpoint'],
                     ],
                 ],
             ]),
@@ -172,12 +172,13 @@ class Odoo_Addon extends Addon
                 $bridge['credential'] = '';
             }
 
-            $bridge['model'] = $bridge['model'] ?? '';
+            /* context: endpoint is an alias for the db model */
+            $bridge['endpoint'] = $bridge['endpoint'] ?? '';
 
             $bridge['is_valid'] =
                 $bridge['is_valid'] &&
                 !empty($bridge['credential']) &&
-                !empty($bridge['model']);
+                !empty($bridge['endpoint']);
 
             $validated[] = $bridge;
         }
@@ -205,7 +206,7 @@ class Odoo_Addon extends Addon
 
         $bridge = new Odoo_Form_Bridge([
             'method' => 'search',
-            'model' => 'res.users',
+            'endpoint' => 'res.users',
             'credential' => $credential['name'],
             'backend' => $backend,
         ]);
@@ -235,7 +236,7 @@ class Odoo_Addon extends Addon
 
         $bridge = new Odoo_Form_Bridge([
             'method' => 'search_read',
-            'model' => $model,
+            'endpoint' => $model,
             'backend' => $backend,
             'credential' => $credential['name'],
         ]);
@@ -270,7 +271,7 @@ class Odoo_Addon extends Addon
 
         $bridge = new Odoo_Form_Bridge([
             'method' => 'get_fields',
-            'model' => $model,
+            'endpoint' => $model,
             'backend' => $backend,
             'credential' => $credential['name'],
         ]);

@@ -59,7 +59,7 @@ class Odoo_Form_Bridge_Template extends Form_Bridge_Template
                 ],
                 [
                     'ref' => '#bridge',
-                    'name' => 'model',
+                    'name' => 'endpoint',
                     'label' => __('Model', 'forms-bridge'),
                     'type' => 'string',
                     'required' => true,
@@ -70,7 +70,7 @@ class Odoo_Form_Bridge_Template extends Form_Bridge_Template
                 'form_id' => '',
                 'backend' => '',
                 'credential' => '',
-                'model' => '',
+                'endpoint' => '',
             ],
             'backend' => [
                 'name' => 'Odoo',
@@ -99,8 +99,8 @@ class Odoo_Form_Bridge_Template extends Form_Bridge_Template
      */
     protected static function extend_schema($schema)
     {
-        $schema['bridge']['properties']['model'] = ['type' => 'string'];
-        $schema['bridge']['required'][] = 'model';
+        $schema['bridge']['properties']['endpoint'] = ['type' => 'string'];
+        $schema['bridge']['required'][] = 'endpoint';
 
         $schema['credential']['properties']['user'] = ['type' => 'string'];
         $schema['credential']['required'][] = 'user';

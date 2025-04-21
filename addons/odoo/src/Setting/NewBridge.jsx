@@ -37,8 +37,8 @@ export default function NewOdooBridge({ add, schema }) {
           <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
             <TextControl
               label={__("Model", "forms-bridge")}
-              value={data.model || ""}
-              onChange={(model) => update({ ...data, model })}
+              value={data.endpoint || ""}
+              onChange={(endpoint) => update({ ...data, endpoint })}
               __nextHasNoMarginBottom
               __next40pxDefaultSize
             />

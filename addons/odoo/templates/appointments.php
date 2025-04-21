@@ -14,7 +14,7 @@ return [
         ],
         [
             'ref' => '#bridge',
-            'name' => 'model',
+            'name' => 'endpoint',
             'value' => 'calendar.event',
         ],
         [
@@ -52,7 +52,7 @@ return [
         ],
     ],
     'bridge' => [
-        'model' => 'calendar.event',
+        'endpoint' => 'calendar.event',
         'mutations' => [
             [
                 [
