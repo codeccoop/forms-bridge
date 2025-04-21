@@ -113,6 +113,11 @@ return [
                     'cast' => 'integer',
                 ],
                 [
+                    'from' => 'code',
+                    'to' => 'vatnumber',
+                    'cast' => 'copy',
+                ],
+                [
                     'from' => 'your-name',
                     'to' => 'name',
                     'cast' => 'string',
@@ -156,7 +161,7 @@ return [
         'workflow' => [
             'forms-bridge-iso2-country-code',
             'holded-prefix-vatnumber',
-            'holded-lead-contact',
+            'holded-bind-contact',
         ],
     ],
     'form' => [
@@ -168,8 +173,8 @@ return [
                 'required' => true,
             ],
             [
-                'label' => __('Vat number', 'forms-bridge'),
-                'name' => 'vatnumber',
+                'label' => __('Tax ID', 'forms-bridge'),
+                'name' => 'code',
                 'type' => 'text',
                 'required' => true,
             ],

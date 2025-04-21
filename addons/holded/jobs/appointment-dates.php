@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-function forms_bridge_odoo_appointment_dates($payload)
+function forms_bridge_holded_appointment_dates($payload)
 {
     $datetime = DateTime::createFromFormat('Y-m-d H:i:s', $payload['date']);
     if ($datetime === false) {
@@ -15,13 +15,8 @@ function forms_bridge_odoo_appointment_dates($payload)
     }
 
     $timestamp = $datetime->getTimestamp();
-
-    $duration = floatval($payload['duration'] ?? 1);
-
-    $payload['start'] = date('Y-m-d H:i:s', $timestamp);
-
-    $end = $duration * 3600 + $timestamp;
-    $payload['stop'] = date('Y-m-d H:i:s', $end);
+    $payload['startDate'] = $timestamp;
+    $payload['duration'] = floatval($payload['duration'] ?? 1);
 
     return $payload;
 }
@@ -29,10 +24,10 @@ function forms_bridge_odoo_appointment_dates($payload)
 return [
     'title' => __('Appointment dates', 'forms-bridge'),
     'description' => __(
-        'Sets appointment start and stop time from "timestamp" and "duration" fields.',
+        'Sets appointment start time and duration from datetime and duration fields',
         'forms-bridge'
     ),
-    'method' => 'forms_bridge_odoo_appointment_dates',
+    'method' => 'forms_bridge_holded_appointment_dates',
     'input' => [
         [
             'name' => 'date',
@@ -46,12 +41,12 @@ return [
     ],
     'output' => [
         [
-            'name' => 'start',
-            'schema' => ['type' => 'string'],
+            'name' => 'startDate',
+            'schema' => ['type' => 'integer'],
         ],
         [
-            'name' => 'stop',
-            'schema' => ['type' => 'string'],
+            'name' => 'duration',
+            'schema' => ['type' => 'number'],
         ],
     ],
 ];

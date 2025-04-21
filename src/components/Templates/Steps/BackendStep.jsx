@@ -128,7 +128,6 @@ export default function BackendStep({ fields, data, setData, wired }) {
     status = "⏳";
   }
 
-  console.log(reuse, fields);
   return (
     <TemplateStep
       name={__("Backend", "forms-bridge")}

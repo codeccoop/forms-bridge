@@ -63,12 +63,13 @@ function forms_bridge_holded_create_contact($payload, $bridge, $update = false)
     ];
 
     $contact_fields = [
-        'vatnumber',
         'tradeName',
         'email',
         'mobile',
         'phone',
         'type',
+        'code',
+        'vatnumber',
         'iban',
         'swift',
         'billAddress',

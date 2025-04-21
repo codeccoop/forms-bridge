@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-function forms_bridge_holded_lead_contact($payload, $bridge)
+function forms_bridge_holded_bind_contact($payload, $bridge)
 {
     $contact = forms_bridge_holded_create_contact($payload, $bridge);
 
@@ -17,12 +17,12 @@ function forms_bridge_holded_lead_contact($payload, $bridge)
 }
 
 return [
-    'title' => __('Lead contact', 'forms-bridge'),
+    'title' => __('Bind contact', 'forms-bridge'),
     'description' => __(
         'Creates a new contact and bind it to the lead',
         'forms-bridge'
     ),
-    'method' => 'forms_bridge_holded_lead_contact',
+    'method' => 'forms_bridge_holded_bind_contact',
     'input' => [
         [
             'name' => 'name',
@@ -47,6 +47,10 @@ return [
         ],
         [
             'name' => 'type',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'code',
             'schema' => ['type' => 'string'],
         ],
         [

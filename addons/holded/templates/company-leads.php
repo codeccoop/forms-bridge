@@ -109,9 +109,9 @@ return [
                     'cast' => 'string',
                 ],
                 [
-                    'from' => 'countryCode',
-                    'to' => 'billAddress.countryCode',
-                    'cast' => 'string',
+                    'from' => 'code',
+                    'to' => 'vatnumber',
+                    'cast' => 'copy',
                 ],
                 [
                     'from' => 'address',
@@ -136,15 +136,14 @@ return [
                 [
                     'from' => 'email',
                     'to' => 'contactPersons[0].email',
-                    'cast' => 'string',
+                    'cast' => 'copy',
                 ],
                 [
                     'from' => 'phone',
                     'to' => 'contactPersons[0].phone',
-                    'cast' => 'string',
+                    'cast' => 'copy',
                 ],
             ],
-            [],
             [
                 [
                     'from' => 'country',
@@ -153,6 +152,13 @@ return [
                 ],
                 [
                     'from' => 'country_code',
+                    'to' => 'countryCode',
+                    'cast' => 'string',
+                ],
+            ],
+            [
+                [
+                    'from' => 'countryCode',
                     'to' => 'billAddress.countryCode',
                     'cast' => 'string',
                 ],
@@ -161,7 +167,7 @@ return [
         'workflow' => [
             'forms-bridge-iso2-country-code',
             'holded-prefix-vatnumber',
-            'holded-lead-contact',
+            'holded-bind-contact',
         ],
     ],
     'form' => [
@@ -173,8 +179,8 @@ return [
                 'required' => true,
             ],
             [
-                'label' => __('Vat number', 'forms-bridge'),
-                'name' => 'vatnumber',
+                'label' => __('Tax ID', 'forms-bridge'),
+                'name' => 'code',
                 'type' => 'text',
                 'required' => true,
             ],

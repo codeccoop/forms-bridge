@@ -8,9 +8,18 @@ function forms_bridge_zoho_meeting_dates($payload)
 {
     $duration = $payload['duration'] ?? 1;
 
-    $time = strtotime($payload['date']);
-    $payload['Start_DateTime'] = date('c', $time);
-    $payload['End_DateTime'] = date('c', $time + 3600 * $duration);
+    $datetime = DateTime::createFromFormat('Y-m-d H:i:s', $payload['date']);
+    if ($datetime === false) {
+        return new WP_Error(
+            'invalid-date',
+            __('Invalid date time value', 'forms-bridge')
+        );
+    }
+
+    $timestamp = $datetime->getTimestamp();
+
+    $payload['Start_DateTime'] = date('c', $timestamp);
+    $payload['End_DateTime'] = date('c', $timestamp + 3600 * $duration);
 
     return $payload;
 }
