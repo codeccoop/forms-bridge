@@ -10,15 +10,7 @@ return [
         [
             'ref' => '#bridge',
             'name' => 'endpoint',
-            'label' => __('Endpoint', 'forms-bridge'),
-            'type' => 'string',
-            'required' => true,
             'value' => '/api/index.php/thirdparties',
-        ],
-        [
-            'ref' => '#form',
-            'name' => 'title',
-            'default' => __('Prospects', 'forms-bridge'),
         ],
         [
             'ref' => '#bridge/custom_fields[]',
@@ -49,6 +41,11 @@ return [
                 ],
             ],
             'default' => '0',
+        ],
+        [
+            'ref' => '#form',
+            'name' => 'title',
+            'default' => __('Prospects', 'forms-bridge'),
         ],
     ],
     'form' => [
@@ -84,15 +81,8 @@ return [
             ],
         ],
     ],
-    'backend' => [
-        'headers' => [
-            'name' => 'Accept',
-            'value' => 'application/json',
-        ],
-    ],
     'bridge' => [
         'endpoint' => '/api/index.php/thirdparties',
-        'method' => 'POST',
         'custom_fields' => [
             [
                 'name' => 'status',

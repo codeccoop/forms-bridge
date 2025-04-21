@@ -12,7 +12,17 @@ function forms_bridge_dolibarr_skip_thirdparty($payload, $bridge)
         return $thirdparty;
     }
 
-    if ($thirdparty) {
+    if (isset($thirdparty['id'])) {
+        $patch = $payload;
+        $patch['id'] = $thirdparty['id'];
+        $patch['code_client'] = $thirdparty['code_client'];
+
+        $response = forms_bridge_dolibarr_update_thirdparty($patch, $bridge);
+
+        if (is_wp_error($response)) {
+            return $response;
+        }
+
         return;
     }
 
@@ -22,19 +32,19 @@ function forms_bridge_dolibarr_skip_thirdparty($payload, $bridge)
 return [
     'title' => __('Skip if thirdparty exists', 'forms-bridge'),
     'description' => __(
-        'Aborts form submission if a thirdparty with same idprof1 exists',
+        'Aborts form submission if a thirdparty already exists',
         'forms-bridge'
     ),
     'method' => 'forms_bridge_dolibarr_skip_thirdparty',
     'input' => [
         [
-            'name' => 'email',
-            'schema' => ['type' => 'string'],
-        ],
-        [
             'name' => 'name',
             'schema' => ['type' => 'string'],
             'required' => true,
+        ],
+        [
+            'name' => 'email',
+            'schema' => ['type' => 'string'],
         ],
         [
             'name' => 'idprof1',
@@ -43,16 +53,18 @@ return [
     ],
     'output' => [
         [
-            'name' => 'email',
-            'schema' => ['type' => 'string'],
-        ],
-        [
             'name' => 'name',
             'schema' => ['type' => 'string'],
         ],
         [
+            'name' => 'email',
+            'schema' => ['type' => 'string'],
+            'forward' => true,
+        ],
+        [
             'name' => 'idprof1',
             'schema' => ['type' => 'string'],
+            'forward' => true,
         ],
     ],
 ];

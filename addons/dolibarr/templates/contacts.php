@@ -31,15 +31,7 @@ return [
         [
             'ref' => '#bridge',
             'name' => 'endpoint',
-            'label' => __('Endpoint', 'forms-bridge'),
-            'type' => 'string',
-            'required' => true,
             'value' => '/api/index.php/contacts',
-        ],
-        [
-            'ref' => '#form',
-            'name' => 'title',
-            'default' => __('Contacts', 'forms-bridge'),
         ],
         [
             'ref' => '#bridge/custom_fields[]',
@@ -47,6 +39,11 @@ return [
             'label' => __('Subscrive to email', 'forms-bridge'),
             'type' => 'boolean',
             'default' => true,
+        ],
+        [
+            'ref' => '#form',
+            'name' => 'title',
+            'default' => __('Contacts', 'forms-bridge'),
         ],
     ],
     'form' => [
@@ -72,12 +69,6 @@ return [
             ],
         ],
     ],
-    'backend' => [
-        'headers' => [
-            'name' => 'Accept',
-            'value' => 'application/json',
-        ],
-    ],
     'bridge' => [
         'endpoint' => '/api/index.php/contacts',
         'custom_fields' => [
@@ -88,11 +79,6 @@ return [
         ],
         'mutations' => [
             [
-                [
-                    'from' => 'status',
-                    'to' => 'status',
-                    'cast' => 'string',
-                ],
                 [
                     'from' => 'no_email',
                     'to' => 'no_email',

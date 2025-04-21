@@ -6,14 +6,15 @@ if (!defined('ABSPATH')) {
 
 function forms_bridge_dolibarr_appointment_dates($payload)
 {
-    $timestamp = strtotime($payload['date']);
-    if ($timestamp === false) {
+    $datetime = DateTime::createFromFormat('Y-m-d H:i:s', $payload['date']);
+    if ($datetime === false) {
         return new WP_Error(
             'invalid-date',
             __('Invalid date time value', 'forms-bridge')
         );
     }
 
+    $timestamp = $datetime->getTimestamp();
     $payload['datep'] = $timestamp;
     $payload['duration'] = floatval($payload['duration'] ?? 1);
     $payload['datef'] = intval($payload['duration'] * 3600 + $timestamp);

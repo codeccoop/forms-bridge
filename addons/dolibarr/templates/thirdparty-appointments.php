@@ -10,15 +10,13 @@ return [
         [
             'ref' => '#bridge',
             'name' => 'endpoint',
-            'label' => __('Endpoint', 'forms-bridge'),
-            'type' => 'string',
-            'required' => true,
             'value' => '/api/index.php/agendaevents',
         ],
         [
             'ref' => '#bridge/custom_fields[]',
-            'name' => 'owner_email',
-            'label' => __('Owner email', 'forms-bridge'),
+            'name' => 'userownerid',
+            'label' => __('Owner', 'forms-bridge'),
+            'description' => __('Host user of the event', 'forms-bridge'),
             'type' => 'string',
             'required' => true,
         ],
@@ -45,7 +43,7 @@ return [
                     'value' => 'AC_OTH',
                 ],
             ],
-            'default' => true,
+            'default' => 'AC_RDV',
             'required' => true,
         ],
         [
@@ -54,7 +52,7 @@ return [
             'label' => __('Event label', 'forms-bridge'),
             'type' => 'string',
             'required' => true,
-            'default' => __('Web Appointment', 'forms-bridge'),
+            'default' => __('Web appointment', 'forms-bridge'),
         ],
         [
             'ref' => '#bridge/custom_fields[]',
@@ -79,7 +77,7 @@ return [
     'form' => [
         'fields' => [
             [
-                'name' => 'name',
+                'name' => 'company_name',
                 'label' => __('Company name', 'forms-bridge'),
                 'type' => 'text',
                 'required' => true,
@@ -97,7 +95,7 @@ return [
                 'required' => true,
             ],
             [
-                'name' => 'email',
+                'name' => 'contact_email',
                 'label' => __('Email', 'forms-bridge'),
                 'type' => 'email',
                 'required' => true,
@@ -240,25 +238,13 @@ return [
             ],
         ],
     ],
-    'backend' => [
-        'headers' => [
-            'name' => 'Accept',
-            'value' => 'application/json',
-        ],
-    ],
     'bridge' => [
         'endpoint' => '/api/index.php/agendaevents',
-        'method' => 'POST',
         'mutations' => [
             [
                 [
-                    'from' => 'type_code',
-                    'to' => 'type_code',
-                    'cast' => 'string',
-                ],
-                [
-                    'from' => 'fulldayevent',
-                    'to' => 'fulldayevent',
+                    'from' => 'company_name',
+                    'to' => 'name',
                     'cast' => 'string',
                 ],
                 [
@@ -266,14 +252,14 @@ return [
                     'to' => 'duration',
                     'cast' => 'number',
                 ],
+            ],
+            [
                 [
-                    'from' => 'email',
-                    'to' => 'contact_email',
-                    'cast' => 'copy',
+                    'from' => 'datetime',
+                    'to' => 'date',
+                    'cast' => 'string',
                 ],
             ],
-            [],
-            [],
             [
                 [
                     'from' => 'contact_email',
@@ -284,9 +270,9 @@ return [
             [],
         ],
         'workflow' => [
-            'dolibarr-get-owner-by-email',
+            'forms-bridge-date-fields-to-date',
             'dolibarr-appointment-dates',
-            'dolibarr-thirdparty-id',
+            'dolibarr-contact-socid',
             'dolibarr-appointment-attendee',
         ],
     ],

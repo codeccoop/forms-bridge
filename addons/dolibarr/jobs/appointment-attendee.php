@@ -6,53 +6,14 @@ if (!defined('ABSPATH')) {
 
 function forms_bridge_dolibarr_appointment_attendee($payload, $bridge)
 {
-    $contact = forms_bridge_dolibarr_search_contact($payload, $bridge);
+    $contact = forms_bridge_dolibarr_create_contact($payload, $bridge);
 
     if (is_wp_error($contact)) {
         return $contact;
     }
 
-    if (isset($contact['id'])) {
-        $payload['socpeopleassigned'][$contact['id']] = [
-            'id' => $contact['id'],
-            'mandatory' => 0,
-            'answer_status' => 0,
-            'transparency' => 0,
-        ];
-
-        return $payload;
-    }
-
-    $backend = $bridge->backend;
-    $dolapykey = $bridge->api_key->key;
-
-    $contact = [
-        'email' => $payload['email'],
-        'firstname' => $payload['firstname'],
-        'lastname' => $payload['lastname'],
-    ];
-
-    $contact_fields = ['socid', 'poste'];
-    foreach ($contact_fields as $field) {
-        if (isset($payload[$field])) {
-            $contact[$field] = $payload[$field];
-        }
-    }
-
-    if (empty($contact)) {
-        return $payload;
-    }
-
-    $response = $backend->post('/api/index.php/contacts', $contact, [
-        'DOLAPIKEY' => $dolapykey,
-    ]);
-
-    if (is_wp_error($response)) {
-        return $response;
-    }
-
-    $payload['socpeopleassigned'][$response['body']] = [
-        'id' => $response['body'],
+    $payload['socpeopleassigned'][$contact['id']] = [
+        'id' => $contact['id'],
         'mandatory' => 0,
         'answer_status' => 0,
         'transparency' => 0,
@@ -64,32 +25,98 @@ function forms_bridge_dolibarr_appointment_attendee($payload, $bridge)
 return [
     'title' => __('Appointment attendee', 'forms-bridge'),
     'description' => __(
-        'Adds a contact ID as an appointment attendee',
+        'Create a contact and binds it to the appointment as an attendee',
         'forms-bridge'
     ),
     'method' => 'forms_bridge_dolibarr_appointment_attendee',
     'input' => [
-        [
-            'name' => 'email',
-            'required' => true,
-            'schema' => ['type' => 'string'],
-        ],
-        [
-            'name' => 'firstname',
-            'required' => true,
-            'schema' => ['type' => 'string'],
-        ],
         [
             'name' => 'lastname',
             'required' => true,
             'schema' => ['type' => 'string'],
         ],
         [
-            'name' => 'socid',
+            'name' => 'firstname',
             'schema' => ['type' => 'string'],
         ],
         [
+            'name' => 'email',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'civility_code',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'status',
+            'schema' => ['type' => 'integer'],
+        ],
+        [
+            'name' => 'note_public',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'note_private',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'address',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'zip',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'town',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'country_id',
+            'schema' => ['type' => 'integer'],
+        ],
+        [
+            'name' => 'state_id',
+            'schema' => ['type' => 'integer'],
+        ],
+        [
+            'name' => 'region_id',
+            'schema' => ['type' => 'integer'],
+        ],
+        [
+            'name' => 'phone_pro',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'phone_perso',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'phone_mobile',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'fax',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'url',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'socid',
+            'schema' => ['type' => 'integer'],
+        ],
+        [
             'name' => 'poste',
+            'schema' => ['type' => 'string'],
+        ],
+        [
+            'name' => 'stcomm_id',
+            'schema' => ['type' => 'integer'],
+        ],
+        [
+            'name' => 'no_email',
             'schema' => ['type' => 'string'],
         ],
     ],

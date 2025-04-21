@@ -621,7 +621,7 @@ class Form_Bridge_Template
                 );
             }
 
-            if (empty($field['value']) && $is_required) {
+            if (!isset($field['value']) && $is_required) {
                 throw new Form_Bridge_Template_Exception(
                     'required_field',
                     sprintf(

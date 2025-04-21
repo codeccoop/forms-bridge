@@ -10,20 +10,13 @@ return [
         [
             'ref' => '#bridge',
             'name' => 'endpoint',
-            'label' => __('Endpoint', 'forms-bridge'),
-            'type' => 'string',
-            'required' => true,
             'value' => '/api/index.php/agendaevents',
         ],
         [
-            'ref' => '#form',
-            'name' => 'title',
-            'default' => __('Web Appointments', 'forms-bridge'),
-        ],
-        [
             'ref' => '#bridge/custom_fields[]',
-            'name' => 'owner_email',
-            'label' => __('Owner email', 'forms-bridge'),
+            'name' => 'userownerid',
+            'label' => __('Owner', 'forms-bridge'),
+            'description' => __('Host user of the event', 'forms-bridge'),
             'type' => 'string',
             'required' => true,
         ],
@@ -50,7 +43,7 @@ return [
                     'value' => 'AC_OTH',
                 ],
             ],
-            'default' => true,
+            'default' => 'AC_RDV',
             'required' => true,
         ],
         [
@@ -59,7 +52,7 @@ return [
             'label' => __('Event label', 'forms-bridge'),
             'type' => 'string',
             'required' => true,
-            'default' => __('Web Appointment', 'forms-bridge'),
+            'default' => __('Web appointment', 'forms-bridge'),
         ],
         [
             'ref' => '#bridge/custom_fields[]',
@@ -75,6 +68,11 @@ return [
             'type' => 'number',
             'default' => 1,
             'required' => true,
+        ],
+        [
+            'ref' => '#form',
+            'name' => 'title',
+            'default' => __('Appointments', 'forms-bridge'),
         ],
     ],
     'form' => [
@@ -229,15 +227,8 @@ return [
             ],
         ],
     ],
-    'backend' => [
-        'headers' => [
-            'name' => 'Accept',
-            'value' => 'application/json',
-        ],
-    ],
     'bridge' => [
         'endpoint' => '/api/index.php/agendaevents',
-        'method' => 'POST',
         'mutations' => [
             [
                 [
@@ -257,7 +248,6 @@ return [
         'workflow' => [
             'forms-bridge-date-fields-to-date',
             'dolibarr-appointment-dates',
-            'dolibarr-get-owner-by-email',
             'dolibarr-appointment-attendee',
         ],
     ],

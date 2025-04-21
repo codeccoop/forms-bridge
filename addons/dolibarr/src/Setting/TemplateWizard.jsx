@@ -1,6 +1,6 @@
 import { useGeneral } from "../../../../src/providers/Settings";
 import TemplateWizard from "../../../../src/components/Templates/Wizard";
-import BridgeStep from "./BridgeStep";
+import DolibarrBridgeStep from "./BridgeStep";
 import { useTemplateConfig } from "../../../../src/providers/Templates";
 import { debounce, validateUrl } from "../../../../src/lib/utils";
 
@@ -10,9 +10,7 @@ const { useState, useMemo, useRef, useEffect } = wp.element;
 const STEPS = [
   {
     name: "bridge",
-    step: ({ fields, data, setData }) => (
-      <BridgeStep fields={fields} data={data} setData={setData} />
-    ),
+    component: DolibarrBridgeStep,
     order: 20,
   },
 ];
@@ -26,7 +24,12 @@ function validateBackend(data) {
   );
 }
 
-export default function DolibarrTemplateWizard({ integration, onDone }) {
+export default function DolibarrTemplateWizard({
+  integration,
+  wired,
+  setWired,
+  onDone,
+}) {
   const [{ backends }] = useGeneral();
 
   const config = useTemplateConfig();
@@ -54,6 +57,14 @@ export default function DolibarrTemplateWizard({ integration, onDone }) {
       base_url: data.backend.base_url,
       headers: [
         {
+          name: "Content-Type",
+          value: "application/json",
+        },
+        {
+          name: "Accept",
+          value: "application/json",
+        },
+        {
           name: "DOLAPIKEY",
           value: data.backend.DOLAPIKEY,
         },
@@ -65,25 +76,25 @@ export default function DolibarrTemplateWizard({ integration, onDone }) {
     }
   });
 
-  const fetch = useRef((module, then, backend) => {
+  const fetch = useRef((endpoint, then, backend) => {
     apiFetch({
-      path: `forms-bridge/v1/dolibarr/${module}`,
+      path: `forms-bridge/v1/dolibarr/fetch`,
       method: "POST",
-      data: backend,
+      data: { backend, endpoint },
     })
       .then(then)
       .catch(() => then([]));
   }).current;
 
   const fetchUsers = useRef(
-    debounce((backend) => fetch("users", setUsers, backend), 1e3)
+    debounce((backend) => fetch("/api/index.php/users", setUsers, backend), 1e3)
   ).current;
 
   useEffect(() => {
-    if (!backend) return;
+    if (!backend || !wired) return;
 
     customFields.includes("userownerid") && fetchUsers(backend);
-  }, [backend, customFields]);
+  }, [wired, backend, customFields]);
 
   useEffect(() => {
     setData({
@@ -100,6 +111,8 @@ export default function DolibarrTemplateWizard({ integration, onDone }) {
       integration={integration}
       data={data}
       setData={setData}
+      wired={wired}
+      setWired={setWired}
       onDone={onDone}
       steps={STEPS}
     />

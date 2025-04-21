@@ -13,25 +13,25 @@
     "fields": [
       {
         "name": "email",
-        "label": "Email",
+        "label": "Your email",
         "type": "email",
         "required": true
       },
       {
         "name": "firstname",
-        "label": "Firstname",
+        "label": "Your first name",
         "type": "text",
         "required": true
       },
       {
         "name": "lastname",
-        "label": "Lastname",
+        "label": "Your last name",
         "type": "text",
         "required": true
       },
       {
         "name": "phone",
-        "label": "Phone",
+        "label": "Your phone",
         "type": "text"
       }
     ]

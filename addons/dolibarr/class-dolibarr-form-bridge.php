@@ -26,13 +26,6 @@ class Dolibarr_Form_Bridge extends Rest_Form_Bridge
     protected static $api_headers = ['DOLAPIKEY', 'Accept', 'Content-Type'];
 
     /**
-     * Handles allowed HTTP method.
-     *
-     * @var array
-     */
-    public const allowed_methods = ['POST'];
-
-    /**
      * Returns json as static bridge content type.
      *
      * @return string.

@@ -1,16 +1,14 @@
-import TemplateStep from "../../../../src/components/Templates/Steps/Step";
-import TemplateField from "../../../../src/components/Templates/Field";
+// source
+import BridgeStep from "../../../../src/components/Templates/Steps/BridgeStep";
 
 const { useMemo, useEffect } = wp.element;
 const { __ } = wp.i18n;
 
-const fieldsOrder = ["name"];
-
 const API_FIELDS = ["userownerid", "product_id"];
 
-export default function BridgeStep({ fields, data, setData }) {
-  const users = data._users || [];
-  const products = data._products || [];
+export default function DolibarrBridgeStep({ fields, data, setData }) {
+  const users = useMemo(() => data._users || [], [data._users]);
+  const products = useMemo(() => data._products || [], [data._products]);
 
   const userOptions = useMemo(
     () =>
@@ -30,95 +28,50 @@ export default function BridgeStep({ fields, data, setData }) {
     [products]
   );
 
-  const sortedFields = useMemo(
-    () =>
-      fields.sort((a, b) => {
-        if (!fieldsOrder.includes(a.name)) {
-          return 1;
-        } else if (!fieldsOrder.includes(b.name)) {
-          return -1;
-        } else {
-          fieldsOrder.indexOf(a.name) - fieldsOrder.indexOf(b.name);
-        }
-      }),
+  const standardFields = useMemo(
+    () => fields.filter(({ name }) => !API_FIELDS.includes(name)),
     [fields]
   );
 
-  const standardFields = useMemo(
-    () => sortedFields.filter(({ name }) => !API_FIELDS.includes(name)),
-    [sortedFields]
-  );
-
-  const apiFields = useMemo(
-    () =>
-      sortedFields
-        .filter(({ name }) => API_FIELDS.includes(name))
-        .map((field) => {
-          if (field.name === "user_id") {
-            return {
-              ...field,
-              type: "options",
-              options: userOptions,
-            };
-          } else if (field.name === "product_id") {
-            return {
-              ...field,
-              type: "options",
-              options: productOptions,
-            };
-          }
-        }),
-    [sortedFields]
-  );
+  const apiFields = useMemo(() => {
+    return fields
+      .filter(({ name }) => API_FIELDS.includes(name))
+      .map((field) => {
+        if (field.name === "userownerid") {
+          return {
+            ...field,
+            type: "options",
+            options: userOptions,
+          };
+        } else if (field.name === "product_id") {
+          return {
+            ...field,
+            type: "options",
+            options: productOptions,
+          };
+        }
+      });
+  }, [fields, userOptions, productOptions]);
 
   useEffect(() => {
     const defaults = {};
 
-    if (productOptions.length === 1) {
+    if (productOptions.length > 0 && !data.product_id) {
       defaults.product_id = productOptions[0].value;
     }
 
-    if (userOptions.length === 1) {
-      defaults.user_id = userOptions[0].value;
-    }
-
-    if (teamOptions.length === 1) {
-      defaults.team_id = teamOptions[0].value;
+    if (userOptions.length > 0 && !data.userownerid) {
+      defaults.userownerid = userOptions[0].value;
     }
 
     setData(defaults);
   }, [productOptions, userOptions]);
 
   return (
-    <TemplateStep
-      name={__("Bridge", "forms-bridge")}
-      description={__("Configure the bridge", "forms-bridge")}
-    >
-      {standardFields.map((field) => (
-        <TemplateField
-          data={{
-            ...field,
-            value: data[field.name] || "",
-            onChange: (value) => setData({ [field.name]: value }),
-          }}
-        />
-      ))}
-      {apiFields.map((field) => (
-        <TemplateField
-          data={{
-            ...field,
-            value: data[field.name] || "",
-            onChange: (value) => setData({ [field.name]: value }),
-            description:
-              field.options.length === 0
-                ? __(
-                    "It seems there is no values for this field. Please, check your backend connection",
-                    "forms-bridge"
-                  )
-                : null,
-          }}
-        />
-      ))}
-    </TemplateStep>
+    <BridgeStep
+      fields={standardFields.concat(apiFields)}
+      data={data}
+      setData={setData}
+    />
   );
 }

@@ -53,11 +53,11 @@ class Dolibarr_Addon extends Rest_Addon
      * Performs a request against the backend to check the connexion status.
      *
      * @param string $backend Target backend name.
-     * @params WP_REST_Request $request Current REST request.
+     * @param null $credential Credential data.
      *
      * @return array Ping result.
      */
-    protected function do_ping($backend, $request)
+    protected function do_ping($backend, $credential)
     {
         $bridge = new Dolibarr_Form_Bridge([
             'name' => '__dolibarr-' . time(),
@@ -71,7 +71,8 @@ class Dolibarr_Addon extends Rest_Addon
             return ['success' => false];
         }
 
-        return ['success' => $response['data']['success']['code'] === 200];
+        $code = $response['data']['success']['code'] ?? null;
+        return ['success' => $code === 200];
     }
 
     /**
@@ -79,11 +80,11 @@ class Dolibarr_Addon extends Rest_Addon
      *
      * @param string $backend Target backend name.
      * @param string $endpoint Target endpoint name.
-     * @params WP_REST_Request $request Current REST request.
+     * @param null $credential Credential data.
      *
      * @return array Fetched records.
      */
-    protected function do_fetch($backend, $endpoint, $request)
+    protected function do_fetch($backend, $endpoint, $credential)
     {
         $bridge = new Dolibarr_Form_Bridge([
             'name' => '__dolibarr-' . time(),
@@ -92,7 +93,7 @@ class Dolibarr_Addon extends Rest_Addon
             'method' => 'GET',
         ]);
 
-        $response = $bridge->submit([]);
+        $response = $bridge->submit();
         if (is_wp_error($response)) {
             return [];
         }
@@ -106,11 +107,11 @@ class Dolibarr_Addon extends Rest_Addon
      *
      * @param string $backend Target backend name.
      * @param string $endpoint Target endpoint name.
-     * @params WP_REST_Request $request Current REST request.
+     * @param null $credential Credential data.
      *
      * @return array List of fields and content type of the endpoint.
      */
-    protected function get_schema($backend, $endpoint, $request)
+    protected function get_schema($backend, $endpoint, $credential)
     {
         $bridge = new Dolibarr_Form_Bridge([
             'name' => '__dolibarr-' . time(),
@@ -119,7 +120,7 @@ class Dolibarr_Addon extends Rest_Addon
             'method' => 'GET',
         ]);
 
-        return $bridge->api_fields;
+        return $bridge->api_schema;
     }
 }
 

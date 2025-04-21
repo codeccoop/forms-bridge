@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 global $forms_bridge_dolibarr_countries;
 
 return [
-    'title' => __('Company Prospects', 'forms-bridge'),
+    'title' => __('Customers', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#bridge',
@@ -15,43 +15,13 @@ return [
             'value' => '/api/index.php/contacts',
         ],
         [
-            'ref' => '#bridge/custom_fields[]',
-            'name' => 'stcomm_id',
-            'label' => __('Prospect status', 'forms-bridge'),
-            'required' => true,
-            'type' => 'options',
-            'options' => [
-                [
-                    'label' => __('Never contacted', 'forms-bridge'),
-                    'value' => '0',
-                ],
-                [
-                    'label' => __('To contact', 'forms-bridge'),
-                    'value' => '1',
-                ],
-                [
-                    'label' => __('Contact in progress', 'forms-bridge'),
-                    'value' => '2',
-                ],
-                [
-                    'label' => __('Contacted', 'forms-bridge'),
-                    'value' => '3',
-                ],
-                [
-                    'label' => __('Do not contact', 'forms-bridge'),
-                    'value' => '-1',
-                ],
-            ],
-            'default' => ' 0',
-        ],
-        [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('Company Prospects', 'forms-bridge'),
+            'default' => __('Customers', 'forms-bridge'),
         ],
     ],
     'form' => [
-        'title' => __('Company Prospects', 'forms-bridge'),
+        'title' => __('Customers', 'forms-bridge'),
         'fields' => [
             [
                 'name' => 'company_name',
@@ -60,7 +30,7 @@ return [
                 'required' => true,
             ],
             [
-                'name' => 'idprof1',
+                'name' => 'tva_intra',
                 'label' => __('Tax ID', 'forms-bridge'),
                 'type' => 'text',
                 'required' => true,
@@ -141,7 +111,7 @@ return [
             ],
             [
                 'name' => 'client',
-                'value' => '2',
+                'value' => '1',
             ],
         ],
         'mutations' => [

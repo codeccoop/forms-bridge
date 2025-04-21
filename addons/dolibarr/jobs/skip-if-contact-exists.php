@@ -12,7 +12,16 @@ function forms_bridge_dolibarr_skip_contact($payload, $bridge)
         return $contact;
     }
 
-    if ($contact) {
+    if (isset($contact['id'])) {
+        $patch = $payload;
+        $patch['id'] = $contact['id'];
+
+        $response = forms_bridge_dolibarr_update_contact($patch, $bridge);
+
+        if (is_wp_error($response)) {
+            return $response;
+        }
+
         return;
     }
 
@@ -22,7 +31,7 @@ function forms_bridge_dolibarr_skip_contact($payload, $bridge)
 return [
     'title' => __('Skip if contact exists', 'forms-bridge'),
     'description' => __(
-        'Aborts form submission if a contact with same email exists.',
+        'Aborts form submission if the contact exists',
         'forms-bridge'
     ),
     'method' => 'forms_bridge_dolibarr_skip_contact',
@@ -49,18 +58,22 @@ return [
         [
             'name' => 'email',
             'schema' => ['type' => 'string'],
+            'forward' => true,
         ],
         [
             'name' => 'firstname',
             'schema' => ['type' => 'string'],
+            'forward' => true,
         ],
         [
             'name' => 'lastname',
             'schema' => ['type' => 'string'],
+            'forward' => true,
         ],
         [
             'name' => 'socid',
             'schema' => ['type' => 'string'],
+            'forward' => true,
         ],
     ],
 ];
