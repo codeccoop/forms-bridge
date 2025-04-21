@@ -11,6 +11,8 @@ require_once FORMS_BRIDGE_ADDONS_DIR . '/rest-api/rest-api.php';
 require_once 'class-financoop-form-bridge.php';
 require_once 'class-financoop-form-bridge-template.php';
 
+require_once 'shortcodes.php';
+
 /**
  * FinanCoop Addon class.
  */
