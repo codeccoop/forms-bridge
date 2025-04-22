@@ -1,7 +1,7 @@
 {
   "translation-revision-date": "2025-04-07 23:13+0000",
   "generator": "WP-CLI\/2.11.0",
-  "source": "addons\/rest-api\/assets\/addon.bundle.js",
+  "source": "addons\/bigin\/assets\/addon.bundle.js",
   "domain": "messages",
   "locale_data": {
     "messages": {
@@ -12,12 +12,14 @@
       },
       "Add": ["A\u00f1adir"],
       "Add bridge": ["A\u00f1adir bridge"],
+      "Add credentials": [""],
       "Add new step": [""],
       "After mutations": [""],
       "Backend": ["Backend"],
       "Boolean": [""],
       "Bridge": ["Bridge"],
-      "Bridge your forms to any backend or service with a REST API": [""],
+      "Client ID": [""],
+      "Client secret": [""],
       "Close": ["Cerrar"],
       "Configure the backend to bridge your form to": [
         "Configura un backend al que contectarse"
@@ -27,6 +29,7 @@
         "Felicidades, has creado un nuevo bridge de formulario!"
       ],
       "Copy": [""],
+      "Credentials": [""],
       "Decimal": [""],
       "Endpoint": ["Endpoint"],
       "Field is optional or type not match": [""],
@@ -36,6 +39,9 @@
       "Form submission": [""],
       "Form submission after mappers has been applied": [""],
       "Form title": [""],
+      "Forms Bridge needs Zoho OAuth Self Client credentials to work properly. Get more info about the process of creation of such credentials on the <a href='https:\/\/www.zoho.com\/accounts\/protocol\/oauth\/self-client\/overview.html' target='_blank'>Zoho OAuth documentation<\/a>": [
+        ""
+      ],
       "From": ["De"],
       "Ignore": [""],
       "Implode mutations": [""],
@@ -46,10 +52,10 @@
       "Loading": [""],
       "Loading config error": ["Error de carga de configuraci\u00f3n"],
       "Loading worflow job error": [""],
-      "Method": ["M\u00e9todo"],
       "Name": ["Nombre"],
       "Next": ["Siguiente"],
       "No input fields": [""],
+      "Organization ID": [""],
       "Output mutations: %s": [""],
       "Populate the form default values": [
         "Rellena los valores por defecto del formulario"
@@ -58,7 +64,7 @@
       "Referer": [""],
       "Remove": ["Eliminar"],
       "Rename": [""],
-      "rest-api": ["REST API"],
+      "Scope": ["Contexto"],
       "Select a template": ["Selecciona una plantilla"],
       "Show": [""],
       "Show diff": [""],
@@ -79,6 +85,9 @@
       "To": ["A"],
       "Type mutations": [""],
       "Use tempalte": ["Usar plantilla"],
+      "Use WordPress as the frontend of your CRM and don't let any lead slip through your fingers": [
+        ""
+      ],
       "Value": ["Valor"],
       "Workflow": [""],
       "Form ID": [""],
@@ -111,7 +120,14 @@
         ""
       ],
       "Reuse an existing backend": [""],
-      "Reuse an existing form": [""]
+      "Reuse an existing form": [""],
+      "Credential": [""],
+      "Configure the backend credentials": [""],
+      "Reuse an existing credential": [""],
+      "Store your Zoho API credentials and reuse them on your Bigin bridges": [
+        ""
+      ],
+      "bigin": ["Bigin"]
     }
   }
 }

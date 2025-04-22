@@ -53,7 +53,6 @@
       "financoop": ["FinanCoop"],
       "General": ["General"],
       "gf": ["GravityForms"],
-      "google-sheets": ["Google Sheets"],
       "Header-Name": ["Nombre-Cabecera"],
       "If your backend uses custom encoding, Forms Bridge will need a string payload. You can use the `forms_bridge_payload` hook to encode your form submission as string.": [
         "Si tu backend usa una codificaci\u00f3n personalizada, Forms Bridge necesitar\u00e1 una cadena de texto como cuerpo de la petici\u00f3n. Puedes usar el hook `forms_bridge_payload` para codificar las entradas de formulario."
@@ -96,7 +95,17 @@
       "woo": ["WooCommerce"],
       "wpcf7": ["Contact Form 7"],
       "wpforms": ["WPForms"],
-      "zoho": ["Zoho"]
+      "zoho": ["Zoho"],
+      "bigin": ["Bigin"],
+      "brevo": ["Brevo"],
+      "gsheets": ["Google Sheets"],
+      "holded": ["Holded"],
+      "listmonk": ["Listmonk"],
+      "mailchimp": ["MailChimp"],
+      "Credits": [""],
+      "Website": [""],
+      "Documentation": [""],
+      "Support": [""]
     }
   }
 }

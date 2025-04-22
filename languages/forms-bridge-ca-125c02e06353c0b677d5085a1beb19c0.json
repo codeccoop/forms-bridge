@@ -18,8 +18,6 @@
       "Backend": ["Backend"],
       "Boolean": [""],
       "Bridge": ["Bridge"],
-      "Bridge workflow": [""],
-      "Cast as": ["Com a"],
       "Client ID": [""],
       "Client secret": [""],
       "Close": ["Tancar"],
@@ -27,7 +25,6 @@
         "Configura el backend a on connctar-se"
       ],
       "Configure the bridge": ["Configura el bridge"],
-      "Configure the Zoho oauth credentials": [""],
       "Congratulations, you've created a new form bridge!": [
         "Felicitats, has creat un nou bridge de formulari!"
       ],
@@ -41,21 +38,20 @@
       "Form": ["Formulari"],
       "Form submission": [""],
       "Form submission after mappers has been applied": [""],
+      "Form title": [""],
       "Forms Bridge needs Zoho OAuth Self Client credentials to work properly. Get more info about the process of creation of such credentials on the <a href='https:\/\/www.zoho.com\/accounts\/protocol\/oauth\/self-client\/overview.html' target='_blank'>Zoho OAuth documentation<\/a>": [
         ""
       ],
       "From": ["De"],
       "Ignore": [""],
       "Implode mutations": [""],
-      "Initial state": [""],
       "Integer": [""],
+      "IP address": [""],
       "Job interface": [""],
       "Join": [""],
       "Loading": [""],
       "Loading config error": ["Error de c\u00e0rrega de configuraci\u00f3"],
       "Loading worflow job error": [""],
-      "Mutation layers": [""],
-      "Mutations": [""],
       "Name": ["N\u00f3m"],
       "Next": ["Seg\u00fcent"],
       "No input fields": [""],
@@ -65,10 +61,9 @@
         "Emplena els valors per defecte del formulari"
       ],
       "Previous": ["Anterior"],
+      "Referer": [""],
       "Remove": ["Eliminar"],
       "Rename": [""],
-      "Reuse a credential": [""],
-      "Reuse backend": ["Reutilitza un backend"],
       "Scope": ["Context"],
       "Select a template": ["Selecciona una plantilla"],
       "Show": [""],
@@ -81,6 +76,7 @@
       ],
       "String": [""],
       "Structure mutations": [""],
+      "Submission ID": [""],
       "Submit": ["Enviar"],
       "Target integration": ["Integraci\u00f3 destinat\u00e0ria"],
       "Template submit error": ["Error d'enviament de plantilla"],
@@ -95,8 +91,43 @@
       "Use WordPress as the frontend of your CRM and don't let any lead slip through your fingers": [
         ""
       ],
+      "Value": ["Valor"],
       "Workflow": [""],
-      "zoho": ["Zoho"]
+      "zoho": ["Zoho"],
+      "Form ID": [""],
+      "Site title": [""],
+      "Site description": [""],
+      "Site URL": [""],
+      "Blog URL": [""],
+      "Admin email": [""],
+      "WP Version": [""],
+      "User agent": [""],
+      "Browser locale": [""],
+      "Page locale": [""],
+      "Page language": [""],
+      "Datetime": [""],
+      "ISO Date": [""],
+      "Timestamp": [""],
+      "User ID": [""],
+      "user_login": [""],
+      "User name": [""],
+      "User email": [""],
+      "Fields": [""],
+      "Tags": [""],
+      "Custom fields": [""],
+      "Add custom fields to the form submission payload": [""],
+      "Output payload": [""],
+      "Workflow output payload": [""],
+      "Mutation": [""],
+      "Submission workflow": [""],
+      "Process the form submission before it is sent to the backend over the bridge": [
+        ""
+      ],
+      "Reuse an existing backend": [""],
+      "Reuse an existing form": [""],
+      "Credential": [""],
+      "Configure the backend credentials": [""],
+      "Reuse an existing credential": [""]
     }
   }
 }

@@ -13,454 +13,128 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Domain: forms-bridge\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Loco-Version: 2.7.1; wp-6.7.2"
+"X-Loco-Version: 2.7.1; wp-6.7.2\n"
 
-#: addons/abstract-addon.php:408 integrations/abstract-integration.php:230
-msgid ""
-"$form_id param should include the integration prefix if there is more than "
-"one integration active"
+#: assets/plugin.bundle.js:1177
+msgid "Activate the debug mode and open the loggin console to see bridged form submissions' logs"
 msgstr ""
 
-#: addons/dolibarr/templates/appointments.php:180
-#: addons/dolibarr/templates/thirdparty-appointments.php:192
-#: addons/odoo/templates/appointments.php:189
-#: addons/zoho/templates/bigin-appointments.php:158
-#: addons/zoho/templates/crm-meetings.php:219
-msgid "1 AM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:228
-#: addons/dolibarr/templates/thirdparty-appointments.php:240
-#: addons/odoo/templates/appointments.php:237
-#: addons/zoho/templates/bigin-appointments.php:206
-#: addons/zoho/templates/crm-meetings.php:267
-msgid "1 PM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:216
-#: addons/dolibarr/templates/thirdparty-appointments.php:228
-#: addons/odoo/templates/appointments.php:225
-#: addons/zoho/templates/bigin-appointments.php:194
-#: addons/zoho/templates/crm-meetings.php:255
-msgid "10 AM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:264
-#: addons/dolibarr/templates/thirdparty-appointments.php:276
-#: addons/odoo/templates/appointments.php:273
-#: addons/zoho/templates/bigin-appointments.php:242
-#: addons/zoho/templates/crm-meetings.php:303
-msgid "10 PM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:220
-#: addons/dolibarr/templates/thirdparty-appointments.php:232
-#: addons/odoo/templates/appointments.php:229
-#: addons/zoho/templates/bigin-appointments.php:198
-#: addons/zoho/templates/crm-meetings.php:259
-msgid "11 AM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:268
-#: addons/dolibarr/templates/thirdparty-appointments.php:280
-#: addons/odoo/templates/appointments.php:277
-#: addons/zoho/templates/bigin-appointments.php:246
-#: addons/zoho/templates/crm-meetings.php:307
-msgid "11 PM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:224
-#: addons/dolibarr/templates/thirdparty-appointments.php:236
-#: addons/odoo/templates/appointments.php:233
-#: addons/zoho/templates/bigin-appointments.php:202
-#: addons/zoho/templates/crm-meetings.php:263
-msgid "12 AM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:272
-#: addons/dolibarr/templates/thirdparty-appointments.php:284
-#: addons/odoo/templates/appointments.php:281
-#: addons/zoho/templates/bigin-appointments.php:250
-#: addons/zoho/templates/crm-meetings.php:311
-msgid "12 PM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:184
-#: addons/dolibarr/templates/thirdparty-appointments.php:196
-#: addons/odoo/templates/appointments.php:193
-#: addons/zoho/templates/bigin-appointments.php:162
-#: addons/zoho/templates/crm-meetings.php:223
-msgid "2 AM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:232
-#: addons/dolibarr/templates/thirdparty-appointments.php:244
-#: addons/odoo/templates/appointments.php:241
-#: addons/zoho/templates/bigin-appointments.php:210
-#: addons/zoho/templates/crm-meetings.php:271
-msgid "2 PM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:188
-#: addons/dolibarr/templates/thirdparty-appointments.php:200
-#: addons/odoo/templates/appointments.php:197
-#: addons/zoho/templates/bigin-appointments.php:166
-#: addons/zoho/templates/crm-meetings.php:227
-msgid "3 AM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:236
-#: addons/dolibarr/templates/thirdparty-appointments.php:248
-#: addons/odoo/templates/appointments.php:245
-#: addons/zoho/templates/bigin-appointments.php:214
-#: addons/zoho/templates/crm-meetings.php:275
-msgid "3 PM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:192
-#: addons/dolibarr/templates/thirdparty-appointments.php:204
-#: addons/odoo/templates/appointments.php:201
-#: addons/zoho/templates/bigin-appointments.php:170
-#: addons/zoho/templates/crm-meetings.php:231
-msgid "4 AM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:240
-#: addons/dolibarr/templates/thirdparty-appointments.php:252
-#: addons/odoo/templates/appointments.php:249
-#: addons/zoho/templates/bigin-appointments.php:218
-#: addons/zoho/templates/crm-meetings.php:279
-msgid "4 PM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:196
-#: addons/dolibarr/templates/thirdparty-appointments.php:208
-#: addons/odoo/templates/appointments.php:205
-#: addons/zoho/templates/bigin-appointments.php:174
-#: addons/zoho/templates/crm-meetings.php:235
-msgid "5 AM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:244
-#: addons/dolibarr/templates/thirdparty-appointments.php:256
-#: addons/odoo/templates/appointments.php:253
-#: addons/zoho/templates/bigin-appointments.php:222
-#: addons/zoho/templates/crm-meetings.php:283
-msgid "5 PM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:200
-#: addons/dolibarr/templates/thirdparty-appointments.php:212
-#: addons/odoo/templates/appointments.php:209
-#: addons/zoho/templates/bigin-appointments.php:178
-#: addons/zoho/templates/crm-meetings.php:239
-msgid "6 AM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:248
-#: addons/dolibarr/templates/thirdparty-appointments.php:260
-#: addons/odoo/templates/appointments.php:257
-#: addons/zoho/templates/bigin-appointments.php:226
-#: addons/zoho/templates/crm-meetings.php:287
-msgid "6 PM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:204
-#: addons/dolibarr/templates/thirdparty-appointments.php:216
-#: addons/odoo/templates/appointments.php:213
-#: addons/zoho/templates/bigin-appointments.php:182
-#: addons/zoho/templates/crm-meetings.php:243
-msgid "7 AM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:252
-#: addons/dolibarr/templates/thirdparty-appointments.php:264
-#: addons/odoo/templates/appointments.php:261
-#: addons/zoho/templates/bigin-appointments.php:230
-#: addons/zoho/templates/crm-meetings.php:291
-msgid "7 PM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:208
-#: addons/dolibarr/templates/thirdparty-appointments.php:220
-#: addons/odoo/templates/appointments.php:217
-#: addons/zoho/templates/bigin-appointments.php:186
-#: addons/zoho/templates/crm-meetings.php:247
-msgid "8 AM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:256
-#: addons/dolibarr/templates/thirdparty-appointments.php:268
-#: addons/odoo/templates/appointments.php:265
-#: addons/zoho/templates/bigin-appointments.php:234
-#: addons/zoho/templates/crm-meetings.php:295
-msgid "8 PM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:212
-#: addons/dolibarr/templates/thirdparty-appointments.php:224
-#: addons/odoo/templates/appointments.php:221
-#: addons/zoho/templates/bigin-appointments.php:190
-#: addons/zoho/templates/crm-meetings.php:251
-msgid "9 AM"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:260
-#: addons/dolibarr/templates/thirdparty-appointments.php:272
-#: addons/odoo/templates/appointments.php:269
-#: addons/zoho/templates/bigin-appointments.php:238
-#: addons/zoho/templates/crm-meetings.php:299
-msgid "9 PM"
-msgstr ""
-
-#: integrations/ninja/class-integration.php:919
-msgid "<p>Form submitted successfully.</p>"
-msgstr ""
-
-#: integrations/ninja/class-integration.php:801
-msgid "A form with this value has already been submitted."
-msgstr ""
-
-#: addons/dolibarr/jobs/skip-if-contact-exists.php:24
-msgid "Aborts form submission if a contact with same email exists."
-msgstr ""
-
-#: addons/dolibarr/jobs/skip-if-thirdparty-exists.php:24
-msgid "Aborts form submission if a thirdparty with same idprof1 exists"
-msgstr ""
-
-#: assets/plugin.bundle.js:1141
-msgid ""
-"Activate the debug mode and open the loggin console to see bridged form "
-"submissions' logs"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2983
-#: addons/dolibarr/assets/addon.bundle.js:4337
-#: addons/financoop/assets/addon.bundle.js:2983
-#: addons/google-sheets/assets/addon.bundle.js:3010
-#: addons/odoo/assets/addon.bundle.js:2983
-#: addons/odoo/assets/addon.bundle.js:4349
-#: addons/rest-api/assets/addon.bundle.js:2983
-#: addons/zoho/assets/addon.bundle.js:2983
-#: addons/zoho/assets/addon.bundle.js:4396 assets/plugin.bundle.js:717
+#: addons/bigin/assets/addon.bundle.js:3833
+#: addons/bigin/assets/addon.bundle.js:5552
+#: addons/brevo/assets/addon.bundle.js:3833
+#: addons/dolibarr/assets/addon.bundle.js:3833
+#: addons/financoop/assets/addon.bundle.js:3833
+#: addons/gsheets/assets/addon.bundle.js:3860
+#: addons/holded/assets/addon.bundle.js:3833
+#: addons/listmonk/assets/addon.bundle.js:3833
+#: addons/mailchimp/assets/addon.bundle.js:3833
+#: addons/odoo/assets/addon.bundle.js:3833
+#: addons/odoo/assets/addon.bundle.js:5639
+#: addons/rest-api/assets/addon.bundle.js:3833
+#: addons/zoho/assets/addon.bundle.js:3833
+#: addons/zoho/assets/addon.bundle.js:5552
+#: assets/plugin.bundle.js:717
 #: assets/plugin.bundle.js:798
 msgid "Add"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:4503
-msgid "Add API key"
 msgstr ""
 
 #: assets/plugin.bundle.js:411
 msgid "Add Backend"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:603
-#: addons/financoop/assets/addon.bundle.js:603
-#: addons/google-sheets/assets/addon.bundle.js:630
-#: addons/odoo/assets/addon.bundle.js:603
-#: addons/rest-api/assets/addon.bundle.js:603
-#: addons/zoho/assets/addon.bundle.js:603
+#: addons/bigin/assets/addon.bundle.js:727
+#: addons/brevo/assets/addon.bundle.js:727
+#: addons/dolibarr/assets/addon.bundle.js:727
+#: addons/financoop/assets/addon.bundle.js:727
+#: addons/gsheets/assets/addon.bundle.js:754
+#: addons/holded/assets/addon.bundle.js:727
+#: addons/listmonk/assets/addon.bundle.js:727
+#: addons/mailchimp/assets/addon.bundle.js:727
+#: addons/odoo/assets/addon.bundle.js:727
+#: addons/rest-api/assets/addon.bundle.js:727
+#: addons/zoho/assets/addon.bundle.js:727
 msgid "Add bridge"
 msgstr ""
 
-#: addons/zoho/assets/addon.bundle.js:4586
+#: addons/bigin/assets/addon.bundle.js:5705
+#: addons/zoho/assets/addon.bundle.js:5705
 msgid "Add credentials"
 msgstr ""
 
-#: addons/odoo/assets/addon.bundle.js:4528
-msgid "Add database"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2012
-#: addons/financoop/assets/addon.bundle.js:2012
-#: addons/google-sheets/assets/addon.bundle.js:2039
-#: addons/odoo/assets/addon.bundle.js:2012
-#: addons/rest-api/assets/addon.bundle.js:2012
-#: addons/zoho/assets/addon.bundle.js:2012
+#: addons/bigin/assets/addon.bundle.js:2352
+#: addons/brevo/assets/addon.bundle.js:2352
+#: addons/dolibarr/assets/addon.bundle.js:2352
+#: addons/financoop/assets/addon.bundle.js:2352
+#: addons/gsheets/assets/addon.bundle.js:2379
+#: addons/holded/assets/addon.bundle.js:2352
+#: addons/listmonk/assets/addon.bundle.js:2352
+#: addons/mailchimp/assets/addon.bundle.js:2352
+#: addons/odoo/assets/addon.bundle.js:2352
+#: addons/rest-api/assets/addon.bundle.js:2352
+#: addons/zoho/assets/addon.bundle.js:2352
 msgid "Add new step"
 msgstr ""
 
-#: assets/plugin.bundle.js:1027
+#: assets/plugin.bundle.js:1038
 msgid "Addons"
 msgstr ""
 
-#: addons/dolibarr/templates/company-prospects.php:96
-#: addons/financoop/templates/loan-request.php:139
-#: addons/financoop/templates/subscription-request.php:152
-#: addons/odoo/templates/company-contacts.php:41
-#: addons/odoo/templates/contacts.php:54
-#: addons/odoo/templates/crm-company-leads.php:150
-msgid "Address"
-msgstr ""
-
-#: addons/dolibarr/jobs/appointment-attendee.php:66
-msgid "Adds a contact ID as an appointment attendee"
-msgstr ""
-
-#: includes/workflow-jobs/current-locale.php:18
-msgid "Adds the current locale to the payload"
-msgstr ""
-
-#: includes/workflow-jobs/submission-id.php:18
-msgid "Adds the submission object ID to the payload"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:9 includes/data/country-codes.php:11
-msgid "Afghanistan"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2350
-#: addons/financoop/assets/addon.bundle.js:2350
-#: addons/google-sheets/assets/addon.bundle.js:2377
-#: addons/odoo/assets/addon.bundle.js:2350
-#: addons/rest-api/assets/addon.bundle.js:2350
-#: addons/zoho/assets/addon.bundle.js:2350
+#: addons/bigin/assets/addon.bundle.js:3324
+#: addons/brevo/assets/addon.bundle.js:3324
+#: addons/dolibarr/assets/addon.bundle.js:3324
+#: addons/financoop/assets/addon.bundle.js:3324
+#: addons/gsheets/assets/addon.bundle.js:3351
+#: addons/holded/assets/addon.bundle.js:3324
+#: addons/listmonk/assets/addon.bundle.js:3324
+#: addons/mailchimp/assets/addon.bundle.js:3324
+#: addons/odoo/assets/addon.bundle.js:3324
+#: addons/rest-api/assets/addon.bundle.js:3324
+#: addons/zoho/assets/addon.bundle.js:3324
 msgid "After mutations"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:11 includes/data/country-codes.php:14
-msgid "Albania"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:12 includes/data/country-codes.php:70
-msgid "Algeria"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:13 includes/data/country-codes.php:19
-msgid "American Samoa"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:14 includes/data/country-codes.php:9
-msgid "Andorra"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:15 includes/data/country-codes.php:16
-msgid "Angola"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:16 includes/data/country-codes.php:13
-msgid "Anguilla"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:17 includes/data/country-codes.php:17
-msgid "Antarctica"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:18 includes/data/country-codes.php:12
-msgid "Antigua and Barbuda"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:4143
-#: addons/dolibarr/assets/addon.bundle.js:4202
-msgid "API Key"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:4013
-msgid "API key"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:4614
-msgid "API keys"
-msgstr ""
-
-#: addons/dolibarr/jobs/appointment-attendee.php:65
-#: addons/odoo/jobs/appointment-attendee.php:23
-msgid "Appointment attendee"
-msgstr ""
-
-#: addons/dolibarr/jobs/appointment-dates.php:25
-#: addons/odoo/jobs/appointment-dates.php:28
-#: addons/zoho/jobs/event-dates.php:19
-msgid "Appointment dates"
-msgstr ""
-
-#: addons/odoo/templates/appointments.php:82
-msgid "Appointment name"
-msgstr ""
-
-#: addons/odoo/jobs/appointment-owner.php:22
-msgid "Appointment owner"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:51
-#: addons/odoo/templates/appointments.php:61
-#: addons/odoo/templates/appointments.php:66
-#: addons/zoho/templates/bigin-appointments.php:63
-msgid "Appointments"
-msgstr ""
-
-#: assets/plugin.bundle.js:1355
+#: assets/plugin.bundle.js:1391
 msgid "Are you sure to continue?"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:19 includes/data/country-codes.php:18
-msgid "Argentina"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:20 includes/data/country-codes.php:15
-msgid "Armenia"
-msgstr ""
-
-#: includes/class-rest-settings-controller.php:98
-msgid "Array of workflow job names"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:21 includes/data/country-codes.php:22
-msgid "Aruba"
-msgstr ""
-
-#: addons/zoho/templates/crm-company-leads.php:56
-#: addons/zoho/templates/crm-leads.php:56
-#: addons/zoho/templates/crm-meetings.php:64
-msgid "Attempted to Contact"
-msgstr ""
-
-#: addons/rest-api/templates/mailchimp-contacts.php:156
-msgid "Audience ID"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:22 includes/data/country-codes.php:21
-msgid "Australia"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:23 includes/data/country-codes.php:20
-msgid "Austria"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:24 includes/data/country-codes.php:24
-msgid "Azerbaijan"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2942
-#: addons/dolibarr/assets/addon.bundle.js:3106
-#: addons/dolibarr/assets/addon.bundle.js:3512
-#: addons/dolibarr/assets/addon.bundle.js:4305
-#: addons/dolibarr/assets/addon.bundle.js:4422
-#: addons/financoop/assets/addon.bundle.js:2942
-#: addons/financoop/assets/addon.bundle.js:3106
-#: addons/financoop/assets/addon.bundle.js:3494
-#: addons/google-sheets/assets/addon.bundle.js:2969
-#: addons/google-sheets/assets/addon.bundle.js:3133
-#: addons/google-sheets/assets/addon.bundle.js:3521
-#: addons/odoo/assets/addon.bundle.js:2942
-#: addons/odoo/assets/addon.bundle.js:3106
-#: addons/odoo/assets/addon.bundle.js:3512
-#: addons/odoo/assets/addon.bundle.js:4307
-#: addons/odoo/assets/addon.bundle.js:4434
-#: addons/rest-api/assets/addon.bundle.js:2942
-#: addons/rest-api/assets/addon.bundle.js:3106
-#: addons/rest-api/assets/addon.bundle.js:3494
-#: addons/zoho/assets/addon.bundle.js:2942
-#: addons/zoho/assets/addon.bundle.js:3106
-#: addons/zoho/assets/addon.bundle.js:3512
-#: addons/zoho/assets/addon.bundle.js:4346
-#: addons/zoho/assets/addon.bundle.js:4483
+#: addons/bigin/assets/addon.bundle.js:3792
+#: addons/bigin/assets/addon.bundle.js:3944
+#: addons/bigin/assets/addon.bundle.js:4424
+#: addons/brevo/assets/addon.bundle.js:3792
+#: addons/brevo/assets/addon.bundle.js:3944
+#: addons/brevo/assets/addon.bundle.js:4406
+#: addons/dolibarr/assets/addon.bundle.js:3792
+#: addons/dolibarr/assets/addon.bundle.js:3944
+#: addons/dolibarr/assets/addon.bundle.js:4406
+#: addons/financoop/assets/addon.bundle.js:3792
+#: addons/financoop/assets/addon.bundle.js:3944
+#: addons/financoop/assets/addon.bundle.js:4406
+#: addons/gsheets/assets/addon.bundle.js:3819
+#: addons/gsheets/assets/addon.bundle.js:3971
+#: addons/gsheets/assets/addon.bundle.js:4433
+#: addons/holded/assets/addon.bundle.js:3792
+#: addons/holded/assets/addon.bundle.js:3944
+#: addons/holded/assets/addon.bundle.js:4406
+#: addons/listmonk/assets/addon.bundle.js:3792
+#: addons/listmonk/assets/addon.bundle.js:3944
+#: addons/listmonk/assets/addon.bundle.js:4406
+#: addons/mailchimp/assets/addon.bundle.js:3792
+#: addons/mailchimp/assets/addon.bundle.js:3944
+#: addons/mailchimp/assets/addon.bundle.js:4406
+#: addons/odoo/assets/addon.bundle.js:3792
+#: addons/odoo/assets/addon.bundle.js:3944
+#: addons/odoo/assets/addon.bundle.js:4424
+#: addons/rest-api/assets/addon.bundle.js:3792
+#: addons/rest-api/assets/addon.bundle.js:3944
+#: addons/rest-api/assets/addon.bundle.js:4406
+#: addons/zoho/assets/addon.bundle.js:3792
+#: addons/zoho/assets/addon.bundle.js:3944
+#: addons/zoho/assets/addon.bundle.js:4424
 msgid "Backend"
 msgstr ""
 
-#: assets/plugin.bundle.js:781 assets/plugin.bundle.js:862
+#: assets/plugin.bundle.js:781
+#: assets/plugin.bundle.js:862
 msgid "Backend base URL"
 msgstr ""
 
@@ -468,381 +142,97 @@ msgstr ""
 msgid "Backend HTTP Headers"
 msgstr ""
 
-#: addons/financoop/financoop.php:146 addons/financoop/financoop.php:169
-msgid "Backend is unkown"
-msgstr ""
-
-#: addons/zoho/templates/crm-company-leads.php:88
-#: addons/zoho/templates/crm-contacts.php:13
-#: addons/zoho/templates/crm-leads.php:88
-#: addons/zoho/templates/crm-meetings.php:93 assets/plugin.bundle.js:768
+#: assets/plugin.bundle.js:768
 #: assets/plugin.bundle.js:849
 msgid "Backend name"
 msgstr ""
 
-#: assets/plugin.bundle.js:1438
+#: assets/plugin.bundle.js:1474
 msgid "Backends"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:25 includes/data/country-codes.php:40
-msgid "Bahamas"
+#: addons/gsheets/assets/addon.bundle.js:5082
+msgid "Before you can use spreadsheet bridges, you have to grant access to Forms Bridge as OAuth client"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:26 includes/data/country-codes.php:31
-msgid "Bahrain"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:27 includes/data/country-codes.php:27
-msgid "Bangladesh"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:28 includes/data/country-codes.php:26
-msgid "Barbados"
-msgstr ""
-
-#: addons/google-sheets/assets/addon.bundle.js:4032
-msgid ""
-"Before you can use spreadsheet bridges, you have to grant access to Forms "
-"Bridge as OAuth client"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:29 includes/data/country-codes.php:44
-msgid "Belarus"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:30 includes/data/country-codes.php:28
-msgid "Belgium"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:31 includes/data/country-codes.php:45
-msgid "Belize"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:32 includes/data/country-codes.php:33
-msgid "Benin"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:33 includes/data/country-codes.php:35
-msgid "Bermuda"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:34 includes/data/country-codes.php:41
-msgid "Bhutan"
-msgstr ""
-
-#: addons/zoho/jobs/bigin-account-name.php:23
-msgid "Bigin account name"
-msgstr ""
-
-#: addons/zoho/jobs/bigin-appointment-participant.php:25
-msgid "Bigin appointment participant"
-msgstr ""
-
-#: addons/zoho/templates/bigin-appointments.php:8
-msgid "Bigin Appointments"
-msgstr ""
-
-#: addons/zoho/templates/bigin-companies.php:8
-msgid "Bigin Company Contact"
-msgstr ""
-
-#: addons/zoho/jobs/bigin-contact-name.php:23
-msgid "Bigin contact name"
-msgstr ""
-
-#: addons/zoho/templates/bigin-contacts.php:8
-msgid "Bigin Contacts"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:8
-#: addons/zoho/templates/bigin-deals.php:67
-msgid "Bigin Deals"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:35 includes/data/country-codes.php:37
-msgid "Bolivia"
-msgstr ""
-
-#: includes/data/country-codes.php:38
-msgid "Bonaire, Sint Eustatius and Saba"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:1365
-#: addons/financoop/assets/addon.bundle.js:1365
-#: addons/google-sheets/assets/addon.bundle.js:1392
-#: addons/odoo/assets/addon.bundle.js:1365
-#: addons/rest-api/assets/addon.bundle.js:1365
-#: addons/zoho/assets/addon.bundle.js:1365
+#: addons/bigin/assets/addon.bundle.js:2492
+#: addons/brevo/assets/addon.bundle.js:2492
+#: addons/dolibarr/assets/addon.bundle.js:2492
+#: addons/financoop/assets/addon.bundle.js:2492
+#: addons/gsheets/assets/addon.bundle.js:2519
+#: addons/holded/assets/addon.bundle.js:2492
+#: addons/listmonk/assets/addon.bundle.js:2492
+#: addons/mailchimp/assets/addon.bundle.js:2492
+#: addons/odoo/assets/addon.bundle.js:2492
+#: addons/rest-api/assets/addon.bundle.js:2492
+#: addons/zoho/assets/addon.bundle.js:2492
 msgid "Boolean"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:36 includes/data/country-codes.php:25
-msgid "Bosnia and Herzegovina"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:37 includes/data/country-codes.php:43
-msgid "Botswana"
-msgstr ""
-
-#: includes/data/country-codes.php:42
-msgid "Bouvet Island"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:38 includes/data/country-codes.php:39
-msgid "Brazil"
-msgstr ""
-
-#: addons/rest-api/templates/brevo-contacts-doi.php:44
-#: addons/rest-api/templates/brevo-contacts.php:44
-msgid "Brevo API Key"
-msgstr ""
-
-#: addons/rest-api/templates/brevo-contacts-doi.php:13
-#: addons/rest-api/templates/brevo-contacts.php:13
-msgid "Brevo API URL"
-msgstr ""
-
-#: addons/rest-api/templates/brevo-contacts.php:8
-#: addons/rest-api/templates/brevo-contacts.php:69
-msgid "Brevo Contacts"
-msgstr ""
-
-#: addons/rest-api/templates/brevo-contacts-doi.php:8
-#: addons/rest-api/templates/brevo-contacts-doi.php:89
-msgid "Brevo Contacts DOI"
-msgstr ""
-
-#: addons/rest-api/jobs/brevo-list-ids.php:25
-msgid "Brevo list IDs"
-msgstr ""
-
-#: addons/rest-api/jobs/brevo-doi-redirection-url.php:29
-msgid "Brevo redirection URL"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:3646
-#: addons/financoop/assets/addon.bundle.js:3628
-#: addons/financoop/assets/addon.bundle.js:3939
-#: addons/google-sheets/assets/addon.bundle.js:3655
-#: addons/odoo/assets/addon.bundle.js:3646
-#: addons/rest-api/assets/addon.bundle.js:3628
-#: addons/zoho/assets/addon.bundle.js:3646
+#: addons/bigin/assets/addon.bundle.js:4631
+#: addons/brevo/assets/addon.bundle.js:4613
+#: addons/dolibarr/assets/addon.bundle.js:4613
+#: addons/financoop/assets/addon.bundle.js:4613
+#: addons/gsheets/assets/addon.bundle.js:4640
+#: addons/holded/assets/addon.bundle.js:4613
+#: addons/listmonk/assets/addon.bundle.js:4613
+#: addons/mailchimp/assets/addon.bundle.js:4613
+#: addons/odoo/assets/addon.bundle.js:4631
+#: addons/rest-api/assets/addon.bundle.js:4613
+#: addons/zoho/assets/addon.bundle.js:4631
 msgid "Bridge"
 msgstr ""
 
-#: addons/rest-api/templates/brevo-contacts-doi.php:37
-#: addons/rest-api/templates/brevo-contacts.php:37
-#: addons/rest-api/templates/listmonk-contacts.php:41
-#: addons/rest-api/templates/mailchimp-contacts.php:72
-msgid "Bridge endpoint"
-msgstr ""
-
-#: addons/rest-api/templates/brevo-contacts-doi.php:30
-#: addons/rest-api/templates/brevo-contacts.php:30
-#: addons/rest-api/templates/listmonk-contacts.php:34
-#: addons/rest-api/templates/mailchimp-contacts.php:65
-msgid "Bridge HTTP method"
-msgstr ""
-
-#: includes/class-form-bridge-template.php:348
-msgid "Bridge name"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2631
-#: addons/financoop/assets/addon.bundle.js:2631
-#: addons/google-sheets/assets/addon.bundle.js:2658
-#: addons/odoo/assets/addon.bundle.js:2631
-#: addons/rest-api/assets/addon.bundle.js:2631
-#: addons/zoho/assets/addon.bundle.js:2631
-msgid "Bridge workflow"
-msgstr ""
-
-#: addons/rest-api/assets/addon.bundle.js:4071
+#: addons/rest-api/assets/addon.bundle.js:5109
 msgid "Bridge your forms to any backend or service with a REST API"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:4600
-msgid ""
-"Bridge your forms to Dolibarr and convert user responses to registries on "
-"your ERP"
+#: addons/dolibarr/assets/addon.bundle.js:5313
+msgid "Bridge your forms to Dolibarr and convert user responses to registries on your ERP"
 msgstr ""
 
-#: addons/odoo/assets/addon.bundle.js:4626
-msgid ""
-"Bridge your forms to Odoo and convert user responses to registries on your "
-"ERP"
+#: addons/odoo/assets/addon.bundle.js:5899
+msgid "Bridge your forms to Odoo and convert user responses to registries on your ERP"
 msgstr ""
 
-#: addons/financoop/assets/addon.bundle.js:4165
-msgid ""
-"Bridge your forms to the FinanCoop Odoo module and receive capital "
-"contributions, loans and donations from your website"
+#: addons/financoop/assets/addon.bundle.js:5218
+msgid "Bridge your forms to the FinanCoop Odoo module and receive capital contributions, loans and donations from your website"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:39 includes/data/country-codes.php:113
-msgid "British Indian Ocean Territory"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:40 includes/data/country-codes.php:36
-msgid "Brunei Darussalam"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:41 includes/data/country-codes.php:30
-msgid "Bulgaria"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:42 includes/data/country-codes.php:29
-msgid "Burkina Faso"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:43 includes/data/country-codes.php:32
-msgid "Burundi"
-msgstr ""
-
-#: integrations/ninja/class-integration.php:696
-msgid "Calc value"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:44 includes/data/country-codes.php:124
-msgid "Cambodia"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:45 includes/data/country-codes.php:55
-msgid "Cameroon"
-msgstr ""
-
-#: addons/financoop/jobs/campaign-id.php:8
-msgid "Campaign ID"
-msgstr ""
-
-#: addons/google-sheets/class-gs-service.php:74
-msgid "Can't find the spreadsheets by id"
-msgstr ""
-
-#: addons/google-sheets/class-gs-service.php:158
-msgid "Can't write new values to the spreadhseet"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:46 includes/data/country-codes.php:46
-msgid "Canada"
-msgstr ""
-
-#: assets/plugin.bundle.js:1378
+#: assets/plugin.bundle.js:1414
 msgid "Cancel"
 msgstr ""
 
-#: assets/plugin.bundle.js:1372
+#: assets/plugin.bundle.js:1408
 msgid "Cancel the import"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:47 includes/data/country-codes.php:60
-msgid "Cape Verde"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:1536
-#: addons/financoop/assets/addon.bundle.js:1536
-#: addons/google-sheets/assets/addon.bundle.js:1563
-#: addons/odoo/assets/addon.bundle.js:1536
-#: addons/rest-api/assets/addon.bundle.js:1536
-#: addons/zoho/assets/addon.bundle.js:1536
-msgid "Cast as"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:48 includes/data/country-codes.php:131
-msgid "Cayman Islands"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:49 includes/data/country-codes.php:48
-msgid "Central African Republic"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:50 includes/data/country-codes.php:222
-msgid "Chad"
-msgstr ""
-
-#: integrations/ninja/class-integration.php:725
-#: integrations/ninja/class-integration.php:751
-msgid "Character(s) left"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:51 includes/data/country-codes.php:54
-msgid "Chile"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:52 includes/data/country-codes.php:56
-msgid "China"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:53 includes/data/country-codes.php:62
-msgid "Christmas Island"
-msgstr ""
-
-#: addons/dolibarr/templates/company-prospects.php:108
-#: addons/financoop/templates/loan-request.php:151
-#: addons/financoop/templates/subscription-request.php:164
-#: addons/odoo/templates/company-contacts.php:47
-#: addons/odoo/templates/contacts.php:59
-#: addons/odoo/templates/crm-company-leads.php:156
-#: addons/zoho/templates/bigin-companies.php:89
-#: addons/zoho/templates/bigin-deals.php:194
-#: addons/zoho/templates/crm-company-leads.php:185
-msgid "City"
-msgstr ""
-
-#: addons/rest-api/templates/mailchimp-contacts.php:183
-msgid "Cleaned"
-msgstr ""
-
-#: addons/zoho/templates/bigin-companies.php:29
-#: addons/zoho/templates/bigin-contacts.php:29
-#: addons/zoho/templates/crm-company-leads.php:106
-#: addons/zoho/templates/crm-contacts.php:31
-#: addons/zoho/templates/crm-leads.php:106
-#: addons/zoho/templates/crm-meetings.php:111
-#: addons/zoho/assets/addon.bundle.js:4365
-#: addons/zoho/assets/addon.bundle.js:4502
+#: addons/bigin/assets/addon.bundle.js:5521
+#: addons/bigin/assets/addon.bundle.js:5622
+#: addons/zoho/assets/addon.bundle.js:5521
+#: addons/zoho/assets/addon.bundle.js:5622
 msgid "Client ID"
 msgstr ""
 
-#: addons/zoho/templates/bigin-appointments.php:37
-#: addons/zoho/templates/bigin-contacts.php:40
-#: addons/zoho/templates/bigin-deals.php:41
-#: addons/zoho/templates/crm-company-leads.php:117
-#: addons/zoho/templates/crm-leads.php:117
-#: addons/zoho/templates/crm-meetings.php:122
-msgid "Client Secret"
-msgstr ""
-
-#: addons/zoho/templates/bigin-companies.php:40
-#: addons/zoho/templates/crm-contacts.php:42
-#: addons/zoho/assets/addon.bundle.js:4374
-#: addons/zoho/assets/addon.bundle.js:4511
+#: addons/bigin/assets/addon.bundle.js:5530
+#: addons/bigin/assets/addon.bundle.js:5631
+#: addons/zoho/assets/addon.bundle.js:5530
+#: addons/zoho/assets/addon.bundle.js:5631
 msgid "Client secret"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:2792
-#: addons/financoop/assets/addon.bundle.js:2792
-#: addons/google-sheets/assets/addon.bundle.js:2819
-#: addons/odoo/assets/addon.bundle.js:2792
-#: addons/rest-api/assets/addon.bundle.js:2792
-#: addons/zoho/assets/addon.bundle.js:2792
+#: addons/bigin/assets/addon.bundle.js:3634
+#: addons/brevo/assets/addon.bundle.js:3634
+#: addons/dolibarr/assets/addon.bundle.js:3634
+#: addons/financoop/assets/addon.bundle.js:3634
+#: addons/gsheets/assets/addon.bundle.js:3661
+#: addons/holded/assets/addon.bundle.js:3634
+#: addons/listmonk/assets/addon.bundle.js:3634
+#: addons/mailchimp/assets/addon.bundle.js:3634
+#: addons/odoo/assets/addon.bundle.js:3634
+#: addons/rest-api/assets/addon.bundle.js:3634
+#: addons/zoho/assets/addon.bundle.js:3634
 msgid "Close"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:116
-msgid "Closed Lost"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:112
-msgid "Closed Won"
-msgstr ""
-
-#: includes/data/country-codes.php:47
-msgid "Cocos (Keeling) Islands"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:54
-msgid "Cocosling) Islands"
 msgstr ""
 
 #. Author of the plugin
@@ -850,389 +240,129 @@ msgstr ""
 msgid "codeccoop"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:55 includes/data/country-codes.php:57
-msgid "Colombia"
-msgstr ""
-
-#: addons/dolibarr/templates/company-prospects.php:152
-#: addons/dolibarr/templates/individual-prospects.php:105
-#: addons/odoo/templates/crm-company-leads.php:204
-#: addons/odoo/templates/crm-leads.php:147
-#: addons/odoo/templates/crm-team-leads.php:99
-#: addons/zoho/templates/bigin-appointments.php:278
-#: addons/zoho/templates/bigin-companies.php:133
-#: addons/zoho/templates/bigin-contacts.php:95
-#: addons/zoho/templates/bigin-deals.php:238
-#: addons/zoho/templates/crm-company-leads.php:229
-#: addons/zoho/templates/crm-contacts.php:97
-#: addons/zoho/templates/crm-leads.php:191
-#: addons/zoho/templates/crm-meetings.php:339
-msgid "Comments"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:56 includes/data/country-codes.php:126
-msgid "Comoros"
-msgstr ""
-
-#: addons/zoho/templates/bigin-companies.php:66
-msgid "Companies"
-msgstr ""
-
-#: addons/zoho/templates/crm-company-leads.php:169
-msgid "Company"
-msgstr ""
-
-#: addons/dolibarr/templates/thirdparty-appointments.php:51
-msgid "Company Appointments"
-msgstr ""
-
-#: addons/odoo/templates/company-contacts.php:10
-#: addons/odoo/templates/company-contacts.php:15
-msgid "Company Contacts"
-msgstr ""
-
-#: addons/odoo/jobs/company-id.php:55
-msgid "Company ID"
-msgstr ""
-
-#: addons/dolibarr/templates/company-prospects.php:57
-msgid "Company Leads"
-msgstr ""
-
-#: addons/dolibarr/templates/company-prospects.php:84
-#: addons/dolibarr/templates/thirdparty-appointments.php:151
-#: addons/odoo/templates/company-contacts.php:29
-#: addons/odoo/templates/crm-company-leads.php:138
-#: addons/zoho/templates/bigin-companies.php:73
-#: addons/zoho/templates/bigin-deals.php:178
-msgid "Company name"
-msgstr ""
-
-#: addons/dolibarr/templates/company-prospects.php:10
-#: addons/dolibarr/templates/company-prospects.php:23
-msgid "Company Prospects"
-msgstr ""
-
-#: assets/plugin.bundle.js:1345
+#: assets/plugin.bundle.js:1381
 msgid "Config import warning"
 msgstr ""
 
-#: addons/odoo/assets/addon.bundle.js:4644
+#: addons/odoo/assets/addon.bundle.js:5849
 msgid "Configure RPC credentials to access your ERP database models"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:3513
-#: addons/financoop/assets/addon.bundle.js:3495
-#: addons/google-sheets/assets/addon.bundle.js:3522
-#: addons/odoo/assets/addon.bundle.js:3513
-#: addons/rest-api/assets/addon.bundle.js:3495
-#: addons/zoho/assets/addon.bundle.js:3513
+#: addons/bigin/assets/addon.bundle.js:4425
+#: addons/brevo/assets/addon.bundle.js:4407
+#: addons/dolibarr/assets/addon.bundle.js:4407
+#: addons/financoop/assets/addon.bundle.js:4407
+#: addons/gsheets/assets/addon.bundle.js:4434
+#: addons/holded/assets/addon.bundle.js:4407
+#: addons/listmonk/assets/addon.bundle.js:4407
+#: addons/mailchimp/assets/addon.bundle.js:4407
+#: addons/odoo/assets/addon.bundle.js:4425
+#: addons/rest-api/assets/addon.bundle.js:4407
+#: addons/zoho/assets/addon.bundle.js:4425
 msgid "Configure the backend to bridge your form to"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:3647
-#: addons/financoop/assets/addon.bundle.js:3629
-#: addons/financoop/assets/addon.bundle.js:3940
-#: addons/google-sheets/assets/addon.bundle.js:3656
-#: addons/odoo/assets/addon.bundle.js:3647
-#: addons/rest-api/assets/addon.bundle.js:3629
-#: addons/zoho/assets/addon.bundle.js:3647
+#: addons/bigin/assets/addon.bundle.js:4632
+#: addons/brevo/assets/addon.bundle.js:4614
+#: addons/dolibarr/assets/addon.bundle.js:4614
+#: addons/financoop/assets/addon.bundle.js:4614
+#: addons/gsheets/assets/addon.bundle.js:4641
+#: addons/holded/assets/addon.bundle.js:4614
+#: addons/listmonk/assets/addon.bundle.js:4614
+#: addons/mailchimp/assets/addon.bundle.js:4614
+#: addons/odoo/assets/addon.bundle.js:4632
+#: addons/rest-api/assets/addon.bundle.js:4614
+#: addons/zoho/assets/addon.bundle.js:4632
 msgid "Configure the bridge"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:4014
-msgid "Configure the Dolibarr REST API credentials"
-msgstr ""
-
-#: addons/odoo/assets/addon.bundle.js:4014
-msgid "Configure the Odoo database connection"
-msgstr ""
-
-#: addons/zoho/assets/addon.bundle.js:4027
-msgid "Configure the Zoho oauth credentials"
 msgstr ""
 
 #: assets/plugin.bundle.js:472
 msgid "Configure your backend connexions and reuse them on your form bridges"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:57 includes/data/country-codes.php:50
-msgid "Congo"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:58
-msgid "Congo, The Democratic Republic of the"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2777
-#: addons/financoop/assets/addon.bundle.js:2777
-#: addons/google-sheets/assets/addon.bundle.js:2804
-#: addons/odoo/assets/addon.bundle.js:2777
-#: addons/rest-api/assets/addon.bundle.js:2777
-#: addons/zoho/assets/addon.bundle.js:2777
+#: addons/bigin/assets/addon.bundle.js:3619
+#: addons/brevo/assets/addon.bundle.js:3619
+#: addons/dolibarr/assets/addon.bundle.js:3619
+#: addons/financoop/assets/addon.bundle.js:3619
+#: addons/gsheets/assets/addon.bundle.js:3646
+#: addons/holded/assets/addon.bundle.js:3619
+#: addons/listmonk/assets/addon.bundle.js:3619
+#: addons/mailchimp/assets/addon.bundle.js:3619
+#: addons/odoo/assets/addon.bundle.js:3619
+#: addons/rest-api/assets/addon.bundle.js:3619
+#: addons/zoho/assets/addon.bundle.js:3619
 msgid "Congratulations, you've created a new form bridge!"
-msgstr ""
-
-#: addons/odoo/jobs/contact-company-id.php:15
-msgid "Contact company ID"
-msgstr ""
-
-#: addons/odoo/jobs/contact-id.php:61
-msgid "Contact ID"
-msgstr ""
-
-#: addons/zoho/templates/crm-company-leads.php:60
-#: addons/zoho/templates/crm-leads.php:60
-#: addons/zoho/templates/crm-meetings.php:68
-msgid "Contact in Future"
-msgstr ""
-
-#: addons/dolibarr/templates/company-prospects.php:41
-#: addons/dolibarr/templates/individual-prospects.php:39
-msgid "Contact in progress"
-msgstr ""
-
-#: addons/dolibarr/templates/company-prospects.php:45
-#: addons/dolibarr/templates/individual-prospects.php:43
-msgid "Contacted"
-msgstr ""
-
-#: addons/dolibarr/templates/contacts.php:29
-#: addons/dolibarr/templates/contacts.php:42
-#: addons/dolibarr/templates/contacts.php:53
-#: addons/odoo/templates/contacts.php:8 addons/odoo/templates/contacts.php:13
-#: addons/rest-api/templates/brevo-contacts.php:55
-#: addons/zoho/templates/bigin-contacts.php:65
-msgid "Contacts"
-msgstr ""
-
-#: addons/rest-api/templates/brevo-contacts-doi.php:55
-msgid "Contacts DOI"
 msgstr ""
 
 #: assets/plugin.bundle.js:544
 msgid "Content encoding"
 msgstr ""
 
-#: assets/plugin.bundle.js:1367
+#: assets/plugin.bundle.js:1403
 msgid "Continue"
 msgstr ""
 
-#: assets/plugin.bundle.js:1361
+#: assets/plugin.bundle.js:1397
 msgid "Continue with the import"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:59 includes/data/country-codes.php:53
-msgid "Cook Islands"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:1399
-#: addons/financoop/assets/addon.bundle.js:1399
-#: addons/google-sheets/assets/addon.bundle.js:1426
-#: addons/odoo/assets/addon.bundle.js:1399
-#: addons/rest-api/assets/addon.bundle.js:1399
-#: addons/zoho/assets/addon.bundle.js:1399
+#: addons/bigin/assets/addon.bundle.js:2526
+#: addons/brevo/assets/addon.bundle.js:2526
+#: addons/dolibarr/assets/addon.bundle.js:2526
+#: addons/financoop/assets/addon.bundle.js:2526
+#: addons/gsheets/assets/addon.bundle.js:2553
+#: addons/holded/assets/addon.bundle.js:2526
+#: addons/listmonk/assets/addon.bundle.js:2526
+#: addons/mailchimp/assets/addon.bundle.js:2526
+#: addons/odoo/assets/addon.bundle.js:2526
+#: addons/rest-api/assets/addon.bundle.js:2526
+#: addons/zoho/assets/addon.bundle.js:2526
 msgid "Copy"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:60 includes/data/country-codes.php:58
-msgid "Costa Rica"
-msgstr ""
-
-#: addons/dolibarr/templates/company-prospects.php:114
-#: addons/odoo/templates/company-contacts.php:59
-#: addons/odoo/templates/crm-company-leads.php:168
-#: addons/zoho/templates/bigin-companies.php:99
-#: addons/zoho/templates/bigin-deals.php:204
-#: addons/zoho/templates/crm-company-leads.php:195
-msgid "Country"
-msgstr ""
-
-#: includes/workflow-jobs/country-code.php:17
-msgid "Country code"
-msgstr ""
-
-#: addons/dolibarr/jobs/country-id.php:32
-msgid "Country ID"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:9
-msgid "Creates new deals on your Bigin pipelines"
-msgstr ""
-
-#: addons/zoho/assets/addon.bundle.js:4026
-#: addons/zoho/assets/addon.bundle.js:4153
-#: addons/zoho/assets/addon.bundle.js:4221
-#: addons/zoho/assets/addon.bundle.js:4714
+#: addons/bigin/assets/addon.bundle.js:5330
+#: addons/bigin/assets/addon.bundle.js:5398
+#: addons/bigin/assets/addon.bundle.js:5834
+#: addons/odoo/assets/addon.bundle.js:5914
+#: addons/zoho/assets/addon.bundle.js:5330
+#: addons/zoho/assets/addon.bundle.js:5398
+#: addons/zoho/assets/addon.bundle.js:5834
 msgid "Credentials"
-msgstr ""
-
-#: addons/odoo/templates/crm-company-leads.php:53
-#: addons/odoo/templates/crm-company-leads.php:58
-#: addons/zoho/templates/crm-company-leads.php:8
-#: addons/zoho/templates/crm-company-leads.php:143
-msgid "CRM Company Leads"
-msgstr ""
-
-#: addons/zoho/templates/crm-contacts.php:8
-#: addons/zoho/templates/crm-contacts.php:67
-msgid "CRM Contacts"
-msgstr ""
-
-#: addons/odoo/jobs/crm-company-contact.php:24
-msgid "CRM lead company contact"
-msgstr ""
-
-#: addons/odoo/jobs/crm-contact.php:23
-msgid "CRM lead contact"
-msgstr ""
-
-#: addons/odoo/templates/crm-leads.php:51
-#: addons/odoo/templates/crm-leads.php:56 addons/zoho/templates/crm-leads.php:8
-#: addons/zoho/templates/crm-leads.php:142
-msgid "CRM Leads"
-msgstr ""
-
-#: addons/zoho/jobs/crm-meeting-participant.php:25
-msgid "CRM meeting participant"
-msgstr ""
-
-#: addons/zoho/templates/crm-meetings.php:8
-#: addons/zoho/templates/crm-meetings.php:148
-msgid "CRM Meetings"
-msgstr ""
-
-#: addons/odoo/templates/crm-team-leads.php:8
-#: addons/odoo/templates/crm-team-leads.php:13
-msgid "CRM Team Leads"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:61 includes/data/country-codes.php:105
-msgid "Croatia"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:62 includes/data/country-codes.php:59
-msgid "Cuba"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:63 includes/data/country-codes.php:61
-msgid "Curaçao"
-msgstr ""
-
-#: includes/workflow-jobs/current-locale.php:17
-msgid "Current locale"
 msgstr ""
 
 #: assets/plugin.bundle.js:589
 msgid "Custom encoding"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:64 includes/data/country-codes.php:63
-msgid "Cyprus"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:65 includes/data/country-codes.php:64
-msgid "Czech Republic"
-msgstr ""
-
-#: includes/data/country-codes.php:52
-msgid "Côte d'Ivoire"
-msgstr ""
-
-#: addons/google-sheets/assets/addon.bundle.js:3948
-#: addons/odoo/assets/addon.bundle.js:4013
-#: addons/odoo/assets/addon.bundle.js:4140
-#: addons/odoo/assets/addon.bundle.js:4201
+#: addons/odoo/assets/addon.bundle.js:5598
+#: addons/odoo/assets/addon.bundle.js:5700
 msgid "Database"
 msgstr ""
 
-#: addons/odoo/assets/addon.bundle.js:4640
-msgid "Databases"
-msgstr ""
-
-#: addons/rest-api/templates/mailchimp-contacts.php:95
-msgid "Datacenter"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:169
-#: addons/dolibarr/templates/thirdparty-appointments.php:181
-#: addons/odoo/templates/appointments.php:178
-#: addons/zoho/templates/bigin-appointments.php:148
-#: addons/zoho/templates/crm-meetings.php:209
-msgid "Date"
-msgstr ""
-
-#: includes/workflow-jobs/current-datetime.php:17
-msgid "Date and time"
-msgstr ""
-
-#: addons/financoop/mu/shortcodes.php:165
-msgid "Days to end"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:131
-msgid "Deal amount"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:83
-msgid "Deal name"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:91
-msgid "Deal stage"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:137
-msgid "Deal tags"
-msgstr ""
-
-#: assets/plugin.bundle.js:1139
+#: assets/plugin.bundle.js:1175
 msgid "Debug"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:1361
-#: addons/financoop/assets/addon.bundle.js:1361
-#: addons/google-sheets/assets/addon.bundle.js:1388
-#: addons/odoo/assets/addon.bundle.js:1361
-#: addons/rest-api/assets/addon.bundle.js:1361
-#: addons/zoho/assets/addon.bundle.js:1361
+#: addons/bigin/assets/addon.bundle.js:2488
+#: addons/brevo/assets/addon.bundle.js:2488
+#: addons/dolibarr/assets/addon.bundle.js:2488
+#: addons/financoop/assets/addon.bundle.js:2488
+#: addons/gsheets/assets/addon.bundle.js:2515
+#: addons/holded/assets/addon.bundle.js:2488
+#: addons/listmonk/assets/addon.bundle.js:2488
+#: addons/mailchimp/assets/addon.bundle.js:2488
+#: addons/odoo/assets/addon.bundle.js:2488
+#: addons/rest-api/assets/addon.bundle.js:2488
+#: addons/zoho/assets/addon.bundle.js:2488
 msgid "Decimal"
 msgstr ""
 
-#: includes/data/country-codes.php:49
-msgid "Democratic Republic of the Congo"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:66 includes/data/country-codes.php:67
-msgid "Denmark"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:67 includes/data/country-codes.php:66
-msgid "Djibouti"
-msgstr ""
-
-#: addons/dolibarr/templates/company-prospects.php:49
-#: addons/dolibarr/templates/individual-prospects.php:47
-msgid "Do not contact"
-msgstr ""
-
-#: assets/plugin.bundle.js addons/dolibarr/assets/addon.bundle.js:4691
+#: assets/plugin.bundle.js
+#: addons/dolibarr/assets/addon.bundle.js:5388
 msgid "dolibarr"
 msgstr "Dolibarr"
 
-#: addons/dolibarr/country-codes.php:68 includes/data/country-codes.php:68
-msgid "Dominica"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:69 includes/data/country-codes.php:69
-msgid "Dominican Republic"
-msgstr ""
-
-#: addons/rest-api/templates/brevo-contacts-doi.php:70
-msgid "Double opt-in template ID"
-msgstr ""
-
-#: assets/plugin.bundle.js:1331
+#: assets/plugin.bundle.js:1367
 msgid "Download config"
 msgstr ""
 
@@ -1240,281 +370,181 @@ msgstr ""
 msgid "Drop"
 msgstr ""
 
-#: addons/zoho/templates/bigin-appointments.php:94
-msgid "Duration"
+#: assets/plugin.bundle.js:1040
+msgid "Each addon allows you to create API specific bridges and comes with a library of bridge templates and workflow jobs"
 msgstr ""
 
-#: addons/dolibarr/templates/appointments.php:117
-#: addons/dolibarr/templates/thirdparty-appointments.php:117
-#: addons/odoo/templates/appointments.php:97
-msgid "Duration (Hours)"
+#: assets/plugin.bundle.js:1459
+msgid "Email address where submission errors will be sent with the error log and the submission data"
 msgstr ""
 
-#: addons/zoho/templates/bigin-appointments.php:95
-msgid "Duration in hours"
-msgstr ""
-
-#: assets/plugin.bundle.js:1029
-msgid ""
-"Each addon allows you to create API specific bridges and comes with a "
-"library of bridge templates and workflow jobs"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:70 includes/data/country-codes.php:71
-msgid "Ecuador"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:71 includes/data/country-codes.php:73
-msgid "Egypt"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:72 includes/data/country-codes.php:217
-msgid "El Salvador"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:163
-#: addons/dolibarr/templates/company-prospects.php:140
-#: addons/dolibarr/templates/contacts.php:80
-#: addons/dolibarr/templates/individual-prospects.php:94
-#: addons/dolibarr/templates/thirdparty-appointments.php:169
-#: addons/financoop/templates/loan-request.php:127
-#: addons/financoop/templates/subscription-request.php:140
-#: addons/odoo/templates/mailing-lists.php:67
-#: addons/zoho/templates/bigin-appointments.php:137
-#: addons/zoho/templates/bigin-companies.php:122
-#: addons/zoho/templates/bigin-contacts.php:84
-#: addons/zoho/templates/bigin-deals.php:227
-#: addons/zoho/templates/crm-company-leads.php:213
-#: addons/zoho/templates/crm-contacts.php:86
-#: addons/zoho/templates/crm-leads.php:180
-#: addons/zoho/templates/crm-meetings.php:198
-msgid "Email"
-msgstr ""
-
-#: assets/plugin.bundle.js:1423
-msgid ""
-"Email address where submission errors will be sent with the error log and "
-"the submission data"
-msgstr ""
-
-#: addons/odoo/templates/appointments.php:72
-msgid "Email of the owner user of the appointment"
-msgstr ""
-
-#: addons/odoo/templates/crm-company-leads.php:64
-#: addons/odoo/templates/crm-leads.php:62
-msgid "Email of the owner user of the lead"
-msgstr ""
-
-#: addons/financoop/mu/shortcodes.php:158
-msgid "End date"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:56
-#: addons/dolibarr/templates/company-prospects.php:15
-#: addons/dolibarr/templates/contacts.php:34
-#: addons/dolibarr/templates/individual-prospects.php:13
-#: addons/dolibarr/templates/thirdparty-appointments.php:56
-#: addons/zoho/templates/bigin-appointments.php:48
-#: addons/zoho/templates/bigin-companies.php:51
-#: addons/zoho/templates/bigin-contacts.php:51
-#: addons/zoho/templates/bigin-deals.php:52
-#: addons/zoho/templates/crm-company-leads.php:128
-#: addons/zoho/templates/crm-contacts.php:53
-#: addons/zoho/templates/crm-leads.php:128
-#: addons/zoho/templates/crm-meetings.php:133
-#: addons/dolibarr/assets/addon.bundle.js:4158
-#: addons/dolibarr/assets/addon.bundle.js:4212
-#: addons/financoop/assets/addon.bundle.js:4092
-#: addons/financoop/assets/addon.bundle.js:4125
-#: addons/rest-api/assets/addon.bundle.js:3963
-#: addons/rest-api/assets/addon.bundle.js:4030
-#: addons/zoho/assets/addon.bundle.js:4177
-#: addons/zoho/assets/addon.bundle.js:4240
+#: addons/bigin/assets/addon.bundle.js:5354
+#: addons/bigin/assets/addon.bundle.js:5417
+#: addons/brevo/assets/addon.bundle.js:5250
+#: addons/brevo/assets/addon.bundle.js:5318
+#: addons/dolibarr/assets/addon.bundle.js:5187
+#: addons/dolibarr/assets/addon.bundle.js:5255
+#: addons/financoop/assets/addon.bundle.js:5145
+#: addons/financoop/assets/addon.bundle.js:5178
+#: addons/holded/assets/addon.bundle.js:5180
+#: addons/holded/assets/addon.bundle.js:5248
+#: addons/listmonk/assets/addon.bundle.js:5150
+#: addons/listmonk/assets/addon.bundle.js:5218
+#: addons/mailchimp/assets/addon.bundle.js:5162
+#: addons/mailchimp/assets/addon.bundle.js:5230
+#: addons/rest-api/assets/addon.bundle.js:4991
+#: addons/rest-api/assets/addon.bundle.js:5068
+#: addons/zoho/assets/addon.bundle.js:5354
+#: addons/zoho/assets/addon.bundle.js:5417
 msgid "Endpoint"
 msgstr ""
 
-#: addons/dolibarr/jobs/country-id.php:33
-msgid "Ensures that country id is a valid and well known value"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:73 includes/data/country-codes.php:95
-msgid "Equatorial Guinea"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:74 includes/data/country-codes.php:75
-msgid "Eritrea"
-msgstr ""
-
-#: assets/plugin.bundle.js:1422
+#: assets/plugin.bundle.js:1458
 msgid "Error notification receiver"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:75 includes/data/country-codes.php:72
-msgid "Estonia"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:76 includes/data/country-codes.php:77
-msgid "Ethiopia"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:102
-#: addons/dolibarr/templates/thirdparty-appointments.php:102
-msgid "Event label"
-msgstr ""
-
-#: addons/zoho/templates/bigin-appointments.php:79
-#: addons/zoho/templates/crm-meetings.php:24
-msgid "Event title"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:76
-#: addons/dolibarr/templates/thirdparty-appointments.php:76
-msgid "Event type"
-msgstr ""
-
-#: assets/plugin.bundle.js:1326
+#: assets/plugin.bundle.js:1362
 msgid "Export Forms Bridge config as JSON"
 msgstr ""
 
-#: assets/plugin.bundle.js:1317
-msgid ""
-"Export or import your configuration as a JSON to migrate your bridges to, or "
-"from, any other WordPress instance"
+#: assets/plugin.bundle.js:1353
+msgid "Export or import your configuration as a JSON to migrate your bridges to, or from, any other WordPress instance"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:77 includes/data/country-codes.php:80
-msgid "Falkland Islands"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:78 includes/data/country-codes.php:82
-msgid "Faroe Islands"
-msgstr ""
-
-#. translators: %s: Field name
-#: includes/class-form-bridge-template.php:554
-msgid "Field `%s` does not match the schema"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2250
-#: addons/financoop/assets/addon.bundle.js:2250
-#: addons/google-sheets/assets/addon.bundle.js:2277
-#: addons/odoo/assets/addon.bundle.js:2250
-#: addons/rest-api/assets/addon.bundle.js:2250
-#: addons/zoho/assets/addon.bundle.js:2250
+#: addons/bigin/assets/addon.bundle.js:3093
+#: addons/brevo/assets/addon.bundle.js:3093
+#: addons/dolibarr/assets/addon.bundle.js:3093
+#: addons/financoop/assets/addon.bundle.js:3093
+#: addons/gsheets/assets/addon.bundle.js:3120
+#: addons/holded/assets/addon.bundle.js:3093
+#: addons/listmonk/assets/addon.bundle.js:3093
+#: addons/mailchimp/assets/addon.bundle.js:3093
+#: addons/odoo/assets/addon.bundle.js:3093
+#: addons/rest-api/assets/addon.bundle.js:3093
+#: addons/zoho/assets/addon.bundle.js:3093
 msgid "Field is optional or type not match"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:2246
-#: addons/financoop/assets/addon.bundle.js:2246
-#: addons/google-sheets/assets/addon.bundle.js:2273
-#: addons/odoo/assets/addon.bundle.js:2246
-#: addons/rest-api/assets/addon.bundle.js:2246
-#: addons/zoho/assets/addon.bundle.js:2246
+#: addons/bigin/assets/addon.bundle.js:3089
+#: addons/brevo/assets/addon.bundle.js:3089
+#: addons/dolibarr/assets/addon.bundle.js:3089
+#: addons/financoop/assets/addon.bundle.js:3089
+#: addons/gsheets/assets/addon.bundle.js:3116
+#: addons/holded/assets/addon.bundle.js:3089
+#: addons/listmonk/assets/addon.bundle.js:3089
+#: addons/mailchimp/assets/addon.bundle.js:3089
+#: addons/odoo/assets/addon.bundle.js:3089
+#: addons/rest-api/assets/addon.bundle.js:3089
+#: addons/zoho/assets/addon.bundle.js:3089
 msgid "Field is required"
 msgstr ""
 
-#: includes/class-rest-settings-controller.php:181
-msgid "Field ref that points to some template param"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2248
-#: addons/financoop/assets/addon.bundle.js:2248
-#: addons/google-sheets/assets/addon.bundle.js:2275
-#: addons/odoo/assets/addon.bundle.js:2248
-#: addons/rest-api/assets/addon.bundle.js:2248
-#: addons/zoho/assets/addon.bundle.js:2248
+#: addons/bigin/assets/addon.bundle.js:3091
+#: addons/brevo/assets/addon.bundle.js:3091
+#: addons/dolibarr/assets/addon.bundle.js:3091
+#: addons/financoop/assets/addon.bundle.js:3091
+#: addons/gsheets/assets/addon.bundle.js:3118
+#: addons/holded/assets/addon.bundle.js:3091
+#: addons/listmonk/assets/addon.bundle.js:3091
+#: addons/mailchimp/assets/addon.bundle.js:3091
+#: addons/odoo/assets/addon.bundle.js:3091
+#: addons/rest-api/assets/addon.bundle.js:3091
+#: addons/zoho/assets/addon.bundle.js:3091
 msgid "Field type mutation"
 msgstr ""
 
-#: includes/class-rest-settings-controller.php:197
-msgid "Field value"
-msgstr ""
-
-#: includes/data/country-codes.php:79
-msgid "Fiji"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:79
-msgid "Fiji Islands"
-msgstr ""
-
-#: assets/plugin.bundle.js addons/financoop/assets/addon.bundle.js:4242
+#: assets/plugin.bundle.js
+#: addons/financoop/assets/addon.bundle.js:5295
 msgid "financoop"
 msgstr "FinanCoop"
 
-#: addons/dolibarr/country-codes.php:80 includes/data/country-codes.php:78
-msgid "Finland"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:151
-#: addons/dolibarr/templates/company-prospects.php:128
-#: addons/dolibarr/templates/contacts.php:68
-#: addons/dolibarr/templates/individual-prospects.php:82
-#: addons/dolibarr/templates/thirdparty-appointments.php:157
-#: addons/financoop/templates/loan-request.php:96
-#: addons/financoop/templates/subscription-request.php:109
-#: addons/odoo/templates/mailing-lists.php:55
-#: addons/zoho/templates/bigin-appointments.php:125
-#: addons/zoho/templates/bigin-companies.php:104
-#: addons/zoho/templates/bigin-contacts.php:72
-#: addons/zoho/templates/bigin-deals.php:209
-#: addons/zoho/templates/crm-company-leads.php:201
-#: addons/zoho/templates/crm-contacts.php:74
-#: addons/zoho/templates/crm-leads.php:168
-#: addons/zoho/templates/crm-meetings.php:186
-msgid "First name"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2954
-#: addons/dolibarr/assets/addon.bundle.js:3118
-#: addons/dolibarr/assets/addon.bundle.js:3572
-#: addons/financoop/assets/addon.bundle.js:2954
-#: addons/financoop/assets/addon.bundle.js:3118
-#: addons/financoop/assets/addon.bundle.js:3554
-#: addons/google-sheets/assets/addon.bundle.js:2981
-#: addons/google-sheets/assets/addon.bundle.js:3145
-#: addons/google-sheets/assets/addon.bundle.js:3581
-#: addons/odoo/assets/addon.bundle.js:2954
-#: addons/odoo/assets/addon.bundle.js:3118
-#: addons/odoo/assets/addon.bundle.js:3572
-#: addons/rest-api/assets/addon.bundle.js:2954
-#: addons/rest-api/assets/addon.bundle.js:3118
-#: addons/rest-api/assets/addon.bundle.js:3554
-#: addons/zoho/assets/addon.bundle.js:2954
-#: addons/zoho/assets/addon.bundle.js:3118
-#: addons/zoho/assets/addon.bundle.js:3572
+#: addons/bigin/assets/addon.bundle.js:3804
+#: addons/bigin/assets/addon.bundle.js:3956
+#: addons/bigin/assets/addon.bundle.js:4576
+#: addons/brevo/assets/addon.bundle.js:3804
+#: addons/brevo/assets/addon.bundle.js:3956
+#: addons/brevo/assets/addon.bundle.js:4558
+#: addons/dolibarr/assets/addon.bundle.js:3804
+#: addons/dolibarr/assets/addon.bundle.js:3956
+#: addons/dolibarr/assets/addon.bundle.js:4558
+#: addons/financoop/assets/addon.bundle.js:3804
+#: addons/financoop/assets/addon.bundle.js:3956
+#: addons/financoop/assets/addon.bundle.js:4558
+#: addons/gsheets/assets/addon.bundle.js:3831
+#: addons/gsheets/assets/addon.bundle.js:3983
+#: addons/gsheets/assets/addon.bundle.js:4585
+#: addons/holded/assets/addon.bundle.js:3804
+#: addons/holded/assets/addon.bundle.js:3956
+#: addons/holded/assets/addon.bundle.js:4558
+#: addons/listmonk/assets/addon.bundle.js:3804
+#: addons/listmonk/assets/addon.bundle.js:3956
+#: addons/listmonk/assets/addon.bundle.js:4558
+#: addons/mailchimp/assets/addon.bundle.js:3804
+#: addons/mailchimp/assets/addon.bundle.js:3956
+#: addons/mailchimp/assets/addon.bundle.js:4558
+#: addons/odoo/assets/addon.bundle.js:3804
+#: addons/odoo/assets/addon.bundle.js:3956
+#: addons/odoo/assets/addon.bundle.js:4576
+#: addons/rest-api/assets/addon.bundle.js:3804
+#: addons/rest-api/assets/addon.bundle.js:3956
+#: addons/rest-api/assets/addon.bundle.js:4558
+#: addons/zoho/assets/addon.bundle.js:3804
+#: addons/zoho/assets/addon.bundle.js:3956
+#: addons/zoho/assets/addon.bundle.js:4576
 msgid "Form"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:1779
-#: addons/financoop/assets/addon.bundle.js:1779
-#: addons/google-sheets/assets/addon.bundle.js:1806
-#: addons/odoo/assets/addon.bundle.js:1779
-#: addons/rest-api/assets/addon.bundle.js:1779
-#: addons/zoho/assets/addon.bundle.js:1779
+#: addons/bigin/assets/addon.bundle.js:2074
+#: addons/bigin/assets/addon.bundle.js:2216
+#: addons/brevo/assets/addon.bundle.js:2074
+#: addons/brevo/assets/addon.bundle.js:2216
+#: addons/dolibarr/assets/addon.bundle.js:2074
+#: addons/dolibarr/assets/addon.bundle.js:2216
+#: addons/financoop/assets/addon.bundle.js:2074
+#: addons/financoop/assets/addon.bundle.js:2216
+#: addons/gsheets/assets/addon.bundle.js:2101
+#: addons/gsheets/assets/addon.bundle.js:2243
+#: addons/holded/assets/addon.bundle.js:2074
+#: addons/holded/assets/addon.bundle.js:2216
+#: addons/listmonk/assets/addon.bundle.js:2074
+#: addons/listmonk/assets/addon.bundle.js:2216
+#: addons/mailchimp/assets/addon.bundle.js:2074
+#: addons/mailchimp/assets/addon.bundle.js:2216
+#: addons/odoo/assets/addon.bundle.js:2074
+#: addons/odoo/assets/addon.bundle.js:2216
+#: addons/rest-api/assets/addon.bundle.js:2074
+#: addons/rest-api/assets/addon.bundle.js:2216
+#: addons/zoho/assets/addon.bundle.js:2074
+#: addons/zoho/assets/addon.bundle.js:2216
 msgid "Form submission"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:1780
-#: addons/financoop/assets/addon.bundle.js:1780
-#: addons/google-sheets/assets/addon.bundle.js:1807
-#: addons/odoo/assets/addon.bundle.js:1780
-#: addons/rest-api/assets/addon.bundle.js:1780
-#: addons/zoho/assets/addon.bundle.js:1780
+#: addons/bigin/assets/addon.bundle.js:2075
+#: addons/brevo/assets/addon.bundle.js:2075
+#: addons/dolibarr/assets/addon.bundle.js:2075
+#: addons/financoop/assets/addon.bundle.js:2075
+#: addons/gsheets/assets/addon.bundle.js:2102
+#: addons/holded/assets/addon.bundle.js:2075
+#: addons/listmonk/assets/addon.bundle.js:2075
+#: addons/mailchimp/assets/addon.bundle.js:2075
+#: addons/odoo/assets/addon.bundle.js:2075
+#: addons/rest-api/assets/addon.bundle.js:2075
+#: addons/zoho/assets/addon.bundle.js:2075
 msgid "Form submission after mappers has been applied"
 msgstr ""
 
-#: includes/class-form-bridge-template.php:341
+#: addons/bigin/assets/addon.bundle.js:1232
+#: addons/brevo/assets/addon.bundle.js:1232
+#: addons/dolibarr/assets/addon.bundle.js:1232
+#: addons/financoop/assets/addon.bundle.js:1232
+#: addons/gsheets/assets/addon.bundle.js:1259
+#: addons/holded/assets/addon.bundle.js:1232
+#: addons/listmonk/assets/addon.bundle.js:1232
+#: addons/mailchimp/assets/addon.bundle.js:1232
+#: addons/odoo/assets/addon.bundle.js:1232
+#: addons/rest-api/assets/addon.bundle.js:1232
+#: addons/zoho/assets/addon.bundle.js:1232
 msgid "Form title"
-msgstr ""
-
-#: includes/workflow-jobs/date-fields-to-date.php:17
-msgid "Format date fields"
-msgstr ""
-
-#: addons/rest-api/jobs/brevo-list-ids.php:26
-msgid "Formats the submission payload listIds field as an array of integers."
 msgstr ""
 
 #. Plugin Name of the plugin
@@ -1522,250 +552,39 @@ msgstr ""
 msgid "Forms Bridge"
 msgstr ""
 
-#: addons/dolibarr/class-dolibarr-form-bridge-template.php:141
-msgid "Forms Bridge can't create the api key"
+#: addons/bigin/assets/addon.bundle.js:5790
+#: addons/zoho/assets/addon.bundle.js:5790
+msgid "Forms Bridge needs Zoho OAuth Self Client credentials to work properly. Get more info about the process of creation of such credentials on the <a href='https://www.zoho.com/accounts/protocol/oauth/self-client/overview.html' target='_blank'>Zoho OAuth documentation</a>"
 msgstr ""
 
-#: includes/class-form-bridge-template.php:686
-msgid "Forms bridge can't create the backend"
-msgstr ""
-
-#: addons/zoho/class-zoho-form-bridge-template.php:187
-msgid "Forms Bridge can't create the credentials"
-msgstr ""
-
-#: addons/odoo/class-odoo-form-bridge-template.php:141
-msgid "Forms Bridge can't create the database"
-msgstr ""
-
-#: includes/class-form-bridge-template.php:665
-msgid "Forms bridge can't create the form"
-msgstr ""
-
-#: includes/class-form-bridge-template.php:710
-msgid "Forms bridge can't create the form bridge"
-msgstr ""
-
-#: addons/zoho/assets/addon.bundle.js:4671
-msgid ""
-"Forms Bridge needs Zoho OAuth Self Client credentials to work properly. Get "
-"more info about the process of creation of such credentials on the <a "
-"href='https://www.zoho.com/accounts/protocol/oauth/self-client/overview."
-"html' target='_blank'>Zoho OAuth documentation</a>"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:81 includes/data/country-codes.php:83
-msgid "France"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:82 includes/data/country-codes.php:87
-msgid "French Guiana"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:83 includes/data/country-codes.php:182
-msgid "French Polynesia"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:84 includes/data/country-codes.php:223
-msgid "French Southern Territories"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:1516
-#: addons/financoop/assets/addon.bundle.js:1516
-#: addons/google-sheets/assets/addon.bundle.js:1543
-#: addons/odoo/assets/addon.bundle.js:1516
-#: addons/rest-api/assets/addon.bundle.js:1516
-#: addons/zoho/assets/addon.bundle.js:1516
+#: addons/bigin/assets/addon.bundle.js:2672
+#: addons/brevo/assets/addon.bundle.js:2672
+#: addons/dolibarr/assets/addon.bundle.js:2672
+#: addons/financoop/assets/addon.bundle.js:2672
+#: addons/gsheets/assets/addon.bundle.js:2699
+#: addons/holded/assets/addon.bundle.js:2672
+#: addons/listmonk/assets/addon.bundle.js:2672
+#: addons/mailchimp/assets/addon.bundle.js:2672
+#: addons/odoo/assets/addon.bundle.js:2672
+#: addons/rest-api/assets/addon.bundle.js:2672
+#: addons/zoho/assets/addon.bundle.js:2672
 msgid "From"
 msgstr ""
 
-#: addons/zoho/templates/bigin-appointments.php:19
-#: addons/zoho/templates/bigin-companies.php:19
-#: addons/zoho/templates/bigin-contacts.php:19
-#: addons/zoho/templates/bigin-deals.php:23
-#: addons/zoho/templates/crm-company-leads.php:96
-#: addons/zoho/templates/crm-contacts.php:21
-#: addons/zoho/templates/crm-leads.php:96
-#: addons/zoho/templates/crm-meetings.php:101
-msgid ""
-"From your organization dashboard, expand the profile sidebar and click on "
-"the copy user ID icon to get your organization ID."
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:85 includes/data/country-codes.php:84
-msgid "Gabon"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:86 includes/data/country-codes.php:92
-msgid "Gambia"
-msgstr ""
-
-#: assets/plugin.bundle.js:1568
+#: assets/plugin.bundle.js:1646
 msgid "General"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:87 includes/data/country-codes.php:86
-msgid "Georgia"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:88 includes/data/country-codes.php:65
-msgid "Germany"
-msgstr ""
-
-#: includes/workflow-jobs/date-fields-to-date.php:18
-msgid ""
-"Gets date, hour and minute fields and merge its values into a date with "
-"format Y-m-d H:M:S"
-msgstr ""
-
-#: addons/financoop/jobs/campaign-id.php:9
-msgid ""
-"Gets the campaign ID from the bridge endpoint and place it on the payload"
-msgstr ""
-
-#: addons/dolibarr/jobs/thirdparty-id.php:74
-msgid ""
-"Gets the ID of a third party or creates a new thirparty if it doesn't exists"
-msgstr ""
-
-#: addons/dolibarr/jobs/individual-thirdparty-id.php:58
-msgid ""
-"Gets the ID of an individual thirdparty or creates a new thirparty if it "
-"doesn't exists"
-msgstr ""
-
-#: includes/workflow-jobs/country-code.php:18
-msgid "Gets the ISO2 country code from country names and replace its value"
-msgstr ""
-
-#: includes/workflow-jobs/ip-address.php:18
-msgid ""
-"Gets the source IP address of the form submission and place it as the IP "
-"attribute on the payload"
-msgstr ""
-
-#: includes/workflow-jobs/referer.php:18
-msgid ""
-"Gets the source URL of the form submission and place it as the referer "
-"attribute on the payload"
 msgstr ""
 
 #: assets/plugin.bundle.js
 msgid "gf"
 msgstr "GravityForms"
 
-#: addons/dolibarr/country-codes.php:89 includes/data/country-codes.php:88
-msgid "Ghana"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:90 includes/data/country-codes.php:89
-msgid "Gibraltar"
-msgstr ""
-
-#: addons/rest-api/templates/listmonk-contacts.php:55
-msgid ""
-"Go to Lists > Forms and copy the value of the checkbox input with name \"l\""
-msgstr ""
-
-#: addons/financoop/mu/shortcodes.php:99
-msgid "Goal"
-msgstr ""
-
-#: addons/google-sheets/assets/addon.bundle.js:4228
+#: addons/gsheets/assets/addon.bundle.js:5280
 msgid "Google Service Credentials"
-msgstr ""
-
-#: assets/plugin.bundle.js addons/google-sheets/assets/addon.bundle.js:4329
-msgid "google-sheets"
-msgstr "Google Sheets"
-
-#: addons/dolibarr/country-codes.php:91 includes/data/country-codes.php:96
-msgid "Greece"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:92 includes/data/country-codes.php:91
-msgid "Greenland"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:93 includes/data/country-codes.php:85
-msgid "Grenada"
-msgstr ""
-
-#: includes/data/country-codes.php:94
-msgid "Guadeloupe"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:94 includes/data/country-codes.php:99
-msgid "Guam"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:95 includes/data/country-codes.php:98
-msgid "Guatemala"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:96 includes/data/country-codes.php:90
-msgid "Guernsey"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:97 includes/data/country-codes.php:93
-msgid "Guinea"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:98 includes/data/country-codes.php:100
-msgid "Guinea-Bissau"
-msgstr ""
-
-#: includes/data/country-codes.php:101
-msgid "Guyana"
-msgstr ""
-
-#: includes/data/country-codes.php:106
-msgid "Haiti"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:99
-msgid "Haïti"
 msgstr ""
 
 #: assets/plugin.bundle.js:675
 msgid "Header-Name"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:100
-msgid "Heard Island and McDonald"
-msgstr ""
-
-#: includes/data/country-codes.php:103
-msgid "Heard Island and McDonald Islands"
-msgstr ""
-
-#: includes/data/country-codes.php:244
-msgid "Holy See (Vatican City State)"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:101
-msgid "Holy Seeican City State)"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:102 includes/data/country-codes.php:104
-msgid "Honduras"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:103 includes/data/country-codes.php:102
-msgid "Hong Kong"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:175
-#: addons/dolibarr/templates/thirdparty-appointments.php:187
-#: addons/odoo/templates/appointments.php:184
-#: addons/zoho/templates/bigin-appointments.php:154
-#: addons/zoho/templates/crm-meetings.php:215
-msgid "Hour"
-msgstr ""
-
-#. translators: %s: method name
-#: addons/rest-api/class-rest-form-bridge.php:38
-msgid "HTTP method %s is not allowed"
 msgstr ""
 
 #. Plugin URI of the plugin
@@ -1778,105 +597,65 @@ msgstr ""
 msgid "https://www.codeccoop.org"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:104 includes/data/country-codes.php:107
-msgid "Hungary"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:105 includes/data/country-codes.php:116
-msgid "Iceland"
-msgstr ""
-
-#: addons/financoop/templates/loan-request.php:108
-#: addons/financoop/templates/subscription-request.php:121
-msgid "ID number"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:73
-#: addons/zoho/templates/crm-company-leads.php:14
-#: addons/zoho/templates/crm-leads.php:14
-#: addons/zoho/templates/crm-meetings.php:14
-msgid "ID of the owner user of the deal"
-msgstr ""
-
-#: addons/zoho/templates/bigin-appointments.php:69
-msgid "ID of the owner user of the event"
-msgstr ""
-
 #: assets/plugin.bundle.js:573
-msgid ""
-"If your backend uses custom encoding, Forms Bridge will need a string "
-"payload. You can use the `forms_bridge_payload` hook to encode your form "
-"submission as string."
+msgid "If your backend uses custom encoding, Forms Bridge will need a string payload. You can use the `forms_bridge_payload` hook to encode your form submission as string."
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:1403
-#: addons/financoop/assets/addon.bundle.js:1403
-#: addons/google-sheets/assets/addon.bundle.js:1430
-#: addons/odoo/assets/addon.bundle.js:1403
-#: addons/rest-api/assets/addon.bundle.js:1403
-#: addons/zoho/assets/addon.bundle.js:1403
+#: addons/bigin/assets/addon.bundle.js:2530
+#: addons/brevo/assets/addon.bundle.js:2530
+#: addons/dolibarr/assets/addon.bundle.js:2530
+#: addons/financoop/assets/addon.bundle.js:2530
+#: addons/gsheets/assets/addon.bundle.js:2557
+#: addons/holded/assets/addon.bundle.js:2530
+#: addons/listmonk/assets/addon.bundle.js:2530
+#: addons/mailchimp/assets/addon.bundle.js:2530
+#: addons/odoo/assets/addon.bundle.js:2530
+#: addons/rest-api/assets/addon.bundle.js:2530
+#: addons/zoho/assets/addon.bundle.js:2530
 msgid "Ignore"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:1369
-#: addons/financoop/assets/addon.bundle.js:1369
-#: addons/google-sheets/assets/addon.bundle.js:1396
-#: addons/odoo/assets/addon.bundle.js:1369
-#: addons/rest-api/assets/addon.bundle.js:1369
-#: addons/zoho/assets/addon.bundle.js:1369
+#: addons/bigin/assets/addon.bundle.js:2496
+#: addons/brevo/assets/addon.bundle.js:2496
+#: addons/dolibarr/assets/addon.bundle.js:2496
+#: addons/financoop/assets/addon.bundle.js:2496
+#: addons/gsheets/assets/addon.bundle.js:2523
+#: addons/holded/assets/addon.bundle.js:2496
+#: addons/listmonk/assets/addon.bundle.js:2496
+#: addons/mailchimp/assets/addon.bundle.js:2496
+#: addons/odoo/assets/addon.bundle.js:2496
+#: addons/rest-api/assets/addon.bundle.js:2496
+#: addons/zoho/assets/addon.bundle.js:2496
 msgid "Implode mutations"
 msgstr ""
 
-#: assets/plugin.bundle.js:1453
+#: assets/plugin.bundle.js:1489
 msgid "Import / Export"
 msgstr ""
 
-#: assets/plugin.bundle.js:1350
-msgid ""
-"Import a new configuration is a destructive action. Your current "
-"configuration will be replaced with the new one. If there are some errors on "
-"the new config, Forms Bridge will filter it to avoid bugs."
+#: assets/plugin.bundle.js:1386
+msgid "Import a new configuration is a destructive action. Your current configuration will be replaced with the new one. If there are some errors on the new config, Forms Bridge will filter it to avoid bugs."
 msgstr ""
 
-#: assets/plugin.bundle.js:1340
+#: assets/plugin.bundle.js:1376
 msgid "Import config"
 msgstr ""
 
-#: assets/plugin.bundle.js:1335
+#: assets/plugin.bundle.js:1371
 msgid "Import Forms Bridge JSON config"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:106 includes/data/country-codes.php:112
-msgid "India"
-msgstr ""
-
-#: addons/dolibarr/jobs/individual-thirdparty-id.php:57
-msgid "Individual thirdparty ID"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:107 includes/data/country-codes.php:108
-msgid "Indonesia"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:1912
-#: addons/financoop/assets/addon.bundle.js:1912
-#: addons/google-sheets/assets/addon.bundle.js:1939
-#: addons/odoo/assets/addon.bundle.js:1912
-#: addons/rest-api/assets/addon.bundle.js:1912
-#: addons/zoho/assets/addon.bundle.js:1912
-msgid "Initial state"
-msgstr ""
-
-#: addons/rest-api/templates/listmonk-contacts.php:14
-msgid "Insert the base URL of your listmonk server"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:1357
-#: addons/financoop/assets/addon.bundle.js:1357
-#: addons/google-sheets/assets/addon.bundle.js:1384
-#: addons/odoo/assets/addon.bundle.js:1357
-#: addons/rest-api/assets/addon.bundle.js:1357
-#: addons/zoho/assets/addon.bundle.js:1357
+#: addons/bigin/assets/addon.bundle.js:2484
+#: addons/brevo/assets/addon.bundle.js:2484
+#: addons/dolibarr/assets/addon.bundle.js:2484
+#: addons/financoop/assets/addon.bundle.js:2484
+#: addons/gsheets/assets/addon.bundle.js:2511
+#: addons/holded/assets/addon.bundle.js:2484
+#: addons/listmonk/assets/addon.bundle.js:2484
+#: addons/mailchimp/assets/addon.bundle.js:2484
+#: addons/odoo/assets/addon.bundle.js:2484
+#: addons/rest-api/assets/addon.bundle.js:2484
+#: addons/zoho/assets/addon.bundle.js:2484
 msgid "Integer"
 msgstr ""
 
@@ -1884,846 +663,237 @@ msgstr ""
 msgid "Integrations"
 msgstr ""
 
-#: addons/rest-api/jobs/mailchimp-authorization.php:34
-msgid ""
-"Intercepts http headers and sets up MailChimp basic authorization "
-"credentials."
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:88
-#: addons/dolibarr/templates/thirdparty-appointments.php:88
-msgid "Intervention on site"
-msgstr ""
-
-#: includes/workflow-jobs/date-fields-to-date.php:105
-msgid "Invalid date format"
-msgstr ""
-
-#: addons/dolibarr/jobs/appointment-dates.php:13
-#: addons/odoo/jobs/appointment-dates.php:13
-msgid "Invalid date time value"
-msgstr ""
-
-#. translators: %s: ref value
-#: includes/class-form-bridge-template.php:617
-msgid "Invalid template field ref `%s`"
-msgstr ""
-
-#: includes/class-form-bridge-template.php:524
-msgid "Invalid template fields"
-msgstr ""
-
-#: includes/class-rest-settings-controller.php:344
-msgid "Invalid use template integration"
-msgstr ""
-
-#: includes/class-rest-settings-controller.php:337
-msgid "Invalid use template params"
-msgstr ""
-
-#: includes/workflow-jobs/ip-address.php:17
+#: addons/bigin/assets/addon.bundle.js:1260
+#: addons/brevo/assets/addon.bundle.js:1260
+#: addons/dolibarr/assets/addon.bundle.js:1260
+#: addons/financoop/assets/addon.bundle.js:1260
+#: addons/gsheets/assets/addon.bundle.js:1287
+#: addons/holded/assets/addon.bundle.js:1260
+#: addons/listmonk/assets/addon.bundle.js:1260
+#: addons/mailchimp/assets/addon.bundle.js:1260
+#: addons/odoo/assets/addon.bundle.js:1260
+#: addons/rest-api/assets/addon.bundle.js:1260
+#: addons/zoho/assets/addon.bundle.js:1260
 msgid "IP address"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:108 includes/data/country-codes.php:115
-msgid "Iran"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:109 includes/data/country-codes.php:114
-msgid "Iraq"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:110 includes/data/country-codes.php:109
-msgid "Ireland"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:110
-#: addons/dolibarr/templates/thirdparty-appointments.php:110
-#: addons/odoo/templates/appointments.php:90
-#: addons/zoho/templates/bigin-appointments.php:87
-#: addons/zoho/templates/crm-meetings.php:86
-msgid "Is all day event?"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:111 includes/data/country-codes.php:111
-msgid "Isle of Man"
-msgstr ""
-
-#: includes/workflow-jobs/current-iso-time.php:17
-msgid "ISO date"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:112 includes/data/country-codes.php:110
-msgid "Israel"
-msgstr ""
-
-#: assets/plugin.bundle.js:1284
+#: assets/plugin.bundle.js:1320
 msgid "It has been an error with config import"
 msgstr ""
 
 #: assets/plugin.bundle.js:938
-msgid ""
-"It seems you have no available integrations. If you want to use Forms Bridge,"
-" you should install, at least one of the following plugins before you can "
-"create form bridges."
+msgid "It seems you have no available integrations. If you want to use Forms Bridge, you should install, at least one of the following plugins before you can create form bridges."
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:113 includes/data/country-codes.php:117
-msgid "Italy"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:114
-msgid "Ivory Coast"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:115 includes/data/country-codes.php:119
-msgid "Jamaica"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:116 includes/data/country-codes.php:121
-msgid "Japan"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:117 includes/data/country-codes.php:118
-msgid "Jersey"
-msgstr ""
-
-#: includes/class-workflow-job.php:481
-msgid "Job callback is not a function"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2286
-#: addons/financoop/assets/addon.bundle.js:2286
-#: addons/google-sheets/assets/addon.bundle.js:2313
-#: addons/odoo/assets/addon.bundle.js:2286
-#: addons/rest-api/assets/addon.bundle.js:2286
-#: addons/zoho/assets/addon.bundle.js:2286
+#: addons/bigin/assets/addon.bundle.js:3130
+#: addons/brevo/assets/addon.bundle.js:3130
+#: addons/dolibarr/assets/addon.bundle.js:3130
+#: addons/financoop/assets/addon.bundle.js:3130
+#: addons/gsheets/assets/addon.bundle.js:3157
+#: addons/holded/assets/addon.bundle.js:3130
+#: addons/listmonk/assets/addon.bundle.js:3130
+#: addons/mailchimp/assets/addon.bundle.js:3130
+#: addons/odoo/assets/addon.bundle.js:3130
+#: addons/rest-api/assets/addon.bundle.js:3130
+#: addons/zoho/assets/addon.bundle.js:3130
 msgid "Job interface"
 msgstr ""
 
-#: includes/class-workflow-job.php:472
-msgid "Job method is not a function"
-msgstr ""
-
-#: addons/dolibarr/templates/company-prospects.php:146
-#: addons/dolibarr/templates/thirdparty-appointments.php:175
-#: addons/odoo/templates/company-contacts.php:78
-#: addons/odoo/templates/crm-company-leads.php:187
-#: addons/zoho/templates/crm-company-leads.php:224
-msgid "Job position"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:1386
-#: addons/financoop/assets/addon.bundle.js:1386
-#: addons/google-sheets/assets/addon.bundle.js:1413
-#: addons/odoo/assets/addon.bundle.js:1386
-#: addons/rest-api/assets/addon.bundle.js:1386
-#: addons/zoho/assets/addon.bundle.js:1386
+#: addons/bigin/assets/addon.bundle.js:2513
+#: addons/brevo/assets/addon.bundle.js:2513
+#: addons/dolibarr/assets/addon.bundle.js:2513
+#: addons/financoop/assets/addon.bundle.js:2513
+#: addons/gsheets/assets/addon.bundle.js:2540
+#: addons/holded/assets/addon.bundle.js:2513
+#: addons/listmonk/assets/addon.bundle.js:2513
+#: addons/mailchimp/assets/addon.bundle.js:2513
+#: addons/odoo/assets/addon.bundle.js:2513
+#: addons/rest-api/assets/addon.bundle.js:2513
+#: addons/zoho/assets/addon.bundle.js:2513
 msgid "Join"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:118 includes/data/country-codes.php:120
-msgid "Jordan"
-msgstr ""
-
-#: assets/plugin.bundle.js:1259
+#: assets/plugin.bundle.js:1295
 msgid "JSON syntax error"
-msgstr ""
-
-#: addons/zoho/templates/crm-company-leads.php:64
-#: addons/zoho/templates/crm-leads.php:64
-#: addons/zoho/templates/crm-meetings.php:72
-msgid "Junk Lead"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:119 includes/data/country-codes.php:132
-msgid "Kazakhstan"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:120 includes/data/country-codes.php:122
-msgid "Kenya"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:4315
-#: addons/dolibarr/assets/addon.bundle.js:4432
-msgid "Key value"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:121 includes/data/country-codes.php:125
-msgid "Kiribati"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:122 includes/data/country-codes.php:258
-msgid "Kosovo"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:123 includes/data/country-codes.php:130
-msgid "Kuwait"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:124 includes/data/country-codes.php:123
-msgid "Kyrgyzstan"
-msgstr ""
-
-#: integrations/ninja/class-integration.php:688
-msgid "Label"
-msgstr ""
-
-#: addons/rest-api/templates/brevo-contacts-doi.php:20
-#: addons/rest-api/templates/brevo-contacts.php:20
-msgid "Label of the Brevo API backend connection"
-msgstr ""
-
-#: addons/rest-api/templates/listmonk-contacts.php:24
-msgid "Label of the Listmonk backend connection"
-msgstr ""
-
-#: addons/rest-api/templates/mailchimp-contacts.php:55
-msgid "Label of the MailChimp API backend connection"
-msgstr ""
-
-#: addons/zoho/templates/crm-company-leads.php:25
-#: addons/zoho/templates/crm-leads.php:25
-#: addons/zoho/templates/crm-meetings.php:33
-msgid "Label to identify your website sourced leads"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:125
-msgid "Lao"
-msgstr ""
-
-#: includes/data/country-codes.php:133
-msgid "Laos"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:157
-#: addons/dolibarr/templates/company-prospects.php:134
-#: addons/dolibarr/templates/contacts.php:74
-#: addons/dolibarr/templates/individual-prospects.php:88
-#: addons/dolibarr/templates/thirdparty-appointments.php:163
-#: addons/financoop/templates/loan-request.php:102
-#: addons/financoop/templates/subscription-request.php:115
-#: addons/odoo/templates/mailing-lists.php:61
-#: addons/zoho/templates/bigin-appointments.php:131
-#: addons/zoho/templates/bigin-companies.php:110
-#: addons/zoho/templates/bigin-contacts.php:78
-#: addons/zoho/templates/bigin-deals.php:215
-#: addons/zoho/templates/crm-company-leads.php:207
-#: addons/zoho/templates/crm-contacts.php:80
-#: addons/zoho/templates/crm-leads.php:174
-#: addons/zoho/templates/crm-meetings.php:192
-msgid "Last name"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:126 includes/data/country-codes.php:142
-msgid "Latvia"
-msgstr ""
-
-#: addons/odoo/templates/crm-company-leads.php:74
-#: addons/odoo/templates/crm-leads.php:72
-#: addons/odoo/templates/crm-team-leads.php:29
-msgid "Lead name"
-msgstr ""
-
-#: addons/odoo/jobs/lead-owner-id.php:22
-msgid "Lead owner ID"
-msgstr ""
-
-#: addons/zoho/templates/crm-company-leads.php:24
-#: addons/zoho/templates/crm-leads.php:24
-#: addons/zoho/templates/crm-meetings.php:32
-msgid "Lead source"
-msgstr ""
-
-#: addons/zoho/templates/crm-company-leads.php:36
-#: addons/zoho/templates/crm-leads.php:36
-#: addons/zoho/templates/crm-meetings.php:44
-msgid "Lead status"
-msgstr ""
-
-#: addons/zoho/templates/crm-company-leads.php:78
-#: addons/zoho/templates/crm-leads.php:78
-msgid "Lead tags"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:127 includes/data/country-codes.php:134
-msgid "Lebanon"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:128 includes/data/country-codes.php:139
-msgid "Lesotho"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:129 includes/data/country-codes.php:138
-msgid "Liberia"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:130 includes/data/country-codes.php:143
-msgid "Libya"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:131 includes/data/country-codes.php:136
-msgid "Liechtenstein"
-msgstr ""
-
-#: addons/rest-api/templates/listmonk-contacts.php:53
-msgid "List ID"
-msgstr ""
-
-#: addons/odoo/templates/mailing-lists.php:18
-msgid "List IDs"
-msgstr ""
-
-#: addons/odoo/templates/mailing-lists.php:19
-msgid "List IDs separated by commas"
-msgstr ""
-
-#: addons/rest-api/templates/brevo-contacts-doi.php:62
-#: addons/rest-api/templates/brevo-contacts-doi.php:72
-#: addons/rest-api/templates/brevo-contacts.php:62
-msgid ""
-"List IDs separated by commas. Leave it empty if you don't want to subscrive "
-"contact to any list"
-msgstr ""
-
-#: addons/rest-api/templates/listmonk-contacts.php:8
-#: addons/rest-api/templates/listmonk-contacts.php:62
-msgid "Listmonk Contacts"
-msgstr ""
-
-#: addons/rest-api/templates/listmonk-contacts.php:13
-msgid "Listmonk URL"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:132 includes/data/country-codes.php:140
-msgid "Lithuania"
 msgstr ""
 
 #: assets/plugin.bundle.js:26
 msgid "Load settings error"
 msgstr ""
 
-#: includes/class-menu.php:23 addons/dolibarr/assets/addon.bundle.js:2518
-#: addons/financoop/assets/addon.bundle.js:2518
-#: addons/google-sheets/assets/addon.bundle.js:2545
-#: addons/odoo/assets/addon.bundle.js:2518
-#: addons/rest-api/assets/addon.bundle.js:2518
-#: addons/zoho/assets/addon.bundle.js:2518
+#: addons/bigin/assets/addon.bundle.js:3304
+#: addons/brevo/assets/addon.bundle.js:3304
+#: addons/dolibarr/assets/addon.bundle.js:3304
+#: addons/financoop/assets/addon.bundle.js:3304
+#: addons/gsheets/assets/addon.bundle.js:3331
+#: addons/holded/assets/addon.bundle.js:3304
+#: addons/listmonk/assets/addon.bundle.js:3304
+#: addons/mailchimp/assets/addon.bundle.js:3304
+#: addons/odoo/assets/addon.bundle.js:3304
+#: addons/rest-api/assets/addon.bundle.js:3304
+#: addons/zoho/assets/addon.bundle.js:3304
 msgid "Loading"
 msgstr ""
 
+#: addons/bigin/assets/addon.bundle.js:327
+#: addons/brevo/assets/addon.bundle.js:327
 #: addons/dolibarr/assets/addon.bundle.js:327
 #: addons/financoop/assets/addon.bundle.js:327
-#: addons/google-sheets/assets/addon.bundle.js:327
+#: addons/gsheets/assets/addon.bundle.js:327
+#: addons/holded/assets/addon.bundle.js:327
+#: addons/listmonk/assets/addon.bundle.js:327
+#: addons/mailchimp/assets/addon.bundle.js:327
 #: addons/odoo/assets/addon.bundle.js:327
 #: addons/rest-api/assets/addon.bundle.js:327
 #: addons/zoho/assets/addon.bundle.js:327
 msgid "Loading config error"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:480
-#: addons/financoop/assets/addon.bundle.js:480
-#: addons/google-sheets/assets/addon.bundle.js:480
-#: addons/odoo/assets/addon.bundle.js:480
-#: addons/rest-api/assets/addon.bundle.js:480
-#: addons/zoho/assets/addon.bundle.js:480
+#: addons/bigin/assets/addon.bundle.js:497
+#: addons/brevo/assets/addon.bundle.js:497
+#: addons/dolibarr/assets/addon.bundle.js:497
+#: addons/financoop/assets/addon.bundle.js:497
+#: addons/gsheets/assets/addon.bundle.js:497
+#: addons/holded/assets/addon.bundle.js:497
+#: addons/listmonk/assets/addon.bundle.js:497
+#: addons/mailchimp/assets/addon.bundle.js:497
+#: addons/odoo/assets/addon.bundle.js:497
+#: addons/rest-api/assets/addon.bundle.js:497
+#: addons/zoho/assets/addon.bundle.js:497
 msgid "Loading worflow job error"
 msgstr ""
 
-#: assets/plugin.bundle.js:1193
+#: assets/plugin.bundle.js:1229
 msgid "Loading..."
 msgstr ""
 
-#: addons/financoop/templates/loan-request.php:89
-msgid "Loan amount"
-msgstr ""
-
-#: addons/financoop/templates/loan-request.php:51
-#: addons/financoop/templates/loan-request.php:56
-msgid "Loan Requests"
-msgstr ""
-
-#: assets/plugin.bundle.js:1149
+#: assets/plugin.bundle.js:1185
 msgid "Logging"
 msgstr ""
 
-#: addons/zoho/templates/crm-company-leads.php:68
-#: addons/zoho/templates/crm-leads.php:68
-#: addons/zoho/templates/crm-meetings.php:76
-msgid "Lost Lead"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:133 includes/data/country-codes.php:141
-msgid "Luxembourg"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:134
-msgid "Macao"
-msgstr ""
-
-#: includes/data/country-codes.php:155
-msgid "Macau"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:135
-msgid "Macedonia, the former Yugoslav of"
-msgstr ""
-
-#: includes/data/country-codes.php:151
-msgid "Macedonia, the former Yugoslav Republic of"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:136 includes/data/country-codes.php:149
-msgid "Madagascar"
-msgstr ""
-
-#: addons/rest-api/templates/mailchimp-contacts.php:79
-msgid "MailChimp API Key"
-msgstr ""
-
-#: addons/rest-api/templates/mailchimp-contacts.php:48
-msgid "MailChimp API URL"
-msgstr ""
-
-#: addons/rest-api/jobs/mailchimp-authorization.php:33
-msgid "MailChimp authorization"
-msgstr ""
-
-#: addons/rest-api/jobs/mailchimp-contact-status.php:19
-msgid "MailChimp contact status"
-msgstr ""
-
-#: addons/rest-api/templates/mailchimp-contacts.php:43
-#: addons/rest-api/templates/mailchimp-contacts.php:196
-msgid "MailChimp Contacts"
-msgstr ""
-
-#: addons/odoo/jobs/mailing-contact.php:76
-msgid "Mailing list contact"
-msgstr ""
-
-#: addons/odoo/jobs/mailing-list-ids.php:19
-msgid "Mailing list IDs"
-msgstr ""
-
-#: addons/odoo/templates/mailing-lists.php:8
-#: addons/odoo/templates/mailing-lists.php:13
-msgid "Mailing Lists"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:137 includes/data/country-codes.php:163
-msgid "Malawi"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:138 includes/data/country-codes.php:165
-msgid "Malaysia"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:139 includes/data/country-codes.php:162
-msgid "Maldives"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:140 includes/data/country-codes.php:152
-msgid "Mali"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:141 includes/data/country-codes.php:160
-msgid "Malta"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:142 includes/data/country-codes.php:150
-msgid "Marshall Islands"
-msgstr ""
-
-#: includes/data/country-codes.php:157
-msgid "Martinique"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:143 includes/data/country-codes.php:158
-msgid "Mauritania"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:144 includes/data/country-codes.php:161
-msgid "Mauritius"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:145 includes/data/country-codes.php:254
-msgid "Mayotte"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:80
-#: addons/dolibarr/templates/thirdparty-appointments.php:80
-msgid "Meeting"
-msgstr ""
-
-#: addons/rest-api/assets/addon.bundle.js:3953
-#: addons/rest-api/assets/addon.bundle.js:4020
+#: addons/brevo/assets/addon.bundle.js:5259
+#: addons/brevo/assets/addon.bundle.js:5327
+#: addons/dolibarr/assets/addon.bundle.js:5196
+#: addons/dolibarr/assets/addon.bundle.js:5264
+#: addons/holded/assets/addon.bundle.js:5189
+#: addons/holded/assets/addon.bundle.js:5257
+#: addons/listmonk/assets/addon.bundle.js:5159
+#: addons/listmonk/assets/addon.bundle.js:5227
+#: addons/mailchimp/assets/addon.bundle.js:5171
+#: addons/mailchimp/assets/addon.bundle.js:5239
+#: addons/rest-api/assets/addon.bundle.js:5000
+#: addons/rest-api/assets/addon.bundle.js:5058
 msgid "Method"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:146 includes/data/country-codes.php:164
-msgid "Mexico"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:147 includes/data/country-codes.php:81
-msgid "Micronesia"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:279
-#: addons/dolibarr/templates/thirdparty-appointments.php:291
-#: addons/odoo/templates/appointments.php:288
-#: addons/zoho/templates/bigin-appointments.php:258
-#: addons/zoho/templates/crm-meetings.php:319
-msgid "Minute"
-msgstr ""
-
-#: addons/odoo/assets/addon.bundle.js:4157
-#: addons/odoo/assets/addon.bundle.js:4211
+#: addons/odoo/assets/addon.bundle.js:5455
+#: addons/odoo/assets/addon.bundle.js:5509
 msgid "Model"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:148 includes/data/country-codes.php:146
-msgid "Moldova"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:149 includes/data/country-codes.php:145
-msgid "Monaco"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:150 includes/data/country-codes.php:154
-msgid "Mongolia"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:151
-msgid "Monserrat"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:152 includes/data/country-codes.php:147
-msgid "Montenegro"
-msgstr ""
-
-#: includes/data/country-codes.php:159
-msgid "Montserrat"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:153 includes/data/country-codes.php:144
-msgid "Morocco"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:154 includes/data/country-codes.php:166
-msgid "Mozambique"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:1644
-#: addons/financoop/assets/addon.bundle.js:1644
-#: addons/google-sheets/assets/addon.bundle.js:1671
-#: addons/odoo/assets/addon.bundle.js:1644
-#: addons/rest-api/assets/addon.bundle.js:1644
-#: addons/zoho/assets/addon.bundle.js:1644
-msgid "Mutation layers"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:1640
-#: addons/financoop/assets/addon.bundle.js:1640
-#: addons/google-sheets/assets/addon.bundle.js:1667
-#: addons/odoo/assets/addon.bundle.js:1640
-#: addons/rest-api/assets/addon.bundle.js:1640
-#: addons/zoho/assets/addon.bundle.js:1640
-msgid "Mutations"
-msgstr ""
-
-#: includes/data/country-codes.php:153
-msgid "Myanmar"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:155
-msgid "Myanmarma"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2927
-#: addons/dolibarr/assets/addon.bundle.js:3091
-#: addons/dolibarr/assets/addon.bundle.js:4291
-#: addons/dolibarr/assets/addon.bundle.js:4408
-#: addons/financoop/assets/addon.bundle.js:2927
-#: addons/financoop/assets/addon.bundle.js:3091
-#: addons/google-sheets/assets/addon.bundle.js:2954
-#: addons/google-sheets/assets/addon.bundle.js:3118
-#: addons/odoo/assets/addon.bundle.js:2927
-#: addons/odoo/assets/addon.bundle.js:3091
-#: addons/odoo/assets/addon.bundle.js:4293
-#: addons/odoo/assets/addon.bundle.js:4420
-#: addons/rest-api/assets/addon.bundle.js:2927
-#: addons/rest-api/assets/addon.bundle.js:3091
-#: addons/zoho/assets/addon.bundle.js:2927
-#: addons/zoho/assets/addon.bundle.js:3091
-#: addons/zoho/assets/addon.bundle.js:4332
-#: addons/zoho/assets/addon.bundle.js:4469
+#: addons/bigin/assets/addon.bundle.js:1460
+#: addons/bigin/assets/addon.bundle.js:3777
+#: addons/bigin/assets/addon.bundle.js:3929
+#: addons/bigin/assets/addon.bundle.js:5498
+#: addons/bigin/assets/addon.bundle.js:5599
+#: addons/brevo/assets/addon.bundle.js:1460
+#: addons/brevo/assets/addon.bundle.js:3777
+#: addons/brevo/assets/addon.bundle.js:3929
+#: addons/dolibarr/assets/addon.bundle.js:1460
+#: addons/dolibarr/assets/addon.bundle.js:3777
+#: addons/dolibarr/assets/addon.bundle.js:3929
+#: addons/financoop/assets/addon.bundle.js:1460
+#: addons/financoop/assets/addon.bundle.js:3777
+#: addons/financoop/assets/addon.bundle.js:3929
+#: addons/gsheets/assets/addon.bundle.js:1487
+#: addons/gsheets/assets/addon.bundle.js:3804
+#: addons/gsheets/assets/addon.bundle.js:3956
+#: addons/holded/assets/addon.bundle.js:1460
+#: addons/holded/assets/addon.bundle.js:3777
+#: addons/holded/assets/addon.bundle.js:3929
+#: addons/listmonk/assets/addon.bundle.js:1460
+#: addons/listmonk/assets/addon.bundle.js:3777
+#: addons/listmonk/assets/addon.bundle.js:3929
+#: addons/mailchimp/assets/addon.bundle.js:1460
+#: addons/mailchimp/assets/addon.bundle.js:3777
+#: addons/mailchimp/assets/addon.bundle.js:3929
+#: addons/odoo/assets/addon.bundle.js:1460
+#: addons/odoo/assets/addon.bundle.js:3777
+#: addons/odoo/assets/addon.bundle.js:3929
+#: addons/odoo/assets/addon.bundle.js:5584
+#: addons/odoo/assets/addon.bundle.js:5686
+#: addons/rest-api/assets/addon.bundle.js:1460
+#: addons/rest-api/assets/addon.bundle.js:3777
+#: addons/rest-api/assets/addon.bundle.js:3929
+#: addons/zoho/assets/addon.bundle.js:1460
+#: addons/zoho/assets/addon.bundle.js:3777
+#: addons/zoho/assets/addon.bundle.js:3929
+#: addons/zoho/assets/addon.bundle.js:5498
+#: addons/zoho/assets/addon.bundle.js:5599
 msgid "Name"
 msgstr ""
 
-#: includes/class-rest-settings-controller.php:189
-msgid "Name of the field"
-msgstr ""
-
-#: includes/class-rest-settings-controller.php:75
-msgid "Name of the job"
-msgstr ""
-
-#: addons/odoo/templates/crm-team-leads.php:19
-msgid "Name of the owner team of the lead"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:84
-msgid "Name of the pipeline deals"
-msgstr ""
-
-#: includes/class-rest-settings-controller.php:136
-#: includes/class-rest-settings-controller.php:155
-msgid "Name of the template"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:156 includes/data/country-codes.php:167
-msgid "Namibia"
-msgstr ""
-
-#: addons/financoop/templates/loan-request.php:114
-#: addons/financoop/templates/subscription-request.php:127
-msgid "Nationality"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:157 includes/data/country-codes.php:176
-msgid "Nauru"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:100
-msgid "Needs Analysis"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:108
-msgid "Negotiation/Review"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:158 includes/data/country-codes.php:175
-msgid "Nepal"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:159 includes/data/country-codes.php:173
-msgid "Netherlands"
-msgstr ""
-
-#: addons/dolibarr/templates/company-prospects.php:33
-#: addons/dolibarr/templates/individual-prospects.php:31
-msgid "Never contacted"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:160 includes/data/country-codes.php:168
-msgid "New Caledonia"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:161 includes/data/country-codes.php:178
-msgid "New Zealand"
-msgstr ""
-
-#: addons/rest-api/templates/listmonk-contacts.php:48
-#: addons/rest-api/templates/mailchimp-contacts.php:90
-msgid "Newsletter"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:3905
-#: addons/financoop/assets/addon.bundle.js:3887
-#: addons/google-sheets/assets/addon.bundle.js:3914
-#: addons/odoo/assets/addon.bundle.js:3905
-#: addons/rest-api/assets/addon.bundle.js:3887
-#: addons/zoho/assets/addon.bundle.js:3905
+#: addons/bigin/assets/addon.bundle.js:4957
+#: addons/brevo/assets/addon.bundle.js:4939
+#: addons/dolibarr/assets/addon.bundle.js:4939
+#: addons/financoop/assets/addon.bundle.js:4939
+#: addons/gsheets/assets/addon.bundle.js:4966
+#: addons/holded/assets/addon.bundle.js:4939
+#: addons/listmonk/assets/addon.bundle.js:4939
+#: addons/mailchimp/assets/addon.bundle.js:4939
+#: addons/odoo/assets/addon.bundle.js:4957
+#: addons/rest-api/assets/addon.bundle.js:4939
+#: addons/zoho/assets/addon.bundle.js:4957
 msgid "Next"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:162 includes/data/country-codes.php:172
-msgid "Nicaragua"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:163 includes/data/country-codes.php:169
-msgid "Niger"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:164 includes/data/country-codes.php:171
-msgid "Nigeria"
 msgstr ""
 
 #: assets/plugin.bundle.js
 msgid "ninja"
 msgstr "Ninja Forms"
 
-#: addons/dolibarr/country-codes.php:165 includes/data/country-codes.php:177
-msgid "Niue"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2289
-#: addons/financoop/assets/addon.bundle.js:2289
-#: addons/google-sheets/assets/addon.bundle.js:2316
-#: addons/odoo/assets/addon.bundle.js:2289
-#: addons/rest-api/assets/addon.bundle.js:2289
-#: addons/zoho/assets/addon.bundle.js:2289
+#: addons/bigin/assets/addon.bundle.js:3133
+#: addons/brevo/assets/addon.bundle.js:3133
+#: addons/dolibarr/assets/addon.bundle.js:3133
+#: addons/financoop/assets/addon.bundle.js:3133
+#: addons/gsheets/assets/addon.bundle.js:3160
+#: addons/holded/assets/addon.bundle.js:3133
+#: addons/listmonk/assets/addon.bundle.js:3133
+#: addons/mailchimp/assets/addon.bundle.js:3133
+#: addons/odoo/assets/addon.bundle.js:3133
+#: addons/rest-api/assets/addon.bundle.js:3133
+#: addons/zoho/assets/addon.bundle.js:3133
 msgid "No input fields"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:166 includes/data/country-codes.php:170
-msgid "Norfolk Island"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:167 includes/data/country-codes.php:128
-msgid "North Korea"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:168 includes/data/country-codes.php:156
-msgid "Northern Mariana Islands"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:169 includes/data/country-codes.php:174
-msgid "Norway"
-msgstr ""
-
-#: addons/zoho/templates/crm-company-leads.php:40
-#: addons/zoho/templates/crm-leads.php:40
-#: addons/zoho/templates/crm-meetings.php:48
-msgid "Not Contacted"
-msgstr ""
-
-#: addons/zoho/templates/crm-company-leads.php:48
-#: addons/zoho/templates/crm-leads.php:48
-#: addons/zoho/templates/crm-meetings.php:56
-msgid "Not qualified"
-msgstr ""
-
-#: assets/plugin.bundle.js addons/odoo/assets/addon.bundle.js:4719
+#: assets/plugin.bundle.js
+#: addons/odoo/assets/addon.bundle.js:5987
 msgid "odoo"
 msgstr "Odoo"
 
-#: addons/dolibarr/country-codes.php:170 includes/data/country-codes.php:179
-msgid "Oman"
-msgstr ""
-
-#: addons/financoop/templates/subscription-request.php:102
-msgid "Ordered parts"
-msgstr ""
-
-#: addons/zoho/assets/addon.bundle.js:4356
-#: addons/zoho/assets/addon.bundle.js:4493
+#: addons/bigin/assets/addon.bundle.js:5512
+#: addons/bigin/assets/addon.bundle.js:5613
+#: addons/zoho/assets/addon.bundle.js:5512
+#: addons/zoho/assets/addon.bundle.js:5613
 msgid "Organization ID"
 msgstr ""
 
-#: addons/dolibarr/templates/appointments.php:92
-#: addons/dolibarr/templates/thirdparty-appointments.php:92
-msgid "Other"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2581
-#: addons/financoop/assets/addon.bundle.js:2581
-#: addons/google-sheets/assets/addon.bundle.js:2608
-#: addons/odoo/assets/addon.bundle.js:2581
-#: addons/rest-api/assets/addon.bundle.js:2581
-#: addons/zoho/assets/addon.bundle.js:2581
+#: addons/bigin/assets/addon.bundle.js:3408
+#: addons/brevo/assets/addon.bundle.js:3408
+#: addons/dolibarr/assets/addon.bundle.js:3408
+#: addons/financoop/assets/addon.bundle.js:3408
+#: addons/gsheets/assets/addon.bundle.js:3435
+#: addons/holded/assets/addon.bundle.js:3408
+#: addons/listmonk/assets/addon.bundle.js:3408
+#: addons/mailchimp/assets/addon.bundle.js:3408
+#: addons/odoo/assets/addon.bundle.js:3408
+#: addons/rest-api/assets/addon.bundle.js:3408
+#: addons/zoho/assets/addon.bundle.js:3408
 msgid "Output mutations: %s"
 msgstr ""
 
-#: addons/dolibarr/templates/appointments.php:69
-#: addons/dolibarr/templates/thirdparty-appointments.php:69
-#: addons/odoo/templates/appointments.php:71
-#: addons/odoo/templates/crm-company-leads.php:63
-#: addons/odoo/templates/crm-leads.php:61
-msgid "Owner email"
-msgstr ""
-
-#: addons/zoho/templates/bigin-appointments.php:68
-#: addons/zoho/templates/bigin-deals.php:72
-#: addons/zoho/templates/crm-company-leads.php:13
-#: addons/zoho/templates/crm-leads.php:13
-#: addons/zoho/templates/crm-meetings.php:13
-msgid "Owner ID"
-msgstr ""
-
-#: addons/dolibarr/jobs/get-owner-by-email.php:30
-msgid "Owner ID by email"
-msgstr ""
-
-#: addons/odoo/templates/crm-team-leads.php:18
-msgid "Owner team"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:171 includes/data/country-codes.php:185
-msgid "Pakistan"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:172 includes/data/country-codes.php:192
-msgid "Palau"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:173
-msgid "Palestinian Territory, Occupied"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:174 includes/data/country-codes.php:180
-msgid "Panama"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:175 includes/data/country-codes.php:183
-msgid "Papua New Guinea"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:176 includes/data/country-codes.php:193
-msgid "Paraguay"
-msgstr ""
-
-#: addons/odoo/assets/addon.bundle.js:4327
-#: addons/odoo/assets/addon.bundle.js:4454
+#: addons/odoo/assets/addon.bundle.js:5617
+#: addons/odoo/assets/addon.bundle.js:5719
 msgid "Password"
-msgstr ""
-
-#: addons/rest-api/templates/mailchimp-contacts.php:179
-msgid "Pending"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:177 includes/data/country-codes.php:181
-msgid "Peru"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:178 includes/data/country-codes.php:184
-msgid "Philippines"
-msgstr ""
-
-#: addons/dolibarr/templates/individual-prospects.php:100
-#: addons/financoop/templates/loan-request.php:133
-#: addons/financoop/templates/subscription-request.php:146
-#: addons/zoho/templates/bigin-appointments.php:143
-#: addons/zoho/templates/bigin-companies.php:128
-#: addons/zoho/templates/bigin-contacts.php:90
-#: addons/zoho/templates/bigin-deals.php:233
-#: addons/zoho/templates/crm-company-leads.php:219
-#: addons/zoho/templates/crm-contacts.php:92
-#: addons/zoho/templates/crm-leads.php:186
-#: addons/zoho/templates/crm-meetings.php:204
-msgid "Phone"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:84
-#: addons/dolibarr/templates/thirdparty-appointments.php:84
-msgid "Phone call"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:124
-msgid "Pipeline name"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:179 includes/data/country-codes.php:188
-msgid "Pitcairn Islands"
-msgstr ""
-
-#: integrations/gf/class-integration.php:835
-msgid "please supply a valid email address"
-msgstr ""
-
-#: integrations/gf/class-integration.php:780
-msgid "please supply a valid value"
 msgstr ""
 
 #. Description of the plugin
@@ -2731,254 +901,90 @@ msgstr ""
 msgid "Plugin to bridge WP forms submissions to any backend or service"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:180 includes/data/country-codes.php:186
-msgid "Poland"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:3573
-#: addons/financoop/assets/addon.bundle.js:3555
-#: addons/google-sheets/assets/addon.bundle.js:3582
-#: addons/odoo/assets/addon.bundle.js:3573
-#: addons/rest-api/assets/addon.bundle.js:3555
-#: addons/zoho/assets/addon.bundle.js:3573
+#: addons/bigin/assets/addon.bundle.js:4577
+#: addons/brevo/assets/addon.bundle.js:4559
+#: addons/dolibarr/assets/addon.bundle.js:4559
+#: addons/financoop/assets/addon.bundle.js:4559
+#: addons/gsheets/assets/addon.bundle.js:4586
+#: addons/holded/assets/addon.bundle.js:4559
+#: addons/listmonk/assets/addon.bundle.js:4559
+#: addons/mailchimp/assets/addon.bundle.js:4559
+#: addons/odoo/assets/addon.bundle.js:4577
+#: addons/rest-api/assets/addon.bundle.js:4559
+#: addons/zoho/assets/addon.bundle.js:4577
 msgid "Populate the form default values"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:181 includes/data/country-codes.php:191
-msgid "Portugal"
-msgstr ""
-
-#: addons/dolibarr/templates/company-prospects.php:102
-#: addons/zoho/templates/bigin-companies.php:84
-#: addons/zoho/templates/bigin-deals.php:189
-#: addons/zoho/templates/crm-company-leads.php:180
-msgid "Postal code"
-msgstr ""
-
-#: addons/zoho/templates/crm-company-leads.php:52
-#: addons/zoho/templates/crm-leads.php:52
-#: addons/zoho/templates/crm-meetings.php:60
-msgid "Pre-qualified"
-msgstr ""
-
-#: addons/financoop/jobs/vat-id.php:47 addons/odoo/jobs/vat-id.php:47
-msgid ""
-"Prefix the vat with country code, or the current locale, if it isn't prefixed"
-msgstr ""
-
-#: addons/financoop/jobs/vat-id.php:46 addons/odoo/jobs/vat-id.php:46
-msgid "Prefixed vat ID"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:3897
-#: addons/financoop/assets/addon.bundle.js:3879
-#: addons/google-sheets/assets/addon.bundle.js:3906
-#: addons/odoo/assets/addon.bundle.js:3897
-#: addons/rest-api/assets/addon.bundle.js:3879
-#: addons/zoho/assets/addon.bundle.js:3897
+#: addons/bigin/assets/addon.bundle.js:4949
+#: addons/brevo/assets/addon.bundle.js:4931
+#: addons/dolibarr/assets/addon.bundle.js:4931
+#: addons/financoop/assets/addon.bundle.js:4931
+#: addons/gsheets/assets/addon.bundle.js:4958
+#: addons/holded/assets/addon.bundle.js:4931
+#: addons/listmonk/assets/addon.bundle.js:4931
+#: addons/mailchimp/assets/addon.bundle.js:4931
+#: addons/odoo/assets/addon.bundle.js:4949
+#: addons/rest-api/assets/addon.bundle.js:4931
+#: addons/zoho/assets/addon.bundle.js:4949
 msgid "Previous"
 msgstr ""
 
-#: addons/odoo/templates/crm-company-leads.php:82
-#: addons/odoo/templates/crm-leads.php:80
-#: addons/odoo/templates/crm-team-leads.php:37
-msgid "Priority"
-msgstr ""
-
-#: integrations/ninja/class-integration.php:591
-msgid "Processing"
-msgstr ""
-
-#: addons/financoop/mu/shortcodes.php:104
-msgid "Progress"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:104
-msgid "Proposal/Price Quote"
-msgstr ""
-
-#: addons/dolibarr/templates/company-prospects.php:28
-#: addons/dolibarr/templates/individual-prospects.php:26
-msgid "Prospect status"
-msgstr ""
-
-#: addons/dolibarr/templates/individual-prospects.php:8
-#: addons/dolibarr/templates/individual-prospects.php:21
-#: addons/dolibarr/templates/individual-prospects.php:55
-msgid "Prospects"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:182 includes/data/country-codes.php:189
-msgid "Puerto Rico"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:183 includes/data/country-codes.php:194
-msgid "Qatar"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:96
-msgid "Qualification"
-msgstr ""
-
-#: addons/zoho/templates/crm-company-leads.php:44
-#: addons/zoho/templates/crm-leads.php:44
-#: addons/zoho/templates/crm-meetings.php:52
-msgid "Qualified"
-msgstr ""
-
-#: addons/dolibarr/jobs/next-client-code.php:24
-msgid "Query for the next valid thirdparty code client"
-msgstr ""
-
-#: integrations/ninja/class-integration.php:820
-msgid "Record Submission"
-msgstr ""
-
-#: addons/rest-api/templates/brevo-contacts-doi.php:80
-msgid "Redirection URL"
-msgstr ""
-
-#: includes/workflow-jobs/referer.php:17
+#: addons/bigin/assets/addon.bundle.js:1264
+#: addons/brevo/assets/addon.bundle.js:1264
+#: addons/dolibarr/assets/addon.bundle.js:1264
+#: addons/financoop/assets/addon.bundle.js:1264
+#: addons/gsheets/assets/addon.bundle.js:1291
+#: addons/holded/assets/addon.bundle.js:1264
+#: addons/listmonk/assets/addon.bundle.js:1264
+#: addons/mailchimp/assets/addon.bundle.js:1264
+#: addons/odoo/assets/addon.bundle.js:1264
+#: addons/rest-api/assets/addon.bundle.js:1264
+#: addons/zoho/assets/addon.bundle.js:1264
 msgid "Referer"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:3171
-#: addons/dolibarr/assets/addon.bundle.js:4454
-#: addons/financoop/assets/addon.bundle.js:3171
-#: addons/google-sheets/assets/addon.bundle.js:3198
-#: addons/odoo/assets/addon.bundle.js:3171
-#: addons/odoo/assets/addon.bundle.js:4476
-#: addons/rest-api/assets/addon.bundle.js:3171
-#: addons/zoho/assets/addon.bundle.js:3171
-#: addons/zoho/assets/addon.bundle.js:4533 assets/plugin.bundle.js:879
+#: addons/bigin/assets/addon.bundle.js:4008
+#: addons/bigin/assets/addon.bundle.js:5653
+#: addons/brevo/assets/addon.bundle.js:4008
+#: addons/dolibarr/assets/addon.bundle.js:4008
+#: addons/financoop/assets/addon.bundle.js:4008
+#: addons/gsheets/assets/addon.bundle.js:4035
+#: addons/holded/assets/addon.bundle.js:4008
+#: addons/listmonk/assets/addon.bundle.js:4008
+#: addons/mailchimp/assets/addon.bundle.js:4008
+#: addons/odoo/assets/addon.bundle.js:4008
+#: addons/odoo/assets/addon.bundle.js:5741
+#: addons/rest-api/assets/addon.bundle.js:4008
+#: addons/zoho/assets/addon.bundle.js:4008
+#: addons/zoho/assets/addon.bundle.js:5653
+#: assets/plugin.bundle.js:879
 msgid "Remove"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:1395
-#: addons/financoop/assets/addon.bundle.js:1395
-#: addons/google-sheets/assets/addon.bundle.js:1422
-#: addons/odoo/assets/addon.bundle.js:1395
-#: addons/rest-api/assets/addon.bundle.js:1395
-#: addons/zoho/assets/addon.bundle.js:1395
+#: addons/bigin/assets/addon.bundle.js:2522
+#: addons/brevo/assets/addon.bundle.js:2522
+#: addons/dolibarr/assets/addon.bundle.js:2522
+#: addons/financoop/assets/addon.bundle.js:2522
+#: addons/gsheets/assets/addon.bundle.js:2549
+#: addons/holded/assets/addon.bundle.js:2522
+#: addons/listmonk/assets/addon.bundle.js:2522
+#: addons/mailchimp/assets/addon.bundle.js:2522
+#: addons/odoo/assets/addon.bundle.js:2522
+#: addons/rest-api/assets/addon.bundle.js:2522
+#: addons/zoho/assets/addon.bundle.js:2522
 msgid "Rename"
 msgstr ""
 
-#: assets/plugin.bundle.js addons/rest-api/assets/addon.bundle.js:4146
+#: assets/plugin.bundle.js
+#: addons/rest-api/assets/addon.bundle.js:5184
 msgid "rest-api"
 msgstr "REST API"
 
-#: addons/zoho/assets/addon.bundle.js:4030
-msgid "Reuse a credential"
-msgstr ""
-
-#: addons/odoo/assets/addon.bundle.js:4017
-msgid "Reuse a database"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:4020
-msgid "Reuse an API key"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:3519
-#: addons/financoop/assets/addon.bundle.js:3501
-#: addons/google-sheets/assets/addon.bundle.js:3528
-#: addons/odoo/assets/addon.bundle.js:3519
-#: addons/rest-api/assets/addon.bundle.js:3501
-#: addons/zoho/assets/addon.bundle.js:3519
-msgid "Reuse backend"
-msgstr ""
-
-#: addons/google-sheets/assets/addon.bundle.js:4248
+#: addons/gsheets/assets/addon.bundle.js:5300
 msgid "Revoke credentials"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:184 includes/data/country-codes.php:196
-msgid "Romania"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:185
-msgid "Russia"
-msgstr ""
-
-#: includes/data/country-codes.php:198
-msgid "Russian Federation"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:186 includes/data/country-codes.php:199
-msgid "Rwanda"
-msgstr ""
-
-#: includes/data/country-codes.php:195
-msgid "Réunion"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:187
-msgid "Saint Barthelemy"
-msgstr ""
-
-#: includes/data/country-codes.php:34
-msgid "Saint Barthélémy"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:188
-msgid "Saint Helena"
-msgstr ""
-
-#: includes/data/country-codes.php:206
-msgid "Saint Helena, Ascension and Tristan da Cunha"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:189 includes/data/country-codes.php:127
-msgid "Saint Kitts and Nevis"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:190 includes/data/country-codes.php:135
-msgid "Saint Lucia"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:191
-msgid "Saint Martin"
-msgstr ""
-
-#: includes/data/country-codes.php:148
-msgid "Saint Martin (French part)"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:192 includes/data/country-codes.php:187
-msgid "Saint Pierre and Miquelon"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:193
-msgid "Saint Vincent and Grenadines"
-msgstr ""
-
-#: includes/data/country-codes.php:245
-msgid "Saint Vincent and the Grenadines"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:194 includes/data/country-codes.php:252
-msgid "Samoa"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:195 includes/data/country-codes.php:211
-msgid "San Marino"
-msgstr ""
-
-#: addons/rest-api/jobs/brevo-doi-redirection-url.php:30
-msgid ""
-"Sanitize the redirection URL value and sets site host as domain if is a "
-"relative URL."
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:196
-msgid "Sao Tome and Principe"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:197 includes/data/country-codes.php:200
-msgid "Saudi Arabia"
-msgstr ""
-
-#: assets/plugin.bundle.js:1555
+#: assets/plugin.bundle.js:1633
 msgid "Save"
 msgstr ""
 
@@ -2986,121 +992,28 @@ msgstr ""
 msgid "Save settings error"
 msgstr ""
 
-#: addons/zoho/templates/bigin-appointments.php:55
-#: addons/zoho/templates/bigin-companies.php:58
-#: addons/zoho/templates/bigin-contacts.php:58
-#: addons/zoho/templates/bigin-deals.php:59
-#: addons/zoho/templates/crm-company-leads.php:135
-#: addons/zoho/templates/crm-contacts.php:60
-#: addons/zoho/templates/crm-leads.php:135
-#: addons/zoho/templates/crm-meetings.php:140
-#: addons/zoho/assets/addon.bundle.js:4168
-#: addons/zoho/assets/addon.bundle.js:4231
+#: addons/bigin/assets/addon.bundle.js:5345
+#: addons/bigin/assets/addon.bundle.js:5408
+#: addons/zoho/assets/addon.bundle.js:5345
+#: addons/zoho/assets/addon.bundle.js:5408
 msgid "Scope"
 msgstr ""
 
-#: addons/odoo/jobs/skip-if-contact-exists.php:29
-msgid "Search contacts by email and skip submission if it exists"
-msgstr ""
-
-#: addons/odoo/jobs/contact-id.php:62
-msgid ""
-"Search for a  partner by email or creates a new and sets its ID as the "
-"payload partner_id"
-msgstr ""
-
-#: addons/odoo/jobs/contact-company-id.php:16
-msgid ""
-"Search for a company type partner by vat or creates a new and sets its ID as "
-"the partner parent ID"
-msgstr ""
-
-#: addons/odoo/jobs/company-id.php:56
-msgid ""
-"Search for a company type partner by vat or creates a new and sets its ID as "
-"the payload partner_id"
-msgstr ""
-
-#: addons/zoho/jobs/bigin-contact-name.php:24
-msgid ""
-"Search for a contact by email or creates a new if it does't exists and "
-"replace the name by the ID on the payload"
-msgstr ""
-
-#: addons/zoho/jobs/bigin-appointment-participant.php:26
-msgid ""
-"Search for a contact or creates a new one and sets its ID as appointment "
-"participant"
-msgstr ""
-
-#: addons/zoho/jobs/crm-meeting-participant.php:26
-msgid ""
-"Search for a lead or creates a new one and sets its ID as meeting participant"
-msgstr ""
-
-#: addons/odoo/jobs/crm-company-contact.php:25
-msgid ""
-"Search for a partner by email and parent id or creates a new and sets its "
-"email as the email_from payload attribute"
-msgstr ""
-
-#: addons/odoo/jobs/crm-contact.php:24
-msgid ""
-"Search for a partner by email or creates a new and sets its email as the "
-"email_from payload attribute"
-msgstr ""
-
-#: addons/odoo/jobs/mailing-contact.php:77
-msgid ""
-"Search for a subscribed contact and updates its subscriptions and skips if "
-"succeed"
-msgstr ""
-
-#: addons/odoo/jobs/team-owner-id.php:28
-msgid "Search for a team by name and sets its ID as the lead owenr ID"
-msgstr ""
-
-#: addons/odoo/jobs/lead-owner-id.php:23
-msgid "Search for a user by email and sets its ID as the lead owner ID"
-msgstr ""
-
-#: addons/zoho/jobs/bigin-account-name.php:24
-msgid ""
-"Search for an account by name or creates a new if it does't exists and "
-"replace the name by the ID on the payload"
-msgstr ""
-
-#: addons/odoo/jobs/appointment-attendee.php:24
-msgid ""
-"Search for partner by email or creates a new one and sets it as the "
-"appointment attendee"
-msgstr ""
-
-#: addons/odoo/jobs/appointment-owner.php:23
-msgid "Search for user by email and sets it as the appointment ower"
-msgstr ""
-
-#: addons/dolibarr/jobs/get-owner-by-email.php:31
-msgid ""
-"Search for user ID by email and sets it value as the \"userownerid\" of the "
-"payload."
-msgstr ""
-
-#: addons/rest-api/templates/brevo-contacts-doi.php:60
-#: addons/rest-api/templates/brevo-contacts.php:60
-msgid "Segment IDs"
-msgstr ""
-
-#: addons/google-sheets/assets/addon.bundle.js:3955
+#: addons/gsheets/assets/addon.bundle.js:5007
 msgid "Select a Spreadsheet"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:2810
-#: addons/financoop/assets/addon.bundle.js:2810
-#: addons/google-sheets/assets/addon.bundle.js:2837
-#: addons/odoo/assets/addon.bundle.js:2810
-#: addons/rest-api/assets/addon.bundle.js:2810
-#: addons/zoho/assets/addon.bundle.js:2810
+#: addons/bigin/assets/addon.bundle.js:3652
+#: addons/brevo/assets/addon.bundle.js:3652
+#: addons/dolibarr/assets/addon.bundle.js:3652
+#: addons/financoop/assets/addon.bundle.js:3652
+#: addons/gsheets/assets/addon.bundle.js:3679
+#: addons/holded/assets/addon.bundle.js:3652
+#: addons/listmonk/assets/addon.bundle.js:3652
+#: addons/mailchimp/assets/addon.bundle.js:3652
+#: addons/odoo/assets/addon.bundle.js:3652
+#: addons/rest-api/assets/addon.bundle.js:3652
+#: addons/zoho/assets/addon.bundle.js:3652
 msgid "Select a template"
 msgstr ""
 
@@ -3108,7 +1021,7 @@ msgstr ""
 msgid "Select how Forms Bridge should encode your form submissions."
 msgstr ""
 
-#: addons/google-sheets/assets/addon.bundle.js:3949
+#: addons/gsheets/assets/addon.bundle.js:5001
 msgid "Select the spreadsheet do you want to use as backend"
 msgstr ""
 
@@ -3116,734 +1029,378 @@ msgstr ""
 msgid "Select which plugins you want to integrate with Forms Bridge"
 msgstr ""
 
-#: integrations/wpforms/class-integration.php:766
-msgid "Sending..."
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:198 includes/data/country-codes.php:212
-msgid "Senegal"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:199 includes/data/country-codes.php:197
-msgid "Serbia"
-msgstr ""
-
-#: addons/zoho/jobs/event-dates.php:20
-msgid ""
-"Sets appointment start and end time from \"datetime\" and \"duration\" "
-"fields."
-msgstr ""
-
-#: addons/odoo/jobs/appointment-dates.php:29
-msgid ""
-"Sets appointment start and stop time from \"timestamp\" and \"duration\" "
-"fields."
-msgstr ""
-
-#: addons/dolibarr/jobs/appointment-dates.php:26
-msgid ""
-"Sets appointment start, end time and duration from datetime and duration "
-"fields."
-msgstr ""
-
-#: includes/workflow-jobs/current-iso-time.php:18
-msgid "Sets the submission date and time on the payload with format ISO 8601"
-msgstr ""
-
-#: includes/workflow-jobs/current-datetime.php:18
-msgid ""
-"Sets the submission date and time on the payload with format Y-m-d H:M:S"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:200 includes/data/country-codes.php:202
-msgid "Seychelles"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2590
-#: addons/financoop/assets/addon.bundle.js:2590
-#: addons/google-sheets/assets/addon.bundle.js:2617
-#: addons/odoo/assets/addon.bundle.js:2590
-#: addons/rest-api/assets/addon.bundle.js:2590
-#: addons/zoho/assets/addon.bundle.js:2590
+#: addons/bigin/assets/addon.bundle.js:3417
+#: addons/brevo/assets/addon.bundle.js:3417
+#: addons/dolibarr/assets/addon.bundle.js:3417
+#: addons/financoop/assets/addon.bundle.js:3417
+#: addons/gsheets/assets/addon.bundle.js:3444
+#: addons/holded/assets/addon.bundle.js:3417
+#: addons/listmonk/assets/addon.bundle.js:3417
+#: addons/mailchimp/assets/addon.bundle.js:3417
+#: addons/odoo/assets/addon.bundle.js:3417
+#: addons/rest-api/assets/addon.bundle.js:3417
+#: addons/zoho/assets/addon.bundle.js:3417
 msgid "Show"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:2372
-#: addons/financoop/assets/addon.bundle.js:2372
-#: addons/google-sheets/assets/addon.bundle.js:2399
-#: addons/odoo/assets/addon.bundle.js:2372
-#: addons/rest-api/assets/addon.bundle.js:2372
-#: addons/zoho/assets/addon.bundle.js:2372
+#: addons/bigin/assets/addon.bundle.js:3350
+#: addons/brevo/assets/addon.bundle.js:3350
+#: addons/dolibarr/assets/addon.bundle.js:3350
+#: addons/financoop/assets/addon.bundle.js:3350
+#: addons/gsheets/assets/addon.bundle.js:3377
+#: addons/holded/assets/addon.bundle.js:3350
+#: addons/listmonk/assets/addon.bundle.js:3350
+#: addons/mailchimp/assets/addon.bundle.js:3350
+#: addons/odoo/assets/addon.bundle.js:3350
+#: addons/rest-api/assets/addon.bundle.js:3350
+#: addons/zoho/assets/addon.bundle.js:3350
 msgid "Show diff"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:201 includes/data/country-codes.php:210
-msgid "Sierra Leone"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:202 includes/data/country-codes.php:205
-msgid "Singapore"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:203
-msgid "Sint Maarten"
-msgstr ""
-
-#: includes/data/country-codes.php:218
-msgid "Sint Maarten (Dutch part)"
-msgstr ""
-
-#: addons/dolibarr/jobs/skip-if-contact-exists.php:23
-#: addons/odoo/jobs/skip-if-contact-exists.php:28
-msgid "Skip if contact exists"
-msgstr ""
-
-#: addons/dolibarr/jobs/skip-if-thirdparty-exists.php:23
-msgid "Skip if thirdparty exists"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2331
-#: addons/financoop/assets/addon.bundle.js:2331
-#: addons/google-sheets/assets/addon.bundle.js:2358
-#: addons/odoo/assets/addon.bundle.js:2331
-#: addons/rest-api/assets/addon.bundle.js:2331
-#: addons/zoho/assets/addon.bundle.js:2331
+#: addons/bigin/assets/addon.bundle.js:3297
+#: addons/brevo/assets/addon.bundle.js:3297
+#: addons/dolibarr/assets/addon.bundle.js:3297
+#: addons/financoop/assets/addon.bundle.js:3297
+#: addons/gsheets/assets/addon.bundle.js:3324
+#: addons/holded/assets/addon.bundle.js:3297
+#: addons/listmonk/assets/addon.bundle.js:3297
+#: addons/mailchimp/assets/addon.bundle.js:3297
+#: addons/odoo/assets/addon.bundle.js:3297
+#: addons/rest-api/assets/addon.bundle.js:3297
+#: addons/zoho/assets/addon.bundle.js:3297
 msgid "Skipped"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:204 includes/data/country-codes.php:209
-msgid "Slovakia"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:205 includes/data/country-codes.php:207
-msgid "Slovenia"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:206 includes/data/country-codes.php:201
-msgid "Solomon Islands"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:207 includes/data/country-codes.php:213
-msgid "Somalia"
-msgstr ""
-
-#: assets/plugin.bundle.js:1292
+#: assets/plugin.bundle.js:1328
 msgid "Somthing went wrong with the file upload"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:208 includes/data/country-codes.php:255
-msgid "South Africa"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:209 includes/data/country-codes.php:97
-msgid "South Georgia and the South Sandwich Islands"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:210 includes/data/country-codes.php:129
-msgid "South Korea"
-msgstr ""
-
-#: includes/data/country-codes.php:215
-msgid "South Sudan"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:1382
-#: addons/financoop/assets/addon.bundle.js:1382
-#: addons/google-sheets/assets/addon.bundle.js:1409
-#: addons/odoo/assets/addon.bundle.js:1382
-#: addons/rest-api/assets/addon.bundle.js:1382
-#: addons/zoho/assets/addon.bundle.js:1382
+#: addons/bigin/assets/addon.bundle.js:2509
+#: addons/brevo/assets/addon.bundle.js:2509
+#: addons/dolibarr/assets/addon.bundle.js:2509
+#: addons/financoop/assets/addon.bundle.js:2509
+#: addons/gsheets/assets/addon.bundle.js:2536
+#: addons/holded/assets/addon.bundle.js:2509
+#: addons/listmonk/assets/addon.bundle.js:2509
+#: addons/mailchimp/assets/addon.bundle.js:2509
+#: addons/odoo/assets/addon.bundle.js:2509
+#: addons/rest-api/assets/addon.bundle.js:2509
+#: addons/zoho/assets/addon.bundle.js:2509
 msgid "Spaced"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:211 includes/data/country-codes.php:76
-msgid "Spain"
-msgstr ""
-
-#: addons/odoo/jobs/mailing-list-ids.php:20
-msgid "Split comma separated into an array of integer IDs"
-msgstr ""
-
-#: addons/zoho/jobs/tags.php:27
-msgid "Split comma separated tags and format as a collection of objects"
-msgstr ""
-
-#: addons/google-sheets/assets/addon.bundle.js:4029
-#: addons/google-sheets/assets/addon.bundle.js:4089
+#: addons/gsheets/assets/addon.bundle.js:5000
+#: addons/gsheets/assets/addon.bundle.js:5079
+#: addons/gsheets/assets/addon.bundle.js:5141
 msgid "Spreadsheet"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:212 includes/data/country-codes.php:137
-msgid "Sri Lanka"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2547
-#: addons/financoop/assets/addon.bundle.js:2547
-#: addons/google-sheets/assets/addon.bundle.js:2574
-#: addons/odoo/assets/addon.bundle.js:2547
-#: addons/rest-api/assets/addon.bundle.js:2547
-#: addons/zoho/assets/addon.bundle.js:2547
+#: addons/bigin/assets/addon.bundle.js:3372
+#: addons/brevo/assets/addon.bundle.js:3372
+#: addons/dolibarr/assets/addon.bundle.js:3372
+#: addons/financoop/assets/addon.bundle.js:3372
+#: addons/gsheets/assets/addon.bundle.js:3399
+#: addons/holded/assets/addon.bundle.js:3372
+#: addons/listmonk/assets/addon.bundle.js:3372
+#: addons/mailchimp/assets/addon.bundle.js:3372
+#: addons/odoo/assets/addon.bundle.js:3372
+#: addons/rest-api/assets/addon.bundle.js:3372
+#: addons/zoho/assets/addon.bundle.js:3372
 msgid "Stage mapper"
 msgstr ""
 
-#: addons/financoop/mu/shortcodes.php:150
-msgid "Start date"
-msgstr ""
-
-#: addons/zoho/templates/bigin-companies.php:94
-#: addons/zoho/templates/bigin-deals.php:199
-#: addons/zoho/templates/crm-company-leads.php:190
-msgid "State"
-msgstr ""
-
-#: includes/data/country-codes.php:190
-msgid "State of Palestine"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:4618
-msgid "Store your Dolibarr API keys and reuse them on your Dolibarr bridges"
-msgstr ""
-
-#: addons/zoho/assets/addon.bundle.js:4642
+#: addons/zoho/assets/addon.bundle.js:5761
 msgid "Store your Zoho API credentials and reuse them on your Zoho bridges"
 msgstr ""
 
-#: addons/zoho/templates/bigin-companies.php:79
-#: addons/zoho/templates/bigin-deals.php:184
-#: addons/zoho/templates/crm-company-leads.php:175
-msgid "Street"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:1353
-#: addons/financoop/assets/addon.bundle.js:1353
-#: addons/google-sheets/assets/addon.bundle.js:1380
-#: addons/odoo/assets/addon.bundle.js:1353
-#: addons/rest-api/assets/addon.bundle.js:1353
-#: addons/zoho/assets/addon.bundle.js:1353
+#: addons/bigin/assets/addon.bundle.js:2480
+#: addons/brevo/assets/addon.bundle.js:2480
+#: addons/dolibarr/assets/addon.bundle.js:2480
+#: addons/financoop/assets/addon.bundle.js:2480
+#: addons/gsheets/assets/addon.bundle.js:2507
+#: addons/holded/assets/addon.bundle.js:2480
+#: addons/listmonk/assets/addon.bundle.js:2480
+#: addons/mailchimp/assets/addon.bundle.js:2480
+#: addons/odoo/assets/addon.bundle.js:2480
+#: addons/rest-api/assets/addon.bundle.js:2480
+#: addons/zoho/assets/addon.bundle.js:2480
 msgid "String"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:1390
-#: addons/financoop/assets/addon.bundle.js:1390
-#: addons/google-sheets/assets/addon.bundle.js:1417
-#: addons/odoo/assets/addon.bundle.js:1390
-#: addons/rest-api/assets/addon.bundle.js:1390
-#: addons/zoho/assets/addon.bundle.js:1390
+#: addons/bigin/assets/addon.bundle.js:2517
+#: addons/brevo/assets/addon.bundle.js:2517
+#: addons/dolibarr/assets/addon.bundle.js:2517
+#: addons/financoop/assets/addon.bundle.js:2517
+#: addons/gsheets/assets/addon.bundle.js:2544
+#: addons/holded/assets/addon.bundle.js:2517
+#: addons/listmonk/assets/addon.bundle.js:2517
+#: addons/mailchimp/assets/addon.bundle.js:2517
+#: addons/odoo/assets/addon.bundle.js:2517
+#: addons/rest-api/assets/addon.bundle.js:2517
+#: addons/zoho/assets/addon.bundle.js:2517
 msgid "Structure mutations"
 msgstr ""
 
-#: includes/workflow-jobs/submission-id.php:17
+#: addons/bigin/assets/addon.bundle.js:1224
+#: addons/brevo/assets/addon.bundle.js:1224
+#: addons/dolibarr/assets/addon.bundle.js:1224
+#: addons/financoop/assets/addon.bundle.js:1224
+#: addons/gsheets/assets/addon.bundle.js:1251
+#: addons/holded/assets/addon.bundle.js:1224
+#: addons/listmonk/assets/addon.bundle.js:1224
+#: addons/mailchimp/assets/addon.bundle.js:1224
+#: addons/odoo/assets/addon.bundle.js:1224
+#: addons/rest-api/assets/addon.bundle.js:1224
+#: addons/zoho/assets/addon.bundle.js:1224
 msgid "Submission ID"
 msgstr ""
 
-#: integrations/gf/class-integration.php:128
-#: integrations/ninja/class-integration.php:590
-#: integrations/wpcf7/class-integration.php:431
-#: integrations/wpforms/class-integration.php:765
-#: addons/dolibarr/assets/addon.bundle.js:3909
-#: addons/financoop/assets/addon.bundle.js:3891
-#: addons/google-sheets/assets/addon.bundle.js:3918
-#: addons/odoo/assets/addon.bundle.js:3909
-#: addons/rest-api/assets/addon.bundle.js:3891
-#: addons/zoho/assets/addon.bundle.js:3909
+#: addons/bigin/assets/addon.bundle.js:4961
+#: addons/brevo/assets/addon.bundle.js:4943
+#: addons/dolibarr/assets/addon.bundle.js:4943
+#: addons/financoop/assets/addon.bundle.js:4943
+#: addons/gsheets/assets/addon.bundle.js:4970
+#: addons/holded/assets/addon.bundle.js:4943
+#: addons/listmonk/assets/addon.bundle.js:4943
+#: addons/mailchimp/assets/addon.bundle.js:4943
+#: addons/odoo/assets/addon.bundle.js:4961
+#: addons/rest-api/assets/addon.bundle.js:4943
+#: addons/zoho/assets/addon.bundle.js:4961
 msgid "Submit"
 msgstr ""
 
-#: addons/rest-api/templates/mailchimp-contacts.php:171
-msgid "Subscribed"
+#: addons/gsheets/assets/addon.bundle.js:5266
+msgid "Syncrhonize your form submission with Google Sheets and work with your web leads out of the WordPress admin site"
 msgstr ""
 
-#: addons/financoop/templates/subscription-request.php:52
-#: addons/financoop/templates/subscription-request.php:57
-msgid "Subscription Requests"
-msgstr ""
-
-#: addons/rest-api/templates/mailchimp-contacts.php:167
-msgid "Subscription status"
-msgstr ""
-
-#: addons/dolibarr/templates/contacts.php:47
-msgid "Subscrive to email"
-msgstr ""
-
-#: integrations/ninja/class-integration.php:872
-msgid "Success message"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:213 includes/data/country-codes.php:203
-msgid "Sudan"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:214 includes/data/country-codes.php:214
-msgid "Suriname"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:215 includes/data/country-codes.php:208
-msgid "Svalbard and Jan Mayen"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:216 includes/data/country-codes.php:220
-msgid "Swaziland"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:217 includes/data/country-codes.php:204
-msgid "Sweden"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:218 includes/data/country-codes.php:51
-msgid "Switzerland"
-msgstr ""
-
-#: addons/google-sheets/assets/addon.bundle.js:4214
-msgid ""
-"Syncrhonize your form submission with Google Sheets and work with your web "
-"leads out of the WordPress admin site"
-msgstr ""
-
-#: includes/data/country-codes.php:219
-msgid "Syria"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:219
-msgid "Syrian"
-msgstr ""
-
-#: includes/data/country-codes.php:216
-msgid "São Tomé and Príncipe"
-msgstr ""
-
-#: addons/google-sheets/assets/addon.bundle.js:4047
-#: addons/google-sheets/assets/addon.bundle.js:4099
-msgid "Tab Name"
-msgstr ""
-
-#: addons/zoho/templates/bigin-deals.php:138
-#: addons/zoho/templates/crm-company-leads.php:79
-#: addons/zoho/templates/crm-leads.php:79
-msgid "Tag names separated by commas"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:220 includes/data/country-codes.php:235
-msgid "Taiwan"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:221 includes/data/country-codes.php:226
-msgid "Tajikistan"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:222 includes/data/country-codes.php:236
-msgid "Tanzania"
-msgstr ""
-
-#: includes/class-rest-settings-controller.php:163
-#: addons/dolibarr/assets/addon.bundle.js:2800
-#: addons/financoop/assets/addon.bundle.js:2800
-#: addons/google-sheets/assets/addon.bundle.js:2827
-#: addons/odoo/assets/addon.bundle.js:2800
-#: addons/rest-api/assets/addon.bundle.js:2800
-#: addons/zoho/assets/addon.bundle.js:2800
+#: addons/bigin/assets/addon.bundle.js:3642
+#: addons/brevo/assets/addon.bundle.js:3642
+#: addons/dolibarr/assets/addon.bundle.js:3642
+#: addons/financoop/assets/addon.bundle.js:3642
+#: addons/gsheets/assets/addon.bundle.js:3669
+#: addons/holded/assets/addon.bundle.js:3642
+#: addons/listmonk/assets/addon.bundle.js:3642
+#: addons/mailchimp/assets/addon.bundle.js:3642
+#: addons/odoo/assets/addon.bundle.js:3642
+#: addons/rest-api/assets/addon.bundle.js:3642
+#: addons/zoho/assets/addon.bundle.js:3642
 msgid "Target integration"
 msgstr ""
 
-#: addons/dolibarr/templates/company-prospects.php:90
-#: addons/odoo/templates/company-contacts.php:35
-#: addons/odoo/templates/crm-company-leads.php:144
-msgid "Tax ID"
-msgstr ""
-
-#: addons/odoo/jobs/team-owner-id.php:27
-msgid "Team owner ID"
-msgstr ""
-
-#. translators: %s: Field name
-#: includes/class-form-bridge-template.php:575
-msgid "Template does not include form field `%s`"
-msgstr ""
-
-#: includes/class-rest-settings-controller.php:171
-msgid "Template fields with user inputs"
-msgstr ""
-
-#: includes/class-rest-settings-controller.php:304
-msgid "Template not found"
-msgstr ""
-
+#: addons/bigin/assets/addon.bundle.js:349
+#: addons/brevo/assets/addon.bundle.js:349
 #: addons/dolibarr/assets/addon.bundle.js:349
 #: addons/financoop/assets/addon.bundle.js:349
-#: addons/google-sheets/assets/addon.bundle.js:349
+#: addons/gsheets/assets/addon.bundle.js:349
+#: addons/holded/assets/addon.bundle.js:349
+#: addons/listmonk/assets/addon.bundle.js:349
+#: addons/mailchimp/assets/addon.bundle.js:349
 #: addons/odoo/assets/addon.bundle.js:349
 #: addons/rest-api/assets/addon.bundle.js:349
 #: addons/zoho/assets/addon.bundle.js:349
 msgid "Template submit error"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:2771
-#: addons/financoop/assets/addon.bundle.js:2771
-#: addons/google-sheets/assets/addon.bundle.js:2798
-#: addons/odoo/assets/addon.bundle.js:2771
-#: addons/rest-api/assets/addon.bundle.js:2771
-#: addons/zoho/assets/addon.bundle.js:2771
+#: addons/bigin/assets/addon.bundle.js:3613
+#: addons/brevo/assets/addon.bundle.js:3613
+#: addons/dolibarr/assets/addon.bundle.js:3613
+#: addons/financoop/assets/addon.bundle.js:3613
+#: addons/gsheets/assets/addon.bundle.js:3640
+#: addons/holded/assets/addon.bundle.js:3613
+#: addons/listmonk/assets/addon.bundle.js:3613
+#: addons/mailchimp/assets/addon.bundle.js:3613
+#: addons/odoo/assets/addon.bundle.js:3613
+#: addons/rest-api/assets/addon.bundle.js:3613
+#: addons/zoho/assets/addon.bundle.js:3613
 msgid "Templates"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:223 includes/data/country-codes.php:225
-msgid "Thailand"
-msgstr ""
-
-#: integrations/ninja/class-integration.php:873
-msgid "Thank you for filling out my form!"
-msgstr ""
-
-#: integrations/wpforms/class-integration.php:782
-msgid "Thanks for contacting us! We will be in touch with you shortly."
-msgstr ""
-
-#: integrations/ninja/class-integration.php:805
-msgid "The form has reached its submission limit."
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:3325
-#: addons/financoop/assets/addon.bundle.js:3307
-#: addons/google-sheets/assets/addon.bundle.js:3334
-#: addons/odoo/assets/addon.bundle.js:3325
-#: addons/rest-api/assets/addon.bundle.js:3307
-#: addons/zoho/assets/addon.bundle.js:3325
+#: addons/bigin/assets/addon.bundle.js:4163
+#: addons/brevo/assets/addon.bundle.js:4145
+#: addons/dolibarr/assets/addon.bundle.js:4145
+#: addons/financoop/assets/addon.bundle.js:4145
+#: addons/gsheets/assets/addon.bundle.js:4172
+#: addons/holded/assets/addon.bundle.js:4145
+#: addons/listmonk/assets/addon.bundle.js:4145
+#: addons/mailchimp/assets/addon.bundle.js:4145
+#: addons/odoo/assets/addon.bundle.js:4163
+#: addons/rest-api/assets/addon.bundle.js:4145
+#: addons/zoho/assets/addon.bundle.js:4163
 msgid "The value is not a number"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:3330
-#: addons/financoop/assets/addon.bundle.js:3312
-#: addons/google-sheets/assets/addon.bundle.js:3339
-#: addons/odoo/assets/addon.bundle.js:3330
-#: addons/rest-api/assets/addon.bundle.js:3312
-#: addons/zoho/assets/addon.bundle.js:3330
+#: addons/bigin/assets/addon.bundle.js:4168
+#: addons/brevo/assets/addon.bundle.js:4150
+#: addons/dolibarr/assets/addon.bundle.js:4150
+#: addons/financoop/assets/addon.bundle.js:4150
+#: addons/gsheets/assets/addon.bundle.js:4177
+#: addons/holded/assets/addon.bundle.js:4150
+#: addons/listmonk/assets/addon.bundle.js:4150
+#: addons/mailchimp/assets/addon.bundle.js:4150
+#: addons/odoo/assets/addon.bundle.js:4168
+#: addons/rest-api/assets/addon.bundle.js:4150
+#: addons/zoho/assets/addon.bundle.js:4168
 msgid "The value is too large"
 msgstr ""
 
-#: addons/dolibarr/assets/addon.bundle.js:3328
-#: addons/financoop/assets/addon.bundle.js:3310
-#: addons/google-sheets/assets/addon.bundle.js:3337
-#: addons/odoo/assets/addon.bundle.js:3328
-#: addons/rest-api/assets/addon.bundle.js:3310
-#: addons/zoho/assets/addon.bundle.js:3328
+#: addons/bigin/assets/addon.bundle.js:4166
+#: addons/brevo/assets/addon.bundle.js:4148
+#: addons/dolibarr/assets/addon.bundle.js:4148
+#: addons/financoop/assets/addon.bundle.js:4148
+#: addons/gsheets/assets/addon.bundle.js:4175
+#: addons/holded/assets/addon.bundle.js:4148
+#: addons/listmonk/assets/addon.bundle.js:4148
+#: addons/mailchimp/assets/addon.bundle.js:4148
+#: addons/odoo/assets/addon.bundle.js:4166
+#: addons/rest-api/assets/addon.bundle.js:4148
+#: addons/zoho/assets/addon.bundle.js:4166
 msgid "The value is too small"
 msgstr ""
 
-#: addons/financoop/jobs/vat-id.php:30 addons/odoo/jobs/vat-id.php:30
-msgid "The vat ID prefix is invalid"
-msgstr ""
-
-#: includes/class-form-bridge-template.php:647
-msgid "There is a problem with the template data"
-msgstr ""
-
-#: addons/financoop/assets/addon.bundle.js:3950
-msgid ""
-"There is no active campaign. This can happens due to a wrong backend "
-"connexion, or because you have no active campaigns on your FinanCoop module. "
-"Please, fix this issue before createing new bridges."
-msgstr ""
-
-#: addons/dolibarr/jobs/thirdparty-id.php:73
-msgid "Thirdparty ID"
-msgstr ""
-
-#: integrations/wpcf7/class-integration.php:502
-msgid ""
-"This are the responses to the contact form:\n"
-"\n"
-msgstr ""
-
-#. translators: 1: blog name, 2: blog URL
-#: integrations/wpcf7/class-integration.php:514
-msgid ""
-"This is a notification that a contact form was submitted on your website "
-"(%1$s %2$s)."
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2930
-#: addons/dolibarr/assets/addon.bundle.js:3094
-#: addons/dolibarr/assets/addon.bundle.js:3529
-#: addons/dolibarr/assets/addon.bundle.js:3652
-#: addons/dolibarr/assets/addon.bundle.js:4030
-#: addons/dolibarr/assets/addon.bundle.js:4294
-#: addons/dolibarr/assets/addon.bundle.js:4411
-#: addons/financoop/assets/addon.bundle.js:2930
-#: addons/financoop/assets/addon.bundle.js:3094
-#: addons/financoop/assets/addon.bundle.js:3511
-#: addons/financoop/assets/addon.bundle.js:3634
-#: addons/google-sheets/assets/addon.bundle.js:2957
-#: addons/google-sheets/assets/addon.bundle.js:3121
-#: addons/google-sheets/assets/addon.bundle.js:3538
-#: addons/google-sheets/assets/addon.bundle.js:3661
-#: addons/odoo/assets/addon.bundle.js:2930
-#: addons/odoo/assets/addon.bundle.js:3094
-#: addons/odoo/assets/addon.bundle.js:3529
-#: addons/odoo/assets/addon.bundle.js:3652
-#: addons/odoo/assets/addon.bundle.js:4027
-#: addons/odoo/assets/addon.bundle.js:4296
-#: addons/odoo/assets/addon.bundle.js:4423
-#: addons/rest-api/assets/addon.bundle.js:2930
-#: addons/rest-api/assets/addon.bundle.js:3094
-#: addons/rest-api/assets/addon.bundle.js:3511
-#: addons/rest-api/assets/addon.bundle.js:3634
-#: addons/zoho/assets/addon.bundle.js:2930
-#: addons/zoho/assets/addon.bundle.js:3094
-#: addons/zoho/assets/addon.bundle.js:3529
-#: addons/zoho/assets/addon.bundle.js:3652
-#: addons/zoho/assets/addon.bundle.js:4040
-#: addons/zoho/assets/addon.bundle.js:4335
-#: addons/zoho/assets/addon.bundle.js:4472 assets/plugin.bundle.js:771
+#: addons/bigin/assets/addon.bundle.js:3780
+#: addons/bigin/assets/addon.bundle.js:3932
+#: addons/bigin/assets/addon.bundle.js:4451
+#: addons/bigin/assets/addon.bundle.js:4642
+#: addons/bigin/assets/addon.bundle.js:5077
+#: addons/bigin/assets/addon.bundle.js:5501
+#: addons/bigin/assets/addon.bundle.js:5602
+#: addons/brevo/assets/addon.bundle.js:3780
+#: addons/brevo/assets/addon.bundle.js:3932
+#: addons/brevo/assets/addon.bundle.js:4433
+#: addons/brevo/assets/addon.bundle.js:4624
+#: addons/dolibarr/assets/addon.bundle.js:3780
+#: addons/dolibarr/assets/addon.bundle.js:3932
+#: addons/dolibarr/assets/addon.bundle.js:4433
+#: addons/dolibarr/assets/addon.bundle.js:4624
+#: addons/financoop/assets/addon.bundle.js:3780
+#: addons/financoop/assets/addon.bundle.js:3932
+#: addons/financoop/assets/addon.bundle.js:4433
+#: addons/financoop/assets/addon.bundle.js:4624
+#: addons/gsheets/assets/addon.bundle.js:3807
+#: addons/gsheets/assets/addon.bundle.js:3959
+#: addons/gsheets/assets/addon.bundle.js:4460
+#: addons/gsheets/assets/addon.bundle.js:4651
+#: addons/holded/assets/addon.bundle.js:3780
+#: addons/holded/assets/addon.bundle.js:3932
+#: addons/holded/assets/addon.bundle.js:4433
+#: addons/holded/assets/addon.bundle.js:4624
+#: addons/listmonk/assets/addon.bundle.js:3780
+#: addons/listmonk/assets/addon.bundle.js:3932
+#: addons/listmonk/assets/addon.bundle.js:4433
+#: addons/listmonk/assets/addon.bundle.js:4624
+#: addons/mailchimp/assets/addon.bundle.js:3780
+#: addons/mailchimp/assets/addon.bundle.js:3932
+#: addons/mailchimp/assets/addon.bundle.js:4433
+#: addons/mailchimp/assets/addon.bundle.js:4624
+#: addons/odoo/assets/addon.bundle.js:3780
+#: addons/odoo/assets/addon.bundle.js:3932
+#: addons/odoo/assets/addon.bundle.js:4451
+#: addons/odoo/assets/addon.bundle.js:4642
+#: addons/odoo/assets/addon.bundle.js:5077
+#: addons/odoo/assets/addon.bundle.js:5587
+#: addons/odoo/assets/addon.bundle.js:5689
+#: addons/rest-api/assets/addon.bundle.js:3780
+#: addons/rest-api/assets/addon.bundle.js:3932
+#: addons/rest-api/assets/addon.bundle.js:4433
+#: addons/rest-api/assets/addon.bundle.js:4624
+#: addons/zoho/assets/addon.bundle.js:3780
+#: addons/zoho/assets/addon.bundle.js:3932
+#: addons/zoho/assets/addon.bundle.js:4451
+#: addons/zoho/assets/addon.bundle.js:4642
+#: addons/zoho/assets/addon.bundle.js:5077
+#: addons/zoho/assets/addon.bundle.js:5501
+#: addons/zoho/assets/addon.bundle.js:5602
+#: assets/plugin.bundle.js:771
 #: assets/plugin.bundle.js:852
 msgid "This name is already in use"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:224 includes/data/country-codes.php:231
-msgid "Timor-Leste"
-msgstr ""
-
-#: addons/zoho/templates/bigin-companies.php:116
-#: addons/zoho/templates/bigin-deals.php:221
-msgid "Title"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:1526
-#: addons/financoop/assets/addon.bundle.js:1526
-#: addons/google-sheets/assets/addon.bundle.js:1553
-#: addons/odoo/assets/addon.bundle.js:1526
-#: addons/rest-api/assets/addon.bundle.js:1526
-#: addons/zoho/assets/addon.bundle.js:1526
+#: addons/bigin/assets/addon.bundle.js:2682
+#: addons/brevo/assets/addon.bundle.js:2682
+#: addons/dolibarr/assets/addon.bundle.js:2682
+#: addons/financoop/assets/addon.bundle.js:2682
+#: addons/gsheets/assets/addon.bundle.js:2709
+#: addons/holded/assets/addon.bundle.js:2682
+#: addons/listmonk/assets/addon.bundle.js:2682
+#: addons/mailchimp/assets/addon.bundle.js:2682
+#: addons/odoo/assets/addon.bundle.js:2682
+#: addons/rest-api/assets/addon.bundle.js:2682
+#: addons/zoho/assets/addon.bundle.js:2682
 msgid "To"
 msgstr ""
 
-#: addons/dolibarr/templates/company-prospects.php:37
-#: addons/dolibarr/templates/individual-prospects.php:35
-msgid "To contact"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:225 includes/data/country-codes.php:224
-msgid "Togo"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:226 includes/data/country-codes.php:227
-msgid "Tokelau"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:227 includes/data/country-codes.php:230
-msgid "Tonga"
-msgstr ""
-
-#: addons/rest-api/templates/mailchimp-contacts.php:187
-msgid "Transactional"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:228 includes/data/country-codes.php:233
-msgid "Trinidad and Tobago"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:229 includes/data/country-codes.php:229
-msgid "Tunisia"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:230 includes/data/country-codes.php:232
-msgid "Turkey"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:231 includes/data/country-codes.php:228
-msgid "Turkmenistan"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:232 includes/data/country-codes.php:221
-msgid "Turks and Caicos Islands"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:233 includes/data/country-codes.php:234
-msgid "Tuvalu"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:1348
-#: addons/financoop/assets/addon.bundle.js:1348
-#: addons/google-sheets/assets/addon.bundle.js:1375
-#: addons/odoo/assets/addon.bundle.js:1348
-#: addons/rest-api/assets/addon.bundle.js:1348
-#: addons/zoho/assets/addon.bundle.js:1348
+#: addons/bigin/assets/addon.bundle.js:2475
+#: addons/brevo/assets/addon.bundle.js:2475
+#: addons/dolibarr/assets/addon.bundle.js:2475
+#: addons/financoop/assets/addon.bundle.js:2475
+#: addons/gsheets/assets/addon.bundle.js:2502
+#: addons/holded/assets/addon.bundle.js:2475
+#: addons/listmonk/assets/addon.bundle.js:2475
+#: addons/mailchimp/assets/addon.bundle.js:2475
+#: addons/odoo/assets/addon.bundle.js:2475
+#: addons/rest-api/assets/addon.bundle.js:2475
+#: addons/zoho/assets/addon.bundle.js:2475
 msgid "Type mutations"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:234 includes/data/country-codes.php:238
-msgid "Uganda"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:235 includes/data/country-codes.php:237
-msgid "Ukraine"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:236 includes/data/country-codes.php:10
-msgid "United Arab Emirates"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:237 includes/data/country-codes.php:239
-msgid "United Kingdom"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:238 includes/data/country-codes.php:241
-msgid "United States"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:239
-msgid "United States Minor Outlying Islands"
-msgstr ""
-
-#: addons/odoo/class-odoo-form-bridge.php:77
-msgid "Unkown HTTP response content type %s"
-msgstr ""
-
-#: addons/rest-api/templates/mailchimp-contacts.php:175
-msgid "Unsubscribed"
-msgstr ""
-
-#: addons/google-sheets/assets/addon.bundle.js:4258
+#: addons/gsheets/assets/addon.bundle.js:5310
 msgid "Upload credentials"
 msgstr ""
 
-#: addons/rest-api/templates/brevo-contacts-doi.php:82
-msgid ""
-"URL of the web page that user will be redirected to after clicking on the "
-"double opt in URL"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:240 includes/data/country-codes.php:242
-msgid "Uruguay"
-msgstr ""
-
-#: includes/data/country-codes.php:240
-msgid "USA Minor Outlying Islands"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2767
-#: addons/financoop/assets/addon.bundle.js:2767
-#: addons/google-sheets/assets/addon.bundle.js:2794
-#: addons/odoo/assets/addon.bundle.js:2767
-#: addons/rest-api/assets/addon.bundle.js:2767
-#: addons/zoho/assets/addon.bundle.js:2767
+#: addons/bigin/assets/addon.bundle.js:3609
+#: addons/brevo/assets/addon.bundle.js:3609
+#: addons/dolibarr/assets/addon.bundle.js:3609
+#: addons/financoop/assets/addon.bundle.js:3609
+#: addons/gsheets/assets/addon.bundle.js:3636
+#: addons/holded/assets/addon.bundle.js:3609
+#: addons/listmonk/assets/addon.bundle.js:3609
+#: addons/mailchimp/assets/addon.bundle.js:3609
+#: addons/odoo/assets/addon.bundle.js:3609
+#: addons/rest-api/assets/addon.bundle.js:3609
+#: addons/zoho/assets/addon.bundle.js:3609
 msgid "Use tempalte"
 msgstr ""
 
-#: addons/zoho/assets/addon.bundle.js:4700
-msgid ""
-"Use WordPress as the frontend of your CRM and don't let any lead slip "
-"through your fingers"
+#: addons/bigin/assets/addon.bundle.js:5819
+#: addons/zoho/assets/addon.bundle.js:5819
+msgid "Use WordPress as the frontend of your CRM and don't let any lead slip through your fingers"
 msgstr ""
 
-#: addons/odoo/assets/addon.bundle.js:4317
-#: addons/odoo/assets/addon.bundle.js:4444
-msgid "User"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:241 includes/data/country-codes.php:243
-msgid "Uzbekistan"
-msgstr ""
-
-#: addons/rest-api/jobs/mailchimp-contact-status.php:20
-msgid "Validates contact status value or sets subscribed as its default value"
-msgstr ""
-
-#: integrations/ninja/class-integration.php:692 assets/plugin.bundle.js:687
+#: addons/bigin/assets/addon.bundle.js:1466
+#: addons/brevo/assets/addon.bundle.js:1466
+#: addons/dolibarr/assets/addon.bundle.js:1466
+#: addons/financoop/assets/addon.bundle.js:1466
+#: addons/gsheets/assets/addon.bundle.js:1493
+#: addons/holded/assets/addon.bundle.js:1466
+#: addons/listmonk/assets/addon.bundle.js:1466
+#: addons/mailchimp/assets/addon.bundle.js:1466
+#: addons/odoo/assets/addon.bundle.js:1466
+#: addons/rest-api/assets/addon.bundle.js:1466
+#: addons/zoho/assets/addon.bundle.js:1466
+#: assets/plugin.bundle.js:687
 msgid "Value"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:242 includes/data/country-codes.php:250
-msgid "Vanuatu"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:243 includes/data/country-codes.php:246
-msgid "Venezuela"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:244
-msgid "Viet Nam"
-msgstr ""
-
-#: includes/data/country-codes.php:249
-msgid "Vietnam"
-msgstr ""
-
-#: includes/data/country-codes.php:247
-msgid "Virgin Islands (British)"
-msgstr ""
-
-#: includes/data/country-codes.php:248
-msgid "Virgin Islands (USA)"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:245
-msgid "Virgin Islands, British"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:246
-msgid "Virgin Islands, U.S."
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:247 includes/data/country-codes.php:251
-msgid "Wallis and Futuna"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:105
-#: addons/dolibarr/templates/thirdparty-appointments.php:105
-#: addons/odoo/templates/appointments.php:85
-#: addons/zoho/templates/bigin-appointments.php:82
-msgid "Web Appointment"
-msgstr ""
-
-#: addons/dolibarr/templates/appointments.php:64
-#: addons/dolibarr/templates/thirdparty-appointments.php:64
-msgid "Web Appointments"
-msgstr ""
-
-#: addons/odoo/templates/crm-company-leads.php:77
-#: addons/odoo/templates/crm-leads.php:75
-#: addons/odoo/templates/crm-team-leads.php:32
-msgid "Web Lead"
-msgstr ""
-
-#: addons/zoho/templates/crm-meetings.php:27
-msgid "Web Meetting"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:248 includes/data/country-codes.php:74
-msgid "Western Sahara"
-msgstr ""
-
-#: assets/plugin.bundle.js:1150
-msgid ""
-"When debug mode is activated, logs will be write to the log file and readed "
-"from there. Make sure to deactivate the debug mode once you've done to erase "
-"this file contents."
+#: assets/plugin.bundle.js:1186
+msgid "When debug mode is activated, logs will be write to the log file and readed from there. Make sure to deactivate the debug mode once you've done to erase this file contents."
 msgstr ""
 
 #: assets/plugin.bundle.js
 msgid "woo"
 msgstr "WooCommerce"
 
-#: integrations/woo/class-integration.php:67
-msgid "Woo Checkout"
-msgstr ""
-
-#: addons/dolibarr/assets/addon.bundle.js:2627
-#: addons/financoop/assets/addon.bundle.js:2627
-#: addons/google-sheets/assets/addon.bundle.js:2654
-#: addons/odoo/assets/addon.bundle.js:2627
-#: addons/rest-api/assets/addon.bundle.js:2627
-#: addons/zoho/assets/addon.bundle.js:2627
+#: addons/bigin/assets/addon.bundle.js:3461
+#: addons/brevo/assets/addon.bundle.js:3461
+#: addons/dolibarr/assets/addon.bundle.js:3461
+#: addons/financoop/assets/addon.bundle.js:3461
+#: addons/gsheets/assets/addon.bundle.js:3488
+#: addons/holded/assets/addon.bundle.js:3461
+#: addons/listmonk/assets/addon.bundle.js:3461
+#: addons/mailchimp/assets/addon.bundle.js:3461
+#: addons/odoo/assets/addon.bundle.js:3461
+#: addons/rest-api/assets/addon.bundle.js:3461
+#: addons/zoho/assets/addon.bundle.js:3461
 msgid "Workflow"
-msgstr ""
-
-#: includes/class-rest-settings-controller.php:242
-msgid "Workflow job not found"
-msgstr ""
-
-#: includes/class-rest-settings-controller.php:273
-msgid "Workflow jobs not found"
 msgstr ""
 
 #: assets/plugin.bundle.js
@@ -3854,127 +1411,547 @@ msgstr "Contact Form 7"
 msgid "wpforms"
 msgstr "WPForms"
 
-#: addons/dolibarr/country-codes.php:249 includes/data/country-codes.php:253
-msgid "Yemen"
+#: addons/gsheets/assets/addon.bundle.js:5285
+msgid "You have to create a service account credentials to grant Forms Bridge access to your spreadsheets. Follow this <a href='https://github.com/juampynr/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>example</a> if you need help with the process."
 msgstr ""
 
-#: addons/rest-api/templates/mailchimp-contacts.php:157
-msgid "You can find the ID on the settings tab of your segments"
-msgstr ""
-
-#: addons/rest-api/templates/brevo-contacts-doi.php:45
-#: addons/rest-api/templates/brevo-contacts.php:45
-#: addons/rest-api/templates/mailchimp-contacts.php:80
-msgid ""
-"You can get it from \"SMTP & API\" > \"API Keys\" page from your dashboard"
-msgstr ""
-
-#: addons/google-sheets/class-gs-rest-controller.php:61
-msgid "You can't manage wp options"
-msgstr ""
-
-#: addons/zoho/templates/bigin-appointments.php:29
-#: addons/zoho/templates/bigin-companies.php:30
-#: addons/zoho/templates/bigin-contacts.php:30
-#: addons/zoho/templates/bigin-deals.php:33
-#: addons/zoho/templates/crm-company-leads.php:107
-#: addons/zoho/templates/crm-contacts.php:32
-#: addons/zoho/templates/crm-leads.php:107
-#: addons/zoho/templates/crm-meetings.php:112
-msgid ""
-"You have to create a Self-Client Application on the Zoho Developer Console "
-"and get the Client ID"
-msgstr ""
-
-#: addons/zoho/templates/bigin-appointments.php:38
-#: addons/zoho/templates/bigin-companies.php:41
-#: addons/zoho/templates/bigin-contacts.php:41
-#: addons/zoho/templates/bigin-deals.php:42
-#: addons/zoho/templates/crm-company-leads.php:118
-#: addons/zoho/templates/crm-contacts.php:43
-#: addons/zoho/templates/crm-leads.php:118
-#: addons/zoho/templates/crm-meetings.php:123
-msgid ""
-"You have to create a Self-Client Application on the Zoho Developer Console "
-"and get the Client Secret"
-msgstr ""
-
-#: addons/google-sheets/assets/addon.bundle.js:4233
-msgid ""
-"You have to create a service account credentials to grant Forms Bridge "
-"access to your spreadsheets. Follow this <a href='https://github."
-"com/juampynr/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>"
-"example</a> if you need help with the process."
-msgstr ""
-
-#: addons/odoo/templates/appointments.php:167
-#: addons/odoo/templates/company-contacts.php:84
-#: addons/odoo/templates/contacts.php:43
-#: addons/odoo/templates/crm-company-leads.php:193
-#: addons/odoo/templates/crm-leads.php:136
-#: addons/odoo/templates/crm-team-leads.php:88
-#: addons/rest-api/templates/brevo-contacts-doi.php:108
-#: addons/rest-api/templates/brevo-contacts.php:78
-#: addons/rest-api/templates/listmonk-contacts.php:77
-#: addons/rest-api/templates/mailchimp-contacts.php:205
-msgid "Your email"
-msgstr ""
-
-#: addons/rest-api/templates/brevo-contacts-doi.php:114
-#: addons/rest-api/templates/brevo-contacts.php:84
-#: addons/rest-api/templates/mailchimp-contacts.php:211
-msgid "Your first name"
-msgstr ""
-
-#: addons/rest-api/templates/brevo-contacts-doi.php:120
-#: addons/rest-api/templates/brevo-contacts.php:90
-#: addons/rest-api/templates/mailchimp-contacts.php:216
-msgid "Your last name"
-msgstr ""
-
-#: addons/odoo/templates/appointments.php:161
-#: addons/odoo/templates/company-contacts.php:72
-#: addons/odoo/templates/contacts.php:37
-#: addons/odoo/templates/crm-company-leads.php:181
-#: addons/odoo/templates/crm-leads.php:130
-#: addons/odoo/templates/crm-team-leads.php:82
-#: addons/rest-api/templates/listmonk-contacts.php:83
-msgid "Your name"
-msgstr ""
-
-#: addons/odoo/templates/appointments.php:173
-#: addons/odoo/templates/company-contacts.php:90
-#: addons/odoo/templates/contacts.php:49
-#: addons/odoo/templates/crm-company-leads.php:199
-#: addons/odoo/templates/crm-leads.php:142
-#: addons/odoo/templates/crm-team-leads.php:94
-msgid "Your phone"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:250 includes/data/country-codes.php:256
-msgid "Zambia"
-msgstr ""
-
-#: addons/dolibarr/country-codes.php:251 includes/data/country-codes.php:257
-msgid "Zimbabwe"
-msgstr ""
-
-#: addons/financoop/templates/loan-request.php:145
-#: addons/financoop/templates/subscription-request.php:158
-#: addons/odoo/templates/company-contacts.php:53
-#: addons/odoo/templates/contacts.php:64
-#: addons/odoo/templates/crm-company-leads.php:162
-msgid "Zip code"
-msgstr ""
-
-#: assets/plugin.bundle.js addons/zoho/assets/addon.bundle.js:4785
+#: assets/plugin.bundle.js
+#: addons/zoho/assets/addon.bundle.js:5905
 msgid "zoho"
 msgstr "Zoho"
 
-#: addons/zoho/jobs/tags.php:26
-msgid "Zoho tags"
+#: addons/bigin/assets/addon.bundle.js:1228
+#: addons/brevo/assets/addon.bundle.js:1228
+#: addons/dolibarr/assets/addon.bundle.js:1228
+#: addons/financoop/assets/addon.bundle.js:1228
+#: addons/gsheets/assets/addon.bundle.js:1255
+#: addons/holded/assets/addon.bundle.js:1228
+#: addons/listmonk/assets/addon.bundle.js:1228
+#: addons/mailchimp/assets/addon.bundle.js:1228
+#: addons/odoo/assets/addon.bundle.js:1228
+#: addons/rest-api/assets/addon.bundle.js:1228
+#: addons/zoho/assets/addon.bundle.js:1228
+msgid "Form ID"
 msgstr ""
 
-#: addons/dolibarr/country-codes.php:10 includes/data/country-codes.php:23
-msgid "Åland Islands"
+#: addons/bigin/assets/addon.bundle.js:1236
+#: addons/brevo/assets/addon.bundle.js:1236
+#: addons/dolibarr/assets/addon.bundle.js:1236
+#: addons/financoop/assets/addon.bundle.js:1236
+#: addons/gsheets/assets/addon.bundle.js:1263
+#: addons/holded/assets/addon.bundle.js:1236
+#: addons/listmonk/assets/addon.bundle.js:1236
+#: addons/mailchimp/assets/addon.bundle.js:1236
+#: addons/odoo/assets/addon.bundle.js:1236
+#: addons/rest-api/assets/addon.bundle.js:1236
+#: addons/zoho/assets/addon.bundle.js:1236
+msgid "Site title"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1240
+#: addons/brevo/assets/addon.bundle.js:1240
+#: addons/dolibarr/assets/addon.bundle.js:1240
+#: addons/financoop/assets/addon.bundle.js:1240
+#: addons/gsheets/assets/addon.bundle.js:1267
+#: addons/holded/assets/addon.bundle.js:1240
+#: addons/listmonk/assets/addon.bundle.js:1240
+#: addons/mailchimp/assets/addon.bundle.js:1240
+#: addons/odoo/assets/addon.bundle.js:1240
+#: addons/rest-api/assets/addon.bundle.js:1240
+#: addons/zoho/assets/addon.bundle.js:1240
+msgid "Site description"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1244
+#: addons/brevo/assets/addon.bundle.js:1244
+#: addons/dolibarr/assets/addon.bundle.js:1244
+#: addons/financoop/assets/addon.bundle.js:1244
+#: addons/gsheets/assets/addon.bundle.js:1271
+#: addons/holded/assets/addon.bundle.js:1244
+#: addons/listmonk/assets/addon.bundle.js:1244
+#: addons/mailchimp/assets/addon.bundle.js:1244
+#: addons/odoo/assets/addon.bundle.js:1244
+#: addons/rest-api/assets/addon.bundle.js:1244
+#: addons/zoho/assets/addon.bundle.js:1244
+msgid "Site URL"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1248
+#: addons/brevo/assets/addon.bundle.js:1248
+#: addons/dolibarr/assets/addon.bundle.js:1248
+#: addons/financoop/assets/addon.bundle.js:1248
+#: addons/gsheets/assets/addon.bundle.js:1275
+#: addons/holded/assets/addon.bundle.js:1248
+#: addons/listmonk/assets/addon.bundle.js:1248
+#: addons/mailchimp/assets/addon.bundle.js:1248
+#: addons/odoo/assets/addon.bundle.js:1248
+#: addons/rest-api/assets/addon.bundle.js:1248
+#: addons/zoho/assets/addon.bundle.js:1248
+msgid "Blog URL"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1252
+#: addons/brevo/assets/addon.bundle.js:1252
+#: addons/dolibarr/assets/addon.bundle.js:1252
+#: addons/financoop/assets/addon.bundle.js:1252
+#: addons/gsheets/assets/addon.bundle.js:1279
+#: addons/holded/assets/addon.bundle.js:1252
+#: addons/listmonk/assets/addon.bundle.js:1252
+#: addons/mailchimp/assets/addon.bundle.js:1252
+#: addons/odoo/assets/addon.bundle.js:1252
+#: addons/rest-api/assets/addon.bundle.js:1252
+#: addons/zoho/assets/addon.bundle.js:1252
+msgid "Admin email"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1256
+#: addons/brevo/assets/addon.bundle.js:1256
+#: addons/dolibarr/assets/addon.bundle.js:1256
+#: addons/financoop/assets/addon.bundle.js:1256
+#: addons/gsheets/assets/addon.bundle.js:1283
+#: addons/holded/assets/addon.bundle.js:1256
+#: addons/listmonk/assets/addon.bundle.js:1256
+#: addons/mailchimp/assets/addon.bundle.js:1256
+#: addons/odoo/assets/addon.bundle.js:1256
+#: addons/rest-api/assets/addon.bundle.js:1256
+#: addons/zoho/assets/addon.bundle.js:1256
+msgid "WP Version"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1268
+#: addons/brevo/assets/addon.bundle.js:1268
+#: addons/dolibarr/assets/addon.bundle.js:1268
+#: addons/financoop/assets/addon.bundle.js:1268
+#: addons/gsheets/assets/addon.bundle.js:1295
+#: addons/holded/assets/addon.bundle.js:1268
+#: addons/listmonk/assets/addon.bundle.js:1268
+#: addons/mailchimp/assets/addon.bundle.js:1268
+#: addons/odoo/assets/addon.bundle.js:1268
+#: addons/rest-api/assets/addon.bundle.js:1268
+#: addons/zoho/assets/addon.bundle.js:1268
+msgid "User agent"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1272
+#: addons/brevo/assets/addon.bundle.js:1272
+#: addons/dolibarr/assets/addon.bundle.js:1272
+#: addons/financoop/assets/addon.bundle.js:1272
+#: addons/gsheets/assets/addon.bundle.js:1299
+#: addons/holded/assets/addon.bundle.js:1272
+#: addons/listmonk/assets/addon.bundle.js:1272
+#: addons/mailchimp/assets/addon.bundle.js:1272
+#: addons/odoo/assets/addon.bundle.js:1272
+#: addons/rest-api/assets/addon.bundle.js:1272
+#: addons/zoho/assets/addon.bundle.js:1272
+msgid "Browser locale"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1276
+#: addons/brevo/assets/addon.bundle.js:1276
+#: addons/dolibarr/assets/addon.bundle.js:1276
+#: addons/financoop/assets/addon.bundle.js:1276
+#: addons/gsheets/assets/addon.bundle.js:1303
+#: addons/holded/assets/addon.bundle.js:1276
+#: addons/listmonk/assets/addon.bundle.js:1276
+#: addons/mailchimp/assets/addon.bundle.js:1276
+#: addons/odoo/assets/addon.bundle.js:1276
+#: addons/rest-api/assets/addon.bundle.js:1276
+#: addons/zoho/assets/addon.bundle.js:1276
+msgid "Page locale"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1280
+#: addons/brevo/assets/addon.bundle.js:1280
+#: addons/dolibarr/assets/addon.bundle.js:1280
+#: addons/financoop/assets/addon.bundle.js:1280
+#: addons/gsheets/assets/addon.bundle.js:1307
+#: addons/holded/assets/addon.bundle.js:1280
+#: addons/listmonk/assets/addon.bundle.js:1280
+#: addons/mailchimp/assets/addon.bundle.js:1280
+#: addons/odoo/assets/addon.bundle.js:1280
+#: addons/rest-api/assets/addon.bundle.js:1280
+#: addons/zoho/assets/addon.bundle.js:1280
+msgid "Page language"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1284
+#: addons/brevo/assets/addon.bundle.js:1284
+#: addons/dolibarr/assets/addon.bundle.js:1284
+#: addons/financoop/assets/addon.bundle.js:1284
+#: addons/gsheets/assets/addon.bundle.js:1311
+#: addons/holded/assets/addon.bundle.js:1284
+#: addons/listmonk/assets/addon.bundle.js:1284
+#: addons/mailchimp/assets/addon.bundle.js:1284
+#: addons/odoo/assets/addon.bundle.js:1284
+#: addons/rest-api/assets/addon.bundle.js:1284
+#: addons/zoho/assets/addon.bundle.js:1284
+msgid "Datetime"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1288
+#: addons/brevo/assets/addon.bundle.js:1288
+#: addons/dolibarr/assets/addon.bundle.js:1288
+#: addons/financoop/assets/addon.bundle.js:1288
+#: addons/gsheets/assets/addon.bundle.js:1315
+#: addons/holded/assets/addon.bundle.js:1288
+#: addons/listmonk/assets/addon.bundle.js:1288
+#: addons/mailchimp/assets/addon.bundle.js:1288
+#: addons/odoo/assets/addon.bundle.js:1288
+#: addons/rest-api/assets/addon.bundle.js:1288
+#: addons/zoho/assets/addon.bundle.js:1288
+msgid "ISO Date"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1292
+#: addons/brevo/assets/addon.bundle.js:1292
+#: addons/dolibarr/assets/addon.bundle.js:1292
+#: addons/financoop/assets/addon.bundle.js:1292
+#: addons/gsheets/assets/addon.bundle.js:1319
+#: addons/holded/assets/addon.bundle.js:1292
+#: addons/listmonk/assets/addon.bundle.js:1292
+#: addons/mailchimp/assets/addon.bundle.js:1292
+#: addons/odoo/assets/addon.bundle.js:1292
+#: addons/rest-api/assets/addon.bundle.js:1292
+#: addons/zoho/assets/addon.bundle.js:1292
+msgid "Timestamp"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1296
+#: addons/brevo/assets/addon.bundle.js:1296
+#: addons/dolibarr/assets/addon.bundle.js:1296
+#: addons/financoop/assets/addon.bundle.js:1296
+#: addons/gsheets/assets/addon.bundle.js:1323
+#: addons/holded/assets/addon.bundle.js:1296
+#: addons/listmonk/assets/addon.bundle.js:1296
+#: addons/mailchimp/assets/addon.bundle.js:1296
+#: addons/odoo/assets/addon.bundle.js:1296
+#: addons/rest-api/assets/addon.bundle.js:1296
+#: addons/zoho/assets/addon.bundle.js:1296
+msgid "User ID"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1300
+#: addons/brevo/assets/addon.bundle.js:1300
+#: addons/dolibarr/assets/addon.bundle.js:1300
+#: addons/financoop/assets/addon.bundle.js:1300
+#: addons/gsheets/assets/addon.bundle.js:1327
+#: addons/holded/assets/addon.bundle.js:1300
+#: addons/listmonk/assets/addon.bundle.js:1300
+#: addons/mailchimp/assets/addon.bundle.js:1300
+#: addons/odoo/assets/addon.bundle.js:1300
+#: addons/rest-api/assets/addon.bundle.js:1300
+#: addons/zoho/assets/addon.bundle.js:1300
+msgid "user_login"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1304
+#: addons/brevo/assets/addon.bundle.js:1304
+#: addons/dolibarr/assets/addon.bundle.js:1304
+#: addons/financoop/assets/addon.bundle.js:1304
+#: addons/gsheets/assets/addon.bundle.js:1331
+#: addons/holded/assets/addon.bundle.js:1304
+#: addons/listmonk/assets/addon.bundle.js:1304
+#: addons/mailchimp/assets/addon.bundle.js:1304
+#: addons/odoo/assets/addon.bundle.js:1304
+#: addons/rest-api/assets/addon.bundle.js:1304
+#: addons/zoho/assets/addon.bundle.js:1304
+msgid "User name"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1308
+#: addons/brevo/assets/addon.bundle.js:1308
+#: addons/dolibarr/assets/addon.bundle.js:1308
+#: addons/financoop/assets/addon.bundle.js:1308
+#: addons/gsheets/assets/addon.bundle.js:1335
+#: addons/holded/assets/addon.bundle.js:1308
+#: addons/listmonk/assets/addon.bundle.js:1308
+#: addons/mailchimp/assets/addon.bundle.js:1308
+#: addons/odoo/assets/addon.bundle.js:1308
+#: addons/odoo/assets/addon.bundle.js:5607
+#: addons/odoo/assets/addon.bundle.js:5709
+#: addons/rest-api/assets/addon.bundle.js:1308
+#: addons/zoho/assets/addon.bundle.js:1308
+msgid "User email"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1505
+#: addons/bigin/assets/addon.bundle.js:2739
+#: addons/brevo/assets/addon.bundle.js:1505
+#: addons/brevo/assets/addon.bundle.js:2739
+#: addons/dolibarr/assets/addon.bundle.js:1505
+#: addons/dolibarr/assets/addon.bundle.js:2739
+#: addons/financoop/assets/addon.bundle.js:1505
+#: addons/financoop/assets/addon.bundle.js:2739
+#: addons/gsheets/assets/addon.bundle.js:1532
+#: addons/gsheets/assets/addon.bundle.js:2766
+#: addons/holded/assets/addon.bundle.js:1505
+#: addons/holded/assets/addon.bundle.js:2739
+#: addons/listmonk/assets/addon.bundle.js:1505
+#: addons/listmonk/assets/addon.bundle.js:2739
+#: addons/mailchimp/assets/addon.bundle.js:1505
+#: addons/mailchimp/assets/addon.bundle.js:2739
+#: addons/odoo/assets/addon.bundle.js:1505
+#: addons/odoo/assets/addon.bundle.js:2739
+#: addons/rest-api/assets/addon.bundle.js:1505
+#: addons/rest-api/assets/addon.bundle.js:2739
+#: addons/zoho/assets/addon.bundle.js:1505
+#: addons/zoho/assets/addon.bundle.js:2739
+msgid "Fields"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1544
+#: addons/brevo/assets/addon.bundle.js:1544
+#: addons/dolibarr/assets/addon.bundle.js:1544
+#: addons/financoop/assets/addon.bundle.js:1544
+#: addons/gsheets/assets/addon.bundle.js:1571
+#: addons/holded/assets/addon.bundle.js:1544
+#: addons/listmonk/assets/addon.bundle.js:1544
+#: addons/mailchimp/assets/addon.bundle.js:1544
+#: addons/odoo/assets/addon.bundle.js:1544
+#: addons/rest-api/assets/addon.bundle.js:1544
+#: addons/zoho/assets/addon.bundle.js:1544
+msgid "Tags"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1648
+#: addons/bigin/assets/addon.bundle.js:1652
+#: addons/brevo/assets/addon.bundle.js:1648
+#: addons/brevo/assets/addon.bundle.js:1652
+#: addons/dolibarr/assets/addon.bundle.js:1648
+#: addons/dolibarr/assets/addon.bundle.js:1652
+#: addons/financoop/assets/addon.bundle.js:1648
+#: addons/financoop/assets/addon.bundle.js:1652
+#: addons/gsheets/assets/addon.bundle.js:1675
+#: addons/gsheets/assets/addon.bundle.js:1679
+#: addons/holded/assets/addon.bundle.js:1648
+#: addons/holded/assets/addon.bundle.js:1652
+#: addons/listmonk/assets/addon.bundle.js:1648
+#: addons/listmonk/assets/addon.bundle.js:1652
+#: addons/mailchimp/assets/addon.bundle.js:1648
+#: addons/mailchimp/assets/addon.bundle.js:1652
+#: addons/odoo/assets/addon.bundle.js:1648
+#: addons/odoo/assets/addon.bundle.js:1652
+#: addons/rest-api/assets/addon.bundle.js:1648
+#: addons/rest-api/assets/addon.bundle.js:1652
+#: addons/zoho/assets/addon.bundle.js:1648
+#: addons/zoho/assets/addon.bundle.js:1652
+msgid "Custom fields"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:1663
+#: addons/brevo/assets/addon.bundle.js:1663
+#: addons/dolibarr/assets/addon.bundle.js:1663
+#: addons/financoop/assets/addon.bundle.js:1663
+#: addons/gsheets/assets/addon.bundle.js:1690
+#: addons/holded/assets/addon.bundle.js:1663
+#: addons/listmonk/assets/addon.bundle.js:1663
+#: addons/mailchimp/assets/addon.bundle.js:1663
+#: addons/odoo/assets/addon.bundle.js:1663
+#: addons/rest-api/assets/addon.bundle.js:1663
+#: addons/zoho/assets/addon.bundle.js:1663
+msgid "Add custom fields to the form submission payload"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:2093
+#: addons/bigin/assets/addon.bundle.js:2223
+#: addons/brevo/assets/addon.bundle.js:2093
+#: addons/brevo/assets/addon.bundle.js:2223
+#: addons/dolibarr/assets/addon.bundle.js:2093
+#: addons/dolibarr/assets/addon.bundle.js:2223
+#: addons/financoop/assets/addon.bundle.js:2093
+#: addons/financoop/assets/addon.bundle.js:2223
+#: addons/gsheets/assets/addon.bundle.js:2120
+#: addons/gsheets/assets/addon.bundle.js:2250
+#: addons/holded/assets/addon.bundle.js:2093
+#: addons/holded/assets/addon.bundle.js:2223
+#: addons/listmonk/assets/addon.bundle.js:2093
+#: addons/listmonk/assets/addon.bundle.js:2223
+#: addons/mailchimp/assets/addon.bundle.js:2093
+#: addons/mailchimp/assets/addon.bundle.js:2223
+#: addons/odoo/assets/addon.bundle.js:2093
+#: addons/odoo/assets/addon.bundle.js:2223
+#: addons/rest-api/assets/addon.bundle.js:2093
+#: addons/rest-api/assets/addon.bundle.js:2223
+#: addons/zoho/assets/addon.bundle.js:2093
+#: addons/zoho/assets/addon.bundle.js:2223
+msgid "Output payload"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:2094
+#: addons/brevo/assets/addon.bundle.js:2094
+#: addons/dolibarr/assets/addon.bundle.js:2094
+#: addons/financoop/assets/addon.bundle.js:2094
+#: addons/gsheets/assets/addon.bundle.js:2121
+#: addons/holded/assets/addon.bundle.js:2094
+#: addons/listmonk/assets/addon.bundle.js:2094
+#: addons/mailchimp/assets/addon.bundle.js:2094
+#: addons/odoo/assets/addon.bundle.js:2094
+#: addons/rest-api/assets/addon.bundle.js:2094
+#: addons/zoho/assets/addon.bundle.js:2094
+msgid "Workflow output payload"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:2692
+#: addons/brevo/assets/addon.bundle.js:2692
+#: addons/dolibarr/assets/addon.bundle.js:2692
+#: addons/financoop/assets/addon.bundle.js:2692
+#: addons/gsheets/assets/addon.bundle.js:2719
+#: addons/holded/assets/addon.bundle.js:2692
+#: addons/listmonk/assets/addon.bundle.js:2692
+#: addons/mailchimp/assets/addon.bundle.js:2692
+#: addons/odoo/assets/addon.bundle.js:2692
+#: addons/rest-api/assets/addon.bundle.js:2692
+#: addons/zoho/assets/addon.bundle.js:2692
+msgid "Mutation"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:3465
+#: addons/brevo/assets/addon.bundle.js:3465
+#: addons/dolibarr/assets/addon.bundle.js:3465
+#: addons/financoop/assets/addon.bundle.js:3465
+#: addons/gsheets/assets/addon.bundle.js:3492
+#: addons/holded/assets/addon.bundle.js:3465
+#: addons/listmonk/assets/addon.bundle.js:3465
+#: addons/mailchimp/assets/addon.bundle.js:3465
+#: addons/odoo/assets/addon.bundle.js:3465
+#: addons/rest-api/assets/addon.bundle.js:3465
+#: addons/zoho/assets/addon.bundle.js:3465
+msgid "Submission workflow"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:3476
+#: addons/brevo/assets/addon.bundle.js:3476
+#: addons/dolibarr/assets/addon.bundle.js:3476
+#: addons/financoop/assets/addon.bundle.js:3476
+#: addons/gsheets/assets/addon.bundle.js:3503
+#: addons/holded/assets/addon.bundle.js:3476
+#: addons/listmonk/assets/addon.bundle.js:3476
+#: addons/mailchimp/assets/addon.bundle.js:3476
+#: addons/odoo/assets/addon.bundle.js:3476
+#: addons/rest-api/assets/addon.bundle.js:3476
+#: addons/zoho/assets/addon.bundle.js:3476
+msgid "Process the form submission before it is sent to the backend over the bridge"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:4435
+#: addons/brevo/assets/addon.bundle.js:4417
+#: addons/dolibarr/assets/addon.bundle.js:4417
+#: addons/financoop/assets/addon.bundle.js:4417
+#: addons/gsheets/assets/addon.bundle.js:4444
+#: addons/holded/assets/addon.bundle.js:4417
+#: addons/listmonk/assets/addon.bundle.js:4417
+#: addons/mailchimp/assets/addon.bundle.js:4417
+#: addons/odoo/assets/addon.bundle.js:4435
+#: addons/rest-api/assets/addon.bundle.js:4417
+#: addons/zoho/assets/addon.bundle.js:4435
+msgid "Reuse an existing backend"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:4581
+#: addons/brevo/assets/addon.bundle.js:4563
+#: addons/dolibarr/assets/addon.bundle.js:4563
+#: addons/financoop/assets/addon.bundle.js:4563
+#: addons/gsheets/assets/addon.bundle.js:4590
+#: addons/holded/assets/addon.bundle.js:4563
+#: addons/listmonk/assets/addon.bundle.js:4563
+#: addons/mailchimp/assets/addon.bundle.js:4563
+#: addons/odoo/assets/addon.bundle.js:4581
+#: addons/rest-api/assets/addon.bundle.js:4563
+#: addons/zoho/assets/addon.bundle.js:4581
+msgid "Reuse an existing form"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:5056
+#: addons/odoo/assets/addon.bundle.js:5056
+#: addons/odoo/assets/addon.bundle.js:5440
+#: addons/odoo/assets/addon.bundle.js:5499
+#: addons/zoho/assets/addon.bundle.js:5056
+msgid "Credential"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:5057
+#: addons/odoo/assets/addon.bundle.js:5057
+#: addons/zoho/assets/addon.bundle.js:5057
+msgid "Configure the backend credentials"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:5061
+#: addons/odoo/assets/addon.bundle.js:5061
+#: addons/zoho/assets/addon.bundle.js:5061
+msgid "Reuse an existing credential"
+msgstr ""
+
+#: addons/bigin/assets/addon.bundle.js:5761
+msgid "Store your Zoho API credentials and reuse them on your Bigin bridges"
+msgstr ""
+
+#: assets/plugin.bundle.js
+#: addons/bigin/assets/addon.bundle.js:5905
+msgid "bigin"
+msgstr "Bigin"
+
+#: addons/brevo/assets/addon.bundle.js:5369
+msgid "Bridge your forms to Brevo and convert your web visitors to contacts"
+msgstr ""
+
+#: assets/plugin.bundle.js
+#: addons/brevo/assets/addon.bundle.js:5444
+msgid "brevo"
+msgstr "Brevo"
+
+#: addons/gsheets/assets/addon.bundle.js:5097
+#: addons/gsheets/assets/addon.bundle.js:5151
+msgid "Tab name"
+msgstr ""
+
+#: assets/plugin.bundle.js
+#: addons/gsheets/assets/addon.bundle.js:5381
+msgid "gsheets"
+msgstr "Google Sheets"
+
+#: addons/holded/assets/addon.bundle.js:5299
+msgid "Bridge your forms to Holded and convert your web visitors to contacts"
+msgstr ""
+
+#: assets/plugin.bundle.js
+#: addons/holded/assets/addon.bundle.js:5374
+msgid "holded"
+msgstr "Holded"
+
+#: addons/listmonk/assets/addon.bundle.js:5269
+msgid "Listmonk is a self-hosted newsletter and mailing list manager, free and open source"
+msgstr ""
+
+#: assets/plugin.bundle.js
+#: addons/listmonk/assets/addon.bundle.js:5344
+msgid "listmonk"
+msgstr "Listmonk"
+
+#: addons/mailchimp/assets/addon.bundle.js:5281
+msgid "Create opt in forms to your MailChimp audiences"
+msgstr ""
+
+#: assets/plugin.bundle.js
+#: addons/mailchimp/assets/addon.bundle.js:5353
+msgid "mailchimp"
+msgstr "MailChimp"
+
+#: addons/odoo/assets/addon.bundle.js:5793
+msgid "Add credential"
+msgstr ""
+
+#: assets/plugin.bundle.js:1494
+msgid "Credits"
+msgstr ""
+
+#: assets/plugin.bundle.js:1499
+msgid "Website"
+msgstr ""
+
+#: assets/plugin.bundle.js:1505
+msgid "Documentation"
+msgstr ""
+
+#: assets/plugin.bundle.js:1514
+msgid "Support"
 msgstr ""

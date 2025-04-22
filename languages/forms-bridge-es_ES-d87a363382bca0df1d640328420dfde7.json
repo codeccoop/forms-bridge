@@ -1,7 +1,7 @@
 {
   "translation-revision-date": "2025-04-07 23:13+0000",
   "generator": "WP-CLI\/2.11.0",
-  "source": "addons\/rest-api\/assets\/addon.bundle.js",
+  "source": "addons\/mailchimp\/assets\/addon.bundle.js",
   "domain": "messages",
   "locale_data": {
     "messages": {
@@ -17,7 +17,6 @@
       "Backend": ["Backend"],
       "Boolean": [""],
       "Bridge": ["Bridge"],
-      "Bridge your forms to any backend or service with a REST API": [""],
       "Close": ["Cerrar"],
       "Configure the backend to bridge your form to": [
         "Configura un backend al que contectarse"
@@ -58,7 +57,6 @@
       "Referer": [""],
       "Remove": ["Eliminar"],
       "Rename": [""],
-      "rest-api": ["REST API"],
       "Select a template": ["Selecciona una plantilla"],
       "Show": [""],
       "Show diff": [""],
@@ -111,7 +109,9 @@
         ""
       ],
       "Reuse an existing backend": [""],
-      "Reuse an existing form": [""]
+      "Reuse an existing form": [""],
+      "Create opt in forms to your MailChimp audiences": [""],
+      "mailchimp": ["MailChimp"]
     }
   }
 }

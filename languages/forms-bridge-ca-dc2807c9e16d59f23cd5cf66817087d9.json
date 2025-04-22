@@ -1,42 +1,44 @@
 {
   "translation-revision-date": "2025-04-07 23:13+0000",
   "generator": "WP-CLI\/2.11.0",
-  "source": "addons\/rest-api\/assets\/addon.bundle.js",
+  "source": "addons\/gsheets\/assets\/addon.bundle.js",
   "domain": "messages",
   "locale_data": {
     "messages": {
       "": {
         "domain": "messages",
-        "lang": "es_ES",
+        "lang": "ca",
         "plural-forms": "nplurals=2; plural=n != 1;"
       },
-      "Add": ["A\u00f1adir"],
-      "Add bridge": ["A\u00f1adir bridge"],
+      "Add": ["Afegir"],
+      "Add bridge": ["Afegir bridge"],
       "Add new step": [""],
       "After mutations": [""],
       "Backend": ["Backend"],
+      "Before you can use spreadsheet bridges, you have to grant access to Forms Bridge as OAuth client": [
+        "Abans de poder utilitzar bridges de spreadsheets, has de garantirs l'acces de Forms Bridge com un client OAuth"
+      ],
       "Boolean": [""],
       "Bridge": ["Bridge"],
-      "Bridge your forms to any backend or service with a REST API": [""],
-      "Close": ["Cerrar"],
+      "Close": ["Tancar"],
       "Configure the backend to bridge your form to": [
-        "Configura un backend al que contectarse"
+        "Configura el backend a on connctar-se"
       ],
       "Configure the bridge": ["Configura el bridge"],
       "Congratulations, you've created a new form bridge!": [
-        "Felicidades, has creado un nuevo bridge de formulario!"
+        "Felicitats, has creat un nou bridge de formulari!"
       ],
       "Copy": [""],
       "Decimal": [""],
-      "Endpoint": ["Endpoint"],
       "Field is optional or type not match": [""],
       "Field is required": [""],
       "Field type mutation": [""],
-      "Form": ["Formulario"],
+      "Form": ["Formulari"],
       "Form submission": [""],
       "Form submission after mappers has been applied": [""],
       "Form title": [""],
       "From": ["De"],
+      "Google Service Credentials": ["Credencials de Google Service"],
       "Ignore": [""],
       "Implode mutations": [""],
       "Integer": [""],
@@ -44,43 +46,54 @@
       "Job interface": [""],
       "Join": [""],
       "Loading": [""],
-      "Loading config error": ["Error de carga de configuraci\u00f3n"],
+      "Loading config error": ["Error de c\u00e0rrega de configuraci\u00f3"],
       "Loading worflow job error": [""],
-      "Method": ["M\u00e9todo"],
-      "Name": ["Nombre"],
-      "Next": ["Siguiente"],
+      "Name": ["N\u00f3m"],
+      "Next": ["Seg\u00fcent"],
       "No input fields": [""],
       "Output mutations: %s": [""],
       "Populate the form default values": [
-        "Rellena los valores por defecto del formulario"
+        "Emplena els valors per defecte del formulari"
       ],
       "Previous": ["Anterior"],
       "Referer": [""],
       "Remove": ["Eliminar"],
       "Rename": [""],
-      "rest-api": ["REST API"],
+      "Revoke credentials": [""],
+      "Select a Spreadsheet": ["Selecciona un Spreadsheet"],
       "Select a template": ["Selecciona una plantilla"],
+      "Select the spreadsheet do you want to use as backend": [
+        "Selecciona el spreadsheet que vols fer servir com a backend"
+      ],
       "Show": [""],
       "Show diff": [""],
       "Skipped": [""],
       "Spaced": [""],
+      "Spreadsheet": ["Spreadsheet"],
       "Stage mapper": [""],
       "String": [""],
       "Structure mutations": [""],
       "Submission ID": [""],
       "Submit": ["Enviar"],
-      "Target integration": ["Integraci\u00f3n destinataria"],
-      "Template submit error": ["Error de envio de plantilla"],
-      "Templates": ["Plantillas"],
-      "The value is not a number": ["El valor no es un n\u00famero"],
-      "The value is too large": ["El valor es demasiado grande"],
-      "The value is too small": ["El valor es demasiado peque\u00f1o"],
-      "This name is already in use": ["Este nomre ya est\u00e1 en uso"],
+      "Syncrhonize your form submission with Google Sheets and work with your web leads out of the WordPress admin site": [
+        ""
+      ],
+      "Target integration": ["Integraci\u00f3 destinat\u00e0ria"],
+      "Template submit error": ["Error d'enviament de plantilla"],
+      "Templates": ["Plantilles"],
+      "The value is not a number": ["El valor no \u00e9s un n\u00famero"],
+      "The value is too large": ["El valor \u00e9s massa gran"],
+      "The value is too small": ["El valor \u00e9s massa petit"],
+      "This name is already in use": ["Aquest n\u00f3m ja s'est\u00e0 usant"],
       "To": ["A"],
       "Type mutations": [""],
-      "Use tempalte": ["Usar plantilla"],
+      "Upload credentials": ["Pujar credencials"],
+      "Use tempalte": ["Utilitzar plantilla"],
       "Value": ["Valor"],
       "Workflow": [""],
+      "You have to create a service account credentials to grant Forms Bridge access to your spreadsheets. Follow this <a href='https:\/\/github.com\/juampynr\/google-spreadsheet-reader?tab=readme-ov-file' target='_blank'>example<\/a> if you need help with the process.": [
+        ""
+      ],
       "Form ID": [""],
       "Site title": [""],
       "Site description": [""],
@@ -111,7 +124,9 @@
         ""
       ],
       "Reuse an existing backend": [""],
-      "Reuse an existing form": [""]
+      "Reuse an existing form": [""],
+      "Tab name": [""],
+      "gsheets": ["Google Sheets"]
     }
   }
 }
