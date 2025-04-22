@@ -51,10 +51,6 @@ require_once 'includes/json-schema-utils.php';
 require_once 'integrations/abstract-integration.php';
 require_once 'addons/abstract-addon.php';
 
-require_once 'includes/data/country-phone-codes.php';
-require_once 'includes/data/iso2-countries.php';
-require_once 'includes/data/iso3-countries.php';
-
 /**
  * Forms Bridge plugin.
  */
@@ -102,6 +98,9 @@ class Forms_Bridge extends Base_Plugin
             90,
             4
         );
+
+        // Defer data loading to init to avoid i18n api warnings
+        add_action('init', [self::class, 'load_data'], 0);
     }
 
     /**
@@ -126,6 +125,16 @@ class Forms_Bridge extends Base_Plugin
         if ($db_version !== self::version()) {
             self::do_migrations();
         }
+    }
+
+    /**
+     * Data loader.
+     */
+    public static function load_data()
+    {
+        require_once 'includes/data/country-phone-codes.php';
+        require_once 'includes/data/iso2-countries.php';
+        require_once 'includes/data/iso3-countries.php';
     }
 
     /**
