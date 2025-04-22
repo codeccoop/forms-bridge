@@ -3,7 +3,7 @@ Contributors: codeccoop
 Tags: forms, contact forms, bridge, api, http
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable Tag: 3.3.0
+Stable Tag: 3.3.1
 Tested up to: 6.8
 
 Bridge WP forms to any backend or service over HTTP requests.
