@@ -47,6 +47,20 @@ export default function MailchimpTemplateWizard({
 
   const [data, setData] = useState({});
 
+  if (
+    data.backend?.datacenter &&
+    data.backend.base_url !==
+      `https://${data.backend.datacenter}.api.mailchimp.com`
+  ) {
+    setData({
+      ...data,
+      backend: {
+        ...data.backend,
+        base_url: `https://${data.backend.datacenter}.api.mailchimp.com`,
+      },
+    });
+  }
+
   const [lists, setLists] = useState([]);
 
   const backend = useMemo(() => {
@@ -82,14 +96,17 @@ export default function MailchimpTemplateWizard({
   }).current;
 
   const fetchLists = useRef(
-    debounce((backend) => fetch("/3.0/lists", setLists, backend), 1e3)
+    debounce(
+      (backend) => fetch("/3.0/lists", (data) => setLists(data.lists), backend),
+      1e3
+    )
   ).current;
 
   useEffect(() => {
     if (!backend || !wired) return;
 
     customFields.includes("list_id") && fetchLists(backend);
-  }, [backend, customFields]);
+  }, [wired, backend, customFields]);
 
   useEffect(() => {
     setData({
