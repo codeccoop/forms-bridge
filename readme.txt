@@ -4,7 +4,7 @@ Tags: forms, bridge, api, integration, rest
 Donate link: https://buymeacoffee.com/codeccoop
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable Tag: 3.3.2
+Stable Tag: 3.3.3
 Tested up to: 6.8
 
 Bridge your WordPress forms without code, add custom fields, configure a workflow and make your data flow to your backend.
@@ -40,11 +40,11 @@ Forms Bridge has core support for generic REST API bridges and addons for:
 
 == Docs ==
 
-Browse the plugin's documentation in our [official website](https://formsbridge.codeccoop.org/documentation/)
+Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbridge.codeccoop.org/documentation/)
 
 == Links ==
 
-* [Forms Bridge plugin page](https://formsbridge.codeccoop.org/)
+* [Official website](https://formsbridge.codeccoop.org/)
 * [Gitlab](https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge/)
 * [Còdec](https://www.codeccoop.org)
 * [Other plugins](https://profiles.wordpress.org/codeccoop/#content-plugins)
