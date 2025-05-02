@@ -29,17 +29,14 @@ abstract class Form_Bridge
             ],
             'form_id' => [
                 'type' => 'string',
-                'minLength' => 1,
                 'default' => '',
             ],
             'backend' => [
                 'type' => 'string',
-                'minLength' => 1,
                 'default' => '',
             ],
             'credential' => [
                 'type' => 'string',
-                'minLength' => 1,
                 'default' => '',
             ],
             'custom_fields' => [
