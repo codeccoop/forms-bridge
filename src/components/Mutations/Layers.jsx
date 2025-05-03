@@ -157,11 +157,12 @@ export default function MutationLayers({ fields, mappers, setMappers }) {
       .concat(mappers.slice(index, mappers.length));
 
     if (index === mappers.length) {
-      setTimeout(
-        () =>
-          tableWrapper.current.scrollTo(0, tableWrapper.current.offsetHeight),
-        100
-      );
+      setTimeout(() => {
+        tableWrapper.current.scrollTo(
+          0,
+          tableWrapper.current.children[0].offsetHeight
+        );
+      }, 100);
     }
 
     setMappers(newMappers);

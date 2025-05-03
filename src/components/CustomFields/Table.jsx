@@ -195,11 +195,12 @@ export default function CustomFieldsTable({ customFields, setCustomFields }) {
       .concat(customFields.slice(index, customFields.length));
 
     if (index === customFields.length) {
-      setTimeout(
-        () =>
-          tableWrapper.current.scrollTo(0, tableWrapper.current.offsetHeight),
-        100
-      );
+      setTimeout(() => {
+        tableWrapper.current.scrollTo(
+          0,
+          tableWrapper.current.children[0].offsetHeight
+        );
+      }, 100);
     }
 
     setCustomFields(newCustomFields);
