@@ -60,6 +60,16 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 
 == Changelog ==
 
+= 3.3.3 =
+* feat: remove minLength constraint from bridge schema
+* feat: set null value on mappers with nowhere jsonfinger pointers
+
+= 3.3.2 =
+* feat: update plugin urls and readme
+* feat: remote assets from gitlab
+* fix: mailchimp template wizard
+* feat: update credits, donation link and screenshots
+
 = 3.3.1 =
 * fix: odoo api function bridge patches
 * feat: plugin screenshots
