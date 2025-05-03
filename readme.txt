@@ -4,7 +4,7 @@ Tags: forms, bridge, api, integration, rest
 Donate link: https://buymeacoffee.com/codeccoop
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable Tag: 3.3.3
+Stable Tag: 3.3.4
 Tested up to: 6.8
 
 Bridge your WordPress forms without code, add custom fields, configure a workflow and make your data flow to your backend.
@@ -59,6 +59,11 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 6. Debug console
 
 == Changelog ==
+
+= 3.3.4 =
+* fix: does not skip empty array submissions on submission filter
+* feat: remove gf private uploads module
+* fix: scroll to bottom on mutations/custom fields tables
 
 = 3.3.3 =
 * feat: remove minLength constraint from bridge schema
