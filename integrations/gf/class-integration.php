@@ -646,17 +646,27 @@ class Integration extends BaseIntegration
             array_filter($form_data['fields'], function ($field) {
                 return $field['is_file'];
             }),
-            function ($carry, $field) use ($submission) {
-                $paths = rgar($submission, (string) $field['id']);
-                if (empty($paths)) {
-                    return $carry;
+            function ($carry, $field) use ($submission, $form_data) {
+                $upload_path = GFFormsModel::get_upload_path($form_data['id']);
+                $upload_url = GFFormsModel::get_upload_url($form_data['id']);
+
+                $urls = $submission[$field['id']];
+                $urls = $field['is_multi'] ? json_decode($urls, true) : [$urls];
+
+                $paths = [];
+                foreach ($urls as $url) {
+                    $path = str_replace($upload_url, $upload_path, $url);
+                    if (is_file($path)) {
+                        $paths[] = $path;
+                    }
                 }
 
-                $paths = $field['is_multi'] ? json_decode($paths) : [$paths];
-                $carry[$field['name']] = [
-                    'path' => $field['is_multi'] ? $paths : $paths[0],
-                    'is_multi' => $field['is_multi'],
-                ];
+                if (!empty($paths)) {
+                    $carry[$field['name']] = [
+                        'path' => $field['is_multi'] ? $paths : $paths[0],
+                        'is_multi' => $field['is_multi'],
+                    ];
+                }
 
                 return $carry;
             },
