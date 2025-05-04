@@ -25,6 +25,7 @@ return [
         'workflow' => [
             'forms-bridge-iso2-country-code',
             'odoo-vat-id',
+            'odoo-country-id',
             'odoo-contact-company',
             'odoo-skip-if-partner-exists',
         ],
@@ -35,14 +36,6 @@ return [
             ],
         ],
         'mutations' => [
-            [],
-            [
-                [
-                    'from' => 'country',
-                    'to' => 'country',
-                    'cast' => 'null',
-                ],
-            ],
             [
                 [
                     'from' => 'company_name',
@@ -50,6 +43,15 @@ return [
                     'cast' => 'string',
                 ],
             ],
+            [
+                [
+                    'from' => 'country',
+                    'to' => 'country',
+                    'cast' => 'null',
+                ],
+            ],
+            [],
+            [],
             [
                 [
                     'from' => 'contact_name',

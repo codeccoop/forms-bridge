@@ -102,6 +102,11 @@ return [
                     'to' => 'user_id',
                     'cast' => 'integer',
                 ],
+                [
+                    'from' => 'company_name',
+                    'to' => 'name',
+                    'cast' => 'string',
+                ],
             ],
             [
                 [
@@ -110,13 +115,8 @@ return [
                     'cast' => 'null',
                 ],
             ],
-            [
-                [
-                    'from' => 'company_name',
-                    'to' => 'name',
-                    'cast' => 'string',
-                ],
-            ],
+            [],
+            [],
             [
                 [
                     'from' => 'contact_name',
@@ -145,6 +145,7 @@ return [
         'workflow' => [
             'forms-bridge-iso2-country-code',
             'odoo-vat-id',
+            'odoo-country-id',
             'odoo-contact-company',
             'odoo-crm-contact',
         ],
