@@ -287,7 +287,7 @@ export default function CustomFieldsTable({ customFields, setCustomFields }) {
                         onClick={() => setFieldSelector(i)}
                         __next40pxDefaultSize
                       >
-                        $
+                        {"{...}"}
                         {fieldSelector === i && (
                           <DropdownSelect
                             title={__("Fields", "forms-bridge")}

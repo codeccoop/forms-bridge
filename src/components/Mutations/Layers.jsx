@@ -272,7 +272,7 @@ export default function MutationLayers({ fields, mappers, setMappers }) {
                         onClick={() => setFieldSelector(i)}
                         __next40pxDefaultSize
                       >
-                        $
+                        {"{...}"}
                         {fieldSelector === i && (
                           <DropdownSelect
                             title={__("Fields", "forms-bridge")}
