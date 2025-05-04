@@ -180,7 +180,17 @@ class Integration extends BaseIntegration
      */
     public function uploads()
     {
-        return [];
+        $form_data = $this->form();
+        if (!$form_data) {
+            return null;
+        }
+
+        $submission = self::$submission;
+        if (empty($submission)) {
+            return null;
+        }
+
+        return $this->submission_uploads($submission, $form_data);
     }
 
     /**
@@ -195,8 +205,8 @@ class Integration extends BaseIntegration
         $form = $form_factory->get();
         $form_id = (int) $form->get_id();
         $fields = array_filter(
-            array_map(function ($field) {
-                return $this->serialize_field($field);
+            array_map(function ($field) use ($form) {
+                return $this->serialize_field($field, $form->get_settings());
             }, $form_factory->get_fields())
         );
 
@@ -222,10 +232,11 @@ class Integration extends BaseIntegration
      * Serializes a form field model instance as array data.
      *
      * @param NF_Database_Models_Field $field Form field model instance.
+     * @param array $form_settings Form settings data.
      *
      * @return array
      */
-    private function serialize_field($field)
+    private function serialize_field($field, $form_settings)
     {
         if (
             in_array($field->get_setting('type'), [
@@ -242,7 +253,11 @@ class Integration extends BaseIntegration
 
         return apply_filters(
             'forms_bridge_form_field_data',
-            $this->_serialize_field($field->get_id(), $field->get_settings()),
+            $this->_serialize_field(
+                $field->get_id(),
+                $field->get_settings(),
+                $form_settings
+            ),
             $field,
             'ninja'
         );
@@ -253,20 +268,47 @@ class Integration extends BaseIntegration
      *
      * @param int $id Field id.
      * @param array $settings Field settings data.
+     * @param array $form_settings Form settings data.
      *
      * @return array.
      */
-    private function _serialize_field($id, $settings)
+    private function _serialize_field($id, $settings, $form_settings)
     {
         $name =
             $settings['key'] ??
             ($settings['admin_label'] ?? $settings['label']);
 
         $children = isset($settings['fields'])
-            ? array_map(function ($setting) {
-                return $this->_serialize_field($setting['id'], $setting);
+            ? array_map(function ($setting) use ($form_settings) {
+                return $this->_serialize_field(
+                    $setting['id'],
+                    $setting,
+                    $form_settings
+                );
             }, $settings['fields'])
             : [];
+
+        $is_conditional = false;
+        foreach ($form_settings['conditions'] as $condition) {
+            $then = $condition['then'] ?? [];
+            $else = $condition['else'] ?? [];
+            foreach (array_merge($then, $else) as $effect) {
+                if ($effect['type'] !== 'field') {
+                    continue;
+                }
+
+                $is_conditional =
+                    $effect['key'] === $settings['key'] &&
+                    $effect['trigger'] === 'hide_field';
+                if ($is_conditional) {
+                    break;
+                }
+            }
+
+            if ($is_conditional) {
+                break;
+            }
+        }
 
         return [
             'id' => $id,
@@ -279,9 +321,9 @@ class Integration extends BaseIntegration
             'options' => isset($settings['options'])
                 ? $settings['options']
                 : [],
-            'is_file' => false,
+            'is_file' => $settings['type'] === 'file_upload',
             'is_multi' => $this->is_multi_field($settings),
-            'conditional' => false,
+            'conditional' => $is_conditional,
             'children' => $children,
             'format' => strtolower($settings['date_format'] ?? ''),
             'schema' => $this->field_value_schema($settings, $children),
@@ -310,6 +352,13 @@ class Integration extends BaseIntegration
         if (
             $settings['type'] === 'listimage' &&
             ($settings['allow_multi_select'] ?? false)
+        ) {
+            return true;
+        }
+
+        if (
+            $settings['type'] === 'file_upload' &&
+            $settings['upload_multi_count'] > 1
         ) {
             return true;
         }
@@ -402,6 +451,8 @@ class Integration extends BaseIntegration
                     ],
                     'additionalItems' => true,
                 ];
+            case 'file_upload':
+                return;
             default:
                 return ['type' => 'string'];
         }
@@ -420,11 +471,11 @@ class Integration extends BaseIntegration
         $data = [];
 
         foreach ($form_data['fields'] as $field_data) {
-            $field = $submission['fields'][(int) $field_data['id']];
-
-            if ($field_data['type'] === 'file') {
+            if ($field_data['is_file']) {
                 continue;
             }
+
+            $field = $submission['fields'][(int) $field_data['id']];
 
             if ($field_data['type'] === 'repeater') {
                 $subfields = $field['fields'];
@@ -458,6 +509,14 @@ class Integration extends BaseIntegration
                     $field_data['type'],
                     $field['value']
                 );
+
+                if (
+                    $data[$field_data['name']] === false &&
+                    $field_data['schema']['type'] !== 'boolean' &&
+                    $field_data['conditional']
+                ) {
+                    $data[$field_data['name']] = null;
+                }
             }
         }
 
@@ -520,7 +579,45 @@ class Integration extends BaseIntegration
      */
     protected function submission_uploads($submission, $form_data)
     {
-        return [];
+        $uploads = [];
+
+        foreach ($form_data['fields'] as $field_data) {
+            if (!$field_data['is_file']) {
+                continue;
+            }
+
+            $field = $submission['fields'][(int) $field_data['id']];
+
+            $uploads_path =
+                wp_upload_dir()['basedir'] . '/ninja-forms/' . $form_data['id'];
+            $urls = $field['value'];
+            $paths = [];
+            foreach ($urls as $url) {
+                $basename = basename($url);
+                $path = $uploads_path . '/' . $basename;
+                if (is_file($path)) {
+                    $paths[] = $path;
+                }
+            }
+
+            if (empty($paths)) {
+                continue;
+            }
+
+            if ($field_data['is_multi']) {
+                $uploads[$field_data['name']] = [
+                    'path' => $paths,
+                    'is_multi' => true,
+                ];
+            } else {
+                $uploads[$field_data['name']] = [
+                    'path' => $paths[0],
+                    'is_multi' => false,
+                ];
+            }
+        }
+
+        return $uploads;
     }
 
     private function decorate_form_fields($fields)
@@ -566,6 +663,11 @@ class Integration extends BaseIntegration
                     break;
                 case 'date':
                     $nf_fields[] = $this->date_field(...$args);
+                    break;
+                case 'file':
+                    $args[] = $field['is_multi'] ?? false;
+                    $args[] = $field['filetypes'] ?? '';
+                    $nf_fields[] = $this->upload_field(...$args);
                     break;
                 case 'hidden':
                     if (isset($field['value'])) {
@@ -626,6 +728,31 @@ class Integration extends BaseIntegration
             'container_class' => '',
             'label_pos' => 'default',
         ];
+    }
+
+    private function upload_field(
+        $order,
+        $name,
+        $label,
+        $required,
+        $is_multi,
+        $filetypes = ''
+    ) {
+        $filetypes = preg_replace('/\.(?=[A-Za-z]{2})/', '', $filetypes);
+
+        return array_merge(
+            $this->field_template(
+                'file_upload',
+                $order,
+                $name,
+                $label,
+                $required
+            ),
+            [
+                'upload_types' => $filetypes,
+                'upload_multi_count' => $is_multi ? 2 : 1,
+            ]
+        );
     }
 
     private function hidden_field($order, $name, $label, $required, $value)
