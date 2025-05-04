@@ -4,30 +4,34 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-function forms_bridge_odoo_contact_company($payload, $bridge)
+function forms_bridge_odoo_contact_id($payload, $bridge)
 {
-    $company = forms_bridge_odoo_create_company($payload, $bridge);
+    $contact = forms_bridge_odoo_create_partner($payload, $bridge);
 
-    if (is_wp_error($company)) {
-        return $company;
+    if (is_wp_error($contact)) {
+        return $contact;
     }
 
-    $payload['parent_id'] = $company['id'];
+    $payload['partner_id'] = $contact['id'];
     return $payload;
 }
 
 return [
-    'title' => __('Contact company', 'forms-bridge'),
+    'title' => __('Contact', 'forms-bridge'),
     'description' => __(
-        'Creates a a company set its ID as the parent_id of the payload',
+        'Creates a contact and set its ID as the partner_id of the payload',
         'forms-bridge'
     ),
-    'method' => 'forms_bridge_odoo_contact_company',
+    'method' => 'forms_bridge_odoo_contact_id',
     'input' => [
         [
             'name' => 'name',
             'schema' => ['type' => 'string'],
             'required' => true,
+        ],
+        [
+            'name' => 'title',
+            'schema' => ['type' => 'string'],
         ],
         [
             'name' => 'lang',
@@ -85,10 +89,18 @@ return [
             'name' => 'is_public',
             'schema' => ['type' => 'boolean'],
         ],
+        [
+            'name' => 'parent_id',
+            'schema' => ['type' => 'integer'],
+        ],
+        [
+            'name' => 'function',
+            'schema' => ['type' => 'string'],
+        ],
     ],
     'output' => [
         [
-            'name' => 'parent_id',
+            'name' => 'partner_id',
             'schema' => ['type' => 'integer'],
         ],
     ],

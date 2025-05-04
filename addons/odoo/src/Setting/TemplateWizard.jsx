@@ -102,7 +102,7 @@ export default function OdooTemplateWizard({
   ).current;
 
   const fetchProducts = useRef(
-    debounce((...args) => fetch("product.template", setProducts, ...args), 1e3)
+    debounce((...args) => fetch("product.product", setProducts, ...args), 1e3)
   ).current;
 
   const fetchTags = useRef(
