@@ -403,6 +403,7 @@ abstract class Addon extends Singleton
         add_action(
             'init',
             static function () {
+                static::load_data();
                 static::load_templates();
                 static::load_workflow_jobs();
             },
@@ -859,6 +860,14 @@ abstract class Addon extends Singleton
         }
 
         return $loaded;
+    }
+
+    /**
+     * Loads addon's bridge data.
+     */
+    private static function load_data()
+    {
+        self::autoload_dir('data');
     }
 
     /**

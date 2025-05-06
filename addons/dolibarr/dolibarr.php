@@ -13,9 +13,6 @@ require_once 'class-dolibarr-form-bridge-template.php';
 
 require_once 'api-functions.php';
 
-require_once 'country-codes.php';
-// require_once 'state-codes.php';
-
 /**
  * Dolibarr Addon class.
  */
