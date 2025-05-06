@@ -4,7 +4,7 @@ import BridgeStep from "../../../../src/components/Templates/Steps/BridgeStep";
 const { useMemo, useEffect } = wp.element;
 const { __ } = wp.i18n;
 
-const API_FIELDS = ["userownerid", "product_id"];
+const API_FIELDS = ["userownerid", "fk_product"];
 
 export default function DolibarrBridgeStep({ fields, data, setData }) {
   const users = useMemo(() => data._users || [], [data._users]);
@@ -21,9 +21,9 @@ export default function DolibarrBridgeStep({ fields, data, setData }) {
 
   const productOptions = useMemo(
     () =>
-      products.map(({ id, name }) => ({
+      products.map(({ id, label }) => ({
         value: id,
-        label: name,
+        label: label,
       })),
     [products]
   );
@@ -43,7 +43,7 @@ export default function DolibarrBridgeStep({ fields, data, setData }) {
             type: "options",
             options: userOptions,
           };
-        } else if (field.name === "product_id") {
+        } else if (field.name === "fk_product") {
           return {
             ...field,
             type: "options",
@@ -56,8 +56,8 @@ export default function DolibarrBridgeStep({ fields, data, setData }) {
   useEffect(() => {
     const defaults = {};
 
-    if (productOptions.length > 0 && !data.product_id) {
-      defaults.product_id = productOptions[0].value;
+    if (productOptions.length > 0 && !data.fk_product) {
+      defaults.fk_product = productOptions[0].value;
     }
 
     if (userOptions.length > 0 && !data.userownerid) {

@@ -7,12 +7,12 @@ if (!defined('ABSPATH')) {
 global $forms_bridge_dolibarr_countries;
 
 return [
-    'title' => __('Company Prospects', 'forms-bridge'),
+    'title' => __('Company Quotations', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#bridge',
             'name' => 'endpoint',
-            'value' => '/api/index.php/contacts',
+            'value' => '/api/index.php/orders',
         ],
         [
             'ref' => '#bridge/custom_fields[]',
@@ -45,14 +45,29 @@ return [
             'default' => ' 0',
         ],
         [
+            'ref' => '#bridge/custom_fields[]',
+            'name' => 'fk_product',
+            'label' => __('Product', 'forms-bridge'),
+            'type' => 'string',
+            'required' => true,
+        ],
+        [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('Company Prospects', 'forms-bridge'),
+            'default' => __('Company Quotations', 'forms-bridge'),
         ],
     ],
     'form' => [
-        'title' => __('Company Prospects', 'forms-bridge'),
+        'title' => __('Company Quotations', 'forms-bridge'),
         'fields' => [
+            [
+                'name' => 'quantity',
+                'label' => __('Quantity', 'forms-bridge'),
+                'type' => 'number',
+                'required' => true,
+                'default' => 1,
+                'min' => 1,
+            ],
             [
                 'name' => 'company_name',
                 'label' => __('Company name', 'forms-bridge'),
@@ -60,7 +75,7 @@ return [
                 'required' => true,
             ],
             [
-                'name' => 'idprof1',
+                'name' => 'tva_intra',
                 'label' => __('Tax ID', 'forms-bridge'),
                 'type' => 'text',
                 'required' => true,
@@ -115,21 +130,10 @@ return [
                 'type' => 'email',
                 'required' => true,
             ],
-            [
-                'name' => 'poste',
-                'label' => __('Job position', 'forms-bridge'),
-                'type' => 'text',
-                'required' => true,
-            ],
-            [
-                'name' => 'note_public',
-                'label' => __('Comments', 'forms-bridge'),
-                'type' => 'textarea',
-            ],
         ],
     ],
     'bridge' => [
-        'endpoint' => '/api/index.php/contacts',
+        'endpoint' => '/api/index.php/orders',
         'custom_fields' => [
             [
                 'name' => 'status',
@@ -143,6 +147,10 @@ return [
                 'name' => 'client',
                 'value' => '2',
             ],
+            [
+                'name' => 'date',
+                'value' => '$timestamp',
+            ],
         ],
         'mutations' => [
             [
@@ -151,12 +159,37 @@ return [
                     'to' => 'name',
                     'cast' => 'string',
                 ],
+                [
+                    'from' => 'quantity',
+                    'to' => 'lines[0].qty',
+                    'cast' => 'integer',
+                ],
+                [
+                    'from' => 'fk_product',
+                    'to' => 'lines[0].fk_product',
+                    'cast' => 'integer',
+                ],
+            ],
+            [],
+            [
+                [
+                    'from' => 'socid',
+                    'to' => 'order_socid',
+                    'cast' => 'copy',
+                ],
+            ],
+            [
+                [
+                    'from' => 'order_socid',
+                    'to' => 'socid',
+                    'cast' => 'integer',
+                ],
             ],
         ],
         'workflow' => [
             'dolibarr-country-id',
             'dolibarr-contact-socid',
-            'dolibarr-skip-if-contact-exists',
+            'dolibarr-contact-id',
         ],
     ],
 ];

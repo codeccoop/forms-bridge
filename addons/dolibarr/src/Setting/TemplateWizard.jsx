@@ -43,6 +43,7 @@ export default function DolibarrTemplateWizard({
   const [data, setData] = useState({});
 
   const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
 
   const backend = useMemo(() => {
     if (!data.backend?.name) return;
@@ -90,10 +91,18 @@ export default function DolibarrTemplateWizard({
     debounce((backend) => fetch("/api/index.php/users", setUsers, backend), 1e3)
   ).current;
 
+  const fetchProducts = useRef(
+    debounce(
+      (backend) => fetch("/api/index.php/products", setProducts, backend),
+      1e3
+    )
+  ).current;
+
   useEffect(() => {
     if (!backend || !wired) return;
 
     customFields.includes("userownerid") && fetchUsers(backend);
+    customFields.includes("fk_product") && fetchProducts(backend);
   }, [wired, backend, customFields]);
 
   useEffect(() => {
@@ -102,9 +111,10 @@ export default function DolibarrTemplateWizard({
       bridge: {
         ...(data.bridge || {}),
         _users: users,
+        _products: products,
       },
     });
-  }, [users]);
+  }, [users, products]);
 
   return (
     <TemplateWizard
