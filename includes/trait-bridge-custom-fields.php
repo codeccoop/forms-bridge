@@ -68,11 +68,17 @@ trait Form_Bridge_Custom_Fields
             'datetime' => static function () {
                 return date('Y-m-d H:i:s', time());
             },
+            'gmt_datetime' => static function () {
+                return gmdate('Y-m-d H:i:s', time());
+            },
             'timestamp' => static function () {
                 return time();
             },
             'iso_date' => static function () {
                 return date('c', time());
+            },
+            'gmt_iso_date' => static function () {
+                return gmdate('c', time());
             },
             'user_id' => static function () {
                 $user = wp_get_current_user();
