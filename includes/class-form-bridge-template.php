@@ -710,7 +710,7 @@ class Form_Bridge_Template
                 } else {
                     $leaf[] = $field['value'];
                 }
-            } else {
+            } elseif (isset($field['value'])) {
                 $leaf[$field['name']] = $field['value'];
             }
         }
