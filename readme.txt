@@ -60,6 +60,16 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 
 == Changelog ==
 
+= 3.4.0 =
+* feat: odoo quotation templates
+* feat: dolibarr quotation templates
+* feat: country id odoo workflow job
+* feat: gmt date tags
+* feat: addons data autoload
+* feat: odoo state id job
+* feat: skip email list subscription jobs
+* fix: firefox backend state updates on firefox
+
 = 3.3.5 =
 * feat: support for ninja file fields and conditionals
 
