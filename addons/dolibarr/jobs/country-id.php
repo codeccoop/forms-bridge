@@ -22,6 +22,8 @@ function forms_bridge_dolibarr_country_id($payload)
         if (isset($countries_by_label[$payload['country_id']])) {
             $payload['country_id'] =
                 $countries_by_label[$payload['country_id']];
+        } else {
+            return new WP_Error('Unkown country', 'forms-bridge');
         }
     }
 
@@ -31,15 +33,15 @@ function forms_bridge_dolibarr_country_id($payload)
 return [
     'title' => __('Country ID', 'forms-bridge'),
     'description' => __(
-        'Ensures that country id is a valid and well known value',
+        'Check if country id is valid or replace its value if a country name is passed',
         'forms-bridge'
     ),
     'method' => 'forms_bridge_dolibarr_country_id',
     'input' => [
         [
             'name' => 'country_id',
-            'required' => true,
             'schema' => ['type' => 'integer'],
+            'required' => true,
         ],
     ],
     'output' => [
