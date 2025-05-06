@@ -95,6 +95,7 @@ export default function CredentialStep({ credentials, fields, data, setData }) {
           options={credentialOptions}
           onChange={setReuse}
           __nextHasNoMarginBottom
+          __next40pxDefaultSize
         />
       )}
       {!reuse && (

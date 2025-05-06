@@ -119,14 +119,17 @@ export default function BackendStep({ fields, data, setData, wired }) {
 
   const nameField = useMemo(() => sortedFields[0], [sortedFields]);
 
-  let status;
-  if (wired === true) {
-    status = "👌";
-  } else if (wired === false) {
-    status = "👎";
-  } else if (validateBackend(backend, schema, fields)) {
-    status = "⏳";
-  }
+  const statusIcon = useMemo(() => {
+    if (wired === true) {
+      return "👌";
+    } else if (wired === false) {
+      return "👎";
+    } else if (validateBackend(backend, schema, fields)) {
+      return "⏳";
+    }
+
+    return null;
+  }, [wired, backend, schema, fields]);
 
   return (
     <TemplateStep
@@ -137,7 +140,9 @@ export default function BackendStep({ fields, data, setData, wired }) {
       )}
     >
       <p>
-        <strong>Connection status: {status}</strong>
+        <strong>
+          Connection status: <span>{statusIcon}</span>
+        </strong>
       </p>
       {backendOptions.length > 0 && (
         <SelectControl
@@ -146,9 +151,10 @@ export default function BackendStep({ fields, data, setData, wired }) {
           options={backendOptions}
           onChange={setReuse}
           __nextHasNoMarginBottom
+          __next40pxDefaultSize
         />
       )}
-      {!reuse && (
+      {(!reuse && (
         <Field
           data={{
             ...nameField,
@@ -161,7 +167,8 @@ export default function BackendStep({ fields, data, setData, wired }) {
               : false
           }
         />
-      )}
+      )) ||
+        null}
       {filteredFields.map((field) => (
         <Field
           data={{

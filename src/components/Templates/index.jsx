@@ -116,6 +116,7 @@ export default function Templates({ Wizard }) {
                     value={integration}
                     onChange={setIntegration}
                     __nextHasNoMarginBottom
+                    __next40pxDefaultSize
                   />
                   <Spacer paddingY="calc(6px)" />
                 </>
@@ -125,6 +126,7 @@ export default function Templates({ Wizard }) {
                 options={templateOptions}
                 onChange={setTemplate}
                 __nextHasNoMarginBottom
+                __next40pxDefaultSize
               />
             </>
           )}
