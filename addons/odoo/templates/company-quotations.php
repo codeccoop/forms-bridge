@@ -91,6 +91,18 @@ return [
                     'to' => 'name',
                     'cast' => 'string',
                 ],
+                [
+                    'from' => 'parent_id',
+                    'to' => 'company_partner_id',
+                    'cast' => 'copy',
+                ],
+            ],
+            [
+                [
+                    'from' => 'company_partner_id',
+                    'to' => 'partner_id',
+                    'cast' => 'integer',
+                ],
             ],
         ],
         'workflow' => [
