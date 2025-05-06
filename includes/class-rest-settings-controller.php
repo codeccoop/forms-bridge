@@ -621,48 +621,4 @@ class REST_Settings_Controller extends Base_Controller
             return new WP_Error('internal_server_error', $e->getMessage());
         }
     }
-
-    /**
-     * Callback for GET requests to the api schema endpoint.
-     *
-     * @param string $api Name of the addon.
-     * @param string $bridge_name Name of the bridge connected to the API.
-     *
-     * @return array API schema with a list of fields and the content type of the requests.
-     */
-    private static function api_schema($api, $bridge_name)
-    {
-        if (empty($bridge_name)) {
-            return new WP_Error(
-                'bad_request',
-                __('Bridge name is required', 'forms-bridge')
-            );
-        }
-
-        $bridge_name = urldecode($bridge_name);
-
-        $bridges = apply_filters('forms_bridge_bridges', [], $api);
-        foreach ($bridges as $candidate) {
-            if ($candidate->name === $bridge_name) {
-                $bridge = $candidate;
-                break;
-            }
-        }
-
-        if (!isset($bridge)) {
-            return new WP_Error(
-                'not_found',
-                __('Bridge is unknown', 'forms-bridge'),
-                ['bridge' => $bridge_name]
-            );
-        }
-
-        $fields = $bridge->api_fields;
-        $content_type = $bridge->content_type;
-
-        return [
-            'fields' => $fields,
-            'content_type' => $content_type,
-        ];
-    }
 }
