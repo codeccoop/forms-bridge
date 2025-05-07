@@ -2,6 +2,8 @@
 
 namespace FORMS_BRIDGE;
 
+use TypeError;
+
 if (!defined('ABSPATH')) {
     exit();
 }
@@ -90,212 +92,83 @@ class Holded_Form_Bridge extends Rest_Form_Bridge
 
     protected function api_schema()
     {
-        if (strstr($this->endpoint, 'contacts')) {
-            $response = $this->patch([
-                'name' => 'holded-contacts-attributes',
-                'endpoint' => '/v3/contacts/attributes',
-                'method' => 'GET',
-            ])->submit([]);
-
-            if (is_wp_error($response)) {
-                return [];
-            }
-
-            if ($this->endpoint === '/v3/contacts/doubleOptinConfirmation') {
-                $fields = [
-                    [
-                        'name' => 'email',
-                        'schema' => ['type' => 'string'],
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'includeListIds',
-                        'schema' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'integer'],
-                        ],
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'excludeListIds',
-                        'schema' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'integer'],
-                        ],
-                    ],
-                    [
-                        'name' => 'templateId',
-                        'schema' => ['type' => 'integer'],
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'redirectionUrl',
-                        'schema' => ['type' => 'string'],
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'attributes',
-                        'schema' => [
-                            'type' => 'object',
-                            'properties' => [],
-                        ],
-                    ],
-                ];
-            } else {
-                $fields = [
-                    [
-                        'name' => 'email',
-                        'schema' => ['type' => 'string'],
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'ext_id',
-                        'schema' => ['type' => 'string'],
-                    ],
-                    [
-                        'name' => 'emailBlacklisted',
-                        'schema' => ['type' => 'boolean'],
-                    ],
-                    [
-                        'name' => 'smsBlacklisted',
-                        'schema' => ['type' => 'boolean'],
-                    ],
-                    [
-                        'name' => 'listIds',
-                        'schema' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'integer'],
-                        ],
-                    ],
-                    [
-                        'name' => 'updateEnabled',
-                        'schema' => ['type' => 'boolean'],
-                    ],
-                    [
-                        'name' => 'smtpBlacklistSender',
-                        'schema' => ['type' => 'boolean'],
-                    ],
-                    [
-                        'name' => 'attributes',
-                        'schema' => [
-                            'type' => 'object',
-                            'properties' => [],
-                        ],
-                    ],
-                ];
-            }
-
-            foreach ($response['data']['attributes'] as $attribute) {
-                $fields[] = [
-                    'name' => 'attributes.' . $attribute['name'],
-                    'schema' => ['type' => 'string'],
-                ];
-            }
-
-            return $fields;
-        } else {
-            preg_match('/\/([a-z]+)$/', $this->endpoint, $matches);
-            $module = $matches[1];
-            $response = $this->patch([
-                'name' => "holded-{$module}-attributes",
-                'endpoint' => "/v3/crm/attributes/{$module}",
-                'method' => 'GET',
-            ])->submit([]);
-
-            if (is_wp_error($response)) {
-                return [];
-            }
-
-            if ($module === 'companies') {
-                $fields = [
-                    [
-                        'name' => 'name',
-                        'schema' => ['type' => 'string'],
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'countryCode',
-                        'schema' => ['type' => 'integer'],
-                    ],
-                    [
-                        'name' => 'linkedContactsIds',
-                        'schema' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'integer'],
-                        ],
-                    ],
-                    [
-                        'name' => 'linkedDealsIds',
-                        'schema' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'integer'],
-                        ],
-                    ],
-                    [
-                        'name' => 'attributes',
-                        'schema' => [
-                            'type' => 'object',
-                            'properties' => [],
-                        ],
-                    ],
-                ];
-            } elseif ($module === 'deals') {
-                $fields = [
-                    [
-                        'name' => 'name',
-                        'schema' => ['type' => 'string'],
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'linkedDealsIds',
-                        'schema' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'integer'],
-                        ],
-                    ],
-                    [
-                        'name' => 'linkedCompaniesIds',
-                        'schema' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'integer'],
-                        ],
-                    ],
-                    [
-                        'name' => 'attributes',
-                        'schema' => [
-                            'type' => 'object',
-                            'properties' => [],
-                        ],
-                    ],
-                ];
-            }
-
-            foreach ($response['data'] as $attribute) {
-                switch ($attribute['attributeTypeName']) {
-                    case 'number':
-                        $type = 'number';
-                        break;
-                    case 'text':
-                        $type = 'string';
-                        break;
-                    case 'user':
-                        $type = 'email';
-                        break;
-                    case 'date':
-                        $type = 'date';
-                        break;
-                    default:
-                        $type = 'string';
-                }
-
-                $fields[] = [
-                    'name' => 'attributes.' . $attribute['internalName'],
-                    'schema' => ['type' => $type],
-                ];
-            }
-
-            return $fields;
+        $chunks = array_values(array_filter(explode('/', $this->endpoint)));
+        if (empty($chunks)) {
+            return [];
         }
+
+        $api_base = $chunks[0];
+        if ($api_base !== 'api') {
+            array_unshift($chunks, 'api');
+        }
+
+        [, $module, $version, $resource] = $chunks;
+
+        if (
+            !in_array($module, [
+                'invoicing',
+                'crm',
+                'projects',
+                'team',
+                'accounting',
+            ]) ||
+            $version !== 'v1'
+        ) {
+            return [];
+        }
+
+        $path = plugin_dir_path(__FILE__) . "/data/swagger/{$module}.json";
+        if (!is_file($path)) {
+            return [];
+        }
+
+        $file_content = file_get_contents($path);
+        try {
+            $paths = json_decode($file_content, true);
+        } catch (TypeError) {
+            return [];
+        }
+
+        $path = '/' . $resource;
+        if (!isset($paths[$path])) {
+            return [];
+        }
+
+        $schema = $paths[$path];
+        if (!isset($schema[strtolower($this->method)])) {
+            return [];
+        }
+
+        $schema = $schema[strtolower($this->method)];
+
+        $fields = [];
+        if (isset($schema['parameters'])) {
+            foreach ($schema['parameters'] as $param) {
+                $fields[] = [
+                    'name' => $param['name'],
+                    'schema' => $param['schema'],
+                ];
+            }
+        } elseif (
+            isset(
+                $schema['requestBody']['content']['application/json']['schema'][
+                    'properties'
+                ]
+            )
+        ) {
+            $properties =
+                $schema['requestBody']['content']['application/json']['schema'][
+                    'properties'
+                ];
+            foreach ($properties as $name => $schema) {
+                $fields[] = [
+                    'name' => $name,
+                    'schema' => $schema,
+                ];
+            }
+        }
+
+        return $fields;
     }
 
     /**

@@ -1,0 +1,1286 @@
+{
+  "/projects": {
+    "get": {
+      "operationId": "List Projects",
+      "responses": {
+        "200": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/project-output" }
+              },
+              "examples": {
+                "response": {
+                  "value": [
+                    {
+                      "id": "5ab390311d6d82002432ec5a",
+                      "name": "Building 301",
+                      "desc": "Bulding 301 in Barcelona",
+                      "tags": ["tag", "tog", "tug"],
+                      "category": 0,
+                      "contactId": "5aaa51ab5b70640028340186",
+                      "contactName": "DIvero",
+                      "date": 0,
+                      "dueDate": 0,
+                      "status": 2,
+                      "lists": [
+                        {
+                          "id": "5ab390311d6d82002432ec52",
+                          "key": "pending",
+                          "name": "Pending",
+                          "desc": "nan"
+                        },
+                        {
+                          "id": "5ab390311d6d82002432ec53",
+                          "key": "review",
+                          "name": "Review",
+                          "desc": "nan"
+                        },
+                        {
+                          "id": "5ab390311d6d82002432ec54",
+                          "key": "done",
+                          "name": "Done",
+                          "desc": "nan"
+                        }
+                      ],
+                      "billable": 1,
+                      "expenses": {
+                        "docId": "5ab3d4121d6d820062013ed3",
+                        "type": "purchase",
+                        "subtotal": 200,
+                        "desc": "noooooo",
+                        "invoiceNum": "123",
+                        "total": 242,
+                        "contactId": "5aaa51ab5b70640028340186",
+                        "contactName": "DIvero (Divero)",
+                        "date": 1521673200,
+                        "dueDate": 1521759600
+                      },
+                      "estimates": [
+                        {
+                          "docId": "5ab3d4cc1d6d82007711bba3",
+                          "type": "estimate",
+                          "subtotal": 34433,
+                          "desc": "no desc",
+                          "invoiceNum": "E170001",
+                          "total": 41663.93,
+                          "contactId": "5aaa51ab5b70640028340186",
+                          "contactName": "DIvero (Divero)",
+                          "date": 1517871600,
+                          "dueDate": 1520118000
+                        }
+                      ],
+                      "sales": [
+                        {
+                          "docId": "5ab391071d6d820034294783",
+                          "type": "invoice",
+                          "subtotal": 818.18,
+                          "desc": "",
+                          "invoiceNum": "F170001",
+                          "total": 990,
+                          "contactId": "5aa939a95b70640009653d72",
+                          "contactName": "Bose QC",
+                          "date": 1521673200,
+                          "dueDate": 0
+                        }
+                      ],
+                      "timeTracking": {
+                        "timeId": "5ac4f2cec839ea004e18a463",
+                        "time": 45300,
+                        "desc": "POOOOOSTuuuuuuu eeeee timetracking after refactor",
+                        "costHour": 234,
+                        "userId": "5a05cc5a60cea100094baf22",
+                        "taskId": "5ab3cb7d1d6d8200440d4683",
+                        "total": 2944.5
+                      },
+                      "price": 2345,
+                      "numberOfTasks": 6,
+                      "completedTasks": 3,
+                      "labels": [
+                        {
+                          "id": "5ab390311d6d82002432ec55",
+                          "name": "New",
+                          "color": "#10cf91"
+                        },
+                        {
+                          "id": "5ab390311d6d82002432ec56",
+                          "name": "Confirmed",
+                          "color": "#10cf91"
+                        },
+                        {
+                          "id": "5ab390311d6d82002432ec57",
+                          "name": "Pending",
+                          "color": "#f8d053"
+                        },
+                        {
+                          "id": "5ab390311d6d82002432ec58",
+                          "name": "Fixed",
+                          "color": "#4181f2"
+                        },
+                        {
+                          "id": "5ab390311d6d82002432ec59",
+                          "name": "Urgent",
+                          "color": "#ee585d"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": ["PROJECTS"],
+      "description": "Get all your projects."
+    },
+    "post": {
+      "operationId": "Create Project",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": { "name": { "type": "string" } },
+              "required": ["name"]
+            }
+          }
+        },
+        "x-examples": { "application/json": { "name": "Project of the month" } }
+      },
+      "responses": {
+        "201": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "integer" },
+                  "info": { "type": "string" },
+                  "id": { "type": "string" }
+                }
+              },
+              "examples": {
+                "response": {
+                  "value": {
+                    "status": 1,
+                    "info": "Created",
+                    "id": "5ac4f2cec839ea004e18a463"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": ["PROJECTS"],
+      "description": "Create a new project."
+    }
+  },
+  "/projects/{projectId}": {
+    "parameters": [
+      {
+        "name": "projectId",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      }
+    ],
+    "get": {
+      "operationId": "Get Project",
+      "responses": {
+        "200": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string" },
+                  "name": { "type": "string" },
+                  "desc": { "type": "string" },
+                  "tags": { "type": "array", "items": { "type": "string" } },
+                  "category": { "type": "integer" },
+                  "contactId": { "type": "string" },
+                  "contactName": { "type": "string" },
+                  "date": { "type": "integer" },
+                  "dueDate": { "type": "integer" },
+                  "status": { "type": "integer" },
+                  "lists": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "key": { "type": "string" },
+                        "name": { "type": "string" },
+                        "desc": { "type": "string" }
+                      }
+                    }
+                  },
+                  "billable": { "type": "integer" },
+                  "expenses": {
+                    "type": "object",
+                    "properties": {
+                      "docId": { "type": "string" },
+                      "type": { "type": "string" },
+                      "subtotal": { "type": "integer" },
+                      "desc": { "type": "string" },
+                      "invoiceNum": { "type": "string" },
+                      "total": { "type": "integer" },
+                      "contactId": { "type": "string" },
+                      "contactName": { "type": "string" },
+                      "date": { "type": "integer" },
+                      "dueDate": { "type": "integer" }
+                    }
+                  },
+                  "estimates": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "docId": { "type": "string" },
+                        "type": { "type": "string" },
+                        "subtotal": { "type": "integer" },
+                        "desc": { "type": "string" },
+                        "invoiceNum": { "type": "string" },
+                        "total": { "type": "number" },
+                        "contactId": { "type": "string" },
+                        "contactName": { "type": "string" },
+                        "date": { "type": "integer" },
+                        "dueDate": { "type": "integer" }
+                      }
+                    }
+                  },
+                  "sales": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "docId": { "type": "string" },
+                        "type": { "type": "string" },
+                        "subtotal": { "type": "number" },
+                        "desc": { "type": "string" },
+                        "invoiceNum": { "type": "string" },
+                        "total": { "type": "integer" },
+                        "contactId": { "type": "string" },
+                        "contactName": { "type": "string" },
+                        "date": { "type": "integer" },
+                        "dueDate": { "type": "integer" }
+                      }
+                    }
+                  },
+                  "timeTracking": {
+                    "type": "object",
+                    "properties": {
+                      "timeId": { "type": "string" },
+                      "time": { "type": "integer" },
+                      "desc": { "type": "string" },
+                      "costHour": { "type": "integer" },
+                      "userId": { "type": "string" },
+                      "taskId": { "type": "string" },
+                      "total": { "type": "number" }
+                    }
+                  },
+                  "price": { "type": "integer" },
+                  "numberOfTasks": { "type": "integer" },
+                  "completedTasks": { "type": "integer" },
+                  "labels": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "name": { "type": "string" },
+                        "color": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "response": {
+                  "value": {
+                    "id": "5ab390311d6d82002432ec5a",
+                    "name": "Building 301",
+                    "desc": "Bulding 301 in Barcelona",
+                    "tags": ["tag", "tog", "tug"],
+                    "category": 0,
+                    "contactId": "5aaa51ab5b70640028340186",
+                    "contactName": "DIvero",
+                    "date": 0,
+                    "dueDate": 0,
+                    "status": 2,
+                    "lists": [
+                      {
+                        "id": "5ab390311d6d82002432ec52",
+                        "key": "pending",
+                        "name": "Pending",
+                        "desc": "nan"
+                      },
+                      {
+                        "id": "5ab390311d6d82002432ec53",
+                        "key": "review",
+                        "name": "Review",
+                        "desc": "nan"
+                      },
+                      {
+                        "id": "5ab390311d6d82002432ec54",
+                        "key": "done",
+                        "name": "Done",
+                        "desc": "nan"
+                      }
+                    ],
+                    "billable": 1,
+                    "expenses": {
+                      "docId": "5ab3d4121d6d820062013ed3",
+                      "type": "purchase",
+                      "subtotal": 200,
+                      "desc": "noooooo",
+                      "invoiceNum": "123",
+                      "total": 242,
+                      "contactId": "5aaa51ab5b70640028340186",
+                      "contactName": "DIvero (Divero)",
+                      "date": 1521673200,
+                      "dueDate": 1521759600
+                    },
+                    "estimates": [
+                      {
+                        "docId": "5ab3d4cc1d6d82007711bba3",
+                        "type": "estimate",
+                        "subtotal": 34433,
+                        "desc": "no desc",
+                        "invoiceNum": "E170001",
+                        "total": 41663.93,
+                        "contactId": "5aaa51ab5b70640028340186",
+                        "contactName": "DIvero (Divero)",
+                        "date": 1517871600,
+                        "dueDate": 1520118000
+                      }
+                    ],
+                    "sales": [
+                      {
+                        "docId": "5ab391071d6d820034294783",
+                        "type": "invoice",
+                        "subtotal": 818.18,
+                        "desc": "",
+                        "invoiceNum": "F170001",
+                        "total": 990,
+                        "contactId": "5aa939a95b70640009653d72",
+                        "contactName": "Bose QC",
+                        "date": 1521673200,
+                        "dueDate": 0
+                      }
+                    ],
+                    "timeTracking": {
+                      "timeId": "5ac4f2cec839ea004e18a463",
+                      "time": 45300,
+                      "desc": "POOOOOSTuuuuuuu eeeee timetracking after refactor",
+                      "costHour": 234,
+                      "userId": "5a05cc5a60cea100094baf22",
+                      "taskId": "5ab3cb7d1d6d8200440d4683",
+                      "total": 2944.5
+                    },
+                    "price": 2345,
+                    "numberOfTasks": 6,
+                    "completedTasks": 3,
+                    "labels": [
+                      {
+                        "id": "5ab390311d6d82002432ec55",
+                        "name": "New",
+                        "color": "#10cf91"
+                      },
+                      {
+                        "id": "5ab390311d6d82002432ec56",
+                        "name": "Confirmed",
+                        "color": "#10cf91"
+                      },
+                      {
+                        "id": "5ab390311d6d82002432ec57",
+                        "name": "Pending",
+                        "color": "#f8d053"
+                      },
+                      {
+                        "id": "5ab390311d6d82002432ec58",
+                        "name": "Fixed",
+                        "color": "#4181f2"
+                      },
+                      {
+                        "id": "5ab390311d6d82002432ec59",
+                        "name": "Urgent",
+                        "color": "#ee585d"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": ["PROJECTS"],
+      "description": "Get a specific payment."
+    },
+    "put": {
+      "operationId": "Update Project",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "desc": { "type": "string" },
+                "tags": { "type": "array", "items": { "type": "string" } },
+                "contactName": { "type": "string" },
+                "date": { "type": "integer" },
+                "dueDate": { "type": "integer" },
+                "status": { "type": "integer" },
+                "lists": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "key": { "type": "string" },
+                      "name": { "type": "string" },
+                      "desc": { "type": "string" }
+                    }
+                  }
+                },
+                "billable": { "type": "integer" },
+                "price": { "type": "integer" },
+                "labels": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "name": { "type": "string" },
+                      "color": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-examples": {
+          "application/json": {
+            "name": "Building 301",
+            "desc": "Bulding 301 in Barcelona",
+            "tags": ["tag", "tog", "tug"],
+            "contactName": "DIvero",
+            "date": 1521673200,
+            "dueDate": 1521759600,
+            "status": 2,
+            "lists": [
+              {
+                "id": "5ab390311d6d82002432ec52",
+                "key": "pending",
+                "name": "Pending",
+                "desc": "nan"
+              },
+              {
+                "id": "5ab390311d6d82002432ec53",
+                "key": "review",
+                "name": "Review",
+                "desc": "nan"
+              },
+              {
+                "id": "5ab390311d6d82002432ec54",
+                "key": "done",
+                "name": "Done",
+                "desc": "nan"
+              }
+            ],
+            "billable": 1,
+            "price": 2345,
+            "labels": [
+              {
+                "id": "5ab390311d6d82002432ec55",
+                "name": "New",
+                "color": "#10cf91"
+              },
+              {
+                "id": "5ab390311d6d82002432ec56",
+                "name": "Confirmed",
+                "color": "#10cf91"
+              },
+              {
+                "id": "5ab390311d6d82002432ec57",
+                "name": "Pending",
+                "color": "#f8d053"
+              },
+              {
+                "id": "5ab390311d6d82002432ec58",
+                "name": "Fixed",
+                "color": "#4181f2"
+              },
+              {
+                "id": "5ab390311d6d82002432ec59",
+                "name": "Urgent",
+                "color": "#ee585d"
+              }
+            ]
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "integer" },
+                  "info": { "type": "string" },
+                  "id": { "type": "string" }
+                }
+              },
+              "examples": {
+                "response": {
+                  "value": {
+                    "status": 1,
+                    "info": "Updated",
+                    "id": "5ab390311d6d82002432ec5a"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": ["PROJECTS"],
+      "description": "Update a specific project.\n\nOnly the params included in the operation will update the project."
+    },
+    "delete": {
+      "operationId": "Delete Project",
+      "responses": {
+        "200": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "integer" },
+                  "info": { "type": "string" },
+                  "id": { "type": "string" }
+                }
+              },
+              "examples": {
+                "response": {
+                  "value": {
+                    "status": 1,
+                    "info": "Successfully deleted",
+                    "id": "5aba68b1c5d438006425ad45"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": ["PROJECTS"],
+      "description": "Delete a specific project."
+    }
+  },
+  "/tasks": {
+    "get": {
+      "operationId": "List Tasks",
+      "responses": {
+        "200": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "projectId": { "type": "string" },
+                    "listId": { "type": "string" },
+                    "name": { "type": "string" },
+                    "desc": { "type": "string" },
+                    "labels": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "comments": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "commentId": { "type": "string" },
+                          "createdAt": { "type": "integer" },
+                          "userId": { "type": "string" },
+                          "message": { "type": "string" }
+                        }
+                      }
+                    },
+                    "date": { "type": "integer" },
+                    "dueDate": { "type": "integer" },
+                    "userId": { "type": "string" },
+                    "createdAt": { "type": "integer" },
+                    "updatedAt": { "type": "integer" },
+                    "status": { "type": "integer" },
+                    "billable": { "type": "integer" },
+                    "featured": { "type": "integer" }
+                  }
+                }
+              },
+              "examples": {
+                "response": {
+                  "value": [
+                    {
+                      "id": "5ab3df6e1d6d82008c5777a4",
+                      "projectId": "5ab390311d6d82002432ec5a",
+                      "listId": "5ab390311d6d82002432ec53",
+                      "name": "Business plan",
+                      "desc": "business plan for the new project",
+                      "labels": [
+                        "5ab390311d6d82002432ec58",
+                        "5ab390311d6d82002432ec59"
+                      ],
+                      "comments": [
+                        {
+                          "commentId": "5ab3df8c1d6d820088525aa3",
+                          "createdAt": 1521737612,
+                          "userId": "5a05cc5a60cea100094baf22",
+                          "message": "no comments"
+                        },
+                        {
+                          "commentId": "5ab3df971d6d82008c5777a5",
+                          "createdAt": 1521737623,
+                          "userId": "5a05cc5a60cea100094baf22",
+                          "message": "a piece of comment\n"
+                        }
+                      ],
+                      "date": 1521737582,
+                      "dueDate": 1521673200,
+                      "userId": "5a05cc5a60cea100094baf22",
+                      "createdAt": 1521737582,
+                      "updatedAt": 1521737582,
+                      "status": 0,
+                      "billable": 0,
+                      "featured": 1
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": ["TASKS"],
+      "description": "Get all your tasks."
+    },
+    "post": {
+      "operationId": "Create Task",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "projectId": { "type": "string" },
+                "listId": { "type": "string" },
+                "name": { "type": "string" }
+              },
+              "required": ["projectId", "listId", "name"]
+            }
+          }
+        },
+        "x-examples": {
+          "application/json": {
+            "projectId": "5ab390311d6d82002432ec5a",
+            "listId": "5ab390311d6d82002432ec52",
+            "name": "new task"
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "integer" },
+                  "info": { "type": "string" },
+                  "id": { "type": "string" }
+                }
+              },
+              "examples": {
+                "response": {
+                  "value": {
+                    "status": 1,
+                    "info": "Created",
+                    "id": "5ac4f2cec839ea004e18a463"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": ["TASKS"],
+      "description": "Create a new task."
+    }
+  },
+  "/tasks/{taskId}": {
+    "parameters": [
+      {
+        "name": "taskId",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      }
+    ],
+    "get": {
+      "operationId": "Get Task",
+      "responses": {
+        "200": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string" },
+                  "projectId": { "type": "string" },
+                  "listId": { "type": "string" },
+                  "name": { "type": "string" },
+                  "desc": { "type": "string" },
+                  "labels": { "type": "array", "items": { "type": "string" } },
+                  "comments": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "commentId": { "type": "string" },
+                        "createdAt": { "type": "integer" },
+                        "userId": { "type": "string" },
+                        "message": { "type": "string" }
+                      }
+                    }
+                  },
+                  "date": { "type": "integer" },
+                  "dueDate": { "type": "integer" },
+                  "userId": { "type": "string" },
+                  "createdAt": { "type": "integer" },
+                  "updatedAt": { "type": "integer" },
+                  "status": { "type": "integer" },
+                  "billable": { "type": "integer" },
+                  "featured": { "type": "integer" }
+                }
+              },
+              "examples": {
+                "response": {
+                  "value": {
+                    "id": "5ab3df6e1d6d82008c5777a4",
+                    "projectId": "5ab390311d6d82002432ec5a",
+                    "listId": "5ab390311d6d82002432ec53",
+                    "name": "Business plan",
+                    "desc": "business plan for the new project",
+                    "labels": [
+                      "5ab390311d6d82002432ec58",
+                      "5ab390311d6d82002432ec59"
+                    ],
+                    "comments": [
+                      {
+                        "commentId": "5ab3df8c1d6d820088525aa3",
+                        "createdAt": 1521737612,
+                        "userId": "5a05cc5a60cea100094baf22",
+                        "message": "no comments"
+                      },
+                      {
+                        "commentId": "5ab3df971d6d82008c5777a5",
+                        "createdAt": 1521737623,
+                        "userId": "5a05cc5a60cea100094baf22",
+                        "message": "a piece of comment\n"
+                      }
+                    ],
+                    "date": 1521737582,
+                    "dueDate": 1521673200,
+                    "userId": "5a05cc5a60cea100094baf22",
+                    "createdAt": 1521737582,
+                    "updatedAt": 1521737582,
+                    "status": 0,
+                    "billable": 0,
+                    "featured": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": ["TASKS"],
+      "description": "Get a specific task."
+    },
+    "delete": {
+      "operationId": "Delete Task",
+      "responses": {
+        "200": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "integer" },
+                  "info": { "type": "string" },
+                  "id": { "type": "string" }
+                }
+              },
+              "examples": {
+                "response": {
+                  "value": {
+                    "status": 1,
+                    "info": "Successfully deleted",
+                    "id": "5aba68b1c5d438006425ad45"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": ["TASKS"],
+      "description": "Delete a specific task."
+    }
+  },
+  "/projects/{projectId}/times": {
+    "parameters": [
+      {
+        "name": "projectId",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      }
+    ],
+    "get": {
+      "operationId": "Get Project Times",
+      "responses": {
+        "200": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/timeTracking-output" }
+              },
+              "examples": {
+                "response": {
+                  "value": [
+                    {
+                      "timeId": "5ab3d2611d6d82005c4d2082",
+                      "duration": 45300,
+                      "desc": "timetracking project",
+                      "costHour": 35,
+                      "userId": "5a05cc5a60cea100094baf22",
+                      "taskId": "5ab3cb7d1d6d8200440d4683",
+                      "total": 440.41666666667
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": ["TIME TRACKING"],
+      "description": "Get all your times tracking by project."
+    },
+    "post": {
+      "operationId": "Create Project Time",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "duration": { "type": "integer" },
+                "desc": { "type": "string" },
+                "costHour": { "type": "integer" },
+                "userId": { "type": "string" },
+                "taskId": { "type": "string" }
+              },
+              "required": ["duration", "costHour"]
+            }
+          }
+        },
+        "x-examples": {
+          "application/json": {
+            "duration": 45300,
+            "desc": "new timetracking",
+            "costHour": 35,
+            "userId": "5a05cc5a60cea100094baf22",
+            "taskId": "5ab3cb7d1d6d8200440d4683"
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "integer" },
+                  "info": { "type": "string" },
+                  "id": { "type": "string" }
+                }
+              },
+              "examples": {
+                "response": {
+                  "value": {
+                    "status": 1,
+                    "info": "Created",
+                    "id": "5ac4f2cec839ea004e18a463"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": ["TIME TRACKING"],
+      "description": "Create a new time tracking."
+    }
+  },
+  "/projects/{projectId}/times/{timeTrackingId}": {
+    "parameters": [
+      {
+        "name": "projectId",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      },
+      {
+        "name": "timeTrackingId",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      }
+    ],
+    "get": {
+      "operationId": "GetProjectTimes",
+      "responses": {
+        "200": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/timeTracking-output-detailed"
+              },
+              "examples": {
+                "response": {
+                  "value": {
+                    "timeId": "5ab3d2611d6d82005c4d2082",
+                    "duration": 45300,
+                    "desc": "timetracking new project",
+                    "costHour": 35,
+                    "userId": "5a05cc5a60cea100094baf22",
+                    "taskId": "5ab3cb7d1d6d8200440d4683",
+                    "total": 440.41666666667
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": ["TIME TRACKING"],
+      "description": "Get a specific time tracking."
+    },
+    "put": {
+      "operationId": "Update Project Time",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "duration": { "type": "integer" },
+                "desc": { "type": "string" },
+                "costHour": { "type": "integer" },
+                "userId": { "type": "string" },
+                "taskId": { "type": "string" }
+              },
+              "required": ["duration", "costHour"]
+            }
+          }
+        },
+        "x-examples": {
+          "application/json": {
+            "duration": 45300,
+            "desc": "timetracking new project",
+            "costHour": 35,
+            "userId": "5a05cc5a60cea100094baf22",
+            "taskId": "5ab3cb7d1d6d8200440d4683"
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "integer" },
+                  "info": { "type": "string" },
+                  "id": { "type": "string" }
+                }
+              },
+              "examples": {
+                "response": {
+                  "value": {
+                    "status": 1,
+                    "info": "Updated",
+                    "id": "5ac4f2cec839ea004e18a463"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": ["TIME TRACKING"],
+      "description": "Update a specific time tracking.\n\nOnly the params included in the operation will update the time tracking."
+    },
+    "delete": {
+      "operationId": "Delete Project Time",
+      "responses": {
+        "200": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "integer" },
+                  "info": { "type": "string" },
+                  "id": { "type": "string" }
+                }
+              },
+              "examples": {
+                "response": {
+                  "value": {
+                    "status": 1,
+                    "info": "Successfully deleted",
+                    "id": "5aba68b1c5d438006425ad45"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": ["TIME TRACKING"],
+      "description": "Delete a specific time tracking."
+    }
+  },
+  "/projects/times": {
+    "get": {
+      "responses": {
+        "200": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "timeTracking": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "timeId": { "type": "string" },
+                          "duration": { "type": "integer" },
+                          "desc": { "type": "string" },
+                          "costHour": { "type": "integer" },
+                          "userId": { "type": "string" },
+                          "taskId": { "type": "string" },
+                          "total": { "type": "number" }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "response": {
+                  "value": [
+                    {
+                      "id": "5ab390311d6d82002432ec5a",
+                      "name": "Building",
+                      "timeTracking": [
+                        {
+                          "timeId": "5ab3d2611d6d82005c4d2082",
+                          "duration": 45300,
+                          "desc": "timetracking test",
+                          "costHour": 35,
+                          "userId": "5a05cc5a60cea100094baf22",
+                          "taskId": "5ab3cb7d1d6d8200440d4683",
+                          "total": 440.41666666667
+                        },
+                        {
+                          "timeId": "5ab4bb421d6d820008184163",
+                          "duration": 38760,
+                          "desc": "first timetracking",
+                          "costHour": 0,
+                          "userId": "5a05cc5a60cea100094baf22",
+                          "taskId": "5ab3cb7d1d6d8200440d4683",
+                          "total": 0
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "operationId": "List Times",
+      "parameters": [
+        {
+          "name": "start",
+          "in": "query",
+          "required": false,
+          "schema": { "type": "integer" }
+        },
+        {
+          "name": "end",
+          "in": "query",
+          "required": false,
+          "schema": { "type": "integer" }
+        },
+        {
+          "name": "archived",
+          "in": "query",
+          "required": false,
+          "schema": { "type": "boolean" }
+        }
+      ],
+      "tags": ["TIME TRACKING"],
+      "description": "List time trackings in projects not archived from 18 months on"
+    }
+  },
+  "/projects/{projectId}/summary": {
+    "get": {
+      "responses": {
+        "200": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "desc": { "type": "string" },
+                  "projectEvolution": {
+                    "type": "object",
+                    "properties": {
+                      "tasks": {
+                        "type": "object",
+                        "properties": {
+                          "total": { "type": "integer" },
+                          "completed": { "type": "integer" }
+                        }
+                      },
+                      "dueDate": { "type": "integer" }
+                    }
+                  },
+                  "profitability": {
+                    "type": "object",
+                    "properties": {
+                      "sales": { "type": "number" },
+                      "expenses": {
+                        "type": "object",
+                        "properties": {
+                          "documents": { "type": "integer" },
+                          "personnel": { "type": "number" },
+                          "total": { "type": "number" }
+                        }
+                      },
+                      "profit": { "type": "number" }
+                    }
+                  },
+                  "economicStatus": {
+                    "type": "object",
+                    "properties": {
+                      "sales": { "type": "number" },
+                      "quoted": { "type": "integer" },
+                      "difference": { "type": "number" },
+                      "estimatePrice": { "type": "integer" },
+                      "billed": { "type": "number" },
+                      "collected": { "type": "integer" },
+                      "remaining": { "type": "number" }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "response": {
+                  "value": {
+                    "name": "Building",
+                    "desc": "Bulding in Barcelona",
+                    "projectEvolution": {
+                      "tasks": { "total": 6, "completed": 3 },
+                      "dueDate": 0
+                    },
+                    "profitability": {
+                      "sales": 1117.18,
+                      "expenses": {
+                        "documents": 200,
+                        "personnel": 15603.333333333,
+                        "total": 15803.333333333
+                      },
+                      "profit": -14686.153333333
+                    },
+                    "economicStatus": {
+                      "sales": 1117.18,
+                      "quoted": 34433,
+                      "difference": -33315.82,
+                      "estimatePrice": 3453456,
+                      "billed": 1351.79,
+                      "collected": 290,
+                      "remaining": 1061.79
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "tags": ["PROJECTS"],
+      "description": "Get a specific project summary."
+    },
+    "parameters": [
+      {
+        "name": "projectId",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      }
+    ]
+  }
+}

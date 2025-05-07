@@ -109,7 +109,7 @@ class Holded_Addon extends Rest_Addon
             'name' => '__holded-' . time(),
             'endpoint' => $endpoint,
             'backend' => $backend,
-            'method' => 'GET',
+            'method' => 'POST',
         ]);
 
         return $bridge->api_schema;

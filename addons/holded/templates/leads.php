@@ -80,6 +80,8 @@ return [
             ),
             'label' => __('Lead potential (%)', 'forms-bridge'),
             'type' => 'number',
+            'min' => 0,
+            'max' => 100,
         ],
         [
             'ref' => '#bridge/custom_fields[]',
