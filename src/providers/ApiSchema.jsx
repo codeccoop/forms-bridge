@@ -16,19 +16,26 @@ export default function ApiSchemaProvider({ children, bridge, credentials }) {
   const [schema, setSchema] = useState(null);
   const [invalid, invalidate] = useState(true);
 
-  const lastBridge = useRef(bridge.name);
+  const lastBridge = useRef(null);
+
   useEffect(() => {
     setError(false);
-    invalidate(bridge.name !== "add" && bridge.name !== lastBridge.current);
+
+    if (bridge.name !== "add") {
+      invalidate(
+        bridge.name !== lastBridge.current?.name ||
+          bridge.backend !== lastBridge.current?.backend ||
+          bridge.endpoint !== lastBridge.current?.endpoint ||
+          bridge.credential !== lastBridge.current?.credential
+      );
+    }
 
     return () => {
       if (bridge.name !== "add") {
-        lastBridge.current = bridge.name;
+        lastBridge.current = bridge;
       }
-
-      invalidate(true);
     };
-  }, [api, bridge]);
+  }, [bridge]);
 
   const fetch = useRef((api, endpoint, backend, credential = {}) => {
     if (!backend || !api) return;
@@ -63,18 +70,9 @@ export default function ApiSchemaProvider({ children, bridge, credentials }) {
 
   const value = useMemo(() => {
     if (error) return null;
-    if (!loading && invalid) fetch(api, bridge?.endpoint, backend, credential);
+    if (!loading && invalid) fetch(api, bridge.endpoint, backend, credential);
     return schema;
-  }, [
-    api,
-    error,
-    loading,
-    invalid,
-    schema,
-    bridge?.endpoint,
-    backend,
-    credential,
-  ]);
+  }, [api, error, loading, invalid, schema, bridge, backend, credential]);
 
   return (
     <ApiSchemaContext.Provider value={value}>
