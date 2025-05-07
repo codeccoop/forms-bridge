@@ -259,33 +259,32 @@ export default function MutationLayers({ fields, mappers, setMappers }) {
                         />
                       </BaseControl>
                     </div>
-                    {fieldOptions.length > 0 && (
-                      <Button
-                        style={{
-                          height: "40px",
-                          width: "40px",
-                          justifyContent: "center",
-                          marginLeft: "2px",
-                        }}
-                        size="compact"
-                        variant="secondary"
-                        onClick={() => setFieldSelector(i)}
-                        __next40pxDefaultSize
-                      >
-                        {"{...}"}
-                        {fieldSelector === i && (
-                          <DropdownSelect
-                            title={__("Fields", "forms-bridge")}
-                            tags={fieldOptions}
-                            onChange={(fieldName) => {
-                              setFieldSelector(-1);
-                              setMapper("to", i, fieldName);
-                            }}
-                            onFocusOutside={() => setFieldSelector(-1)}
-                          />
-                        )}
-                      </Button>
-                    )}
+                    <Button
+                      style={{
+                        height: "40px",
+                        width: "40px",
+                        justifyContent: "center",
+                        marginLeft: "2px",
+                      }}
+                      disabled={fieldOptions.length === 0}
+                      size="compact"
+                      variant="secondary"
+                      onClick={() => setFieldSelector(i)}
+                      __next40pxDefaultSize
+                    >
+                      {"{...}"}
+                      {fieldSelector === i && (
+                        <DropdownSelect
+                          title={__("Fields", "forms-bridge")}
+                          tags={fieldOptions}
+                          onChange={(fieldName) => {
+                            setFieldSelector(-1);
+                            setMapper("to", i, fieldName);
+                          }}
+                          onFocusOutside={() => setFieldSelector(-1)}
+                        />
+                      )}
+                    </Button>
                   </div>
                 </td>
                 <td style={{ columnWidth: "100px" }}>
