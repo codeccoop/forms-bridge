@@ -9,7 +9,7 @@ global $forms_bridge_iso2_countries;
 add_filter(
     'forms_bridge_template_data',
     function ($data, $template_name) {
-        if ($template_name === 'holded-leads') {
+        if ($template_name === 'holded-service-quotations') {
             $index = array_search(
                 'tags',
                 array_column($data['bridge']['custom_fields'], 'name')
@@ -42,69 +42,51 @@ add_filter(
 );
 
 return [
-    'title' => __('Leads', 'forms-bridge'),
+    'title' => __('Service Quotations', 'forms-bridge'),
     'fields' => [
         [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('Leads', 'forms-bridge'),
+            'default' => __('Service Quotations', 'forms-bridge'),
         ],
         [
             'ref' => '#bridge',
             'name' => 'endpoint',
-            'value' => '/api/crm/v1/leads',
-        ],
-        [
-            'ref' => '#bridge/custom_fields[]',
-            'name' => 'funnelId',
-            'label' => __('Funnel', 'forms-bridge'),
-            'type' => 'string',
-            'required' => true,
-        ],
-        [
-            'ref' => '#bridge/custom_fields[]',
-            'name' => 'value',
-            'label' => __('Lead value', 'forms-bridge'),
-            'description' => __(
-                'Estimated deal value in currency units',
-                'forms-bridge'
-            ),
-            'type' => 'number',
-        ],
-        [
-            'ref' => '#bridge/custom_fields[]',
-            'name' => 'potential',
-            'description' => __(
-                'Deal potential as a percentage',
-                'forms-bridge'
-            ),
-            'label' => __('Lead potential (%)', 'forms-bridge'),
-            'type' => 'number',
-            'min' => 0,
-            'max' => 100,
+            'value' => '/api/invoicing/v1/documents/estimate',
         ],
         [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'tags',
-            'label' => __('Contact tags', 'forms-bridge'),
+            'label' => __('Tags', 'forms-bridge'),
             'description' => __('Tags separated by commas', 'forms-bridge'),
             'type' => 'string',
         ],
+        [
+            'ref' => '#bridge/custom_fields[]',
+            'name' => 'serviceId',
+            'label' => __('Service', 'forms-bridge'),
+            'type' => 'string',
+            'required' => true,
+        ],
     ],
     'bridge' => [
-        'endpoint' => '/api/crm/v1/leads',
+        'endpoint' => '/api/invoicing/v1/documents/estimate',
         'custom_fields' => [
+            [
+                'name' => 'type',
+                'value' => 'client',
+            ],
             [
                 'name' => 'isperson',
                 'value' => '1',
             ],
             [
-                'name' => 'type',
-                'value' => 'lead',
-            ],
-            [
                 'name' => 'defaults.language',
                 'value' => '$locale',
+            ],
+            [
+                'name' => 'date',
+                'value' => '$timestamp',
             ],
         ],
         'mutations' => [
@@ -115,14 +97,19 @@ return [
                     'cast' => 'integer',
                 ],
                 [
-                    'from' => 'code',
-                    'to' => 'vatnumber',
-                    'cast' => 'copy',
+                    'from' => 'tags',
+                    'to' => 'quotation_tags',
+                    'cast' => 'inherit',
                 ],
                 [
                     'from' => 'your-name',
                     'to' => 'name',
                     'cast' => 'string',
+                ],
+                [
+                    'from' => 'code',
+                    'to' => 'vatnumber',
+                    'cast' => 'copy',
                 ],
                 [
                     'from' => 'address',
@@ -138,6 +125,16 @@ return [
                     'from' => 'city',
                     'to' => 'billAddress.city',
                     'cast' => 'string',
+                ],
+                [
+                    'from' => 'serviceId',
+                    'to' => 'items[0].serviceId',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'quantity',
+                    'to' => 'items[0].units',
+                    'cast' => 'integer',
                 ],
             ],
             [
@@ -159,6 +156,13 @@ return [
                     'cast' => 'string',
                 ],
             ],
+            [
+                [
+                    'from' => 'quotation_tags',
+                    'to' => 'tags',
+                    'cast' => 'inherit',
+                ],
+            ],
         ],
         'workflow' => [
             'forms-bridge-iso2-country-code',
@@ -168,6 +172,14 @@ return [
     ],
     'form' => [
         'fields' => [
+            [
+                'label' => __('Quantity', 'forms-bridge'),
+                'name' => 'quantity',
+                'type' => 'number',
+                'default' => 1,
+                'min' => 0,
+                'required' => true,
+            ],
             [
                 'label' => __('Your name', 'forms-bridge'),
                 'name' => 'your-name',

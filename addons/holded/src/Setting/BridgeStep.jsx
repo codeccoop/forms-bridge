@@ -2,11 +2,12 @@ import BridgeStep from "../../../../src/components/Templates/Steps/BridgeStep";
 
 const { useMemo, useEffect } = wp.element;
 
-const API_FIELDS = ["funnelId", "sku"];
+const API_FIELDS = ["funnelId", "sku", "serviceId"];
 
 export default function HoldedBridgeStep({ fields, data, setData }) {
   const funnels = useMemo(() => data._funnels || [], [data._funnels]);
   const products = useMemo(() => data._products || [], [data._products]);
+  const services = useMemo(() => data._services || [], [data._services]);
 
   const funnelOptions = useMemo(() => {
     return funnels.map(({ id, name }) => ({
@@ -16,11 +17,18 @@ export default function HoldedBridgeStep({ fields, data, setData }) {
   }, [funnels]);
 
   const productOptions = useMemo(() => {
-    return products.map(({ id, name }) => ({
-      value: id,
+    return products.map(({ sku, name }) => ({
+      value: sku,
       label: name,
     }));
   }, [products]);
+
+  const serviceOptions = useMemo(() => {
+    return services.map(({ id, name }) => ({
+      value: id,
+      label: name,
+    }));
+  }, [services]);
 
   const standardFields = useMemo(
     () => fields.filter(({ name }) => !API_FIELDS.includes(name)),
@@ -43,6 +51,12 @@ export default function HoldedBridgeStep({ fields, data, setData }) {
             type: "options",
             options: productOptions,
           };
+        } else if (field.name === "serviceId") {
+          return {
+            ...field,
+            type: "options",
+            options: serviceOptions,
+          };
         }
       });
   }, [fields, funnelOptions, productOptions]);
@@ -55,7 +69,11 @@ export default function HoldedBridgeStep({ fields, data, setData }) {
     }
 
     if (productOptions.length > 0 && !data.sku) {
-      defaults.product = productOptions[0].value;
+      defaults.sku = productOptions[0].value;
+    }
+
+    if (serviceOptions.length > 0 && !data.serviceId) {
+      defaults.serviceId = serviceOptions[0].value;
     }
     setData(defaults);
   }, [productOptions, funnelOptions]);

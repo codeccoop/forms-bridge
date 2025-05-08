@@ -42,6 +42,7 @@ export default function HoldedTemplateWizard({
 
   const [funnels, setFunnels] = useState([]);
   const [products, setProducts] = useState([]);
+  const [services, setServices] = useState([]);
 
   const backend = useMemo(() => {
     if (!data.backend?.name) return;
@@ -83,7 +84,19 @@ export default function HoldedTemplateWizard({
 
   const fetchProducts = useRef(
     debounce(
-      (backend) => fetch("/api/invoicing/v1/products", setProducts, backend),
+      (backend) =>
+        fetch(
+          "/api/invoicing/v1/products",
+          (products) => setProducts(products.filter((p) => p.sku)),
+          backend
+        ),
+      1e3
+    )
+  ).current;
+
+  const fetchServices = useRef(
+    debounce(
+      (backend) => fetch("/api/invoicing/v1/services", setServices, backend),
       1e3
     )
   ).current;
@@ -93,6 +106,7 @@ export default function HoldedTemplateWizard({
 
     customFields.includes("funnelId") && fetchFunnels(backend);
     customFields.includes("sku") && fetchProducts(backend);
+    customFields.includes("serviceId") && fetchServices(backend);
   }, [wired, backend, customFields]);
 
   useEffect(() => {
@@ -102,9 +116,10 @@ export default function HoldedTemplateWizard({
         ...(data.bridge || {}),
         _funnels: funnels,
         _products: products,
+        _services: services,
       },
     });
-  }, [funnels, products]);
+  }, [funnels, products, services]);
 
   return (
     <TemplateWizard

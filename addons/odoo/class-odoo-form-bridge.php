@@ -229,6 +229,11 @@ class Odoo_Form_Bridge extends Form_Bridge
         return $response;
     }
 
+    /**
+     * Bridge's endpoint fields schema getter.
+     *
+     * @return array
+     */
     protected function api_schema()
     {
         $response = $this->patch([

@@ -37,6 +37,11 @@ class Holded_Form_Bridge extends Rest_Form_Bridge
         return 'application/json';
     }
 
+    /**
+     * Bridge's endpoint fields schema getter.
+     *
+     * @return array
+     */
     protected function api_schema()
     {
         $chunks = array_values(array_filter(explode('/', $this->endpoint)));

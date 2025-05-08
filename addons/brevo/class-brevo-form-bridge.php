@@ -88,6 +88,11 @@ class Brevo_Form_Bridge extends Rest_Form_Bridge
         return $response;
     }
 
+    /**
+     * Bridge's endpoint fields schema getter.
+     *
+     * @return array
+     */
     protected function api_schema()
     {
         if (strstr($this->endpoint, 'contacts')) {
