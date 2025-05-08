@@ -1,13 +1,13 @@
 === Forms Bridge ===
 Contributors: codeccoop
-Tags: forms, bridge, api, integration, rest
+Tags: forms, api, integration, crm, erp
 Donate link: https://buymeacoffee.com/codeccoop
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable Tag: 3.4.0
+Stable Tag: 3.4.1
 Tested up to: 6.8
 
-Bridge your WordPress forms without code, add custom fields, configure a workflow and make your data flow to your backend.
+Bridge your WordPress forms without code, add custom fields, set up a workflow and make your data flow to your backend.
 
 == Integrations ==
 
@@ -34,7 +34,7 @@ Forms Bridge has core support for generic REST API bridges and addons for:
 * [Google Sheets](https://workspace.google.com/products/sheets/)
 * [Holded](https://developers.holded.com/reference/api-key)
 * [Listmonk](https://listmonk.app/docs/apis/apis/)
-* [MailChimp](https://mailchimp.com/developer/)
+* [Mailchimp](https://mailchimp.com/developer/)
 * [Odoo](https://www.odoo.com/)
 * [Zoho CRM](https://www.zoho.com/developer/rest-api.html)
 
@@ -59,6 +59,12 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 6. Debug console
 
 == Changelog ==
+
+= 3.4.1 =
+* feat: holded quotation templates
+* feat: holded API introspection based on swagger data
+* fix: bridge api schema invalidation
+* feat: api fields button with disabled state
 
 = 3.4.0 =
 * feat: odoo quotation templates
