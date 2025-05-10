@@ -19,7 +19,7 @@ function forms_bridge_odoo_contact_id($payload, $bridge)
 return [
     'title' => __('Contact', 'forms-bridge'),
     'description' => __(
-        'Creates a contact and set its ID as the partner_id field of the payload',
+        'Creates a contact and sets its ID as the partner_id field of the payload',
         'forms-bridge'
     ),
     'method' => 'forms_bridge_odoo_contact_id',

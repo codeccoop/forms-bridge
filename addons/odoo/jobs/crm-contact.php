@@ -26,7 +26,7 @@ function forms_bridge_odoo_crm_lead_contact($payload, $bridge)
 return [
     'title' => __('CRM lead contact', 'forms-bridge'),
     'description' => __(
-        'Creates a new contact and sets its email as the email_from value on the payload',
+        'Creates a new contact and sets its email as the email_from and its ID as the partner_id on the payload',
         'forms-bridge'
     ),
     'method' => 'forms_bridge_odoo_crm_lead_contact',

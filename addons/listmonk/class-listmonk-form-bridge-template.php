@@ -74,7 +74,7 @@ class Listmonk_Form_Bridge_Template extends Rest_Form_Bridge_Template
                     ],
                 ],
                 'bridge' => [
-                    'backend' => 'Listmonk',
+                    'backend' => 'Listmonk API',
                     'endpoint' => '',
                     'method' => 'POST',
                 ],

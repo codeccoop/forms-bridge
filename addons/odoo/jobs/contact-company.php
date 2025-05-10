@@ -17,9 +17,9 @@ function forms_bridge_odoo_contact_company($payload, $bridge)
 }
 
 return [
-    'title' => __('Contact company', 'forms-bridge'),
+    'title' => __('Contact\'s company', 'forms-bridge'),
     'description' => __(
-        'Creates a a company set its ID as the parent_id of the payload',
+        'Creates a company and sets its ID as the parent_id of the payload',
         'forms-bridge'
     ),
     'method' => 'forms_bridge_odoo_contact_company',
