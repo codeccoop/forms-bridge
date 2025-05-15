@@ -8,6 +8,10 @@ global $forms_bridge_dolibarr_countries;
 
 return [
     'title' => __('Company Prospects', 'forms-bridge'),
+    'description' => __(
+        'Leads form template. The resulting bridge will convert form submissions into company prospects linked to new contacts.',
+        'forms-bridge'
+    ),
     'fields' => [
         [
             'ref' => '#bridge',

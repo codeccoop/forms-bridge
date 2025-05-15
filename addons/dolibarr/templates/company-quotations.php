@@ -8,6 +8,10 @@ global $forms_bridge_dolibarr_countries;
 
 return [
     'title' => __('Company Quotations', 'forms-bridge'),
+    'description' => __(
+        'Quotations form template. The resulting bridge will convert form submissions into quotations linked to new companies.',
+        'forms-bridge'
+    ),
     'fields' => [
         [
             'ref' => '#bridge',

@@ -48,7 +48,7 @@ add_filter(
 return [
     'title' => __('CRM Company Leads', 'forms-bridge'),
     'description' => __(
-        'Lead form template. The resulting bridge will convert form submissions into leads linked to new companies.',
+        'Leads form template. The resulting bridge will convert form submissions into leads linked to new companies.',
         'forms-bridge'
     ),
     'fields' => [

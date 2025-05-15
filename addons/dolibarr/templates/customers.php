@@ -8,6 +8,10 @@ global $forms_bridge_dolibarr_countries;
 
 return [
     'title' => __('Customers', 'forms-bridge'),
+    'description' => __(
+        'Contact form template. The resulting bridge will convert form submissions into customers.',
+        'forms-bridge'
+    ),
     'fields' => [
         [
             'ref' => '#bridge',

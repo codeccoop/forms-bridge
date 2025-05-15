@@ -6,6 +6,10 @@ if (!defined('ABSPATH')) {
 
 return [
     'title' => __('Quotations', 'forms-bridge'),
+    'description' => __(
+        'Product quotations form template. The resulting bridge will convert form submissions into quotations linked to new contacts.',
+        'forms-bridge'
+    ),
     'fields' => [
         [
             'ref' => '#bridge',
