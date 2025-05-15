@@ -6,6 +6,10 @@ if (!defined('ABSPATH')) {
 
 return [
     'title' => __('Company Contacts', 'forms-bridge'),
+    'description' => __(
+        'Contact form for companies template. The resulting bridge will convert form submissions into new accounts linked to contacts.',
+        'forms-bridge'
+    ),
     'fields' => [
         [
             'ref' => '#bridge',

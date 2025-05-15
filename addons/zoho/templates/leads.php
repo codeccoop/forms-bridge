@@ -41,6 +41,10 @@ add_filter(
 
 return [
     'title' => __('Leads', 'forms-bridge'),
+    'description' => __(
+        'Lead form template. The resulting bridge will convert form submissions into leads.',
+        'forms-bridge'
+    ),
     'fields' => [
         [
             'ref' => '#bridge',

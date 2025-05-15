@@ -6,6 +6,10 @@ if (!defined('ABSPATH')) {
 
 return [
     'title' => __('Meetings', 'forms-bridge'),
+    'description' => __(
+        'Meetings form template. The resulting bridge will convert form submissions into events on the calendar linked to new leads.',
+        'forms-bridge'
+    ),
     'fields' => [
         [
             'ref' => '#bridge',
