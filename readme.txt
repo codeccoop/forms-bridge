@@ -4,12 +4,10 @@ Tags: forms, crm, erp, rest api, integration
 Donate link: https://buymeacoffee.com/codeccoop
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable Tag: 3.4.2
+Stable Tag: 3.4.3
 Tested up to: 6.8
 
 Bridge your WordPress forms without code, add custom fields, set up a workflow and make your data flow to your backend.
-
-With Forms Bridge you can use WordPress as what it is, a CMS, and integrate it with bridges to an infinite stack of possibilities.
 
 == Bridges ==
 
