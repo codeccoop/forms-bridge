@@ -56,6 +56,10 @@ global $forms_bridge_iso2_countries;
 
 return [
     'title' => __('Donation Requests', 'forms-bridge'),
+    'description' => __(
+        'Donations form template. The resulting bridge will convert form submissions into donation requests.',
+        'forms-bridge'
+    ),
     'fields' => [
         [
             'ref' => '#bridge',

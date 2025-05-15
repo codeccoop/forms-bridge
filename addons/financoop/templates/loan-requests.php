@@ -61,6 +61,10 @@ global $forms_bridge_iso2_countries;
 
 return [
     'title' => __('Loan Requests', 'forms-bridge'),
+    'description' => __(
+        'Loans form template. The resulting bridge will convert form submissions into loan requests.',
+        'forms-bridge'
+    ),
     'fields' => [
         [
             'ref' => '#bridge',

@@ -62,6 +62,10 @@ global $forms_bridge_iso2_countries;
 
 return [
     'title' => __('Subscription Requests', 'forms-bridge'),
+    'description' => __(
+        'Subscription form template. The resulting bridge will convert form submissions into subscription requests.',
+        'forms-bridge'
+    ),
     'fields' => [
         [
             'ref' => '#bridge',
