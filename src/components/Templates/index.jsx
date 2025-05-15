@@ -1,6 +1,10 @@
 // source
 import { useIntegrations } from "../../providers/Settings";
-import { useTemplate, useTemplates } from "../../providers/Templates";
+import {
+  useTemplate,
+  useTemplateConfig,
+  useTemplates,
+} from "../../providers/Templates";
 
 const {
   Modal,
@@ -14,6 +18,7 @@ const { __ } = wp.i18n;
 export default function Templates({ Wizard }) {
   const templates = useTemplates();
   const [, setTemplate] = useTemplate();
+  const templateConfig = useTemplateConfig();
 
   const [templateData, setTemplateData] = useState({});
   const [wired, setWired] = useState(null);
@@ -130,6 +135,10 @@ export default function Templates({ Wizard }) {
               />
             </>
           )}
+          {(templateConfig?.description && (
+            <p style={{ maxWidth: "575px" }}>{templateConfig.description}</p>
+          )) ||
+            null}
           <Wizard
             integration={integration}
             onDone={() => setDone(true)}

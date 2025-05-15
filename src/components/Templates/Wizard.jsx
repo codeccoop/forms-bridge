@@ -266,7 +266,7 @@ export default function TemplateWizard({
   if (data[group] === undefined) return;
 
   return (
-    <div style={{ minWidth: "575px", minHeight: "125px" }}>
+    <div style={{ width: "575px", minHeight: "125px" }}>
       <hr style={{ margin: "1rem 0" }} />
       <StepComponent
         integration={integration}
