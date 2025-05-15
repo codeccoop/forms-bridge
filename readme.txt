@@ -80,6 +80,10 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 
 == Changelog ==
 
+= 3.4.3 =
+* feat: bridge template descriptions
+* feat: listmonk skip subscription job
+
 = 3.4.2 =
 * fix: holded appointments template jobs
 * fix: typos from odoo workflow job descriptions
