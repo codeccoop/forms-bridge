@@ -45,6 +45,10 @@ add_filter(
 
 return [
     'title' => __('Opt-in Subscriptions', 'forms-bridge'),
+    'description' => __(
+        'Subscription form template. The resulting bridge will convert form submissions into new list subscriptions with a double opt-in confirmation check.',
+        'forms-bridge'
+    ),
     'fields' => [
         [
             'ref' => '#bridge',
