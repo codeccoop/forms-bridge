@@ -36,8 +36,12 @@ trait Form_Bridge_Mutations
                 continue;
             }
 
-            $isset = $finger->isset($mapper['from']);
+            $isset = $finger->isset($mapper['from'], $is_conditional);
             if (!$isset) {
+                if ($is_conditional) {
+                    continue;
+                }
+
                 $value = null;
             } else {
                 $value = $finger->get($mapper['from']);
