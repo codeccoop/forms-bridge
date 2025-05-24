@@ -110,14 +110,20 @@ trait Form_Bridge_Mutations
 
     private function cast_expanded($values, $cast, $pointer)
     {
-        $parts = explode('[]', $pointer);
+        $expanded = preg_match('/\[\]$/', $pointer);
+
+        $parts = array_filter(explode('[]', $pointer));
         $before = $parts[0];
         $after = implode('[]', array_slice($parts, 1));
 
         if (empty($after)) {
-            return array_map(function ($value) use ($cast, $before) {
-                $this->cast($value, $cast, $before);
-            }, $values);
+            if ($expanded && wp_is_numeric_array($values)) {
+                return array_map(function ($value) use ($cast, $before) {
+                    return $this->cast($value, $cast, $before);
+                }, $values);
+            }
+
+            return $this->cast($values, $cast, $before);
         }
 
         for ($i = 0; $i < count($values); $i++) {
