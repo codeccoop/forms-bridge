@@ -121,7 +121,7 @@ export function applyMappers(payload, mappers = []) {
     }
 
     if (mapper.cast !== "null") {
-      finger.set(mapper.to, castValue(mapper, value));
+      finger.set(mapper.to, castValue(value, mapper));
     }
   }
 
@@ -151,16 +151,11 @@ export function fieldsToPayload(fields) {
   return finger.data;
 }
 
-export function castValue(mapper, value) {
-  const mapCast = Array.isArray(value) && /\[\]$/.test(mapper.to);
-
+export function castValue(value, mapper) {
   const isFrozen = Object.isFrozen(value);
 
-  if (mapCast) {
-    value = value.map((item) => castValue(mapper, item));
-    if (isFrozen) Object.freeze(value);
-
-    return value;
+  if (mapper.from.indexOf("[]") !== -1) {
+    return castExpandedValue(value, mapper);
   }
 
   switch (mapper.cast) {
@@ -180,6 +175,35 @@ export function castValue(mapper, value) {
   }
 
   return value;
+}
+
+function castExpandedValue(values, mapper) {
+  if (!Array.isArray(values)) {
+    return [];
+  }
+
+  const isExpanded = /\[\]$/.test(mapper.from);
+
+  if (isExpanded) {
+    return values.map((value) => {
+      const itemMapper = { ...mapper };
+      itemMapper.from = itemMapper.from.slice(0, -2);
+      return castValue(value, itemMapper);
+    });
+  }
+
+  const parts = mapper.from.split("[]").filter((p) => p);
+  const before = parts[0];
+  const after = parts.slice(1).join("[]");
+
+  for (let i = 0; i < values.length; i++) {
+    const pointer = `${before}[${i}]${after}`;
+    const itemMapper = { ...mapper };
+    itemMapper.from = pointer;
+    values[i] = castValue(values[i], itemMapper);
+  }
+
+  return values;
 }
 
 const TYPES_COMPATIBILITY = {

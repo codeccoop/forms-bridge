@@ -168,7 +168,7 @@ class JSON_Finger
             return '';
         }
 
-        $ponter = array_reduce(
+        $pointer = array_reduce(
             $keys,
             static function ($pointer, $key) {
                 if ($key === INF) {
@@ -189,7 +189,7 @@ class JSON_Finger
         );
 
         if ($is_conditional) {
-            $pointer = '?' . $ponter;
+            $pointer = '?' . $pointer;
         }
 
         return $pointer;
@@ -297,13 +297,9 @@ class JSON_Finger
     {
         $expanded = preg_match('/\[\]$/', $pointer);
 
-        $parts = explode('[]', $pointer);
+        $parts = array_filter(explode('[]', $pointer));
         $before = $parts[0];
         $after = implode('[]', array_slice($parts, 1));
-
-        if ($expanded && count($parts) > 2) {
-            $after .= '[]';
-        }
 
         $items = $this->get($before);
 
@@ -417,7 +413,7 @@ class JSON_Finger
      */
     private function set_expanded($pointer, $values, $unset)
     {
-        $parts = explode('[]', $pointer);
+        $parts = array_filter(explode('[]', $pointer));
         $before = $parts[0];
         $after = implode('[]', array_slice($parts, 1));
 
@@ -457,7 +453,7 @@ class JSON_Finger
     public function unset($pointer)
     {
         if (isset($this->data[$pointer])) {
-            if (intval($pointer) === $pointer) {
+            if (intval($pointer) == $pointer) {
                 if (wp_is_numeric_array($this->data)) {
                     array_splice($this->data, $pointer, 1);
                 }

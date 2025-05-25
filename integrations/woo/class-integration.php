@@ -374,7 +374,7 @@ class Integration extends BaseIntegration
             ];
         }
 
-        foreach ($fields['shipping'] as $name => $data) {
+        foreach ($checkout_fields['shipping'] as $name => $data) {
             $name = str_replace('shipping_', '', $name);
             if (isset(self::order_data_schema['shipping'][$name])) {
                 continue;
@@ -433,7 +433,7 @@ class Integration extends BaseIntegration
 
         $checkout = WC()->checkout;
 
-        $data = $order->data;
+        $data = $order->get_data();
         unset($data['meta_data']);
 
         $checkout_fields = $checkout->checkout_fields;

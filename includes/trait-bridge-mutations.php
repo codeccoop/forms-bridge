@@ -56,10 +56,7 @@ trait Form_Bridge_Mutations
             }
 
             if ($mapper['cast'] !== 'null') {
-                $finger->set(
-                    $mapper['to'],
-                    $this->cast($value, $mapper['cast'], $mapper['from'])
-                );
+                $finger->set($mapper['to'], $this->cast($value, $mapper));
             }
         }
 
@@ -74,13 +71,13 @@ trait Form_Bridge_Mutations
      *
      * @return mixed
      */
-    private function cast($value, $cast, $pointer = null)
+    private function cast($value, $mapper)
     {
-        if ($pointer && strstr($pointer, '[]') !== false) {
-            return $this->cast_expanded($value, $cast, $pointer);
+        if (strstr($mapper['from'], '[]') !== false) {
+            return $this->cast_expanded($value, $mapper);
         }
 
-        switch ($cast) {
+        switch ($mapper['cast']) {
             case 'string':
                 return (string) $value;
             case 'integer':
@@ -108,27 +105,31 @@ trait Form_Bridge_Mutations
         }
     }
 
-    private function cast_expanded($values, $cast, $pointer)
+    private function cast_expanded($values, $mapper)
     {
-        $expanded = preg_match('/\[\]$/', $pointer);
+        if (!wp_is_numeric_array($values)) {
+            return [];
+        }
 
-        $parts = array_filter(explode('[]', $pointer));
+        $is_expanded = preg_match('/\[\]$/', $mapper['from']);
+
+        if ($is_expanded) {
+            return array_map(function ($value) use ($mapper) {
+                $item_mapper = $mapper;
+                $item_mapper['from'] = substr($item_mapper['from'], 0, -2);
+                return $this->cast($value, $item_mapper);
+            }, $values);
+        }
+
+        $parts = array_filter(explode('[]', $mapper['to']));
         $before = $parts[0];
         $after = implode('[]', array_slice($parts, 1));
 
-        if (empty($after)) {
-            if ($expanded && wp_is_numeric_array($values)) {
-                return array_map(function ($value) use ($cast, $before) {
-                    return $this->cast($value, $cast, $before);
-                }, $values);
-            }
-
-            return $this->cast($values, $cast, $before);
-        }
-
         for ($i = 0; $i < count($values); $i++) {
             $pointer = "{$before}[{$i}]{$after}";
-            $values[$i] = $this->cast($values[$i], $cast, $pointer);
+            $item_mapper = $mapper;
+            $item_mapper['from'] = $pointer;
+            $values[$i] = $this->cast($values[$i], $item_mapper);
         }
 
         return $values;

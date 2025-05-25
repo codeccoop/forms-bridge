@@ -186,13 +186,9 @@ JsonFinger.prototype.get = function (pointer, expansion = []) {
 JsonFinger.prototype.getExpanded = function (pointer, expansion = []) {
   const expanded = /\[\]$/.test(pointer);
 
-  const parts = pointer.split("[]");
+  const parts = pointer.split("[]").filter((p) => p);
   const before = parts[0];
   let after = parts.slice(1).join("[]");
-
-  if (expanded && parts.length > 2) {
-    after += "[]";
-  }
 
   const value = this.get(before);
 
