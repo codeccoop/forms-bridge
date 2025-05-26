@@ -47,11 +47,16 @@ trait Form_Bridge_Mutations
                 $value = $finger->get($mapper['from']);
             }
 
-            if (
-                ($mapper['cast'] !== 'copy' &&
-                    $mapper['from'] !== $mapper['to']) ||
-                $mapper['cast'] === 'null'
-            ) {
+            $unset = $mapper['cast'] === 'null';
+
+            if ($mapper['cast'] !== 'copy') {
+                $unset =
+                    $unset ||
+                    preg_replace('/^\?/', '', $mapper['from']) !==
+                        $mapper['to'];
+            }
+
+            if ($unset) {
                 $finger->unset($mapper['from']);
             }
 
@@ -191,5 +196,43 @@ trait Form_Bridge_Mutations
         }
 
         return $values;
+    }
+
+    final public function setup_conditional_mappers($form)
+    {
+        foreach ($form['fields'] as $field) {
+            $is_conditional = $field['conditional'] ?? false;
+
+            if (
+                $field['schema']['type'] === 'array' &&
+                ($field['schema']['additionalItems'] ?? true) === false
+            ) {
+                $min_items = $field['schema']['minItems'] ?? 0;
+                $max_items = $field['schema']['maxItems'] ?? 0;
+
+                $is_conditional = $is_conditional || $min_items < $max_items;
+            }
+
+            if ($is_conditional) {
+                $to = $field['name'];
+
+                for ($i = 0; $i < count($this->data['mutations']); $i++) {
+                    $mutation = $this->data['mutations'][$i];
+
+                    for ($j = 0; $j < count($mutation); $j++) {
+                        $mapper = $this->data['mutations'][$i][$j];
+
+                        $from = preg_replace('/\[\d*\]/', '', $mapper['from']);
+                        if ($from !== $to) {
+                            continue;
+                        }
+
+                        $this->data['mutations'][$i][$j]['from'] =
+                            '?' . $mapper['from'];
+                        $to = preg_replace('/\[\d*\]/', '', $mapper['to']);
+                    }
+                }
+            }
+        }
     }
 }

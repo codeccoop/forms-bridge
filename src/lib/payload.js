@@ -178,6 +178,12 @@ export function castValue(value, mapper) {
     case "csv":
       value = "string";
       break;
+    case "count":
+      value = "integer";
+      break;
+    case "sum":
+      value = "number";
+      break;
     case "copy":
     case "inherit":
       value = JSON.parse(JSON.stringify(value));
