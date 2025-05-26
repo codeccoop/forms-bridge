@@ -85,6 +85,53 @@ export default function NewBridge({
     [name, backend, formId, customFields, customFieldsSchema]
   );
 
+  function uploadConfig() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json";
+
+    input.addEventListener("cancel", function () {
+      document.body.removeChild(input);
+    });
+
+    input.addEventListener("change", function () {
+      if (input.files.length === 1) {
+        const reader = new FileReader();
+
+        reader.onerror = function () {
+          document.body.removeChild(input);
+        };
+
+        reader.onload = function () {
+          let data;
+          try {
+            data = JSON.parse(reader.result);
+          } catch (err) {
+            document.body.removeChild(input);
+          }
+
+          if (!data.name) return;
+
+          let i = 1;
+          while (bridgeNames.has(data.name)) {
+            data.name += ` (${i})`;
+            i++;
+          }
+
+          add(data);
+          document.body.removeChild(input);
+        };
+
+        reader.readAsText(input.files[0]);
+      } else {
+        document.body.removeChild(input);
+      }
+    });
+
+    document.body.appendChild(input);
+    input.click();
+  }
+
   return (
     <div
       style={{
@@ -159,6 +206,15 @@ export default function NewBridge({
           __next40pxDefaultSize
         >
           {__("Add", "forms-bridge")}
+        </Button>
+        <Button
+          variant="secondary"
+          size="compact"
+          style={{ width: "40px", height: "40px", justifyContent: "center" }}
+          onClick={uploadConfig}
+          __next40pxDefaultSize
+        >
+          ⬆
         </Button>
         <Templates Wizard={Wizard} />
       </div>

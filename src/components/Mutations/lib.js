@@ -58,6 +58,5 @@ export function getFromOptions(fields, mappers) {
     applyMappers(fieldsToPayload(fields), mappers)
   );
 
-  console.log(schema);
   return schemaToOptions(schema);
 }

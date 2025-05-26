@@ -10,6 +10,7 @@ import RemoveButton from "../RemoveButton";
 const {
   TextControl,
   SelectControl,
+  Button,
   __experimentalSpacer: Spacer,
 } = wp.components;
 const { useState, useRef, useEffect, useMemo } = wp.element;
@@ -69,10 +70,22 @@ export default function Bridge({
 
   useEffect(() => setName(data.name), [data.name]);
 
-  const alertDelay = useRef();
-  function informDoubleClick() {
-    clearTimeout(alertDelay.current);
-    alertDelay.current = setTimeout(() => alert("Double click to remove"), 200);
+  function exportConfig() {
+    const bridgeData = { ...data };
+    delete bridgeData.is_valid;
+    delete bridgeData.icon;
+
+    const json = JSON.stringify(bridgeData);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = data.name + ".json";
+
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
   }
 
   return (
@@ -167,6 +180,15 @@ export default function Bridge({
         <RemoveButton onClick={() => remove(data)}>
           {__("Remove", "forms-bridge")}
         </RemoveButton>
+        <Button
+          size="compact"
+          variant="secondary"
+          style={{ height: "40px", width: "40px", justifyContent: "center" }}
+          onClick={exportConfig}
+          __next40pxDefaultSize
+        >
+          ⬇
+        </Button>
       </div>
     </div>
   );
