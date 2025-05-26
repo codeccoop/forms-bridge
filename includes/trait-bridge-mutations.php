@@ -77,6 +77,19 @@ trait Form_Bridge_Mutations
             return $this->cast_expanded($value, $mapper);
         }
 
+        if (preg_match('/\[\]$/', $mapper['to'])) {
+            if (!wp_is_numeric_array($value)) {
+                return [];
+            }
+
+            $item_mapper = $mapper;
+            $item_mapper['to'] = substr($item_mapper['to'], 0, -2);
+
+            return array_map(function ($item) use ($item_mapper) {
+                return $this->cast($item, $item_mapper);
+            }, $value);
+        }
+
         switch ($mapper['cast']) {
             case 'string':
                 return (string) $value;

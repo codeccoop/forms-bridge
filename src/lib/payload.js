@@ -158,6 +158,20 @@ export function castValue(value, mapper) {
     return castExpandedValue(value, mapper);
   }
 
+  if (/\[\]$/.test(mapper.to)) {
+    if (!Array.isArray(value)) {
+      if (isFrozen) {
+        return Object.freeze([]);
+      }
+
+      return [];
+    }
+
+    const itemMapper = { ...mapper };
+    itemMapper.to = itemMapper.to.slice(0, -2);
+    return value.map((item) => castValue(item, itemMapper));
+  }
+
   switch (mapper.cast) {
     case "json":
     case "concat":
