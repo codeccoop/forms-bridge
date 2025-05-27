@@ -116,7 +116,7 @@ return [
         'endpoint' => '/api/subscribers',
         'custom_fields' => [
             [
-                'name' => 'locale',
+                'name' => 'attribs.locale',
                 'value' => '$locale',
             ],
             [
@@ -134,11 +134,6 @@ return [
                 [
                     'from' => 'your-name',
                     'to' => 'name',
-                    'cast' => 'string',
-                ],
-                [
-                    'from' => 'locale',
-                    'to' => 'attribs.locale',
                     'cast' => 'string',
                 ],
                 [
