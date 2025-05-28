@@ -251,22 +251,31 @@ class Odoo_Form_Bridge extends Form_Bridge
                 continue;
             }
 
-            if ($spec['type'] === 'char') {
-                $type = 'string';
-            } elseif ($spec['type'] === 'html') {
-                $type = 'string';
+            if ($spec['type'] === 'char' || $spec['type'] === 'html') {
+                $schema = ['type' => 'string'];
             } elseif ($spec['type'] === 'float') {
-                $type = 'number';
+                $schema = ['type' => 'number'];
+            } elseif (
+                in_array(
+                    $spec['type'],
+                    ['one2many', 'many2one', 'many2many'],
+                    true
+                )
+            ) {
+                $schema = [
+                    'type' => 'array',
+                    'items' => [['type' => 'integer'], ['type' => 'string']],
+                    'additionalItems' => false,
+                ];
             } else {
-                $type = $spec['type'];
+                $schema = ['type' => $spec['type']];
             }
+
+            $schema['required'] = $spec['required'];
 
             $fields[] = [
                 'name' => $name,
-                'schema' => [
-                    'type' => $type,
-                    'required' => $spec['required'],
-                ],
+                'schema' => $schema,
             ];
         }
 

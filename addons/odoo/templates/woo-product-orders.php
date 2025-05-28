@@ -4,47 +4,10 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-global $forms_bridge_iso2_countries;
-
-add_filter(
-    'forms_bridge_template_data',
-    function ($data, $template_name) {
-        if ($template_name === 'holded-woo-service-orders') {
-            $index = array_search(
-                'tags',
-                array_column($data['bridge']['custom_fields'], 'name')
-            );
-
-            if ($index !== false) {
-                $field = &$data['bridge']['custom_fields'][$index];
-
-                if (!empty($field['value'])) {
-                    $tags = array_filter(
-                        array_map('trim', explode(',', strval($field['value'])))
-                    );
-
-                    for ($i = 0; $i < count($tags); $i++) {
-                        $data['bridge']['custom_fields'][] = [
-                            'name' => "tags[{$i}]",
-                            'value' => $tags[$i],
-                        ];
-                    }
-                }
-
-                array_splice($data['bridge']['custom_fields'], $index, 1);
-            }
-        }
-
-        return $data;
-    },
-    10,
-    2
-);
-
 return [
-    'title' => __('Service Orders', 'forms-bridge'),
+    'title' => __('Product Orders', 'forms-bridge'),
     'description' => __(
-        'Service sale order form template. The resulting bridge will convert woocommerce orders into service sale orders linked to new contacts.',
+        'Product sale order bridge template. The resulting bridge will convert WooCommerce orders into product sale orders linked to new contacts. To work properly, <b>the bridge needs that you use your Odoo\'s product internal refrence as the WooCommerce product sku values</b>.',
         'forms-bridge'
     ),
     'integrations' => ['woo'],
@@ -52,48 +15,32 @@ return [
         [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('Woo Checkout', 'forms-bridge'),
+            'value' => __('Woo Checkout', 'forms-bridge'),
         ],
         [
             'ref' => '#bridge',
             'name' => 'endpoint',
-            'value' => '/api/invoicing/v1/documents/salesorder',
-        ],
-        [
-            'ref' => '#bridge/custom_fields[]',
-            'name' => 'tags',
-            'label' => __('Tags', 'forms-bridge'),
-            'description' => __('Tags separated by commas', 'forms-bridge'),
-            'type' => 'string',
+            'value' => 'sale.order',
         ],
     ],
     'bridge' => [
-        'endpoint' => '/api/invoicing/v1/documents/salesorder',
+        'endpoint' => 'sale.order',
         'custom_fields' => [
             [
-                'name' => 'type',
-                'value' => 'client',
-            ],
-            [
-                'name' => 'defaults.language',
+                'name' => 'lang',
                 'value' => '$locale',
             ],
             [
-                'name' => 'approveDoc',
-                'value' => '1',
+                'name' => 'state',
+                'value' => 'sale',
             ],
         ],
         'mutations' => [
             [
                 [
-                    'from' => 'approveDoc',
-                    'to' => 'approveDoc',
-                    'cast' => 'boolean',
-                ],
-                [
                     'from' => 'id',
-                    'to' => 'customFields.wp_order_id',
-                    'cast' => 'integer',
+                    'to' => 'id',
+                    'cast' => 'null',
                 ],
                 [
                     'from' => 'parent_id',
@@ -111,6 +58,11 @@ return [
                     'cast' => 'null',
                 ],
                 [
+                    'from' => 'currency',
+                    'to' => 'currency',
+                    'cast' => 'null',
+                ],
+                [
                     'from' => 'prices_include_tax',
                     'to' => 'prices_include_tax',
                     'cast' => 'null',
@@ -122,8 +74,8 @@ return [
                 ],
                 [
                     'from' => 'date_modified',
-                    'to' => 'date',
-                    'cast' => 'string',
+                    'to' => 'date_modified',
+                    'cast' => 'null',
                 ],
                 [
                     'from' => 'discount_total',
@@ -133,11 +85,6 @@ return [
                 [
                     'from' => 'discount_tax',
                     'to' => 'discount_tax',
-                    'cast' => 'null',
-                ],
-                [
-                    'from' => 'shipping_total',
-                    'to' => 'shipping_total',
                     'cast' => 'null',
                 ],
                 [
@@ -167,8 +114,8 @@ return [
                 ],
                 [
                     'from' => 'customer_id',
-                    'to' => 'customFields.wp_customer_id',
-                    'cast' => 'integer',
+                    'to' => 'customer_id',
+                    'cast' => 'null',
                 ],
                 [
                     'from' => 'order_key',
@@ -192,29 +139,34 @@ return [
                 ],
                 [
                     'from' => '?billing.address_1',
-                    'to' => 'billAddress.address',
+                    'to' => 'street',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => '?billing.address_2',
+                    'to' => 'street2',
                     'cast' => 'string',
                 ],
                 [
                     'from' => '?billing.city',
-                    'to' => 'billAddress.city',
+                    'to' => 'city',
                     'cast' => 'string',
                 ],
                 [
                     'from' => '?billing.postcode',
-                    'to' => 'billAddress.postalCode',
+                    'to' => 'zip',
                     'cast' => 'string',
                 ],
-                [
-                    'from' => '?billing.state',
-                    'to' => 'billAddress.province',
-                    'cast' => 'string',
-                ],
-                [
-                    'from' => '?billing.country',
-                    'to' => 'billAddress.country',
-                    'cast' => 'string',
-                ],
+                // [
+                //     'from' => '?billing.state',
+                //     'to' => 'state',
+                //     'cast' => 'string',
+                // ],
+                // [
+                //     'from' => '?billing.country',
+                //     'to' => 'country',
+                //     'cast' => 'string',
+                // ],
                 [
                     'from' => '?billing.email',
                     'to' => 'email',
@@ -228,36 +180,6 @@ return [
                 [
                     'from' => 'billing',
                     'to' => 'billing',
-                    'cast' => 'null',
-                ],
-                [
-                    'from' => '?shipping.address_1',
-                    'to' => 'shippingAddresses[0].address',
-                    'cast' => 'string',
-                ],
-                [
-                    'from' => '?shipping.postcode',
-                    'to' => 'shippingAddresses[0].postalCode',
-                    'cast' => 'string',
-                ],
-                [
-                    'from' => '?shipping.city',
-                    'to' => 'shippingAddresses[0].city',
-                    'cast' => 'string',
-                ],
-                [
-                    'from' => '?shipping.state',
-                    'to' => 'shippingAddresses[0].province',
-                    'cast' => 'string',
-                ],
-                [
-                    'from' => 'shipping.country',
-                    'to' => 'shippingAddresses[0].country',
-                    'cast' => 'string',
-                ],
-                [
-                    'from' => 'shipping',
-                    'to' => 'shipping',
                     'cast' => 'null',
                 ],
                 [
@@ -292,7 +214,7 @@ return [
                 ],
                 [
                     'from' => '?customer_note',
-                    'to' => 'notes',
+                    'to' => 'shipping.comment',
                     'cast' => 'string',
                 ],
                 [
@@ -361,23 +283,33 @@ return [
                     'cast' => 'null',
                 ],
                 [
-                    'from' => 'line_items[].name',
-                    'to' => 'items[].name',
-                    'cast' => 'string',
+                    'from' => 'line_items[].product.sku',
+                    'to' => 'order_line[][0]',
+                    'cast' => 'copy',
                 ],
                 [
-                    'from' => 'line_items[].subtotal',
-                    'to' => 'items[].subtotal',
-                    'cast' => 'number',
-                ],
-                [
-                    'from' => 'line_items[].quantity',
-                    'to' => 'items[].units',
+                    'from' => 'order_line[][0]',
+                    'to' => 'order_line[][0]',
                     'cast' => 'integer',
                 ],
                 [
                     'from' => 'line_items[].product.sku',
-                    'to' => 'items[].serviceId',
+                    'to' => 'order_line[][1]',
+                    'cast' => 'copy',
+                ],
+                [
+                    'from' => 'order_line[][1]',
+                    'to' => 'order_line[][1]',
+                    'cast' => 'integer',
+                ],
+                [
+                    'from' => 'line_items[].quantity',
+                    'to' => 'order_line[][2].product_uom_qty',
+                    'cast' => 'integer',
+                ],
+                [
+                    'from' => 'line_items[].product.sku',
+                    'to' => 'order_line[][2].sku',
                     'cast' => 'string',
                 ],
                 [
@@ -385,20 +317,98 @@ return [
                     'to' => 'line_items',
                     'cast' => 'null',
                 ],
+            ],
+            [
                 [
-                    'from' => 'tags',
-                    'to' => 'order_tags',
+                    'from' => 'partner_id',
+                    'to' => 'order_partner_id',
+                    'cast' => 'copy',
+                ],
+                [
+                    'from' => '?shipping.first_name',
+                    'to' => 'name[0]',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => '?shipping.last_name',
+                    'to' => 'name[1]',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'name',
+                    'to' => 'name',
+                    'cast' => 'concat',
+                ],
+                [
+                    'from' => '?shipping.phone',
+                    'to' => 'phone',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => '?shipping.address_1',
+                    'to' => 'street',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => '?shipping.address_2',
+                    'to' => 'street2',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => '?shipping.city',
+                    'to' => 'city',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => '?shipping.postcode',
+                    'to' => 'zip',
+                    'cast' => 'string',
+                ],
+                // [
+                //     'from' => '?shipping.state',
+                //     'to' => 'state',
+                //     'cast' => 'string',
+                // ],
+                // [
+                //     'from' => '?shipping.country',
+                //     'to' => 'country',
+                //     'cast' => 'string',
+                // ],
+                [
+                    'from' => '?shipping.comment',
+                    'to' => 'comment',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'shipping',
+                    'to' => 'shipping',
+                    'cast' => 'null',
+                ],
+            ],
+            [
+                [
+                    'from' => 'order_line[][2].sku',
+                    'to' => 'internal_refs',
                     'cast' => 'inherit',
                 ],
             ],
             [
                 [
-                    'from' => 'order_tags',
-                    'to' => 'tags',
-                    'cast' => 'inherit',
+                    'from' => 'order_partner_id',
+                    'to' => 'partner_id',
+                    'cast' => 'integer',
+                ],
+                [
+                    'from' => 'product_ids',
+                    'to' => 'order_line[][2].product_id[]',
+                    'cast' => 'integer',
                 ],
             ],
         ],
-        'workflow' => ['holded-contact-id'],
+        'workflow' => [
+            'odoo-contact',
+            'odoo-delivery-address',
+            'odoo-products-by-ref',
+        ],
     ],
 ];

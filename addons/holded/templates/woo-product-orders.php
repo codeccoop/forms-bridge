@@ -42,7 +42,7 @@ add_filter(
 return [
     'title' => __('Product Orders', 'forms-bridge'),
     'description' => __(
-        'Product sale order form template. The resulting bridge will convert woocommerce orders into product sale orders linked to new contacts.',
+        'Product sale order bridge template. The resulting bridge will convert woocommerce orders into product sale orders linked to new contacts. To work propertly, <b>the bridge needs that your WooCommerce product sku values matches with the holded ones</b>.',
         'forms-bridge'
     ),
     'integrations' => ['woo'],
