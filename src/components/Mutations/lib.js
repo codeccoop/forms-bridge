@@ -34,9 +34,15 @@ export function schemaToOptions(schema, name = "") {
       ? schema.items
       : [schema.items];
 
+    const isTuple = schemaItems.reduce((isTuple, item) => {
+      return isTuple || item.type !== schemaItems[0]?.type;
+    }, false);
+
     return options
       .concat(
         schemaItems.reduce((options, item) => {
+          if (isTuple) return options;
+
           const pointer = `${name}[]`;
 
           return options.concat(

@@ -198,38 +198,49 @@ export function castValue(value, mapper) {
 }
 
 function castExpandedValue(values, mapper) {
+  const isFrozen = Object.isFrozen(values);
+
   if (!Array.isArray(values)) {
     return [];
+  } else if (isFrozen) {
+    values = values.map((v) => v);
   }
 
   const isExpanded = /\[\]$/.test(mapper.from);
 
   if (isExpanded) {
-    return values.map((value) => {
+    values = values.map((value) => {
       return castValue(value, { cast: mapper.cast, from: "", to: "" });
     });
+  } else {
+    const toExpansions = mapper.to.replace(/\[\]$/, "").match(/\[\]/g) || [];
+    const fromExpansions =
+      mapper.from.replace(/\[\]$/, "").match(/\[\]/g) || [];
+
+    if ((isExpanded || !fromExpansions.length) && toExpansions > 1) {
+      return [];
+    } else if (
+      fromExpansions.length &&
+      toExpansions.length > fromExpansions.length
+    ) {
+      return [];
+    }
+
+    const parts = mapper.from.split("[]").filter((p) => p);
+    const before = parts[0];
+    const after = parts.slice(1).join("[]");
+
+    for (let i = 0; i < values.length; i++) {
+      const pointer = `${before}[${i}]${after}`;
+      values[i] = castValue(values[i], {
+        from: pointer,
+        to: "",
+        cast: mapper.cast,
+      });
+    }
   }
 
-  const toExpansions = mapper.to.match(/\[\](?=[^\[])/g);
-  const fromExpansions = mapper.from.match(/\[\](?=[^\[])/g);
-
-  if (toExpansions.length > fromExpansions.length) {
-    return [];
-  }
-
-  const parts = mapper.from.split("[]").filter((p) => p);
-  const before = parts[0];
-  const after = parts.slice(1).join("[]");
-
-  for (let i = 0; i < values.length; i++) {
-    const pointer = `${before}[${i}]${after}`;
-    values[i] = castValue(values[i], {
-      from: pointer,
-      to: "",
-      cast: mapper.cast,
-    });
-  }
-
+  if (isFrozen) return Object.freeze(values);
   return values;
 }
 

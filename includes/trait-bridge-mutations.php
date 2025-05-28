@@ -175,10 +175,26 @@ trait Form_Bridge_Mutations
             }, $values);
         }
 
-        preg_match_all('/\[\](?=[^\[])/', $mapper['to'], $to_expansions);
-        preg_match_all('/\[\](?=[^\[])/', $mapper['from'], $from_expansions);
+        preg_match_all(
+            '/\[\](?=[^\[])/',
+            preg_replace('/\[\]$/', '', $mapper['to']),
+            $to_expansions
+        );
+        preg_match_all(
+            '/\[\](?=[^\[])/',
+            preg_replace('/\[\]$/', '', $mapper['from']),
+            $from_expansions
+        );
 
-        if (count($to_expansions[0]) > count($from_expansions)) {
+        if (
+            ($is_expanded || empty($from_expansions)) &&
+            count($to_expansions) > 1
+        ) {
+            return [];
+        } elseif (
+            !empty($from_expansions) &&
+            count($to_expansions[0]) > count($from_expansions[0])
+        ) {
             return [];
         }
 

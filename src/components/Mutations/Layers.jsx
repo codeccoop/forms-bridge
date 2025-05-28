@@ -131,12 +131,15 @@ function useInputStyle(to = "", from = "") {
 
   const isExpanded = /\[\]$/.test(from);
 
-  const toExpansions = to.match(/\[\](?=[^\[])/g) || [];
-  const fromExpansions = from.match(/\[\](?=[^\[])/g) || [];
+  const toExpansions = to.replace(/\[\]$/, "").match(/\[\]/g) || [];
+  const fromExpansions = from.replace(/\[\]$/, "").match(/\[\]/g) || [];
 
-  if (isExpanded && toExpansions > 1) {
+  if ((isExpanded || !fromExpansions.length) && toExpansions > 1) {
     return { ...inputStyle, ...INVALID_TO_STYLE };
-  } else if (toExpansions.length > fromExpansions.length) {
+  } else if (
+    fromExpansions.length &&
+    toExpansions.length > fromExpansions.length
+  ) {
     return { ...inputStyle, ...INVALID_TO_STYLE };
   }
 
@@ -261,7 +264,7 @@ export default function MutationLayers({ fields, mappers, setMappers }) {
                 <td>{i + 1}.</td>
                 <td style={{ columnWidth: "200px" }}>
                   <SelectControl
-                    value={from}
+                    value={from.replace(/^\?/, "")}
                     onChange={(value) => setMapper("from", i, value)}
                     options={getFromOptions(fields, mappers.slice(0, i))}
                     __nextHasNoMarginBottom

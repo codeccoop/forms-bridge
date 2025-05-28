@@ -224,7 +224,25 @@ class Integration extends BaseIntegration
             ],
             'fee_lines' => [
                 'type' => 'array',
-                'items' => [],
+                'items' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'id' => ['type' => 'integer'],
+                        'order_id' => ['type' => 'integer'],
+                        'name' => ['type' => 'string'],
+                        // 'meta_data' => [
+                        // 	'type' => 'array',
+                        // 	'items' => [
+                        // 		'type' => 'object',
+                        // 		'properties' => [
+                        // 			'id' => ['type' => 'integer'],
+                        // 			'key' => ['type' => 'string'],
+                        // 			'value' => ['type' => 'string'],
+                        // 		],
+                        // 	],
+                        // ],
+                    ],
+                ],
                 'additionalItems' => true,
             ],
             'coupon_lines' => [

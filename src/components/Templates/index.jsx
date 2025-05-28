@@ -136,7 +136,10 @@ export default function Templates({ Wizard }) {
             </>
           )}
           {(templateConfig?.description && (
-            <p style={{ maxWidth: "575px" }}>{templateConfig.description}</p>
+            <p
+              style={{ maxWidth: "575px" }}
+              dangerouslySetInnerHTML={{ __html: templateConfig.description }}
+            ></p>
           )) ||
             null}
           <Wizard
