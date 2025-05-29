@@ -157,16 +157,6 @@ return [
                     'to' => 'zip',
                     'cast' => 'string',
                 ],
-                // [
-                //     'from' => '?billing.state',
-                //     'to' => 'state',
-                //     'cast' => 'string',
-                // ],
-                // [
-                //     'from' => '?billing.country',
-                //     'to' => 'country',
-                //     'cast' => 'string',
-                // ],
                 [
                     'from' => '?billing.email',
                     'to' => 'email',
@@ -364,16 +354,6 @@ return [
                     'to' => 'zip',
                     'cast' => 'string',
                 ],
-                // [
-                //     'from' => '?shipping.state',
-                //     'to' => 'state',
-                //     'cast' => 'string',
-                // ],
-                // [
-                //     'from' => '?shipping.country',
-                //     'to' => 'country',
-                //     'cast' => 'string',
-                // ],
                 [
                     'from' => '?shipping.comment',
                     'to' => 'comment',

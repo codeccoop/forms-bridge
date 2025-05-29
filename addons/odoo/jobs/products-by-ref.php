@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 return [
     'title' => __('Products by reference', 'forms-bridge'),
     'description' => __(
-        'Search for products on Odoo based on a list of internal references and return its IDs.',
+        'Search for products on Odoo based on a list of internal references and returns its IDs.',
         'forms-bridge'
     ),
     'method' => 'forms_bridge_odoo_search_products_by_ref',
@@ -54,7 +54,7 @@ function forms_bridge_odoo_search_products_by_ref($payload, $bridge)
         return new WP_Error(
             'product_search_error',
             __(
-                'Inconsistencies between amount of found products and internal references',
+                'Inconsistencies between amount of found products and search references',
                 'forms-bridge'
             ),
             [
