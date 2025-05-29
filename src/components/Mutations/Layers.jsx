@@ -259,105 +259,118 @@ export default function MutationLayers({ fields, mappers, setMappers }) {
           </thead>
 
           <tbody>
-            {mappers.map(({ from, to, cast }, i) => (
-              <tr key={i}>
-                <td>{i + 1}.</td>
-                <td style={{ columnWidth: "200px" }}>
-                  <SelectControl
-                    value={from.replace(/^\?/, "")}
-                    onChange={(value) => setMapper("from", i, value)}
-                    options={getFromOptions(fields, mappers.slice(0, i))}
-                    __nextHasNoMarginBottom
-                    __next40pxDefaultSize
-                  />
-                </td>
-                <td style={{ columnWidth: "200px" }}>
-                  <div style={{ display: "flex" }}>
-                    <div style={{ flex: 1 }}>
-                      <BaseControl __nextHasNoMarginBottom>
-                        <input
-                          type="text"
-                          value={to}
-                          onChange={(ev) => setMapper("to", i, ev.target.value)}
-                          style={useInputStyle(to, from)}
-                        />
-                      </BaseControl>
+            {mappers.map(({ from, to, cast }, i) => {
+              const fromOptions = getFromOptions(fields, mappers.slice(0, i));
+
+              if (JsonFinger.isConditional(from)) {
+                from = from.replace(/^\?/, "");
+                if (!fromOptions.find((opt) => opt.value === from)) {
+                  return null;
+                }
+              }
+
+              return (
+                <tr key={i}>
+                  <td>{i + 1}.</td>
+                  <td style={{ columnWidth: "200px" }}>
+                    <SelectControl
+                      value={from}
+                      onChange={(value) => setMapper("from", i, value)}
+                      options={fromOptions}
+                      __nextHasNoMarginBottom
+                      __next40pxDefaultSize
+                    />
+                  </td>
+                  <td style={{ columnWidth: "200px" }}>
+                    <div style={{ display: "flex" }}>
+                      <div style={{ flex: 1 }}>
+                        <BaseControl __nextHasNoMarginBottom>
+                          <input
+                            type="text"
+                            value={to}
+                            onChange={(ev) =>
+                              setMapper("to", i, ev.target.value)
+                            }
+                            style={useInputStyle(to, from)}
+                          />
+                        </BaseControl>
+                      </div>
+                      <Button
+                        style={{
+                          height: "40px",
+                          width: "40px",
+                          justifyContent: "center",
+                          marginLeft: "2px",
+                        }}
+                        disabled={fieldOptions.length === 0}
+                        size="compact"
+                        variant="secondary"
+                        onClick={() => setFieldSelector(i)}
+                        __next40pxDefaultSize
+                      >
+                        {"{...}"}
+                        {fieldSelector === i && (
+                          <DropdownSelect
+                            title={__("Fields", "forms-bridge")}
+                            tags={fieldOptions}
+                            onChange={(fieldName) => {
+                              setFieldSelector(-1);
+                              setMapper("to", i, fieldName);
+                            }}
+                            onFocusOutside={() => setFieldSelector(-1)}
+                          />
+                        )}
+                      </Button>
                     </div>
-                    <Button
-                      style={{
-                        height: "40px",
-                        width: "40px",
-                        justifyContent: "center",
-                        marginLeft: "2px",
-                      }}
-                      disabled={fieldOptions.length === 0}
-                      size="compact"
-                      variant="secondary"
-                      onClick={() => setFieldSelector(i)}
+                  </td>
+                  <td style={{ columnWidth: "100px" }}>
+                    <SelectControl
+                      value={cast || "string"}
+                      onChange={(value) => setMapper("cast", i, value)}
+                      options={castOptions}
+                      __nextHasNoMarginBottom
                       __next40pxDefaultSize
-                    >
-                      {"{...}"}
-                      {fieldSelector === i && (
-                        <DropdownSelect
-                          title={__("Fields", "forms-bridge")}
-                          tags={fieldOptions}
-                          onChange={(fieldName) => {
-                            setFieldSelector(-1);
-                            setMapper("to", i, fieldName);
-                          }}
-                          onFocusOutside={() => setFieldSelector(-1)}
-                        />
-                      )}
-                    </Button>
-                  </div>
-                </td>
-                <td style={{ columnWidth: "100px" }}>
-                  <SelectControl
-                    value={cast || "string"}
-                    onChange={(value) => setMapper("cast", i, value)}
-                    options={castOptions}
-                    __nextHasNoMarginBottom
-                    __next40pxDefaultSize
-                  />
-                </td>
-                <td>
-                  <div
-                    style={{
-                      display: "flex",
-                      marginLeft: "0.45em",
-                      gap: "0.45em",
-                    }}
-                  >
-                    <Button
-                      size="compact"
-                      variant="secondary"
-                      disabled={!to || !from}
-                      onClick={() => addMapper(i + 1)}
+                    />
+                  </td>
+                  <td>
+                    <div
                       style={{
-                        width: "40px",
-                        height: "40px",
-                        justifyContent: "center",
-                      }}
-                      __next40pxDefaultSize
-                    >
-                      +
-                    </Button>
-                    <RemoveButton
-                      size="compact"
-                      variant="secondary"
-                      onClick={() => dropMapper(i)}
-                      style={{
-                        width: "40px",
-                        height: "40px",
-                        justifyContent: "center",
+                        display: "flex",
+                        marginLeft: "0.45em",
+                        gap: "0.45em",
                       }}
                     >
-                      -
-                    </RemoveButton>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                      <Button
+                        size="compact"
+                        variant="secondary"
+                        disabled={!to || !from}
+                        onClick={() => addMapper(i + 1)}
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                          justifyContent: "center",
+                        }}
+                        __next40pxDefaultSize
+                      >
+                        +
+                      </Button>
+                      <RemoveButton
+                        size="compact"
+                        variant="secondary"
+                        onClick={() => dropMapper(i)}
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                          justifyContent: "center",
+                        }}
+                      >
+                        -
+                      </RemoveButton>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
