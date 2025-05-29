@@ -342,11 +342,6 @@ return [
                     'to' => 'shipping',
                     'cast' => 'null',
                 ],
-                [
-                    'from' => '?customer_note',
-                    'to' => 'note_private',
-                    'cast' => 'string',
-                ],
             ],
             [
                 [
@@ -356,6 +351,11 @@ return [
                 ],
             ],
             [
+                [
+                    'from' => '?customer_note',
+                    'to' => 'note_private',
+                    'cast' => 'string',
+                ],
                 [
                     'from' => 'order_socid',
                     'to' => 'socid',

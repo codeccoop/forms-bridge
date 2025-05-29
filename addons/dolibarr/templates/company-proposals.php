@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 global $forms_bridge_dolibarr_countries;
 
 return [
-    'title' => __('Company Quotations', 'forms-bridge'),
+    'title' => __('Company Proposals', 'forms-bridge'),
     'description' => __(
         'Quotations form template. The resulting bridge will convert form submissions into quotations linked to new companies.',
         'forms-bridge'
@@ -83,11 +83,11 @@ return [
         [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('Company Quotations', 'forms-bridge'),
+            'default' => __('Company Proposals', 'forms-bridge'),
         ],
     ],
     'form' => [
-        'title' => __('Company Quotations', 'forms-bridge'),
+        'title' => __('Company Proposals', 'forms-bridge'),
         'fields' => [
             [
                 'name' => 'quantity',
@@ -175,6 +175,10 @@ return [
             [
                 'name' => 'date',
                 'value' => '$timestamp',
+            ],
+            [
+                'name' => 'lines[0].product_type',
+                'value' => '1',
             ],
         ],
         'mutations' => [

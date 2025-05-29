@@ -5,9 +5,9 @@ if (!defined('ABSPATH')) {
 }
 
 return [
-    'title' => __('Quotations', 'forms-bridge'),
+    'title' => __('Proposals', 'forms-bridge'),
     'description' => __(
-        'Product quotations form template. The resulting bridge will convert form submissions into quotations linked to new contacts.',
+        'Quotations form template. The resulting bridge will convert form submissions into quotations linked to new contacts.',
         'forms-bridge'
     ),
     'fields' => [
@@ -56,11 +56,11 @@ return [
         [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('Quotations', 'forms-bridge'),
+            'default' => __('Proposals', 'forms-bridge'),
         ],
     ],
     'form' => [
-        'title' => __('Quotations', 'forms-bridge'),
+        'title' => __('Proposals', 'forms-bridge'),
         'fields' => [
             [
                 'name' => 'quantity',
@@ -151,6 +151,10 @@ return [
             [
                 'name' => 'date',
                 'value' => '$timestamp',
+            ],
+            [
+                'name' => 'lines[0].product_type',
+                'value' => '1',
             ],
         ],
         'mutations' => [
