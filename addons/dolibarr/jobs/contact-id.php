@@ -12,7 +12,7 @@ function forms_bridge_dolibarr_contact_ids($payload, $bridge)
         return $contact;
     }
 
-    $payload['contact_ids'][] = $contact['id'];
+    $payload['contact_ids'][] = (int) $contact['id'];
     return $payload;
 }
 

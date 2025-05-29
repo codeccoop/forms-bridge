@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-function forms_bridge_dolibarr_contact_socid($payload, $bridge)
+function forms_bridge_dolibarr_thirdparty_socid($payload, $bridge)
 {
     $thirdparty = forms_bridge_dolibarr_create_thirdparty($payload, $bridge);
 
@@ -17,12 +17,12 @@ function forms_bridge_dolibarr_contact_socid($payload, $bridge)
 }
 
 return [
-    'title' => __('Contact\'s company', 'forms-bridge'),
+    'title' => __('Third party', 'forms-bridge'),
     'description' => __(
-        'Creates a new company and bind the contact to it',
+        'Creates a new third party and returns its ID as the socid of the payload.',
         'forms-bridge'
     ),
-    'method' => 'forms_bridge_dolibarr_contact_socid',
+    'method' => 'forms_bridge_dolibarr_thirdparty_socid',
     'input' => [
         [
             'name' => 'name',

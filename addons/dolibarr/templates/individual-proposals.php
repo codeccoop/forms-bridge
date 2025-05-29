@@ -14,7 +14,7 @@ return [
         [
             'ref' => '#bridge',
             'name' => 'endpoint',
-            'value' => '/api/index.php/orders',
+            'value' => '/api/index.php/proposals',
         ],
         [
             'ref' => '#bridge/custom_fields[]',
@@ -134,7 +134,7 @@ return [
         ],
     ],
     'bridge' => [
-        'endpoint' => '/api/index.php/orders',
+        'endpoint' => '/api/index.php/proposals',
         'custom_fields' => [
             [
                 'name' => 'status',

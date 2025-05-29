@@ -16,7 +16,32 @@ return [
         [
             'ref' => '#bridge',
             'name' => 'endpoint',
-            'value' => '/api/index.php/orders',
+            'value' => '/api/index.php/proposals',
+        ],
+        [
+            'ref' => '#bridge/custom_fields[]',
+            'name' => 'typent_id',
+            'label' => __('Third party type', 'forms-bridge'),
+            'type' => 'options',
+            'options' => [
+                [
+                    'label' => __('Large company', 'forms-bridge'),
+                    'value' => '2',
+                ],
+                [
+                    'label' => __('Medium company', 'forms-bridge'),
+                    'value' => '3',
+                ],
+                [
+                    'label' => __('Small company', 'forms-bridge'),
+                    'value' => '4',
+                ],
+                [
+                    'label' => __('Governmental', 'forms-bridge'),
+                    'value' => '5',
+                ],
+            ],
+            'required' => true,
         ],
         [
             'ref' => '#bridge/custom_fields[]',
@@ -137,15 +162,11 @@ return [
         ],
     ],
     'bridge' => [
-        'endpoint' => '/api/index.php/orders',
+        'endpoint' => '/api/index.php/proposals',
         'custom_fields' => [
             [
                 'name' => 'status',
                 'value' => '1',
-            ],
-            [
-                'name' => 'typent_id',
-                'value' => '4',
             ],
             [
                 'name' => 'client',
