@@ -99,6 +99,11 @@ return [
                     'cast' => 'null',
                 ],
                 [
+                    'from' => 'cart_total',
+                    'to' => 'cart_total',
+                    'cast' => 'null',
+                ],
+                [
                     'from' => 'cart_tax',
                     'to' => 'cart_tax',
                     'cast' => 'null',
