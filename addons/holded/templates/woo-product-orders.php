@@ -80,6 +80,10 @@ return [
                 'name' => 'approveDoc',
                 'value' => '1',
             ],
+            [
+                'name' => 'date',
+                'value' => '$timestamp',
+            ],
         ],
         'mutations' => [
             [
@@ -120,8 +124,8 @@ return [
                 ],
                 [
                     'from' => 'date_modified',
-                    'to' => 'date',
-                    'cast' => 'string',
+                    'to' => 'date_modified',
+                    'cast' => 'null',
                 ],
                 [
                     'from' => 'discount_total',
@@ -364,8 +368,13 @@ return [
                     'cast' => 'string',
                 ],
                 [
-                    'from' => 'line_items[].subtotal',
+                    'from' => 'line_items[].product.price',
                     'to' => 'items[].subtotal',
+                    'cast' => 'number',
+                ],
+                [
+                    'from' => 'line_items[].total_tax.percentage',
+                    'to' => 'items[].tax',
                     'cast' => 'number',
                 ],
                 [
