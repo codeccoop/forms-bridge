@@ -73,6 +73,19 @@ class Google_Sheets_Addon extends Addon
         parent::construct(...$args);
         self::register_api();
         self::setting_hooks();
+
+        add_filter(
+            'forms_bridge_prune_empties',
+            static function ($prune, $bridge) {
+                if ($bridge instanceof Google_Sheets_Form_Bridge) {
+                    return false;
+                }
+
+                return $prune;
+            },
+            5,
+            2
+        );
     }
 
     private static function register_api()

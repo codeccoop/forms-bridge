@@ -330,6 +330,7 @@ class Google_Sheets_Service extends Singleton
                 'q' => "mimeType='application/vnd.google-apps.spreadsheet'",
             ]);
 
+            $files = $results->files ?: [];
             return array_map(
                 static function ($spreadhseet) {
                     return [
@@ -337,7 +338,7 @@ class Google_Sheets_Service extends Singleton
                         'title' => $spreadhseet['name'],
                     ];
                 },
-                array_filter($results->files, static function ($file) {
+                array_filter($files, static function ($file) {
                     return isset($file['kind']) &&
                         $file['kind'] === 'drive#file';
                 })
