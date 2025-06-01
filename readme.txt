@@ -4,7 +4,7 @@ Tags: odoo, dolibarr, holded, forms, woocommerce
 Donate link: https://buymeacoffee.com/codeccoop
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable Tag: 3.5.1
+Stable Tag: 3.5.2
 Tested up to: 6.8
 
 Bridge your WordPress forms without code, add custom fields, set up a workflow and make your data flow to your backend.
@@ -79,6 +79,12 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 6. Debug console
 
 == Changelog ==
+
+= 3.5.2 =
+* feat: new google sheets woocomerce orders template
+* feat: disable default payload prune for gsheet bridges
+* feat: update gsheet composer dependencies
+* fix: remove php warnings on zoho and listmonk addons
 
 = 3.5.1 =
 * feat: improve dolibarr next code and product search api calls
