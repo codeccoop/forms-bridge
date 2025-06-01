@@ -314,11 +314,15 @@ class Integration extends BaseIntegration
                             ],
                         ],
                         'taxes' => [
-                            'total' => [
-                                'type' => 'array',
-                                'items' => ['type' => 'number'],
-                                'additionalItems' => true,
+                            'type' => 'object',
+                            'properties' => [
+                                'total' => [
+                                    'type' => 'array',
+                                    'items' => ['type' => 'number'],
+                                    'additionalItems' => true,
+                                ],
                             ],
+                            'required' => ['total'],
                         ],
                         // 'meta_data' => [
                         // 	'type' => 'array',
