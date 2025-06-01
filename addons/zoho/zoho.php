@@ -256,10 +256,12 @@ class Zoho_Addon extends Addon
      */
     protected function do_fetch($backend, $endpoint, $credential)
     {
-        [$credential] = self::validate_credentials([$credential]);
+        $credentials = self::validate_credentials([$credential]);
 
-        if (empty($credential)) {
+        if (empty($credentials)) {
             return [];
+        } else {
+            $credential = $credentials[0];
         }
 
         static::temp_register_credentials($credential);
