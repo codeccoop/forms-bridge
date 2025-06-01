@@ -99,25 +99,27 @@ class Zoho_Form_Bridge extends Form_Bridge
 
         $is_valid = true;
         foreach ($requireds as $required) {
-            [$rapp, $rmodule, $rsubmodule, $rpermission] = explode(
-                '.',
-                $required
-            );
+            $chunks = explode('.', $required);
 
-            if (empty($rpermission)) {
-                $rpermission = $rsubmodule;
+            if (count($chunks) < 3) {
+                return false;
+            } elseif (count($chunks) > 3) {
+                [$rapp, $rmodule, $rsubmodule, $rpermission] = $chunks;
+            } else {
+                [$rapp, $rmodule, $rpermission] = $chunks;
                 $rsubmodule = null;
             }
 
             $match = false;
             foreach ($scopes as $scope) {
-                [$sapp, $smodule, $ssubmodule, $spermission] = explode(
-                    '.',
-                    $scope
-                );
+                $chunks = explode('.', $scope);
 
-                if (empty($spermission)) {
-                    $spermission = $ssubmodule;
+                if (count($chunks) < 3) {
+                    continue;
+                } elseif (count($chunks) > 3) {
+                    [$sapp, $smodule, $ssubmodule, $spermission] = $chunks;
+                } else {
+                    [$sapp, $smodule, $spermission] = $chunks;
                     $ssubmodule = null;
                 }
 

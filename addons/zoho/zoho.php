@@ -278,7 +278,7 @@ class Zoho_Addon extends Addon
             'method' => 'GET',
         ]);
 
-        $response = $bridge->submit([]);
+        $response = $bridge->submit();
         if (is_wp_error($response)) {
             return [];
         }

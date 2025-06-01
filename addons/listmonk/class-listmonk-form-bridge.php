@@ -50,9 +50,10 @@ class Listmonk_Form_Bridge extends Rest_Form_Bridge
         $response = parent::do_submit($payload, $attachments);
 
         if (is_wp_error($response)) {
-            $error_response = $response->get_error_data()['response'];
+            $error_response = $response->get_error_data()['response'] ?? null;
 
-            if ($error_response['response']['code'] !== 409) {
+            $code = $error_response['response']['code'] ?? null;
+            if ($code !== 409) {
                 return $response;
             }
 
