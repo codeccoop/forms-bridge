@@ -132,27 +132,15 @@ function NewBackend({ add }) {
             height: "40px",
             justifyContent: "center",
             fontSize: "1.5em",
+            border: "1px solid",
+            color: "gray",
           }}
           onClick={uploadConfig}
           __next40pxDefaultSize
           label={__("Upload backend config", "forms-bridge")}
           showTooltip
         >
-          <div>
-            ⬆
-            <div
-              aria-hidden
-              style={{
-                height: "3px",
-                borderBottom: "3px solid",
-                borderLeft: "3px solid",
-                borderRight: "3px solid",
-                width: "calc(100% + 4px)",
-                marginLeft: "-5px",
-                transform: "translateY(-3px)",
-              }}
-            ></div>
-          </div>
+          ⬆
         </Button>
       </div>
     </div>
@@ -259,27 +247,15 @@ export default function Backend({ update, remove, ...data }) {
             width: "40px",
             justifyContent: "center",
             fontSize: "1.5em",
+            border: "1px solid",
+            color: "gray",
           }}
           onClick={exportConfig}
           __next40pxDefaultSize
           label={__("Download bridge config", "forms-bridge")}
           showTooltip
         >
-          <div>
-            ⬇
-            <div
-              aria-hidden
-              style={{
-                height: "3px",
-                borderBottom: "3px solid",
-                borderLeft: "3px solid",
-                borderRight: "3px solid",
-                width: "calc(100% + 4px)",
-                marginLeft: "-5px",
-                transform: "translateY(-3px)",
-              }}
-            ></div>
-          </div>
+          ⬇
         </Button>
       </div>
     </div>
