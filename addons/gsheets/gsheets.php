@@ -41,7 +41,7 @@ class Google_Sheets_Addon extends Addon
      * @var array
      */
     public static $static_backend = [
-        'name' => 'Google Sheets gRPC',
+        'name' => 'Sheets API',
         'base_url' => 'https://sheets.googleapis.com/v4/spreadsheets',
         'headers' => [
             [
