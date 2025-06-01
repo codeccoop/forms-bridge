@@ -2,15 +2,34 @@
 
 namespace FORMS_BRIDGE\WOO;
 
+use DivisionByZeroError;
 use FORMS_BRIDGE\Forms_Bridge;
 use FORMS_BRIDGE\Integration as BaseIntegration;
+use TypeError;
 use WC_Session_Handler;
 use WC_Customer;
 
 class Integration extends BaseIntegration
 {
+    /**
+     * The integration will store order's bridged result as a custom field. This const handles the custom field name.
+     *
+     * @var string
+     */
+    private const is_order_bridged_custom_field = 'forms_bridge_woo_order_bridge';
+
+    /**
+     * Handles the current order ID.
+     *
+     * @var integer|null
+     */
     private static $order_id;
 
+    /**
+     * Handles the WooCommerce order data json schema.
+     *
+     * @var array
+     */
     private const order_data_schema = [
         'type' => 'object',
         'properties' => [
@@ -23,12 +42,41 @@ class Integration extends BaseIntegration
             'date_created' => ['type' => 'string'],
             'date_modified' => ['type' => 'string'],
             'discount_total' => ['type' => 'number'],
-            'discount_tax' => ['type' => 'number'],
+            'discount_tax' => [
+                'type' => 'object',
+                'properties' => [
+                    'amount' => ['type' => 'number'],
+                    'rate' => ['type' => 'number'],
+                    'percentage' => ['type' => 'number'],
+                ],
+            ],
             'shipping_total' => ['type' => 'number'],
-            'shipping_tax' => ['type' => 'number'],
-            'cart_tax' => ['type' => 'number'],
+            'shipping_tax' => [
+                'type' => 'object',
+                'properties' => [
+                    'amount' => ['type' => 'number'],
+                    'rate' => ['type' => 'number'],
+                    'percentage' => ['type' => 'number'],
+                ],
+            ],
+            'cart_total' => ['type' => 'number'],
+            'cart_tax' => [
+                'type' => 'object',
+                'properties' => [
+                    'amount' => ['type' => 'number'],
+                    'rate' => ['type' => 'number'],
+                    'percentage' => ['type' => 'number'],
+                ],
+            ],
             'total' => ['type' => 'number'],
-            'total_tax' => ['type' => 'number'],
+            'total_tax' => [
+                'type' => 'object',
+                'properties' => [
+                    'amount' => ['type' => 'number'],
+                    'rate' => ['type' => 'number'],
+                    'percentage' => ['type' => 'number'],
+                ],
+            ],
             'customer_id' => ['type' => 'integer'],
             'order_key' => ['type' => 'string'],
             'billing' => [
@@ -107,9 +155,23 @@ class Integration extends BaseIntegration
                         'quantity' => ['type' => 'integer'],
                         'tax_class' => ['type' => 'string'],
                         'subtotal' => ['type' => 'number'],
-                        'subtotal_tax' => ['type' => 'number'],
+                        'subtotal_tax' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'amount' => ['type' => 'number'],
+                                'rate' => ['type' => 'number'],
+                                'percentage' => ['type' => 'number'],
+                            ],
+                        ],
                         'total' => ['type' => 'number'],
-                        'total_tax' => ['type' => 'number'],
+                        'total_tax' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'amount' => ['type' => 'number'],
+                                'rate' => ['type' => 'number'],
+                                'percentage' => ['type' => 'number'],
+                            ],
+                        ],
                         'taxes' => [
                             'type' => 'object',
                             'properties' => [
@@ -136,6 +198,8 @@ class Integration extends BaseIntegration
                                 'price' => ['type' => 'number'],
                                 'sale_price' => ['type' => 'number'],
                                 'regular_price' => ['type' => 'number'],
+                                'stock_quantity' => ['type' => 'number'],
+                                'stock_status' => ['type' => 'string'],
                             ],
                         ],
                         // 'meta_data' => [
@@ -197,7 +261,14 @@ class Integration extends BaseIntegration
                         'method_title' => ['type' => 'string'],
                         'instance_id' => ['type' => 'integer'],
                         'total' => ['type' => 'number'],
-                        'total_tax' => ['type' => 'number'],
+                        'total_tax' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'amount' => ['type' => 'number'],
+                                'rate' => ['type' => 'number'],
+                                'percentage' => ['type' => 'number'],
+                            ],
+                        ],
                         'tax_status' => ['type' => 'string'],
                         'taxes' => [
                             'type' => 'object',
@@ -230,6 +301,25 @@ class Integration extends BaseIntegration
                         'id' => ['type' => 'integer'],
                         'order_id' => ['type' => 'integer'],
                         'name' => ['type' => 'string'],
+                        'tax_class' => ['type' => 'string'],
+                        'tax_status' => ['type' => 'string'],
+                        'amount' => ['type' => 'number'],
+                        'total' => ['type' => 'number'],
+                        'total_tax' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'amount' => ['type' => 'number'],
+                                'rate' => ['type' => 'number'],
+                                'percentage' => ['type' => 'number'],
+                            ],
+                        ],
+                        'taxes' => [
+                            'total' => [
+                                'type' => 'array',
+                                'items' => ['type' => 'number'],
+                                'additionalItems' => true,
+                            ],
+                        ],
                         // 'meta_data' => [
                         // 	'type' => 'array',
                         // 	'items' => [
@@ -275,21 +365,63 @@ class Integration extends BaseIntegration
         'additionalProperties' => false,
     ];
 
+    private static function decorate_tax($tax, $total)
+    {
+        try {
+            $tax = (float) $tax;
+            $rate = $tax / $total;
+            $rate = floor($rate * 1000) / 1000;
+
+            return [
+                'amount' => $tax,
+                'rate' => $rate,
+                'percentage' => $rate * 100,
+            ];
+        } catch (TypeError | DivisionByZeroError) {
+            return [
+                'amount' => 0,
+                'rate' => 0,
+                'percentage' => 0,
+            ];
+        }
+    }
+
     public function init()
     {
         add_action(
             'woocommerce_order_status_changed',
             static function ($order_id, $old_status, $new_status) {
+                $is_bridged =
+                    get_post_meta(
+                        $order_id,
+                        self::is_order_bridged_custom_field,
+                        true
+                    ) === '1';
+
                 $trigger_submission = apply_filters(
                     'forms_bridge_woo_trigger_submission',
-                    $new_status === 'completed',
+                    !$is_bridged && $new_status === 'completed',
                     $order_id,
                     $new_status,
-                    $old_status
+                    $old_status,
+                    $is_bridged
                 );
 
                 if ($trigger_submission) {
                     self::$order_id = $order_id;
+
+                    add_action(
+                        'forms_bridge_after_submission',
+                        function () {
+                            update_post_meta(
+                                self::$order_id,
+                                self::is_order_bridged_custom_field,
+                                '1'
+                            );
+                        },
+                        90
+                    );
+
                     Forms_Bridge::do_submission();
                 }
             },
@@ -469,6 +601,15 @@ class Integration extends BaseIntegration
             }
         }
 
+        $tax_lines = [];
+        foreach ($data['tax_lines'] as $tax_line) {
+            $line_data = $tax_line->get_data();
+            unset($line_data['meta_data']);
+            $tax_lines[] = $line_data;
+        }
+
+        $data['tax_lines'] = $tax_lines;
+
         $line_items = [];
         foreach ($data['line_items'] as $line_item) {
             $item_data = $line_item->get_data();
@@ -484,26 +625,35 @@ class Integration extends BaseIntegration
                 'price' => $product->get_price(),
                 'sale_price' => $product->get_sale_price(),
                 'regular_price' => $product->get_regular_price(),
+                'stock_quantity' => $product->get_stock_quantity(),
+                'stock_status' => $product->get_stock_status(),
             ];
+
+            $item_data['total_tax'] = self::decorate_tax(
+                $line_item['total_tax'],
+                $line_item['total']
+            );
+
+            $item_data['subtotal_tax'] = self::decorate_tax(
+                $line_item['subtotal_tax'],
+                $line_item['subtotal']
+            );
 
             $line_items[] = $item_data;
         }
 
         $data['line_items'] = $line_items;
 
-        $tax_lines = [];
-        foreach ($data['tax_lines'] as $tax_line) {
-            $line_data = $tax_line->get_data();
-            unset($line_data['meta_data']);
-            $tax_lines[] = $line_data;
-        }
-
-        $data['tax_lines'] = $tax_lines;
-
         $shipping_lines = [];
         foreach ($data['shipping_lines'] as $shipping_line) {
             $line_data = $shipping_line->get_data();
             unset($line_data['meta_data']);
+
+            $line_data['total_tax'] = self::decorate_tax(
+                $line_data['total_tax'],
+                $line_data['total']
+            );
+
             $shipping_lines[] = $line_data;
         }
 
@@ -513,6 +663,12 @@ class Integration extends BaseIntegration
         foreach ($data['coupon_lines'] ?? [] as $coupon_line) {
             $line_data = $coupon_line->get_data();
             unset($line_data['meta_data']);
+
+            $line_data['discount_tax'] = self::decorate_tax(
+                $line_data['discount_tax'],
+                $line_data['discount']
+            );
+
             $coupon_lines[] = $line_data;
         }
 
@@ -522,10 +678,46 @@ class Integration extends BaseIntegration
         foreach ($data['fee_lines'] ?? [] as $fee_line) {
             $line_data = $fee_line->get_data();
             unset($line_data['meta_data']);
+
+            $line_data['total_tax'] = self::decorate_tax(
+                $line_data['total_tax'],
+                $line_data['total']
+            );
+
             $fee_lines[] = $line_data;
         }
 
         $data['fee_lines'] = $fee_lines;
+
+        $data['discount_tax'] = self::decorate_tax(
+            $data['discount_tax'],
+            $data['discount_total']
+        );
+
+        $data['shipping_tax'] = self::decorate_tax(
+            $data['shipping_tax'],
+            $data['shipping_total']
+        );
+
+        $data['total_tax'] = self::decorate_tax(
+            $data['total_tax'],
+            $data['total']
+        );
+
+        $cart_total = 0;
+        foreach ($data['line_items'] as $line_data) {
+            $cart_total += $line_data['total'];
+        }
+
+        foreach ($data['fee_lines'] as $line_data) {
+            $cart_total += $line_data['total'];
+        }
+
+        $data['cart_total'] = $cart_total;
+        $data['cart_tax'] = self::decorate_tax(
+            $data['cart_tax'],
+            $data['cart_total']
+        );
 
         return rest_sanitize_value_from_schema($data, self::order_data_schema);
     }
