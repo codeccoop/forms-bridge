@@ -357,7 +357,7 @@ abstract class Form_Bridge
 
         remove_filter(
             'forms_bridge_http_request',
-            '\FORMS_BRIDGE\Form_Bridge::filter_request',
+            static::class . '::filter_request',
             10,
             1
         );
