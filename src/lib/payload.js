@@ -173,6 +173,7 @@ export function castValue(value, mapper) {
   }
 
   switch (mapper.cast) {
+    case "join":
     case "json":
     case "concat":
     case "csv":
