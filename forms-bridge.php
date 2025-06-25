@@ -323,7 +323,13 @@ class Forms_Bridge extends Base_Plugin
         }
 
         Logger::log('Form data');
-        Logger::log($form_data);
+        Logger::log([
+            'id' => $form_data['id'],
+            'title' => $form_data['title'],
+            'fields' => array_map(function ($field) {
+                return $field['name'];
+            }, $form_data['fields']),
+        ]);
 
         $bridges = $form_data['bridges'];
 
