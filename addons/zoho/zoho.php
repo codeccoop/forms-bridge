@@ -322,7 +322,7 @@ class Zoho_Addon extends Addon
     private static function temp_register_credentials($data)
     {
         add_filter(
-            'wpct_setting_data',
+            'wpct_plugin_setting_data',
             static function ($setting, $setting_name) use ($data) {
                 if ($setting_name === 'forms-bridge_' . static::$api) {
                     foreach ($setting['credentials'] as $candidate) {

@@ -20,7 +20,7 @@ namespace FORMS_BRIDGE;
 use Error;
 use Exception;
 use WP_Error;
-use WPCT_ABSTRACT\Plugin as Base_Plugin;
+use WPCT_PLUGIN\Plugin as Base_Plugin;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -31,7 +31,7 @@ define('FORMS_BRIDGE_DIR', dirname(__FILE__));
 define('FORMS_BRIDGE_INTEGRATIONS_DIR', FORMS_BRIDGE_DIR . '/integrations');
 define('FORMS_BRIDGE_ADDONS_DIR', FORMS_BRIDGE_DIR . '/addons');
 
-require_once 'abstracts/class-plugin.php';
+require_once 'common/class-plugin.php';
 
 require_once 'deps/http/http-bridge.php';
 require_once 'deps/i18n/wpct-i18n.php';
@@ -68,7 +68,7 @@ class Forms_Bridge extends Base_Plugin
      *
      * @var string
      */
-    protected static $settings_class = '\FORMS_BRIDGE\Settings_Store';
+    protected static $store_class = '\FORMS_BRIDGE\Settings_Store';
 
     /**
      * Handle plugin menu class name.

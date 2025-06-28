@@ -4,7 +4,7 @@ namespace FORMS_BRIDGE;
 
 use WP_Error;
 use WP_REST_Server;
-use WPCT_ABSTRACT\Singleton;
+use WPCT_PLUGIN\Singleton;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -207,7 +207,7 @@ class Logger extends Singleton
         });
 
         add_filter(
-            'wpct_setting_default',
+            'wpct_plugin_setting_default',
             static function ($default, $name) {
                 if ($name !== Forms_Bridge::slug() . '_general') {
                     return $default;
@@ -234,7 +234,7 @@ class Logger extends Singleton
         });
 
         add_filter(
-            'wpct_validate_setting',
+            'wpct_plugin_validate_setting',
             static function ($data, $setting) {
                 if (
                     $setting->full_name() !==

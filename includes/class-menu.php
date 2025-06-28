@@ -2,7 +2,7 @@
 
 namespace FORMS_BRIDGE;
 
-use WPCT_ABSTRACT\Menu as Base_Menu;
+use WPCT_PLUGIN\Menu as Base_Menu;
 
 if (!defined('ABSPATH')) {
     exit();

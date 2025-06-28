@@ -8,7 +8,7 @@ use ParseError;
 use HTTP_BRIDGE\Http_Backend;
 use ReflectionClass;
 use TypeError;
-use WPCT_ABSTRACT\Singleton;
+use WPCT_PLUGIN\Singleton;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -176,7 +176,7 @@ abstract class Addon extends Singleton
 
         $general_setting = Forms_Bridge::slug() . '_general';
         add_filter(
-            'wpct_setting_default',
+            'wpct_plugin_setting_default',
             static function ($default, $name) use ($general_setting) {
                 if ($name !== $general_setting) {
                     return $default;
@@ -202,7 +202,7 @@ abstract class Addon extends Singleton
         );
 
         add_filter(
-            'wpct_validate_setting',
+            'wpct_plugin_validate_setting',
             static function ($data, $setting) use ($general_setting) {
                 if ($setting->full_name() !== $general_setting) {
                     return $data;
@@ -626,7 +626,7 @@ abstract class Addon extends Singleton
     private static function handle_settings()
     {
         add_filter(
-            'wpct_settings_config',
+            'wpct_plugin_settings_config',
             static function ($config, $group) {
                 if ($group !== Forms_Bridge::slug()) {
                     return $config;
@@ -640,7 +640,7 @@ abstract class Addon extends Singleton
 
         // Validate the addon setting before updates
         add_filter(
-            'wpct_validate_setting',
+            'wpct_plugin_validate_setting',
             static function ($data, $setting) {
                 return static::do_validation($data, $setting);
             },
@@ -649,7 +649,7 @@ abstract class Addon extends Singleton
         );
 
         add_filter(
-            'wpct_setting_default',
+            'wpct_plugin_setting_default',
             static function ($default, $name) {
                 if ($name !== static::setting_name()) {
                     return $default;
@@ -844,6 +844,8 @@ abstract class Addon extends Singleton
                 Logger::log($e, Logger::ERROR);
             }
         }
+
+        return $items;
     }
 
     /**

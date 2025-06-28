@@ -2,7 +2,7 @@
 
 namespace FORMS_BRIDGE;
 
-use WPCT_ABSTRACT\Settings_Store as Base_Settings_Store;
+use WPCT_PLUGIN\Settings_Store as Base_Settings_Store;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -31,7 +31,7 @@ class Settings_Store extends Base_Settings_Store
 
         // Patch http bridge default settings to plugin settings
         add_filter(
-            'wpct_setting_default',
+            'wpct_plugin_setting_default',
             static function ($default, $name) use ($slug) {
                 if ($name !== $slug . '_general') {
                     return $default;

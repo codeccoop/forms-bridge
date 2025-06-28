@@ -113,7 +113,7 @@ class Google_Sheets_Addon extends Addon
         );
 
         add_filter(
-            'wpct_setting_default',
+            'wpct_plugin_setting_default',
             static function ($data, $name) {
                 if ($name !== 'http-bridge_general') {
                     return $data;
@@ -135,7 +135,7 @@ class Google_Sheets_Addon extends Addon
         );
 
         add_filter(
-            'wpct_validate_setting',
+            'wpct_plugin_validate_setting',
             static function ($data, $name) {
                 if ($name !== 'http-bridge_general') {
                     return $data;
@@ -164,7 +164,7 @@ class Google_Sheets_Addon extends Addon
     {
         // Patch authorized state on the setting default value
         add_filter(
-            'wpct_setting_default',
+            'wpct_plugin_setting_default',
             static function ($data, $name) {
                 if ($name !== self::setting_name()) {
                     return $data;
@@ -179,7 +179,7 @@ class Google_Sheets_Addon extends Addon
         );
 
         add_filter(
-            'wpct_validate_setting',
+            'wpct_plugin_validate_setting',
             static function ($data, $setting) {
                 if ($setting->full_name() !== self::setting_name()) {
                     return $data;

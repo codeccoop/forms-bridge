@@ -2,7 +2,7 @@
 
 namespace FORMS_BRIDGE;
 
-use WPCT_ABSTRACT\Singleton;
+use WPCT_PLUGIN\Singleton;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -321,7 +321,7 @@ abstract class Integration extends Singleton
         $general_setting = Forms_Bridge::slug() . '_general';
 
         add_filter(
-            'wpct_setting_default',
+            'wpct_plugin_setting_default',
             static function ($default, $name) use ($general_setting) {
                 if ($name !== $general_setting) {
                     return $default;
@@ -351,7 +351,7 @@ abstract class Integration extends Singleton
         );
 
         add_filter(
-            'wpct_validate_setting',
+            'wpct_plugin_validate_setting',
             function ($data, $setting) use ($general_setting) {
                 if ($setting->full_name() !== $general_setting) {
                     return $data;

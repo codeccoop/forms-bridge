@@ -1,6 +1,6 @@
-[submodule "abstracts"]
-	path = abstracts
-	url = https://git.coopdevs.org/codeccoop/wp/plugins/wpct-plugin-abstracts.git
+[submodule "common"]
+	path = common
+	url = https://git.coopdevs.org/codeccoop/wp/plugins/wpct-plugin-common.git
 [submodule "deps/http"]
 	path = deps/http
 	url = https://git.coopdevs.org/codeccoop/wp/plugins/bridges/http-bridge.git
