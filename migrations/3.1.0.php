@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit();
+}
+
 $setting_names = [
     'rest-api',
     'dolibarr',

@@ -67,7 +67,7 @@ export default function HoldedTemplateWizard({
 
   const fetch = useRef((endpoint, then, backend) => {
     apiFetch({
-      path: "forms-bridge/v1/holded/fetch",
+      path: "forms-bridge/v1/holded/backend/api/fetch",
       method: "POST",
       data: { backend, endpoint },
     })

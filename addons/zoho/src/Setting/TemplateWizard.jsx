@@ -84,7 +84,7 @@ export default function ZohoTemplateWizard({
 
   const fetch = useRef((endpoint, then, backend, credential) => {
     apiFetch({
-      path: "forms-bridge/v1/zoho/fetch",
+      path: "forms-bridge/v1/zoho/backend/api/fetch",
       method: "POST",
       data: { backend, endpoint, credential },
     })

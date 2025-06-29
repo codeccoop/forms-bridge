@@ -97,14 +97,14 @@ trait Form_Bridge_Custom_Fields
                 return $user->user_email;
             },
             'submission_id' => static function () {
-                return apply_filters('forms_bridge_submission_id', null);
+                return API::get_submission_id();
             },
             'form_title' => static function () {
-                $form = apply_filters('forms_bridge_form', null);
+                $form = API::get_current_form();
                 return $form['title'] ?? null;
             },
             'form_id' => static function () {
-                $form = apply_filters('forms_bridge_form', null);
+                $form = API::get_current_form();
                 return $form['id'] ?? null;
             },
         ];

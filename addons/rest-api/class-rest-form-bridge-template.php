@@ -22,7 +22,7 @@ class Rest_Form_Bridge_Template extends Form_Bridge_Template
      */
     protected static function defaults()
     {
-        return forms_bridge_merge_object(
+        return wpct_plugin_merge_object(
             [
                 'fields' => [
                     [
@@ -83,7 +83,6 @@ class Rest_Form_Bridge_Template extends Form_Bridge_Template
         $schema['properties']['bridge']['properties'] = array_merge(
             $schema['properties']['bridge']['properties'],
             [
-                'backend' => ['type' => 'string'],
                 'endpoint' => ['type' => 'string'],
                 'method' => [
                     'type' => 'string',
@@ -92,7 +91,6 @@ class Rest_Form_Bridge_Template extends Form_Bridge_Template
             ]
         );
 
-        $schema['properties']['bridge']['required'][] = 'backend';
         $schema['properties']['bridge']['required'][] = 'endpoint';
         $schema['properties']['bridge']['required'][] = 'method';
 

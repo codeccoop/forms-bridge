@@ -69,7 +69,7 @@ export default function ListmonkTemplateWizard({
 
   const fetch = useRef((endpoint, then, backend) => {
     apiFetch({
-      path: "forms-bridge/v1/listmonk/fetch",
+      path: "forms-bridge/v1/listmonk/backend/api/fetch",
       method: "POST",
       data: { backend, endpoint },
     })

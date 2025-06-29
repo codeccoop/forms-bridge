@@ -218,14 +218,6 @@ class Workflow_Job
                     ),
                     'type' => 'string',
                 ],
-                // 'callbacks' => [
-                //     'type' => 'object',
-                //     'properties' => [
-                //         'before' => ['type' => 'string'],
-                //         'after' => ['type' => 'string'],
-                //     ],
-                //     'additionalProperties' => false,
-                // ],
             ],
             'additionalProperties' => false,
             'required' => [
@@ -243,49 +235,33 @@ class Workflow_Job
     /**
      * Enqueue the job instance as the last element of the workflow chain.
      *
-     * @param array $workflow Array with workflow job names.
+     * @param string[] $workflow Array with workflow job names.
+     * @param string $api Workflow API namespace.
      *
      * @return Workflow_Job $workflow Chain of workflow jobs.
      */
-    public static function from_workflow($workflow)
+    public static function from_workflow($workflow, $api)
     {
-        $workflow = array_reverse($workflow);
-        return self::workflow_chain($workflow);
-    }
+        $workflow_jobs = [];
+        $jobs = API::get_api_jobs($api);
 
-    /**
-     * Returns a workflow jobs chaing from a workflow names array.
-     *
-     * @param array $workflow Array with workflow names.
-     * @param Workflow_Job $next Optional, the next element of the chain.
-     *
-     * @return array Array with Workflow_Job instances.
-     */
-    private static function workflow_chain($workflow, $next = null)
-    {
-        if (empty($workflow)) {
-            return $next;
+        $i = count($workflow) - 1;
+        while ($job_name = $workflow[$i] ?? null) {
+            foreach ($jobs as $job) {
+                if ($job->name === $job_name) {
+                    $workflow_jobs[] = $job;
+                }
+            }
         }
 
-        $name = array_shift($workflow);
-        $job = apply_filters(
-            'forms_bridge_workflow_job',
-            null,
-            $name,
-            $this->api
-        );
-
-        if (empty($job)) {
-            return;
-        }
-
-        $job = clone $job;
-
-        if ($next) {
+        $next = null;
+        foreach ($workflow_jobs as $job) {
+            $job = clone $job;
             $job->chain($next);
+            $next = $job;
         }
 
-        return self::workflow_chain($workflow, $job);
+        return $next;
     }
 
     private static function reflect_method($method)
@@ -323,10 +299,14 @@ class Workflow_Job
         return trim($snippet);
     }
 
-    private static function load_snippet($snippet, $id)
+    private static function load_snippet($snippet, $name, $api)
     {
         try {
-            $method_name = str_replace('-', '_', $id);
+            $method_name = str_replace(
+                '-',
+                '_',
+                'forms_bridge_job_' . $api . '_' . $name
+            );
 
             $method =
                 'if (!function_exists(\'' . $method_name . '\')) {' . "\n";
@@ -490,13 +470,6 @@ class Workflow_Job
             return $payload;
         }
 
-        // $payload = apply_filters(
-        //     'forms_bridge_workflow_job_payload',
-        //     $payload,
-        //     $this,
-        //     $bridge
-        // );
-
         $method = $this->method;
         $payload = $method($payload, $bridge, $this);
 
@@ -517,77 +490,8 @@ class Workflow_Job
             $payload = $next_job->run($payload, $bridge, $mutations);
         }
 
-        // if (
-        //     isset($this->callbacks['before']) &&
-        //     function_exists($this->callbacks['before'])
-        // ) {
-        //     add_action(
-        //         'forms_bridge_before_submission',
-        //         [$this, 'before_submission'],
-        //         10,
-        //         3
-        //     );
-        // }
-
-        // if (
-        //     isset($this->callbacks['after']) &&
-        //     function_exists($this->callbacks['after'])
-        // ) {
-        //     add_action(
-        //         'forms_bridge_after_submission',
-        //         [$this, 'after_submission'],
-        //         10,
-        //         4
-        //     );
-        // }
-
         return $payload;
     }
-
-    /**
-     * Before submission callback with auto desregistration.
-     *
-     * @param Form_Bridge $bridge Workflow's bridge owner instance.
-     * @param array $payload Payload data to be submitted.
-     * @param array $attahments Submission files to be submitteds.
-     */
-    // public function before_submission($bridge, $payload, $attachments = [])
-    // {
-    //     remove_action(
-    //         'forms_bridge_before_submission',
-    //         [$this, 'before_submission'],
-    //         10,
-    //         3
-    //     );
-
-    //     $callback = $this->callbacks['before'];
-    //     $callback($bridge, $payload, $attachments);
-    // }
-
-    /**
-     * After submission callback with auto desregistration.
-     *
-     * @param Form_Bridge $bridge Worflow's bridge owner instance.
-     * @param array $response Http response of the bridge submission.
-     * @param array $payload Submission payload.
-     * @param array $attachments Submission attachments.
-     */
-    // public function after_submission(
-    //     $bridge,
-    //     $response,
-    //     $payload,
-    //     $attachments = []
-    // ) {
-    //     remove_action(
-    //         'forms_bridge_after_submission',
-    //         [$this, 'after_submission'],
-    //         10,
-    //         4
-    //     );
-
-    //     $callback = $this->callbacks['after'];
-    //     $callback($bridge, $response, $payload, $attachments);
-    // }
 
     /**
      * Workflow job data serializer to be used on REST API response.
@@ -663,8 +567,15 @@ class Workflow_Job
     {
         $schema = self::schema();
 
-        if (isset($data['snippet']) && is_string($data['snippet'])) {
-            $data['method'] = self::load_snippet($data['snippet'], $this->id);
+        if (
+            isset($data['name'], $data['snippet']) &&
+            is_string($data['snippet'])
+        ) {
+            $data['method'] = self::load_snippet(
+                $data['snippet'],
+                $data['name'],
+                $this->api
+            );
         } else {
             if (isset($data['method']) && function_exists($data['method'])) {
                 $data['snippet'] = self::reflect_method($data['method']);
@@ -675,7 +586,7 @@ class Workflow_Job
             }
         }
 
-        $data = forms_bridge_validate_with_schema($data, $schema);
+        $data = wpct_plugin_validate_with_schema($data, $schema);
         if (is_wp_error($data)) {
             return $data;
         }
@@ -687,16 +598,6 @@ class Workflow_Job
                 $data
             );
         }
-
-        // foreach ($data['callbacks'] as $callback) {
-        //     if (!function_exists($callback)) {
-        //         return new WP_Error(
-        //             'method_is_not_function',
-        //             __('Job callback is not a function', 'forms-bridge'),
-        //             $data
-        //         );
-        //     }
-        // }
 
         return $data;
     }

@@ -51,27 +51,7 @@ class Rest_Addon extends Addon
     {
         return [
             static::$api,
-            self::merge_setting_config([
-                'bridges' => [
-                    'type' => 'array',
-                    'items' => [
-                        'type' => 'object',
-                        'additionalProperties' => false,
-                        'properties' => [
-                            'endpoint' => [
-                                'type' => 'string',
-                                'minLength' => 1,
-                            ],
-                            'method' => [
-                                'type' => 'string',
-                                'enum' => ['GET', 'POST', 'PUT', 'DELETE'],
-                                'default' => 'POST',
-                            ],
-                        ],
-                        'required' => ['endpoint', 'method'],
-                    ],
-                ],
-            ]),
+            self::default_config(),
             [
                 'bridges' => [],
             ],

@@ -216,21 +216,7 @@ class Google_Sheets_Addon extends Addon
     {
         return [
             self::$api,
-            self::merge_setting_config([
-                'bridges' => [
-                    'type' => 'array',
-                    'items' => [
-                        'type' => 'object',
-                        'additionalProperties' => false,
-                        'properties' => [
-                            'spreadsheet' => ['type' => 'string'],
-                            'tab' => ['type' => 'string'],
-                            'endpoint' => ['type' => 'string'],
-                        ],
-                        'required' => ['endpoint', 'spreadsheet', 'tab'],
-                    ],
-                ],
-            ]),
+            self::default_config(),
             [
                 'bridges' => [],
             ],

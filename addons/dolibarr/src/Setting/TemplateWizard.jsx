@@ -79,7 +79,7 @@ export default function DolibarrTemplateWizard({
 
   const fetch = useRef((endpoint, then, backend) => {
     apiFetch({
-      path: `forms-bridge/v1/dolibarr/fetch`,
+      path: `forms-bridge/v1/dolibarr/backend/api/fetch`,
       method: "POST",
       data: { backend, endpoint },
     })

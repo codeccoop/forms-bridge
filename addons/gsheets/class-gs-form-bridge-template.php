@@ -22,7 +22,7 @@ class Google_Sheets_Form_Bridge_Template extends Form_Bridge_Template
      */
     protected static function defaults()
     {
-        return forms_bridge_merge_object(
+        return wpct_plugin_merge_object(
             [
                 'fields' => [
                     [

@@ -169,7 +169,7 @@ return [
             ],
         ],
         'workflow' => [
-            'forms-bridge-iso2-country-code',
+            'holded-iso2-country-code',
             'holded-prefix-vatnumber',
             'holded-bind-contact',
         ],

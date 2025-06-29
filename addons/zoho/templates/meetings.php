@@ -277,7 +277,7 @@ return [
         'endpoint' => '/crm/v7/Events',
         'scope' => 'ZohoCRM.modules.ALL',
         'workflow' => [
-            'forms-bridge-date-fields-to-date',
+            'zoho-date-fields-to-date',
             'zoho-event-dates',
             'zoho-crm-meeting-participant',
         ],

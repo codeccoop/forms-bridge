@@ -42,6 +42,28 @@ class Odoo_Form_Bridge extends Form_Bridge
      */
     private static $session;
 
+    public static function schema()
+    {
+        $schema = parent::schema();
+
+        $schema['properties']['credential'] = [
+            'description' => __(
+                'Name of the database credential',
+                'forms-bridge'
+            ),
+            'type' => 'string',
+        ];
+
+        $schema['required'][] = 'credential';
+
+        $schema['properties']['endpoint'] = [
+            'description' => __('Name of the target db model', 'forms-bridge'),
+            'type' => 'string',
+        ];
+
+        $schema['required'][] = 'endpoint';
+        return $schema;
+    }
     /**
      * RPC payload decorator.
      *

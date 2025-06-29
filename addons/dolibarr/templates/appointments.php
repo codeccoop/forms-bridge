@@ -250,7 +250,7 @@ return [
             ],
         ],
         'workflow' => [
-            'forms-bridge-date-fields-to-date',
+            'dolibarr-date-fields-to-date',
             'dolibarr-appointment-dates',
             'dolibarr-appointment-attendee',
         ],

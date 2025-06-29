@@ -101,7 +101,7 @@ return [
                 'value' => '$locale',
             ],
         ],
-        'workflow' => ['forms-bridge-iso2-country-code', 'financoop-vat-id'],
+        'workflow' => ['financoop-iso2-country-code', 'financoop-vat-id'],
     ],
     'form' => [
         'fields' => [

@@ -223,7 +223,7 @@ abstract class Integration extends Singleton
                     if (preg_match('/^(\w+):(\d+)$/', $form_id, $matches)) {
                         [, $integration, $form_id] = $matches;
                         $form_id = (int) $form_id;
-                    } else {
+                    } elseif (empty($integration)) {
                         return $form;
                     }
                 }

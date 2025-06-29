@@ -10,9 +10,7 @@ return [
         'Add a callback to the bridge submission to validate the order after its creation',
         'forms-bridge'
     ),
-    'callbacks' => [
-        'after' => 'forms_bridge_dolibarr_validate_order',
-    ],
+    'method' => 'forms_bridge_dolibarr_enqueue_order_validation',
     'input' => [],
     'output' => [],
 ];
@@ -23,6 +21,13 @@ function forms_bridge_dolibarr_validate_order(
     $payload,
     $attachments
 ) {
+    remove_action(
+        'forms_bridge_after_submission',
+        'forms_bridge_dolibarr_validate_order',
+        10,
+        4
+    );
+
     $order_id = intval($response['data'] ?? null);
 
     if (empty($order_id)) {
@@ -46,4 +51,14 @@ function forms_bridge_dolibarr_validate_order(
             $attachments
         );
     }
+}
+
+function forms_bridge_dolibarr_enqueue_order_validation()
+{
+    add_action(
+        'forms_bridge_after_submission',
+        'forms_bridge_dolibarr_validate_order',
+        10,
+        4
+    );
 }

@@ -20,6 +20,34 @@ class Google_Sheets_Form_Bridge extends Form_Bridge
      */
     protected $api = 'gsheets';
 
+    public static function schema()
+    {
+        $schema = parent::schema();
+        $schema['properties']['spreadsheet'] = [
+            'description' => __('ID of the spreadhseet', 'forms-bridge'),
+            'type' => 'string',
+        ];
+
+        $schema['required'][] = 'spreadsheet';
+
+        $schema['properties']['tab'] = [
+            'description' => __('Name of the spreadsheet tab', 'forms-bridge'),
+            'type' => 'string',
+        ];
+
+        $schema['required'][] = 'tab';
+
+        $schema['properties']['endpoint'] = [
+            'description' => __(
+                'Concatenation of the spreadsheet ID and the tab name by double colons',
+                'forms-bridge'
+            ),
+            'type' => 'string',
+        ];
+
+        $schema['required'][] = 'endpoint';
+        return $schema;
+    }
     /**
      * Retrives the bridge's backend instance.
      *

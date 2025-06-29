@@ -59,4 +59,25 @@ class Rest_Form_Bridge extends Form_Bridge
             $attachments
         );
     }
+
+    public static function schema()
+    {
+        $schema = parent::schema();
+        $schema['properties']['method'] = [
+            'description' => __('HTTP method', 'forms-bridge'),
+            'type' => 'string',
+            'enum' => self::allowed_methods,
+        ];
+
+        $schema['required'][] = 'method';
+
+        $schema['properties']['endpoint'] = [
+            'description' => __('HTTP API endpoint', 'forms-bridge'),
+            'type' => 'string',
+        ];
+
+        $schema['required'][] = 'endpoint';
+
+        return $schema;
+    }
 }

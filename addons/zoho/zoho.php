@@ -90,24 +90,6 @@ class Zoho_Addon extends Addon
                         ],
                     ],
                 ],
-                'bridges' => [
-                    'type' => 'array',
-                    'items' => [
-                        'type' => 'object',
-                        'additionalProperties' => false,
-                        'properties' => [
-                            'endpoint' => [
-                                'type' => 'string',
-                                'minLength' => 1,
-                            ],
-                            'scope' => [
-                                'type' => 'string',
-                                'minLength' => 1,
-                            ],
-                        ],
-                        'required' => ['credential', 'endpoint', 'scope'],
-                    ],
-                ],
             ]),
             [
                 'credentials' => [],

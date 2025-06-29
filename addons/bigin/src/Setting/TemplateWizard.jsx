@@ -84,7 +84,7 @@ export default function BiginTemplateWizard({
 
   const fetch = useRef((endpoint, then, backend, credential) => {
     apiFetch({
-      path: "forms-bridge/v1/bigin/fetch",
+      path: "forms-bridge/v1/bigin/backend/api/fetch",
       method: "POST",
       data: { backend, endpoint, credential },
     })

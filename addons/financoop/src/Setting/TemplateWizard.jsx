@@ -67,7 +67,7 @@ export default function FinanCoopTemplateWizard({
 
   const fetch = useRef((endpoint, then, backend) => {
     apiFetch({
-      path: "forms-bridge/v1/financoop/fetch",
+      path: "forms-bridge/v1/financoop/backend/api/fetch",
       method: "POST",
       data: { backend, endpoint },
     })

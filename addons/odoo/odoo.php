@@ -68,18 +68,6 @@ class Odoo_Addon extends Addon
                         'required' => ['name', 'database', 'user', 'password'],
                     ],
                 ],
-                'bridges' => [
-                    'type' => 'array',
-                    'items' => [
-                        'type' => 'object',
-                        'additionalProperties' => false,
-                        'properties' => [
-                            'credential' => ['type' => 'string'],
-                            'endpoint' => ['type' => 'string'],
-                        ],
-                        'required' => ['credential', 'endpoint'],
-                    ],
-                ],
             ]),
             [
                 'credentials' => [],

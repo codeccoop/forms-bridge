@@ -27,7 +27,7 @@ return [
     'bridge' => [
         'endpoint' => 'res.partner',
         'workflow' => [
-            'forms-bridge-iso2-country-code',
+            'odoo-iso2-country-code',
             'odoo-vat-id',
             'odoo-country-id',
             'odoo-contact-company',

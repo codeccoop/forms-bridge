@@ -87,7 +87,7 @@ export default function MailchimpTemplateWizard({
 
   const fetch = useRef((endpoint, then, backend) => {
     apiFetch({
-      path: "forms-bridge/v1/mailchimp/fetch",
+      path: "forms-bridge/v1/mailchimp/backend/api/fetch",
       method: "POST",
       data: { backend, endpoint },
     })

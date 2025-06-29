@@ -58,7 +58,7 @@ return [
             ],
         ],
         'workflow' => [
-            'forms-bridge-iso2-country-code',
+            'odoo-iso2-country-code',
             'odoo-country-id',
             'odoo-skip-if-partner-exists',
         ],

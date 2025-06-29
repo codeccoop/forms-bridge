@@ -223,9 +223,9 @@ return [
             ],
         ],
         'workflow' => [
-            'forms-bridge-date-fields-to-date',
+            'holded-date-fields-to-date',
             'holded-appointment-dates',
-            'forms-bridge-iso2-country-code',
+            'holded-iso2-country-code',
             'holded-prefix-vatnumber',
             'holded-contact-id',
         ],

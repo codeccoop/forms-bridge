@@ -2,9 +2,7 @@
 
 namespace FORMS_BRIDGE;
 
-use Error;
 use Exception;
-use ParseError;
 use HTTP_BRIDGE\Http_Backend;
 use ReflectionClass;
 use TypeError;
@@ -71,7 +69,7 @@ abstract class Addon extends Singleton
         return [
             'bridges' => [
                 'type' => 'array',
-                'items' => Form_Bridge::schema(),
+                'items' => static::$bridge_class::schema(),
                 'default' => [],
             ],
             'credentials' => [
@@ -100,7 +98,7 @@ abstract class Addon extends Singleton
      */
     protected static function merge_setting_config($config)
     {
-        return forms_bridge_merge_object($config, self::default_config());
+        return wpct_plugin_merge_object($config, self::default_config());
     }
 
     /**
@@ -272,7 +270,7 @@ abstract class Addon extends Singleton
 
         static $forms;
         if (empty($forms)) {
-            $forms = apply_filters('forms_bridge_forms', []);
+            $forms = API::get_forms();
         }
 
         $form = null;
@@ -349,6 +347,7 @@ abstract class Addon extends Singleton
         $bridge['is_valid'] =
             !empty($bridge['form_id']) && !empty($bridge['backend']);
 
+        $bridge['enabled'] = boolval($bridge['enabeld'] ?? true);
         return $bridge;
     }
 
@@ -427,23 +426,6 @@ abstract class Addon extends Singleton
 
         static::handle_settings();
         static::admin_scripts();
-
-        // add_filter(
-        //     'forms_bridge_bridges',
-        //     static function ($bridges, $form_id = null, $api = null) {
-        //         if ($api && $api !== static::$api) {
-        //             return $bridges;
-        //         }
-
-        //         if (!wp_is_numeric_array($bridges)) {
-        //             $bridges = [];
-        //         }
-
-        //         return array_merge($bridges, static::bridges($form_id));
-        //     },
-        //     10,
-        //     3
-        // );
     }
 
     /**
@@ -586,58 +568,6 @@ abstract class Addon extends Singleton
         );
     }
 
-    // /**
-    //  * Adds addons' bridges to the available bridges list.
-    //  *
-    //  * @param int|string|null $form_id Target form ID. This ID should include the integration prefix if there
-    //  * is more than one active integration.
-    //  *
-    //  * @return array List with available bridges.
-    //  */
-    // private static function bridges($form_id)
-    // {
-    //     $integrations = array_keys(Integration::integrations());
-
-    //     if ($form_id) {
-    //         if (preg_match('/^(\w+):(\d+)$/', $form_id, $matches)) {
-    //             [, $integration, $form_id] = $matches;
-    //             $form_id = (int) $form_id;
-    //         } elseif (count($integrations) > 1) {
-    //             _doing_it_wrong(
-    //                 'forms_bridge_bridges',
-    //                 __(
-    //                     '$form_id param should include the integration prefix if there is more than one integration active',
-    //                     'forms-bridge'
-    //                 ),
-    //                 '2.3.0'
-    //             );
-
-    //             return [];
-    //         } else {
-    //             $integration = array_pop($integrations);
-    //             $form_id = (int) $form_id;
-    //         }
-
-    //         $form_id = "{$integration}:{$form_id}";
-    //     } else {
-    //         $form_id = null;
-    //     }
-
-    //     $bridges = static::setting()->bridges ?: [];
-
-    //     return array_map(
-    //         static function ($bridge_data) {
-    //             return new static::$bridge_class($bridge_data);
-    //         },
-    //         array_filter($bridges, static function ($bridge_data) use (
-    //             $form_id
-    //         ) {
-    //             return $form_id === null ||
-    //                 $bridge_data['form_id'] === $form_id;
-    //         })
-    //     );
-    // }
-
     /**
      * Settings hooks interceptors to register on the plugin's settings store
      * the addon setting.
@@ -675,12 +605,7 @@ abstract class Addon extends Singleton
                 }
 
                 $templates = API::get_api_templates(static::$api);
-
-                $workflow_jobs = apply_filters(
-                    'forms_bridgr_workflow_jobs',
-                    [],
-                    static::$api
-                );
+                $jobs = API::get_api_jobs(static::$api);
 
                 return array_merge($default, [
                     'templates' => array_map(function ($template) {
@@ -695,7 +620,7 @@ abstract class Addon extends Singleton
                             'title' => $job->title,
                             'name' => $job->name,
                         ];
-                    }, $workflow_jobs),
+                    }, $jobs),
                 ]);
             },
             10,
@@ -709,17 +634,8 @@ abstract class Addon extends Singleton
                     return $value;
                 }
 
-                $templates = apply_filters(
-                    'forms_bridge_templates',
-                    [],
-                    static::$api
-                );
-
-                $workflow_jobs = apply_filters(
-                    'forms_bridge_workflow_jobs',
-                    [],
-                    static::$api
-                );
+                $templates = API::get_api_templates(static::$api);
+                $jobs = API::get_api_jobs(static::$api);
 
                 return array_merge($value, [
                     'templates' => array_map(function ($template) {
@@ -734,7 +650,7 @@ abstract class Addon extends Singleton
                             'title' => $job->title,
                             'name' => $job->name,
                         ];
-                    }, $workflow_jobs),
+                    }, $jobs),
                 ]);
             },
             10,

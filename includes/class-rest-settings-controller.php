@@ -135,11 +135,7 @@ class REST_Settings_Controller extends Base_Controller
                             'type' => 'string',
                             'required' => true,
                         ],
-                        'fields' => array_merge($args['fields'], [
-                            'items' => array_merge($args['fields']['items'], [
-                                'required' => ['ref', 'name', 'value'],
-                            ]),
-                        ]),
+                        'fields' => $args['fields'],
                     ],
                 ]
             );
@@ -219,19 +215,19 @@ class REST_Settings_Controller extends Base_Controller
 
             register_rest_route(
                 "{$namespace}/v{$version}",
-                "/{$api}/jobs/workflow",
+                "/{$api}/workflow",
                 [
                     [
                         'methods' => WP_REST_Server::CREATABLE,
                         'callback' => static function ($request) use ($api) {
-                            $workflow = $request['workflow'];
-                            return self::get_workflow_jobs($api, $workflow);
+                            $jobs = $request['jobs'];
+                            return self::get_workflow_jobs($api, $jobs);
                         },
                         'permission_callback' => static function () {
                             return self::permission_callback();
                         },
                         'args' => [
-                            'workflow' => [
+                            'jobs' => [
                                 'description' => __(
                                     'Array of workflow job names',
                                     'forms-bridge'
@@ -460,7 +456,7 @@ class REST_Settings_Controller extends Base_Controller
      */
     private static function forms()
     {
-        $forms = apply_filters('forms_bridge_forms', []);
+        $forms = API::get_forms();
         return array_map(static function ($form) {
             unset($form['bridges']);
             return $form;
@@ -477,7 +473,7 @@ class REST_Settings_Controller extends Base_Controller
      */
     private static function get_workflow_job($api, $name)
     {
-        $job = apply_filters('forms_bridge_workflow_job', null, $name, $api);
+        $job = API::get_job($name, $api);
         if (empty($job)) {
             return new WP_Error(
                 'not_found',
@@ -514,26 +510,26 @@ class REST_Settings_Controller extends Base_Controller
      * Callback for POST requests to the workflow jobs endpoint.
      *
      * @param string $api API name.
-     * @param string[] $workflow Array of job names.
+     * @param string[] $job_names Array of job names.
      *
      * @return array|WP_Error Workflow jobs data.
      */
-    private static function get_workflow_jobs($api, $workflow)
+    private static function get_workflow_jobs($api, $job_names)
     {
         $api_jobs = API::get_api_jobs($api);
 
         $jobs = [];
         foreach ($api_jobs as $job) {
-            if (in_array($job->name, $workflow, true)) {
+            if (in_array($job->name, $job_names, true)) {
                 $jobs[] = $job->to_json();
             }
         }
 
-        if (count($jobs) !== count($workflow)) {
+        if (count($jobs) !== count($job_names)) {
             return new WP_Error(
                 'not_found',
                 __('Workflow jobs not found', 'forms-bridge'),
-                ['workflow' => $workflow]
+                ['jobs' => $job_names]
             );
         }
 
@@ -550,7 +546,7 @@ class REST_Settings_Controller extends Base_Controller
      */
     private static function get_template($api, $name)
     {
-        $template = apply_filters('forms_bridge_template', null, $name, $api);
+        $template = API::get_template($name, $api);
         if (empty($template)) {
             return new WP_Error(
                 'not_found',
@@ -606,7 +602,7 @@ class REST_Settings_Controller extends Base_Controller
             );
         }
 
-        $template = apply_filters('forms_bridge_template', null, $name, $api);
+        $template = API::get_template($name, $api);
         if (empty($template)) {
             return new WP_Error(
                 'not_found',

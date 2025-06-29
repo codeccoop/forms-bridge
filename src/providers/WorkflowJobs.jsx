@@ -80,9 +80,9 @@ export default function WorkflowJobsProvider({ children }) {
     setIsLoading(true);
 
     return apiFetch({
-      path: `forms-bridge/v1/${api}/jobs/workflow`,
+      path: `forms-bridge/v1/${api}/workflow`,
       method: "POST",
-      data: { workflow },
+      data: { jobs: workflow },
     })
       .catch(() => {
         wpfb.emit("error", __("Loading worflow job error", "forms-bridge"));

@@ -68,7 +68,7 @@ export default function BrevoTemplateWizard({
 
   const fetch = useRef((endpoint, then, backend) => {
     apiFetch({
-      path: "forms-bridge/v1/brevo/fetch",
+      path: "forms-bridge/v1/brevo/backend/api/fetch",
       method: "POST",
       data: { backend, endpoint },
     })

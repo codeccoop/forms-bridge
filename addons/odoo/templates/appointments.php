@@ -97,7 +97,7 @@ return [
             ],
         ],
         'workflow' => [
-            'forms-bridge-date-fields-to-date',
+            'odoo-date-fields-to-date',
             'odoo-appointment-dates',
             'odoo-appointment-attendee',
         ],

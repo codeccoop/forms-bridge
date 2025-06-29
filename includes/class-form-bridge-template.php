@@ -66,13 +66,6 @@ class Form_Bridge_Template
     protected $api;
 
     /**
-     * Handles the template name.
-     *
-     * @var string
-     */
-    private $name;
-
-    /**
      * Handles the template config data.
      *
      * @var array
@@ -473,7 +466,7 @@ class Form_Bridge_Template
     {
         $schema = static::schema();
         $config = self::with_defaults($config, $schema);
-        $config_or_error = forms_bridge_validate_with_schema($config, $schema);
+        $config_or_error = wpct_plugin_validate_with_schema($config, $schema);
         return $config_or_error;
     }
 
@@ -488,7 +481,7 @@ class Form_Bridge_Template
     private static function with_defaults($config, $schema)
     {
         // merge template config with addon defaults
-        $config = forms_bridge_merge_object(
+        $config = wpct_plugin_merge_object(
             $config,
             static::defaults(),
             $schema
@@ -659,20 +652,17 @@ class Form_Bridge_Template
             }
         }
 
-        $all_fields = forms_bridge_merge_collection(
+        $all_fields = wpct_plugin_merge_collection(
             $fields,
             $template['fields'],
             static::schema()['fields']['items']
         );
 
-        $requireds = array_filter($all_fields, function ($field) {
+        $requireds = array_filter($all_fields, static function ($field) {
             return ($field['required'] ?? false) && empty($field['value']);
         });
 
-        if (
-            count($fields) > count($all_fields) ||
-            count($fields) < count($requireds)
-        ) {
+        if (count($requireds) || count($fields) > count($all_fields)) {
             throw new Form_Bridge_Template_Exception(
                 'invalid_fields',
                 __('Invalid template fields', 'forms-bridge')
@@ -683,7 +673,7 @@ class Form_Bridge_Template
         foreach ($fields as $field) {
             $is_required = $field['required'] ?? false;
 
-            $field = forms_bridge_validate_with_schema($field, [
+            $field_schema = [
                 'type' => 'object',
                 'properties' => [
                     'ref' => [
@@ -707,7 +697,13 @@ class Form_Bridge_Template
                     ],
                 ],
                 'required' => ['ref', 'name'],
-            ]);
+            ];
+
+            if ($is_required) {
+                $field_schema['required'][] = 'value';
+            }
+
+            $field = wpct_plugin_validate_with_schema($field, $field_schema);
 
             if (is_wp_error($field)) {
                 throw new Form_Bridge_Template_Exception(
@@ -716,20 +712,6 @@ class Form_Bridge_Template
                         __(
                             /* translators: %s: Field name */
                             'Field `%s` does not match the schema',
-                            'forms-bridge'
-                        ),
-                        $field['name']
-                    )
-                );
-            }
-
-            if (!isset($field['value']) && $is_required) {
-                throw new Form_Bridge_Template_Exception(
-                    'required_field',
-                    sprintf(
-                        __(
-                            /* translators: %s: Field name */
-                            'Field `%s` is required',
                             'forms-bridge'
                         ),
                         $field['name']
@@ -821,7 +803,7 @@ class Form_Bridge_Template
         $data = apply_filters(
             'forms_bridge_template_data',
             $data,
-            $this->name,
+            $this->id,
             $this
         );
 
@@ -870,7 +852,7 @@ class Form_Bridge_Template
                 do_action(
                     'forms_bridge_template_form',
                     $data['form'],
-                    $this->name,
+                    $this->id,
                     $this
                 );
             } else {
@@ -995,12 +977,7 @@ class Form_Bridge_Template
      */
     private function form_exists($form_id, $integration)
     {
-        $form = apply_filters(
-            'forms_bridge_form',
-            null,
-            $form_id,
-            $integration
-        );
+        $form = API::get_form_by_id($form_id, $integration);
         return !empty($form['id']);
     }
 
@@ -1045,7 +1022,7 @@ class Form_Bridge_Template
             return;
         }
 
-        do_action('forms_bridge_template_backend', $data, $this->name, $this);
+        do_action('forms_bridge_template_backend', $data, $this->id, $this);
 
         return true;
     }
@@ -1112,7 +1089,7 @@ class Form_Bridge_Template
             return;
         }
 
-        do_action('forms_bridge_template_bridge', $data, $this->name, $this);
+        do_action('forms_bridge_template_bridge', $data, $this->id, $this);
 
         return true;
     }
@@ -1183,12 +1160,7 @@ class Form_Bridge_Template
             return;
         }
 
-        do_action(
-            'forms_bridge_template_credential',
-            $data,
-            $this->name,
-            $this
-        );
+        do_action('forms_bridge_template_credential', $data, $this->id, $this);
 
         return true;
     }

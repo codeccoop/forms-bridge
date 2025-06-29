@@ -58,6 +58,11 @@ class API
         return apply_filters('forms_bridge_submission', null);
     }
 
+    public static function get_submission_id()
+    {
+        return apply_filters('forms_bridge_submission_id', null);
+    }
+
     public static function get_uploads()
     {
         return apply_filters('forms_bridge_uploads', []);
@@ -76,16 +81,6 @@ class API
     public static function get_template($name, $api)
     {
         return apply_filters('forms_bridge_template', null, $name, $api);
-    }
-
-    public static function get_job_by_id($id)
-    {
-        $jobs = self::get_jobs();
-        foreach ($jobs as $job) {
-            if ($job->id === $id) {
-                return $job;
-            }
-        }
     }
 
     public static function get_job($name, $api)

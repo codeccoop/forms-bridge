@@ -54,9 +54,6 @@ require_once 'includes/class-rest-settings-controller.php';
 require_once 'includes/class-settings-store.php';
 require_once 'includes/class-workflow-job.php';
 
-// Utils
-require_once 'includes/json-schema-utils.php';
-
 // Abstracts
 require_once 'integrations/abstract-integration.php';
 require_once 'addons/abstract-addon.php';
@@ -91,6 +88,11 @@ class Forms_Bridge extends Base_Plugin
      */
     protected static $menu_class = '\FORMS_BRIDGE\Menu';
 
+    /**
+     * Handles the current bridge instance. Available only during form submissions.
+     *
+     * @var Form_Bridge|null
+     */
     private static $current_bridge;
 
     /**
@@ -103,7 +105,6 @@ class Forms_Bridge extends Base_Plugin
         Addon::load();
         Integration::load();
 
-        // self::http_hooks();
         self::wp_hooks();
 
         add_action(
@@ -152,78 +153,6 @@ class Forms_Bridge extends Base_Plugin
         require_once 'includes/data/iso2-countries.php';
         require_once 'includes/data/iso3-countries.php';
     }
-
-    // /**
-    //  * Aliases to the http bride filters API.
-    //  */
-    // private static function http_hooks()
-    // {
-    //     add_filter(
-    //         'forms_bridge_backends',
-    //         static function ($backends) {
-    //             return apply_filters('http_bridge_backends', $backends);
-    //         },
-    //         10,
-    //         1
-    //     );
-
-    //     add_filter(
-    //         'forms_bridge_backend',
-    //         static function ($backend, $name) {
-    //             return apply_filters('http_bridge_backend', $backend, $name);
-    //         },
-    //         10,
-    //         2
-    //     );
-
-    //     add_filter(
-    //         'http_bridge_backend_headers',
-    //         static function ($headers, $backend) {
-    //             return apply_filters(
-    //                 'forms_bridge_backend_headers',
-    //                 $headers,
-    //                 $backend
-    //             );
-    //         },
-    //         99,
-    //         2
-    //     );
-
-    //     add_filter(
-    //         'http_bridge_backend_url',
-    //         static function ($url, $backend) {
-    //             return apply_filters(
-    //                 'forms_bridge_backend_url',
-    //                 $url,
-    //                 $backend
-    //             );
-    //         },
-    //         99,
-    //         2
-    //     );
-
-    //     add_filter(
-    //         'http_bridge_request',
-    //         static function ($request) {
-    //             return apply_filters('forms_bridge_http_request', $request);
-    //         },
-    //         99,
-    //         1
-    //     );
-
-    //     add_filter(
-    //         'http_bridge_response',
-    //         static function ($response, $request) {
-    //             return apply_filters(
-    //                 'forms_bridge_http_response',
-    //                 $response,
-    //                 $request
-    //             );
-    //         },
-    //         99,
-    //         2
-    //     );
-    // }
 
     /**
      * Binds plugin to wp hooks.
@@ -310,28 +239,6 @@ class Forms_Bridge extends Base_Plugin
         self::$current_bridge;
     }
 
-    public static function submission_id()
-    {
-        $submission = apply_filters('forms_bridge_submission', [], true);
-
-        if (isset($submission['id'])) {
-            // GF
-            return (string) $submission['id'];
-        } elseif (
-            gettype($submission) === 'object' &&
-            method_exists($submission, 'get_posted_data_hash')
-        ) {
-            // WPCF7
-            return (string) $submission->get_posted_data_hash();
-        } elseif (isset($submission['actions']['save']['sub_id'])) {
-            // NF
-            return (string) $submission['actions']['save']['sub_id'];
-        } elseif (isset($submission['entry_id'])) {
-            // WPForms
-            return $submission['entry_id'];
-        }
-    }
-
     /**
      * Proceed with the submission sub-routine.
      */
@@ -377,6 +284,9 @@ class Forms_Bridge extends Base_Plugin
                 );
                 continue;
             } elseif (!$bridge->enabled) {
+                Logger::log(
+                    'Skip submission for disabled bridge ' . $bridge->name
+                );
                 continue;
             }
 

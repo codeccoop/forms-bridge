@@ -56,8 +56,9 @@ package:
   image: codeccoop/wp-cli:latest
   stage: package
   script:
-    - find abstracts -name '*.php' -exec sed -i "s/'wpct-plugin-abstracts'/'forms-bridge'/g" {} \;
-    - find . -name "*.php" -exec sed -i 's/WPCT_ABSTRACT/FORMS_BRIDGE\\Abstracts/g' {} \;
+    - find common -name '*.php' -exec sed -i "s/'wpct-plugin'/'forms-bridge'/g" {} \;
+    - find . -name '*.php' -exec sed -i "s/wpct_plugin_/forms_bridge_/g" {} \;
+    - find . -name "*.php" -exec sed -i 's/WPCT_PLUGIN/FORMS_BRIDGE\\Common/g' {} \;
     - find deps/http -name '*.php' -exec sed -i "s/'http-bridge'/'forms-bridge'/g" {} \;
     - find . -name "*.php" -exec sed -i 's/HTTP_BRIDGE_/FORMS_BRIDGE_/g' {} \;
     - find . -name '*.php' -exec sed -i 's/HTTP_BRIDGE/FORMS_BRIDGE\\Http/g' {} \;

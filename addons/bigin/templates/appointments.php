@@ -239,7 +239,7 @@ return [
             ],
         ],
         'workflow' => [
-            'forms-bridge-date-fields-to-date',
+            'bigin-date-fields-to-date',
             'bigin-event-dates',
             'bigin-appointment-participant',
         ],

@@ -26,27 +26,36 @@ abstract class Form_Bridge
             'type' => 'object',
             'properties' => [
                 'name' => [
-                    'description' => '',
+                    'description' => __(
+                        'Unique name of the bridge',
+                        'forms-bridge'
+                    ),
                     'type' => 'string',
                     'minLength' => 1,
                 ],
                 'form_id' => [
-                    'description' => '',
+                    'description' => __(
+                        'Internal form id with api prefix',
+                        'forms-bridge'
+                    ),
                     'type' => 'string',
                     'default' => '',
                 ],
                 'backend' => [
-                    'description' => '',
+                    'description' => __('Backend name', 'forms-bridge'),
                     'type' => 'string',
                     'default' => '',
                 ],
                 'credential' => [
-                    'description' => '',
+                    'description' => __('Credential name', 'forms-bridge'),
                     'type' => 'string',
                     'default' => '',
                 ],
                 'custom_fields' => [
-                    'description' => '',
+                    'description' => __(
+                        'Array of bridge\'s custom fields',
+                        'forms-bridge'
+                    ),
                     'type' => 'array',
                     'items' => [
                         'type' => 'object',
@@ -63,9 +72,13 @@ abstract class Form_Bridge
                         'additionalProperties' => false,
                         'required' => ['name', 'value'],
                     ],
+                    'default' => [],
                 ],
                 'mutations' => [
-                    'description' => '',
+                    'description' => __(
+                        'Stack of bridge mutations',
+                        'forms-bridge'
+                    ),
                     'type' => 'array',
                     'items' => [
                         'type' => 'array',
@@ -104,22 +117,33 @@ abstract class Form_Bridge
                             'required' => ['from', 'to', 'cast'],
                         ],
                     ],
+                    'default' => [],
                 ],
                 'workflow' => [
-                    'description' => '',
+                    'description' => __(
+                        'Chain of workflow job names',
+                        'forms-bridge'
+                    ),
                     'type' => 'array',
                     'items' => [
                         'type' => 'string',
                         'minLength' => 1,
                     ],
+                    'default' => [],
                 ],
                 'is_valid' => [
-                    'description' => '',
+                    'description' => __(
+                        'Validation result of the bridge setting',
+                        'forms-bridge'
+                    ),
                     'type' => 'boolean',
                     'default' => true,
                 ],
                 'enabled' => [
-                    'description' => '',
+                    'description' => __(
+                        'Boolean flag to enable/disable a bridge',
+                        'forms-bridge'
+                    ),
                     'type' => 'boolean',
                     'default' => true,
                 ],
@@ -132,7 +156,7 @@ abstract class Form_Bridge
                 'mutations',
                 'workflow',
                 'is_valid',
-                'enabeld',
+                'enabled',
             ],
             'additionalProperties' => false,
         ];
@@ -166,7 +190,7 @@ abstract class Form_Bridge
      */
     public function __construct($data)
     {
-        $this->data = forms_bridge_validate_with_schema($data, self::schema());
+        $this->data = wpct_plugin_validate_with_schema($data, static::schema());
 
         if (!is_wp_error($this->data)) {
             $this->id = $this->api . '-' . $data['name'];
@@ -242,6 +266,10 @@ abstract class Form_Bridge
             case 'workflow':
                 return $this->workflow();
             default:
+                if (is_wp_error($this->data)) {
+                    return null;
+                }
+
                 return $this->data[$name] ?? null;
         }
     }

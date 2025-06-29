@@ -42,6 +42,29 @@ class Zoho_Form_Bridge extends Form_Bridge
      */
     protected static $zoho_oauth_service = 'ZohoCRM';
 
+    public static function schema()
+    {
+        $schema = parent::schema();
+
+        $schema['properties']['endpoint'] = [
+            'description' => __('HTTP API endpoint', 'forms-bridge'),
+            'type' => 'string',
+            'minLength' => 1,
+        ];
+        $schema['required'][] = 'endpoint';
+
+        $schema['properties']['scope'] = [
+            'description' => __(
+                'API scopes list separated by commas',
+                'forms-bridge'
+            ),
+            'type' => 'string',
+            'minLength' => 1,
+        ];
+        $schema['required'][] = 'scope';
+        return $schema;
+    }
+
     /**
      * Parent getter interceptor to short circtuit credentials access.
      *
