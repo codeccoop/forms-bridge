@@ -178,6 +178,6 @@ return [
                 ],
             ],
         ],
-        'workflow' => ['dolibarr-contact-socid', 'dolibarr-next-project-ref'],
+        'workflow' => ['contact-socid', 'next-project-ref'],
     ],
 ];

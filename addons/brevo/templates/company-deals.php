@@ -172,9 +172,9 @@ return [
             ],
         ],
         'workflow' => [
-            'brevo-linked-contact',
-            'brevo-country-phone-code',
-            'brevo-linked-company',
+            'linked-contact',
+            'country-phone-code',
+            'linked-company',
         ],
     ],
     'backend' => [

@@ -58,9 +58,9 @@ return [
             ],
         ],
         'workflow' => [
-            'odoo-iso2-country-code',
-            'odoo-country-id',
-            'odoo-skip-if-partner-exists',
+            'iso2-country-code',
+            'country-id',
+            'skip-if-partner-exists',
         ],
     ],
     'form' => [

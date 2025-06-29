@@ -103,6 +103,6 @@ return [
     ],
     'bridge' => [
         'endpoint' => '/bigin/v2/Contacts/upsert',
-        'workflow' => ['bigin-account-name'],
+        'workflow' => ['account-name'],
     ],
 ];

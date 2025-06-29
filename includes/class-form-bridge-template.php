@@ -4,6 +4,7 @@ namespace FORMS_BRIDGE;
 
 use Exception;
 use Error;
+use FBAPI;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -366,7 +367,7 @@ class Form_Bridge_Template
                     'properties' => [
                         'name' => ['type' => 'string'],
                     ],
-                    'additionalProperties' => false,
+                    'additionalProperties' => true,
                     'required' => ['name'],
                 ],
             ],
@@ -605,6 +606,11 @@ class Form_Bridge_Template
         }
     }
 
+    public function is_valid()
+    {
+        return !is_wp_error($this->config);
+    }
+
     /**
      * Decorates the template config data for REST responses.
      *
@@ -612,6 +618,10 @@ class Form_Bridge_Template
      */
     public function to_json()
     {
+        if (!$this->is_valid()) {
+            return;
+        }
+
         return [
             'id' => $this->id,
             'api' => $this->api,
@@ -977,7 +987,7 @@ class Form_Bridge_Template
      */
     private function form_exists($form_id, $integration)
     {
-        $form = API::get_form_by_id($form_id, $integration);
+        $form = FBAPI::get_form_by_id($form_id, $integration);
         return !empty($form['id']);
     }
 

@@ -406,6 +406,6 @@ return [
                 ],
             ],
         ],
-        'workflow' => ['holded-contact-id'],
+        'workflow' => ['contact-id'],
     ],
 ];

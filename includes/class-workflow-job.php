@@ -7,6 +7,7 @@ use Error;
 use ReflectionFunction;
 use WP_Error;
 use WP_Post;
+use FBAPI;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -243,15 +244,18 @@ class Workflow_Job
     public static function from_workflow($workflow, $api)
     {
         $workflow_jobs = [];
-        $jobs = API::get_api_jobs($api);
+        $jobs = FBAPI::get_api_jobs($api);
 
         $i = count($workflow) - 1;
         while ($job_name = $workflow[$i] ?? null) {
             foreach ($jobs as $job) {
                 if ($job->name === $job_name) {
                     $workflow_jobs[] = $job;
+                    break;
                 }
             }
+
+            $i--;
         }
 
         $next = null;

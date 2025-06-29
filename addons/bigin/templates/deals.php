@@ -202,7 +202,7 @@ return [
     ],
     'bridge' => [
         'endpoint' => '/bigin/v2/Pipelines',
-        'workflow' => ['bigin-account-name', 'bigin-contact-name'],
+        'workflow' => ['account-name', 'contact-name'],
         'mutations' => [
             [
                 [

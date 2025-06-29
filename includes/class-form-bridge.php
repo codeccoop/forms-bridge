@@ -2,6 +2,9 @@
 
 namespace FORMS_BRIDGE;
 
+use FBAPI;
+use WP_Error;
+
 if (!defined('ABSPATH')) {
     exit();
 }
@@ -266,14 +269,18 @@ abstract class Form_Bridge
             case 'workflow':
                 return $this->workflow();
             default:
-                if (is_wp_error($this->data)) {
-                    return null;
+                if (!$this->is_valid()) {
+                    return;
                 }
 
                 return $this->data[$name] ?? null;
         }
     }
 
+    public function is_valid()
+    {
+        return !is_wp_error($this->data) && $this->data['is_valid'];
+    }
     /**
      * Retrives the bridge's backend instance.
      *
@@ -281,12 +288,16 @@ abstract class Form_Bridge
      */
     protected function backend()
     {
-        $backend_name = $this->data['backend'] ?? null;
+        if (!$this->is_valid()) {
+            return;
+        }
+
+        $backend_name = $this->data['backend'];
         if (!$backend_name) {
             return;
         }
 
-        return API::get_backend($backend_name);
+        return FBAPI::get_backend($backend_name);
     }
 
     /**
@@ -296,8 +307,13 @@ abstract class Form_Bridge
      */
     protected function form()
     {
-        [$integration, $form_id] = explode(':', $this->form_id);
-        return API::get_form_by_id($form_id, $integration);
+        $form_id = $this->form_id;
+        if (empty($form_id)) {
+            return;
+        }
+
+        [$integration, $form_id] = explode(':', $form_id);
+        return FBAPI::get_form_by_id($form_id, $integration);
     }
 
     /**
@@ -307,7 +323,12 @@ abstract class Form_Bridge
      */
     protected function integration()
     {
-        [$integration] = explode(':', $this->form_id);
+        $form_id = $this->form_id;
+        if (empty($form_id)) {
+            return;
+        }
+
+        [$integration] = explode(':', $form_id);
         return $integration;
     }
 
@@ -318,8 +339,11 @@ abstract class Form_Bridge
      */
     protected function content_type()
     {
-        $backend = $this->backend();
+        if (!$this->is_valid()) {
+            return;
+        }
 
+        $backend = $this->data['backend'];
         if (empty($backend)) {
             return;
         }
@@ -351,6 +375,10 @@ abstract class Form_Bridge
      */
     protected function workflow()
     {
+        if (!$this->is_valid()) {
+            return [];
+        }
+
         return Workflow_Job::from_workflow(
             $this->data['workflow'] ?? [],
             $this->api
@@ -368,6 +396,13 @@ abstract class Form_Bridge
      */
     public function submit($payload = [], $attachments = [])
     {
+        if (!$this->is_valid()) {
+            return new WP_Error(
+                'invalid_bridge',
+                'Bridge has invalid settings'
+            );
+        }
+
         add_filter(
             'http_bridge_request',
             static::class . '::filter_request',
@@ -458,6 +493,10 @@ abstract class Form_Bridge
      */
     public function patch($partial = [])
     {
+        if (!$this->is_valid()) {
+            return $this;
+        }
+
         $data = array_merge($this->data, $partial);
         return new static($data, $this->api);
     }

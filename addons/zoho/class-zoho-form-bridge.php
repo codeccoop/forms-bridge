@@ -51,6 +51,7 @@ class Zoho_Form_Bridge extends Form_Bridge
             'type' => 'string',
             'minLength' => 1,
         ];
+
         $schema['required'][] = 'endpoint';
 
         $schema['properties']['scope'] = [
@@ -61,25 +62,17 @@ class Zoho_Form_Bridge extends Form_Bridge
             'type' => 'string',
             'minLength' => 1,
         ];
-        $schema['required'][] = 'scope';
-        return $schema;
-    }
 
-    /**
-     * Parent getter interceptor to short circtuit credentials access.
-     *
-     * @param string $name Attribute name.
-     *
-     * @return mixed Attribute value or null.
-     */
-    public function __get($name)
-    {
-        switch ($name) {
-            case 'method':
-                return $this->data['method'] ?? 'POST';
-            default:
-                return parent::__get($name);
-        }
+        $schema['required'][] = 'scope';
+
+        $schema['properties']['method'] = [
+            'description' => __('HTTP method', 'forms-bridge'),
+            'type' => 'string',
+            'enum' => ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+            'default' => 'POST',
+        ];
+
+        return $schema;
     }
 
     /**
@@ -99,6 +92,10 @@ class Zoho_Form_Bridge extends Form_Bridge
      */
     protected function credential()
     {
+        if (!$this->is_valid()) {
+            return;
+        }
+
         $credentials = Forms_Bridge::setting($this->api)->credentials ?: [];
         foreach ($credentials as $credential) {
             if ($credential['name'] === $this->data['credential']) {

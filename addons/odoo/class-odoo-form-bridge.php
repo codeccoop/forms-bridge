@@ -62,6 +62,22 @@ class Odoo_Form_Bridge extends Form_Bridge
         ];
 
         $schema['required'][] = 'endpoint';
+
+        $schema['properties']['method'] = [
+            'description' => __('RPC call method name', 'forms-bridge'),
+            'type' => 'string',
+            'enum' => [
+                'search',
+                'search_read',
+                'read',
+                'write',
+                'create',
+                'unlink',
+                'get_fields',
+            ],
+            'default' => 'create',
+        ];
+
         return $schema;
     }
     /**
@@ -198,6 +214,10 @@ class Odoo_Form_Bridge extends Form_Bridge
      */
     protected function credential()
     {
+        if (!$this->is_valid()) {
+            return;
+        }
+
         $credentials = Forms_Bridge::setting($this->api)->credentials ?: [];
         foreach ($credentials as $credential) {
             if ($credential['name'] === $this->data['credential']) {
@@ -217,8 +237,21 @@ class Odoo_Form_Bridge extends Form_Bridge
     protected function do_submit($payload, $more_args = null)
     {
         $credential = $this->credential();
+        $backend = $this->backend();
 
-        $session = self::rpc_login($credential, $this->backend);
+        if (!$credential) {
+            return new WP_Error(
+                'invalid_credential',
+                'The bridge does not have a valid credential'
+            );
+        } elseif (!$backend) {
+            return new WP_Error(
+                'invalid_backend',
+                'The bridge does not have a valid backend'
+            );
+        }
+
+        $session = self::rpc_login($credential, $backend);
 
         if (is_wp_error($session)) {
             return $session;
@@ -241,7 +274,7 @@ class Odoo_Form_Bridge extends Form_Bridge
             $more_args
         );
 
-        $response = $this->backend()->post(self::endpoint, $payload);
+        $response = $backend->post(self::endpoint, $payload);
 
         $result = self::rpc_response($response);
         if (is_wp_error($result)) {

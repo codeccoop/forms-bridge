@@ -5,7 +5,7 @@ namespace FORMS_BRIDGE\WOO;
 use DivisionByZeroError;
 use TypeError;
 use FORMS_BRIDGE\Forms_Bridge;
-use FORMS_BRIDGE\API;
+use FBAPI;
 use FORMS_BRIDGE\Integration as BaseIntegration;
 use WC_Session_Handler;
 use WC_Customer;
@@ -459,7 +459,7 @@ class Integration extends BaseIntegration
                 '_id' => 'woo:1',
                 'id' => 1,
                 'title' => __('Woo Checkout', 'forms-bridge'),
-                'bridges' => API::get_form_bridges('woo:1'),
+                'bridges' => FBAPI::get_form_bridges('woo:1'),
                 'fields' => $this->serialize_order_fields(),
             ],
             WC()->checkout,

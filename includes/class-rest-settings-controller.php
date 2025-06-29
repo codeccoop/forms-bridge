@@ -7,6 +7,7 @@ use Exception;
 use WP_Error;
 use WP_REST_Server;
 use WPCT_PLUGIN\REST_Settings_Controller as Base_Controller;
+use FBAPI;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -456,7 +457,7 @@ class REST_Settings_Controller extends Base_Controller
      */
     private static function forms()
     {
-        $forms = API::get_forms();
+        $forms = FBAPI::get_forms();
         return array_map(static function ($form) {
             unset($form['bridges']);
             return $form;
@@ -473,7 +474,7 @@ class REST_Settings_Controller extends Base_Controller
      */
     private static function get_workflow_job($api, $name)
     {
-        $job = API::get_job($name, $api);
+        $job = FBAPI::get_job($name, $api);
         if (empty($job)) {
             return new WP_Error(
                 'not_found',
@@ -516,7 +517,7 @@ class REST_Settings_Controller extends Base_Controller
      */
     private static function get_workflow_jobs($api, $job_names)
     {
-        $api_jobs = API::get_api_jobs($api);
+        $api_jobs = FBAPI::get_api_jobs($api);
 
         $jobs = [];
         foreach ($api_jobs as $job) {
@@ -546,7 +547,7 @@ class REST_Settings_Controller extends Base_Controller
      */
     private static function get_template($api, $name)
     {
-        $template = API::get_template($name, $api);
+        $template = FBAPI::get_template($name, $api);
         if (empty($template)) {
             return new WP_Error(
                 'not_found',
@@ -602,7 +603,7 @@ class REST_Settings_Controller extends Base_Controller
             );
         }
 
-        $template = API::get_template($name, $api);
+        $template = FBAPI::get_template($name, $api);
         if (empty($template)) {
             return new WP_Error(
                 'not_found',

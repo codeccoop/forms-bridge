@@ -41,7 +41,7 @@ function forms_bridge_workflow_job_format_date_fields($payload)
     $hour = $payload['hour'] ?? '00';
     $minute = $payload['minute'] ?? '00';
 
-    $form_data = \FORMS_BRIDGE\API::get_current_form();
+    $form_data = FBAPI::get_current_form();
     $date_index = array_search(
         'date',
         array_column($form_data['fields'], 'name')

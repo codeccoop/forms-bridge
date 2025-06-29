@@ -239,9 +239,9 @@ return [
             ],
         ],
         'workflow' => [
-            'bigin-date-fields-to-date',
-            'bigin-event-dates',
-            'bigin-appointment-participant',
+            'date-fields-to-date',
+            'event-dates',
+            'appointment-participant',
         ],
     ],
 ];

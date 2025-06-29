@@ -118,7 +118,7 @@ return [
                 ],
             ],
         ],
-        'workflow' => ['odoo-crm-contact'],
+        'workflow' => ['crm-contact'],
     ],
     'form' => [
         'fields' => [

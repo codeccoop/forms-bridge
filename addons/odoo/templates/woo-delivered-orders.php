@@ -400,10 +400,6 @@ return [
                 ],
             ],
         ],
-        'workflow' => [
-            'odoo-contact',
-            'odoo-delivery-address',
-            'odoo-products-by-ref',
-        ],
+        'workflow' => ['contact', 'delivery-address', 'products-by-ref'],
     ],
 ];

@@ -1,12 +1,10 @@
 <?php
 
-namespace FORMS_BRIDGE;
-
 if (!defined('ABSPATH')) {
     exit();
 }
 
-class API
+class FBAPI
 {
     public static function get_current_form()
     {

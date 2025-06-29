@@ -27,11 +27,11 @@ return [
     'bridge' => [
         'endpoint' => 'res.partner',
         'workflow' => [
-            'odoo-iso2-country-code',
-            'odoo-vat-id',
-            'odoo-country-id',
-            'odoo-contact-company',
-            'odoo-skip-if-partner-exists',
+            'iso2-country-code',
+            'vat-id',
+            'country-id',
+            'contact-company',
+            'skip-if-partner-exists',
         ],
         'custom_fields' => [
             [

@@ -253,10 +253,10 @@ return [
             ],
         ],
         'workflow' => [
-            'dolibarr-country-id',
-            'dolibarr-contact-socid',
-            'dolibarr-contact-id',
-            'dolibarr-next-project-ref',
+            'country-id',
+            'contact-socid',
+            'contact-id',
+            'next-project-ref',
         ],
     ],
 ];

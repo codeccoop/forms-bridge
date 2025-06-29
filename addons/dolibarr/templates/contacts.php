@@ -90,6 +90,6 @@ return [
                 ],
             ],
         ],
-        'workflow' => ['dolibarr-skip-if-contact-exists'],
+        'workflow' => ['skip-if-contact-exists'],
     ],
 ];

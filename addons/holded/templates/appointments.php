@@ -223,11 +223,11 @@ return [
             ],
         ],
         'workflow' => [
-            'holded-date-fields-to-date',
-            'holded-appointment-dates',
-            'holded-iso2-country-code',
-            'holded-prefix-vatnumber',
-            'holded-contact-id',
+            'date-fields-to-date',
+            'appointment-dates',
+            'iso2-country-code',
+            'prefix-vatnumber',
+            'contact-id',
         ],
     ],
     'form' => [

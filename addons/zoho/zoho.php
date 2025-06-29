@@ -215,6 +215,7 @@ class Zoho_Addon extends Addon
         static::temp_register_credentials($credential);
 
         $bridge = new static::$bridge_class([
+            'name' => '__zoho-' . time(),
             'backend' => $backend,
             'credential' => $credential['name'],
             'backend' => $backend,
@@ -255,6 +256,7 @@ class Zoho_Addon extends Addon
         }
 
         $bridge = new static::$bridge_class([
+            'name' => '__zoho-' . time(),
             'backend' => $backend,
             'credential' => $credential['name'],
             'endpoint' => $endpoint,
@@ -291,6 +293,7 @@ class Zoho_Addon extends Addon
         static::temp_register_credentials($credential);
 
         $bridge = new static::$bridge_class([
+            'name' => '__zoho-' . time(),
             'backend' => $backend,
             'credential' => $credential['name'],
             'endpoint' => $endpoint,

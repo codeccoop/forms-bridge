@@ -274,10 +274,10 @@ return [
             [],
         ],
         'workflow' => [
-            'dolibarr-date-fields-to-date',
-            'dolibarr-appointment-dates',
-            'dolibarr-contact-socid',
-            'dolibarr-appointment-attendee',
+            'date-fields-to-date',
+            'appointment-dates',
+            'contact-socid',
+            'appointment-attendee',
         ],
     ],
 ];

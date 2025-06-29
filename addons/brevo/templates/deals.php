@@ -110,7 +110,7 @@ return [
                 ],
             ],
         ],
-        'workflow' => ['brevo-linked-contact'],
+        'workflow' => ['linked-contact'],
     ],
     'backend' => [
         'base_url' => 'https://api.brevo.com',

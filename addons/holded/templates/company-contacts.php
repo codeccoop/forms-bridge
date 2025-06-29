@@ -173,9 +173,9 @@ return [
             ],
         ],
         'workflow' => [
-            'holded-skip-if-contact-exists',
-            'holded-iso2-country-code',
-            'holded-prefix-vatnumber',
+            'skip-if-contact-exists',
+            'iso2-country-code',
+            'prefix-vatnumber',
         ],
     ],
     'form' => [

@@ -7,6 +7,7 @@ use HTTP_BRIDGE\Http_Backend;
 use ReflectionClass;
 use TypeError;
 use WPCT_PLUGIN\Singleton;
+use FBAPI;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -270,7 +271,7 @@ abstract class Addon extends Singleton
 
         static $forms;
         if (empty($forms)) {
-            $forms = API::get_forms();
+            $forms = FBAPI::get_forms();
         }
 
         $form = null;
@@ -604,8 +605,8 @@ abstract class Addon extends Singleton
                     return $default;
                 }
 
-                $templates = API::get_api_templates(static::$api);
-                $jobs = API::get_api_jobs(static::$api);
+                $templates = FBAPI::get_api_templates(static::$api);
+                $jobs = FBAPI::get_api_jobs(static::$api);
 
                 return array_merge($default, [
                     'templates' => array_map(function ($template) {
@@ -634,8 +635,8 @@ abstract class Addon extends Singleton
                     return $value;
                 }
 
-                $templates = API::get_api_templates(static::$api);
-                $jobs = API::get_api_jobs(static::$api);
+                $templates = FBAPI::get_api_templates(static::$api);
+                $jobs = FBAPI::get_api_jobs(static::$api);
 
                 return array_merge($value, [
                     'templates' => array_map(function ($template) {

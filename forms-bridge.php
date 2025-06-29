@@ -21,6 +21,7 @@ use Error;
 use Exception;
 use WP_Error;
 use WPCT_PLUGIN\Plugin as Base_Plugin;
+use FBAPI;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -244,7 +245,7 @@ class Forms_Bridge extends Base_Plugin
      */
     public static function do_submission()
     {
-        $form_data = API::get_current_form();
+        $form_data = FBAPI::get_current_form();
 
         if (!$form_data) {
             return;
@@ -265,11 +266,11 @@ class Forms_Bridge extends Base_Plugin
 
         $bridges = $form_data['bridges'];
 
-        $submission = API::get_submission();
+        $submission = FBAPI::get_submission();
         Logger::log('Form submission');
         Logger::log($submission);
 
-        $uploads = API::get_uploads();
+        $uploads = FBAPI::get_uploads();
         Logger::log('Submission uploads');
         Logger::log($uploads);
 
@@ -278,7 +279,7 @@ class Forms_Bridge extends Base_Plugin
         }
 
         foreach ($bridges as $bridge) {
-            if (!$bridge->is_valid) {
+            if (!$bridge->is_valid()) {
                 Logger::log(
                     'Skip submission for invalid bridge ' . $bridge->name
                 );

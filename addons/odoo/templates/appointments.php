@@ -97,9 +97,9 @@ return [
             ],
         ],
         'workflow' => [
-            'odoo-date-fields-to-date',
-            'odoo-appointment-dates',
-            'odoo-appointment-attendee',
+            'date-fields-to-date',
+            'appointment-dates',
+            'appointment-attendee',
         ],
     ],
     'form' => [

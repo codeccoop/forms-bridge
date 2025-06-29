@@ -139,6 +139,6 @@ return [
                 ],
             ],
         ],
-        'workflow' => ['brevo-linked-contact', 'brevo-country-phone-code'],
+        'workflow' => ['linked-contact', 'country-phone-code'],
     ],
 ];

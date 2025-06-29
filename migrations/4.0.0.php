@@ -35,14 +35,14 @@ foreach ($setting_names as $setting_name) {
         $i = 0;
         while ($i < count($bridge_data['workflow'])) {
             $job_name = $bridge_data['workflow'][$i];
+
             if (strpos('forms-bridge-', $job_name) === 0) {
-                $bridge_data['workflow'][$i] = preg_replace(
-                    '/^forms\-bridge/',
-                    $setting_name,
-                    $job_name
-                );
+                $job_name = substr($job_name, 13);
+            } elseif (strpos($job_name, $setting_name) === 0) {
+                $job_name = substr($job_name, strlen($setting_name) + 1);
             }
 
+            $bridge_data['workflow'][$i] = $job_name;
             $i++;
         }
     }

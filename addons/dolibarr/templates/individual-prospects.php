@@ -120,9 +120,6 @@ return [
                 ],
             ],
         ],
-        'workflow' => [
-            'dolibarr-skip-if-thirdparty-exists',
-            'dolibarr-next-client-code',
-        ],
+        'workflow' => ['skip-if-thirdparty-exists', 'next-client-code'],
     ],
 ];

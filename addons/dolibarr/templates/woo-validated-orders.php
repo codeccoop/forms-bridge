@@ -384,10 +384,10 @@ return [
             ],
         ],
         'workflow' => [
-            'dolibarr-contact-socid',
-            'dolibarr-contact-id',
-            'dolibarr-products-by-ref',
-            'dolibarr-validate-order',
+            'contact-socid',
+            'contact-id',
+            'products-by-ref',
+            'validate-order',
         ],
     ],
 ];

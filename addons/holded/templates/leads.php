@@ -164,11 +164,7 @@ return [
                 ],
             ],
         ],
-        'workflow' => [
-            'holded-iso2-country-code',
-            'holded-prefix-vatnumber',
-            'holded-contact-id',
-        ],
+        'workflow' => ['iso2-country-code', 'prefix-vatnumber', 'contact-id'],
     ],
     'form' => [
         'fields' => [

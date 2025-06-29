@@ -193,13 +193,14 @@ class Odoo_Addon extends Addon
         static::temp_register_credentials($credential);
 
         $bridge = new Odoo_Form_Bridge([
+            'name' => '__odoo-' . time(),
             'method' => 'search',
             'endpoint' => 'res.users',
             'credential' => $credential['name'],
             'backend' => $backend,
         ]);
 
-        $response = $bridge->submit([]);
+        $response = $bridge->submit();
         return ['success' => !is_wp_error($response)];
     }
 
@@ -223,6 +224,7 @@ class Odoo_Addon extends Addon
         static::temp_register_credentials($credential);
 
         $bridge = new Odoo_Form_Bridge([
+            'name' => '__odoo-' . time(),
             'method' => 'search_read',
             'endpoint' => $model,
             'backend' => $backend,
@@ -258,6 +260,7 @@ class Odoo_Addon extends Addon
         static::temp_register_credentials($credential);
 
         $bridge = new Odoo_Form_Bridge([
+            'name' => '__odoo-' . time(),
             'method' => 'get_fields',
             'endpoint' => $model,
             'backend' => $backend,

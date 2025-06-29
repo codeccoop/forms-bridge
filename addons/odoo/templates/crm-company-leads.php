@@ -147,11 +147,11 @@ return [
             ],
         ],
         'workflow' => [
-            'odoo-iso2-country-code',
-            'odoo-vat-id',
-            'odoo-country-id',
-            'odoo-contact-company',
-            'odoo-crm-contact',
+            'iso2-country-code',
+            'vat-id',
+            'country-id',
+            'contact-company',
+            'crm-contact',
         ],
     ],
     'form' => [

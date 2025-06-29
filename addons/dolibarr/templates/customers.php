@@ -136,10 +136,6 @@ return [
             ],
             [],
         ],
-        'workflow' => [
-            'dolibarr-country-id',
-            'dolibarr-contact-socid',
-            'dolibarr-skip-if-contact-exists',
-        ],
+        'workflow' => ['country-id', 'contact-socid', 'skip-if-contact-exists'],
     ],
 ];

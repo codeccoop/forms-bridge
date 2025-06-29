@@ -55,6 +55,10 @@ class Google_Sheets_Form_Bridge extends Form_Bridge
      */
     protected function backend()
     {
+        if (!$this->is_valid()) {
+            return;
+        }
+
         return new Http_Backend(Google_Sheets_Addon::$static_backend);
     }
 

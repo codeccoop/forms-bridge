@@ -106,7 +106,7 @@ return [
                 ],
             ],
         ],
-        'workflow' => ['financoop-iso2-country-code', 'financoop-vat-id'],
+        'workflow' => ['iso2-country-code', 'vat-id'],
     ],
     'form' => [
         'fields' => [

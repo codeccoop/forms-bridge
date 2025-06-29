@@ -2,6 +2,8 @@
 
 namespace FORMS_BRIDGE;
 
+use FBAPI;
+
 if (!defined('ABSPATH')) {
     exit();
 }
@@ -97,14 +99,14 @@ trait Form_Bridge_Custom_Fields
                 return $user->user_email;
             },
             'submission_id' => static function () {
-                return API::get_submission_id();
+                return FBAPI::get_submission_id();
             },
             'form_title' => static function () {
-                $form = API::get_current_form();
+                $form = FBAPI::get_current_form();
                 return $form['title'] ?? null;
             },
             'form_id' => static function () {
-                $form = API::get_current_form();
+                $form = FBAPI::get_current_form();
                 return $form['id'] ?? null;
             },
         ];

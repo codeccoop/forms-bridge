@@ -69,7 +69,7 @@ return [
     ],
     'bridge' => [
         'endpoint' => 'mailing.contact',
-        'workflow' => ['odoo-mailing-contact'],
+        'workflow' => ['mailing-contact'],
         'mutations' => [
             [
                 [
