@@ -1,6 +1,7 @@
 import useDiff from "../hooks/useDiff";
 
-const { createContext, useContext, useState, useEffect, useRef } = wp.element;
+const { createContext, useContext, useState, useEffect, useRef, useMemo } =
+  wp.element;
 const { __ } = wp.i18n;
 
 const defaults = {
@@ -145,12 +146,16 @@ export function useApis() {
   return [apis, (api) => patch({ apis: { ...apis, ...api } })];
 }
 
-export function useBridges() {
+export function useBridges(api) {
   const [apis] = useApis();
 
-  return Object.keys(apis).reduce((bridges, api) => {
-    return bridges.concat(apis[api].bridges);
-  }, []);
+  return useMemo(() => {
+    if (api) return apis[api]?.bridges || [];
+
+    return Object.keys(apis).reduce((bridges, api) => {
+      return bridges.concat(apis[api].bridges);
+    }, []);
+  }, [apis, api]);
 }
 
 export function useIntegrations() {

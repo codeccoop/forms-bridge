@@ -7,6 +7,7 @@ import Workflow from "../Workflow";
 import NewBridge from "./NewBridge";
 import RemoveButton from "../RemoveButton";
 import { downloadJson } from "../../lib/utils";
+import useCurrentApi from "../../hooks/useCurrentApi";
 
 const {
   TextControl,
@@ -27,6 +28,7 @@ export default function Bridge({
 }) {
   if (data.name === "add") return template({ add: update, schema });
 
+  const api = useCurrentApi();
   const [{ backends }] = useGeneral();
   const backendOptions = [{ label: "", value: "" }].concat(
     backends.map(({ name }) => ({
@@ -50,7 +52,7 @@ export default function Bridge({
   const [name, setName] = useState(data.name);
   const initialName = useRef(data.name);
 
-  const bridgeNames = useBridgeNames();
+  const bridgeNames = useBridgeNames(api);
   const [nameConflict, setNameConflict] = useState(false);
   const handleSetName = (name) => {
     setNameConflict(

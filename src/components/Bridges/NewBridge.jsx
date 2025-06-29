@@ -4,6 +4,7 @@ import { useGeneral } from "../../providers/Settings";
 import useBridgeNames from "../../hooks/useBridgeNames";
 import Templates from "../Templates";
 import { uploadJson } from "../../lib/utils";
+import useCurrentApi from "../../hooks/useCurrentApi";
 
 const {
   TextControl,
@@ -20,6 +21,7 @@ export default function NewBridge({
   Wizard,
   children = () => {},
 }) {
+  const api = useCurrentApi();
   const [{ backends }] = useGeneral();
   const backendOptions = [{ label: "", value: "" }].concat(
     backends.map(({ name }) => ({
@@ -36,7 +38,7 @@ export default function NewBridge({
     }))
   );
 
-  const bridgeNames = useBridgeNames();
+  const bridgeNames = useBridgeNames(api);
 
   const [name, setName] = useState("");
   const [backend, setBackend] = useState("");

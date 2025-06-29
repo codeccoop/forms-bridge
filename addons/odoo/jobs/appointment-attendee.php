@@ -42,31 +42,6 @@ return [
         'forms-bridge'
     ),
     'method' => 'forms_bridge_odoo_appointment_attendees',
-    'snippet' => '$partner = forms_bridge_odoo_create_partner($payload, $bridge);
-
-if (is_wp_error($partner)) {
-	return $partner;
-}
-
-$payload["partner_ids"] = (array) ($payload["partner_ids"] ?? []);
-$payload["partner_ids"][] = $partner["id"];
-
-if (isset($payload["user_id"])) {
-	$user_response = $bridge
-		->patch([
-			"name" => "odoo-get-user-by-id",
-			"endpoint" => "res.users",
-			"method" => "read",
-		])
-		->submit([$payload["user_id"]]);
-
-	if (is_wp_error($user_response)) {
-		return $user_response;
-	}
-
-	$payload["partner_ids"][] =
-		$user_response["data"]["result"][0]["partner_id"][0];
-}',
     'input' => [
         [
             'name' => 'email',

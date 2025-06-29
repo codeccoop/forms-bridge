@@ -2,6 +2,7 @@ import TemplateStep from "./Step";
 import Field from "../Field";
 import useBridgeNames from "../../../hooks/useBridgeNames";
 import { sortByNamesOrder } from "../../../lib/utils";
+import useCurrentApi from "../../../hooks/useCurrentApi";
 
 const { useMemo, useState, useEffect } = wp.element;
 const { __ } = wp.i18n;
@@ -9,7 +10,8 @@ const { __ } = wp.i18n;
 const fieldsOrder = ["name"];
 
 export default function BridgeStep({ fields, data, setData }) {
-  const names = useBridgeNames();
+  const api = useCurrentApi();
+  const names = useBridgeNames(api);
   const [name, setName] = useState("");
 
   const sortedFields = useMemo(
