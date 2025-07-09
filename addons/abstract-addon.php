@@ -494,7 +494,8 @@ abstract class Addon extends Singleton
                 }
 
                 foreach ($setting->bridges ?: [] as $bridge_data) {
-                    $bridges[] = new static::bridge_class($bridge_data);
+                    $bridge_class = static::bridge_class;
+                    $bridges[] = new $bridge_class($bridge_data);
                 }
 
                 return $bridges;
@@ -532,7 +533,7 @@ abstract class Addon extends Singleton
             2
         );
 
-        Settings_Store::enqueue(static function ($settings) {
+        Settings_Store::register_setting(static function ($settings) {
             $schema = static::schema();
             $schema['name'] = static::name;
             $schema['default'] = static::defaults();
@@ -564,6 +565,10 @@ abstract class Addon extends Singleton
             });
 
             $store::use_setter(static::name, static function ($data) {
+                if (!is_array($data)) {
+                    return $data;
+                }
+
                 unset($data['templates']);
                 unset($data['jobs']);
 

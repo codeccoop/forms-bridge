@@ -18,7 +18,7 @@ class Settings_Store extends Base_Settings_Store
      *
      * @var string REST Controller class name.
      */
-    protected static $rest_controller_class = '\FORMS_BRIDGE\REST_Settings_Controller';
+    protected const rest_controller_class = '\FORMS_BRIDGE\REST_Settings_Controller';
 
     /**
      * Inherits the parent constructor and sets up settings' validation callbacks.
@@ -27,26 +27,21 @@ class Settings_Store extends Base_Settings_Store
     {
         parent::construct(...$args);
 
-        self::enqueue(static function ($settings) {
-            $admin_email = get_option('admin_email');
-
-            $settings[] = [
-                'name' => 'general',
-                'properties' => [
-                    'notification_receiver' => [
-                        'type' => 'string',
-                        'format' => 'email',
-                        'default' => $admin_email,
-                    ],
+        $admin_email = get_option('admin_email');
+        self::register_setting([
+            'name' => 'general',
+            'properties' => [
+                'notification_receiver' => [
+                    'type' => 'string',
+                    'format' => 'email',
+                    'default' => $admin_email,
                 ],
-                'required' => ['notification_receiver'],
-                'default' => [
-                    'notification_receiver' => $admin_email,
-                ],
-            ];
-
-            return $settings;
-        });
+            ],
+            'required' => ['notification_receiver'],
+            'default' => [
+                'notification_receiver' => $admin_email,
+            ],
+        ]);
 
         self::ready(static function ($store) {
             $store::use_getter('general', static function ($data) {

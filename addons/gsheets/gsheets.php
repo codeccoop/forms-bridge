@@ -57,26 +57,15 @@ class Google_Sheets_Addon extends Addon
      */
     public const bridge_class = '\FORMS_BRIDGE\Google_Sheets_Form_Bridge';
 
-    /**
-     * Addon constructor. Inherits from the abstract addon and sets up interceptors
-     * and custom hooks.
-     */
-    protected function construct(...$args)
+    public function load()
     {
-        parent::construct(...$args);
+        Settings_Store::ready(static function ($store) {
+            self::register_setting_proxy($store);
+        });
 
-        add_action(
-            'wpct_plugin_registered_settings',
-            function ($settings, $group, $store) {
-                if ($group === 'http-bridge') {
-                    self::register_backed_proxy($store);
-                } elseif ($group === 'forms-bridge') {
-                    self::register_setting_proxy($store);
-                }
-            },
-            10,
-            3
-        );
+        \HTTP_BRIDGE\Settings_Store::ready(static function ($store) {
+            self::register_backend_proxy($store);
+        });
 
         add_filter(
             'forms_bridge_prune_empties',
@@ -92,7 +81,7 @@ class Google_Sheets_Addon extends Addon
         );
     }
 
-    private static function register_backed_proxy($store)
+    private static function register_backend_proxy($store)
     {
         $store::use_getter(
             'general',
@@ -155,16 +144,6 @@ class Google_Sheets_Addon extends Addon
             },
             9
         );
-    }
-
-    /**
-     * Registers the setting and its fields.
-     *
-     * @return array Addon's settings configuration.
-     */
-    protected static function config()
-    {
-        return [self::name, self::schema(), self::defaults()];
     }
 
     /**
