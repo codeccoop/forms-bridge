@@ -1,8 +1,8 @@
-import { useTemplateConfig } from "../../../providers/Templates";
+import { useTemplateConfig } from "../../../../providers/Templates";
 import TemplateStep from "./Step";
-import Field from "../Field";
-import { prependEmptyOption, sortByNamesOrder } from "../../../lib/utils";
-import { useCredentials } from "../../../hooks/useAddon";
+import Field from "../../Field";
+import { prependEmptyOption, sortByNamesOrder } from "../../../../lib/utils";
+import { useCredentials } from "../../../../hooks/useAddon";
 
 const { useMemo, useState, useEffect, useRef } = wp.element;
 const { SelectControl } = wp.components;

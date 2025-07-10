@@ -3,9 +3,10 @@
 namespace FORMS_BRIDGE;
 
 use WPCT_PLUGIN\Settings_Store as Base_Settings_Store;
+use HTTP_BRIDGE\Settings_Store as Http_Store;
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit();
 }
 
 /**
@@ -45,10 +46,13 @@ class Settings_Store extends Base_Settings_Store
 
         self::ready(static function ($store) {
             $store::use_getter('general', static function ($data) {
-                $backends =
-                    \HTTP_BRIDGE\Settings_Store::setting('general')->backends ?:
-                    [];
-                $data['backends'] = $backends;
+                $setting = Http_Store::setting('general');
+
+                if ($setting) {
+                    $backends = $setting->backends ?: [];
+                    $data['backends'] = $backends;
+                }
+
                 return $data;
             });
 
@@ -56,28 +60,33 @@ class Settings_Store extends Base_Settings_Store
                 'general',
                 static function ($data) {
                     if (
-                        isset($data['backends']) &&
-                        is_array($data['backends'])
+                        !isset($data['backends']) ||
+                        !is_array($data['backends'])
                     ) {
-                        \HTTP_BRIDGE\Settings_Store::setting(
-                            'general'
-                        )->backends = $data['backends'] ?? [];
-                        unset($data['backends']);
+                        return $data;
                     }
+
+                    $setting = Http_Store::setting('general');
+                    if (!$setting) {
+                        return $data;
+                    }
+
+                    $setting->backends = $data['backends'];
+                    unset($data['backends']);
 
                     return $data;
                 },
                 9
             );
 
-            $store::use_cleaner(
-                'general',
-                static function () {
-                    \HTTP_BRIDGE\Settings_Store::settings(
-                        'general'
-                    )->backends = [];
-                },
-            )
+            $store::use_cleaner('general', static function () {
+                $setting = Http_Store::setting('general');
+                if (!$setting) {
+                    return;
+                }
+
+                $setting->backends = [];
+            });
         });
     }
 }

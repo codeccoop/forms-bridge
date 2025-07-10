@@ -1,12 +1,12 @@
 // source
 import { useTemplateConfig, useTemplate } from "../../../providers/Templates";
 import useTab from "../../../hooks/useTab";
-import diff from "../../../lib/diff";
 import useStepper from "./useStepper";
-import { refToGroup, getGroupFields, validateBackend } from "./lib";
+import { refToGroup, getGroupFields } from "./lib";
+import useWiredBackend from "./useWiredBackend";
 
 const { Button } = wp.components;
-const { useMemo, useState, useEffect, useRef, useCallback } = wp.element;
+const { useMemo, useState, useEffect, useCallback } = wp.element;
 const apiFetch = wp.apiFetch;
 const { __ } = wp.i18n;
 
@@ -14,7 +14,7 @@ export default function TemplateWizard({ integration, onDone }) {
   const [tab] = useTab();
 
   const [data, setData] = useState({});
-  const [wired, setWired] = useState(null);
+  const [authorized, setAuthorized] = useState(null);
   const [fetched, setFetched] = useState(false);
   const [fieldOptions, setFieldOptions] = useState([]);
 
@@ -49,6 +49,22 @@ export default function TemplateWizard({ integration, onDone }) {
     }, {});
   }, [fields]);
 
+  const stepFields = useMemo(() => {
+    if (!groups[group]) return [];
+    if (!fetched) return groups[group];
+    return groups[group].map((field) => {
+      const options = fieldOptions.find(
+        (fo) => fo.name === field.name && fo.ref === field.ref
+      )?.options;
+
+      if (options) {
+        return { ...field, type: "options", options };
+      }
+
+      return field;
+    });
+  }, [groups, group, fieldOptions]);
+
   const defaults = useMemo(() => {
     const template = Object.fromEntries(
       Object.keys(groups).map((group) => [group, {}])
@@ -77,21 +93,27 @@ export default function TemplateWizard({ integration, onDone }) {
     resetStepper();
   }, [fields, defaults]);
 
-  const isValid = useMemo(() => {
-    return Object.keys(groups).reduce((isValid, group) => {
-      const groupFields = getGroupFields(fields, group);
+  const [backend, wired] = useWiredBackend({
+    data: data.backend,
+    fields: groups.backend,
+    credential: data.credential,
+  });
 
-      return groupFields.reduce(
-        (isValid, field) =>
-          isValid && (!!data[group]?.[field.name] || !field.required),
-        isValid
-      );
-    }, true);
-  }, [data]);
+  useEffect(() => {
+    const fetched = !!wired;
+    setFetched(fetched);
 
-  const submit = () => {
-    if (!isValid) return;
+    if (!fetched) {
+      setFieldOptions([]);
+    }
+  }, [wired]);
 
+  useEffect(() => {
+    if (!wired) return;
+    fetchOptions(backend, data.credential);
+  }, [wired, data.credential]);
+
+  const submit = useCallback(() => {
     setConfig({
       template,
       integration,
@@ -134,70 +156,30 @@ export default function TemplateWizard({ integration, onDone }) {
         return field;
       }),
     }).finally(() => onDone());
-  };
+  }, [template, integration, fields, data]);
 
-  const patchData = (patch = null) => {
-    const groupDefaults = defaults[group] || {};
-    const current = data[group] || {};
+  const patchData = useCallback(
+    (patch = null) => {
+      const groupDefaults = defaults[group] || {};
+      const current = data[group] || {};
 
-    if (patch !== null) {
-      patch = {
-        ...groupDefaults,
-        ...current,
-        ...patch,
-      };
-    } else {
-      patch = {};
-    }
-
-    setData({ ...data, [group]: patch });
-  };
-
-  const pingBackend = useCallback(
-    (backend, credential = {}) => {
-      if (!backend?.name || !config?.backend) return;
-
-      backend = {
-        name: backend.name,
-        base_url: backend.base_url,
-        headers: Object.keys(backend)
-          .filter((key) => !["name", "base_url"].includes(key))
-          .map((key) => ({
-            name: key,
-            value: backend[key],
-          })),
-      };
-
-      if (!validateBackend(backend, config.backend, groups[group])) {
-        return;
+      if (patch !== null) {
+        patch = {
+          ...groupDefaults,
+          ...current,
+          ...patch,
+        };
+      } else {
+        patch = {};
       }
 
-      apiFetch({
-        path: `forms-bridge/v1/${tab}/backend/ping`,
-        method: "POST",
-        data: { backend, credential },
-      })
-        .then(({ success }) => setWired(success))
-        .catch(() => setWired(false));
+      setData({ ...data, [group]: patch });
     },
-    [tab, config, group, groups]
+    [data, defaults, group]
   );
 
   const fetchOptions = useCallback(
     (backend, credential = {}) => {
-      if (!template || !backend?.name) return;
-
-      backend = {
-        name: backend.name,
-        base_url: backend.base_url,
-        headers: Object.keys(backend)
-          .filter((key) => !["name", "base_url"].includes(key))
-          .map((k) => ({
-            name: k,
-            value: backend[k],
-          })),
-      };
-
       apiFetch({
         path: `forms-bridge/v1/${tab}/templates/${template}/options`,
         method: "POST",
@@ -209,56 +191,22 @@ export default function TemplateWizard({ integration, onDone }) {
         })
         .catch(() => setFetched(false));
     },
-    [tab, template, groups, group]
+    [tab, template]
   );
 
-  const fromBackend = useRef(data.backend);
-  useEffect(() => {
-    if (diff(data.backend, fromBackend.current)) {
-      setWired(null);
-      setFetched(false);
-      setFieldOptions([]);
-    }
+  const isValid = useMemo(() => {
+    return Object.keys(groups).reduce((isValid, group) => {
+      const groupFields = getGroupFields(fields, group);
 
-    return () => {
-      fromBackend.current = data.backend;
-    };
-  }, [data.backend]);
-
-  const timeout = useRef();
-  useEffect(() => {
-    clearTimeout(timeout.current);
-
-    if (group !== "backend" || !isStepDone || wired !== null) return;
-
-    timeout.current = setTimeout(
-      () => pingBackend(data.backend, data.credential),
-      500
-    );
-  }, [wired, isStepDone, data.backend, data.credential]);
-
-  useEffect(() => {
-    if (!wired) return;
-    fetchOptions(data.backend, data.credential);
-  }, [wired]);
+      return groupFields.reduce(
+        (isValid, field) =>
+          isValid && (!!data[group]?.[field.name] || !field.required),
+        isValid
+      );
+    }, true);
+  }, [data]);
 
   const canGoForward = isStepDone && (group === "backend" ? fetched : true);
-
-  const stepFields = useMemo(() => {
-    if (!groups[group]) return [];
-    if (!fetched) return groups[group];
-    return groups[group].map((field) => {
-      const options = fieldOptions.find(
-        (fo) => fo.name === field.name && fo.ref === field.ref
-      )?.options;
-
-      if (options) {
-        return { ...field, type: "options", options };
-      }
-
-      return field;
-    });
-  }, [groups, group, fieldOptions]);
 
   if (!config?.fields.length) return;
   if (data[group] === undefined) return;

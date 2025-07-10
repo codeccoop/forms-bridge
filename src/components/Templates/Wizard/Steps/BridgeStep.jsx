@@ -1,7 +1,7 @@
 import TemplateStep from "./Step";
-import Field from "../Field";
-import useBridgeNames from "../../../hooks/useBridgeNames";
-import { sortByNamesOrder } from "../../../lib/utils";
+import Field from "../../Field";
+import useBridgeNames from "../../../../hooks/useBridgeNames";
+import { sortByNamesOrder } from "../../../../lib/utils";
 
 const { useMemo, useState, useEffect } = wp.element;
 const { __ } = wp.i18n;

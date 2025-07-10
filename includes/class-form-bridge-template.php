@@ -210,16 +210,27 @@ class Form_Bridge_Template
                                                         'Fingers to get values from the endpoint response',
                                                         'forms-bridge'
                                                     ),
-                                                    'type' => 'object',
-                                                    'properties' => [
-                                                        'value' => [
-                                                            'type' => 'string',
+                                                    'oneOf' => [
+                                                        [
+                                                            'type' => 'object',
+                                                            'properties' => [
+                                                                'value' => [
+                                                                    'type' =>
+                                                                        'string',
+                                                                ],
+                                                                'label' => [
+                                                                    'type' =>
+                                                                        'string',
+                                                                ],
+                                                            ],
+                                                            'required' => [
+                                                                'value',
+                                                            ],
                                                         ],
-                                                        'label' => [
+                                                        [
                                                             'type' => 'string',
                                                         ],
                                                     ],
-                                                    'required' => ['value'],
                                                 ],
                                             ],
                                             'required' => [
@@ -414,6 +425,7 @@ class Form_Bridge_Template
                         'label' => __('Base URL', 'forms-bridge'),
                         'type' => 'string',
                         'required' => true,
+                        'default' => 'https://',
                     ],
                     [
                         'ref' => '#bridge',

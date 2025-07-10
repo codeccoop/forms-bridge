@@ -41,3 +41,28 @@ export function validateBackend(backend, schema, fields) {
     return header.value === value;
   }, isValid);
 }
+
+export function mockBackend(data, defaults = {}) {
+  if (!data?.name || !data?.base_url) return;
+
+  const mock = {
+    name: data.name || defaults.name,
+    base_url: data.base_url || defaults.base_url,
+    headers: Object.keys(data)
+      .filter((k) => !["name", "base_url"].includes(k))
+      .map((k) => ({
+        name: k,
+        value: data[k],
+      })),
+  };
+
+  if (Array.isArray(defaults.headers)) {
+    defaults.headers.forEach(({ name, value }) => {
+      if (!mock.headers.find((h) => h.name === name)) {
+        mock.headers.push({ name, value });
+      }
+    });
+  }
+
+  return mock;
+}

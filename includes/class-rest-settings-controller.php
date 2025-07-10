@@ -6,7 +6,6 @@ use WP_Error;
 use WP_REST_Server;
 use WPCT_PLUGIN\REST_Settings_Controller as Base_Controller;
 use FBAPI;
-use HTTP_BRIDGE\Http_Backend;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -695,6 +694,12 @@ class REST_Settings_Controller extends Base_Controller
         $fields = $template->fields;
         foreach ($fields as $field) {
             if (isset($field['options']['endpoint'])) {
+                if (is_string($field['options']['finger'])) {
+                    $field['options']['finger'] = [
+                        'value' => $field['options']['finger'],
+                    ];
+                }
+
                 $value_pointer = $field['options']['finger']['value'];
 
                 if (!JSON_Finger::validate($value_pointer)) {
@@ -703,7 +708,8 @@ class REST_Settings_Controller extends Base_Controller
 
                 if (
                     $label_pointer =
-                        $field['options']['finger']['label'] ?? null
+                        $field['options']['finger']['label'] ??
+                        $field['options']['finger']['value']
                 ) {
                     if (!JSON_Finger::validate($label_pointer)) {
                         return self::internal_server_error();

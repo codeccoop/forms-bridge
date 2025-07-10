@@ -23,7 +23,11 @@ return [
             'name' => 'userownerid',
             'label' => __('Owner', 'forms-bridge'),
             'description' => __('Owner user of the lead', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'options',
+            'options' => [
+                'endpoint' => '/api/index.php/users',
+                'finger' => '[].email',
+            ],
             'required' => true,
         ],
         [

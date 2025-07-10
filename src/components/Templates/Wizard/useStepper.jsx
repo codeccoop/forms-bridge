@@ -1,7 +1,7 @@
-import BackendStep from "../Steps/BackendStep";
-import FormStep from "../Steps/FormStep";
-import BridgeStep from "../Steps/BridgeStep";
-import CredentialStep from "../Steps/CredentialStep";
+import BackendStep from "./Steps/BackendStep";
+import FormStep from "./Steps/FormStep";
+import BridgeStep from "./Steps/BridgeStep";
+import CredentialStep from "./Steps/CredentialStep";
 import useAddon from "../../../hooks/useAddon";
 import { getGroupFields } from "./lib";
 

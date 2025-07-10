@@ -1,8 +1,8 @@
 import TemplateStep from "./Step";
-import Field from "../Field";
-import { sortByNamesOrder, prependEmptyOption } from "../../../lib/utils";
-import { useForms } from "../../../providers/Forms";
-import { useTemplateConfig } from "../../../providers/Templates";
+import Field from "../../Field";
+import { sortByNamesOrder, prependEmptyOption } from "../../../../lib/utils";
+import { useForms } from "../../../../providers/Forms";
+import { useTemplateConfig } from "../../../../providers/Templates";
 
 const { useMemo, useState, useEffect, useRef } = wp.element;
 const { __ } = wp.i18n;
