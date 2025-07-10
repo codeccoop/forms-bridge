@@ -3,6 +3,7 @@ import { useLoading } from "../providers/Loading";
 import { useError } from "../providers/Error";
 import useTab from "../hooks/useTab";
 import { useFetchSettings } from "./Settings";
+import { useForms } from "./Forms";
 
 const apiFetch = wp.apiFetch;
 const { createContext, useContext, useEffect, useState, useCallback } =
@@ -25,6 +26,7 @@ export default function TemplatesProvider({ children }) {
   const [template, setTemplate] = useState(null);
   const [config, setConfig] = useState(null);
 
+  const [, fetchForms] = useForms();
   const fetchSettings = useFetchSettings();
 
   useEffect(() => {
@@ -65,7 +67,10 @@ export default function TemplatesProvider({ children }) {
         },
       })
         .then(({ success }) => {
-          success && fetchSettings();
+          if (success) {
+            fetchForms().then(fetchSettings);
+          }
+
           return success;
         })
         .catch(() => setError(__("Template submit error", "forms-bridge")))

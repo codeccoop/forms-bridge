@@ -2,6 +2,7 @@
 
 namespace FORMS_BRIDGE\WPCF7;
 
+use FBAPI;
 use FORMS_BRIDGE\Forms_Bridge;
 use FORMS_BRIDGE\Integration as BaseIntegration;
 use WPCF7_ContactForm;
@@ -204,11 +205,7 @@ class Integration extends BaseIntegration
                 '_id' => 'wpcf7:' . $form_id,
                 'id' => $form_id,
                 'title' => $form->title(),
-                'bridges' => apply_filters(
-                    'forms_bridge_bridges',
-                    [],
-                    'wpcf7:' . $form_id
-                ),
+                'bridges' => FBAPI::get_form_bridges($form_id, 'wpcf7'),
                 'fields' => array_values($fields),
             ],
             $form,

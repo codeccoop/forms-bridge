@@ -2,6 +2,7 @@
 
 namespace FORMS_BRIDGE\WPFORMS;
 
+use FBAPI;
 use FORMS_BRIDGE\Forms_Bridge;
 use FORMS_BRIDGE\Integration as BaseIntegration;
 use WP_Post;
@@ -251,11 +252,7 @@ class Integration extends BaseIntegration
                 '_id' => 'wpforms:' . $form_id,
                 'id' => $form_id,
                 'title' => $data['settings']['form_title'] ?? '',
-                'bridges' => apply_filters(
-                    'forms_bridge_bridges',
-                    [],
-                    'wpforms:' . $form_id
-                ),
+                'bridges' => FBAPI::get_form_bridges($form_id, 'wpforms'),
                 'fields' => array_reduce(
                     $data['fields'],
                     function ($fields, $field) use ($data) {

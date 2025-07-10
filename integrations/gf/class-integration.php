@@ -3,6 +3,7 @@
 namespace FORMS_BRIDGE\GF;
 
 use Error;
+use FBAPI;
 use TypeError;
 use FORMS_BRIDGE\Forms_Bridge;
 use FORMS_BRIDGE\Integration as BaseIntegration;
@@ -245,11 +246,7 @@ class Integration extends BaseIntegration
                 '_id' => 'gf:' . $form_id,
                 'id' => $form_id,
                 'title' => $form['title'],
-                'bridges' => apply_filters(
-                    'forms_bridge_bridges',
-                    [],
-                    'gf:' . $form_id
-                ),
+                'bridges' => FBAPI::get_form_bridges($form_id, 'gf'),
                 'fields' => $fields,
             ],
             $form,

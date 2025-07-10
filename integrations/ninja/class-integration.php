@@ -2,6 +2,7 @@
 
 namespace FORMS_BRIDGE\NINJA;
 
+use FBAPI;
 use FORMS_BRIDGE\Forms_Bridge;
 use FORMS_BRIDGE\Integration as BaseIntegration;
 use NF_Database_FieldsController;
@@ -220,11 +221,7 @@ class Integration extends BaseIntegration
                 '_id' => 'ninja:' . $form_id,
                 'id' => $form_id,
                 'title' => $form->get_setting('title'),
-                'bridges' => apply_filters(
-                    'forms_bridge_bridges',
-                    [],
-                    'ninja:' . $form_id
-                ),
+                'bridges' => FBAPI::get_form_bridges($form_id, 'ninja'),
                 'fields' => array_values($fields),
             ],
             $form,

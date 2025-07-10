@@ -268,6 +268,10 @@ abstract class Integration extends Singleton
         add_filter(
             'forms_bridge_form',
             function ($form, $form_id = null, $integration = null) {
+                if (is_array($form) && isset($form['id']) && $form['id']) {
+                    return $form;
+                }
+
                 if ($form_id) {
                     if (preg_match('/^(\w+):(\d+)$/', $form_id, $matches)) {
                         [, $integration, $form_id] = $matches;

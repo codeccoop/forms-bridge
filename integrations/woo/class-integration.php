@@ -463,7 +463,7 @@ class Integration extends BaseIntegration
                 '_id' => 'woo:1',
                 'id' => 1,
                 'title' => __('Woo Checkout', 'forms-bridge'),
-                'bridges' => FBAPI::get_form_bridges('woo:1'),
+                'bridges' => FBAPI::get_form_bridges(1, 'woo'),
                 'fields' => $this->serialize_order_fields(),
             ],
             WC()->checkout,

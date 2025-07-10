@@ -75,7 +75,7 @@ abstract class Form_Bridge
                                     'minLength' => 1,
                                 ],
                                 'value' => [
-                                    'type' => 'string',
+                                    'type' => ['string', 'integer', 'number'],
                                     'minLength' => 1,
                                 ],
                             ],
