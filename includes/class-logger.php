@@ -217,16 +217,24 @@ class Logger extends Singleton
                 return $data;
             });
 
-            $store::use_setter('general', static function ($data) {
-                if (isset($data['debug']) && $data['debug'] === true) {
-                    self::activate();
-                } else {
-                    self::deactivate();
-                }
+            $store::use_setter(
+                'general',
+                static function ($data) {
+                    if (!isset($data['debug'])) {
+                        return $data;
+                    }
 
-                unset($data['debug']);
-                return $data;
-            });
+                    if ($data['debug'] === true) {
+                        self::activate();
+                    } else {
+                        self::deactivate();
+                    }
+
+                    unset($data['debug']);
+                    return $data;
+                },
+                9
+            );
         });
     }
 

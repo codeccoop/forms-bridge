@@ -41,11 +41,13 @@ export default function SettingsProvider({ children }) {
   const fetch = useRef(() => {
     setLoading(true);
 
-    initialState.current = null;
     return apiFetch({
       path: "forms-bridge/v1/settings",
     })
-      .then(setState)
+      .then((state) => {
+        initialState.current = state;
+        setState(state);
+      })
       .catch(() => setError(__("Settings loading error", "forms-bridge")))
       .finally(() => setLoading(false));
   }).current;
