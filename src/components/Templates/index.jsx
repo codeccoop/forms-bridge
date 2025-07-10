@@ -12,7 +12,7 @@ const {
   SelectControl,
   __experimentalSpacer: Spacer,
 } = wp.components;
-const { useState, useEffect, useMemo } = wp.element;
+const { useState, useEffect, useMemo, useCallback } = wp.element;
 const { __ } = wp.i18n;
 
 export default function Templates() {
@@ -23,7 +23,7 @@ export default function Templates() {
   const [templateData, setTemplateData] = useState({});
   const [wired, setWired] = useState(null);
   const [done, setDone] = useState(false);
-  const [error] = useError();
+  const [error, setError] = useError();
 
   const [integrations] = useIntegrations();
   const integrationOptions = useMemo(() => {
@@ -76,6 +76,13 @@ export default function Templates() {
       setDone(false);
     }
   }, [isOpen]);
+
+  const onSubmit = useCallback((success) => {
+    if (success) setDone(true);
+    else if (success === false) {
+      setError(__("Unsuccessful template submit", "forms-bridge"));
+    }
+  });
 
   if (!templates.length || !integrations.length) return;
 
@@ -153,7 +160,7 @@ export default function Templates() {
             null}
           <Wizard
             integration={integration}
-            onDone={() => setDone(true)}
+            onSubmit={onSubmit}
             data={templateData}
             setData={setTemplateData}
             wired={wired}

@@ -26,6 +26,7 @@ const DEFAULTS = Object.freeze({
   },
   patch: () => {},
   submit: () => Promise.resolve(),
+  fetch: () => Promise.resolve(),
 });
 
 const SettingsContext = createContext(DEFAULTS);
@@ -98,7 +99,7 @@ export default function SettingsProvider({ children }) {
   const submit = useRef((state) => {
     setLoading(true);
 
-    apiFetch({
+    return apiFetch({
       path: "forms-bridge/v1/settings",
       method: "POST",
       headers: {
@@ -119,7 +120,7 @@ export default function SettingsProvider({ children }) {
   const settings = state || DEFAULTS.state;
 
   return (
-    <SettingsContext.Provider value={{ state: settings, patch, submit }}>
+    <SettingsContext.Provider value={{ state: settings, patch, submit, fetch }}>
       {children}
     </SettingsContext.Provider>
   );
@@ -128,6 +129,11 @@ export default function SettingsProvider({ children }) {
 export function useSettings() {
   const { state, submit } = useContext(SettingsContext);
   return [state, (state) => submit(state)];
+}
+
+export function useFetchSettings() {
+  const { fetch } = useContext(SettingsContext);
+  return fetch;
 }
 
 export function useGeneral() {

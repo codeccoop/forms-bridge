@@ -253,7 +253,7 @@ abstract class Integration extends Singleton
                     $forms = [];
                 }
 
-                if ($integration && $integration !== self::name) {
+                if ($integration && $integration !== static::name) {
                     return $forms;
                 }
 
@@ -277,7 +277,7 @@ abstract class Integration extends Singleton
                     }
                 }
 
-                if ($integration && $integration !== self::name) {
+                if ($integration && $integration !== static::name) {
                     return $form;
                 }
 

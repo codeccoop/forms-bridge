@@ -4,13 +4,14 @@ import useTab from "../../../hooks/useTab";
 import useStepper from "./useStepper";
 import { refToGroup, getGroupFields } from "./lib";
 import useWiredBackend from "./useWiredBackend";
+import { prependEmptyOption } from "../../../lib/utils";
 
 const { Button } = wp.components;
 const { useMemo, useState, useEffect, useCallback } = wp.element;
 const apiFetch = wp.apiFetch;
 const { __ } = wp.i18n;
 
-export default function TemplateWizard({ integration, onDone }) {
+export default function TemplateWizard({ integration, onSubmit }) {
   const [tab] = useTab();
 
   const [data, setData] = useState({});
@@ -58,7 +59,11 @@ export default function TemplateWizard({ integration, onDone }) {
       )?.options;
 
       if (options) {
-        return { ...field, type: "options", options };
+        return {
+          ...field,
+          type: "options",
+          options: prependEmptyOption(options),
+        };
       }
 
       return field;
@@ -155,7 +160,7 @@ export default function TemplateWizard({ integration, onDone }) {
 
         return field;
       }),
-    }).finally(() => onDone());
+    }).then((success) => onSubmit(success));
   }, [template, integration, fields, data]);
 
   const patchData = useCallback(

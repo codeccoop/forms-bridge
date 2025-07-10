@@ -22,7 +22,6 @@ return [
             'label' => __('Owner', 'forms-bridge'),
             'description' => __('Host user of the event', 'forms-bridge'),
             'type' => 'string',
-            'required' => true,
             'options' => [
                 'endpoint' => '/api/index.php/users',
                 'finger' => [

@@ -26,9 +26,8 @@ return [
             'type' => 'options',
             'options' => [
                 'endpoint' => '/api/index.php/users',
-                'finger' => '[].email',
+                'finger' => ['value' => '[].id', 'label' => '[].email'],
             ],
-            'required' => true,
         ],
         [
             'ref' => '#bridge/custom_fields[]',
@@ -53,13 +52,11 @@ return [
                     'value' => '5',
                 ],
             ],
-            'required' => true,
         ],
         [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'stcomm_id',
             'label' => __('Prospect status', 'forms-bridge'),
-            'required' => true,
             'type' => 'options',
             'options' => [
                 [
@@ -83,7 +80,6 @@ return [
                     'value' => '-1',
                 ],
             ],
-            'default' => ' 0',
         ],
         [
             'ref' => '#bridge/custom_fields[]',
@@ -108,8 +104,6 @@ return [
                     'value' => '4',
                 ],
             ],
-            'required' => true,
-            'default' => '1',
         ],
         [
             'ref' => '#bridge/custom_fields[]',

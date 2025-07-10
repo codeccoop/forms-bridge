@@ -2,7 +2,7 @@
 import { useLoading } from "../providers/Loading";
 import { useError } from "../providers/Error";
 import useTab from "../hooks/useTab";
-import useFlushStore from "../hooks/useFlushStore";
+import { useFetchSettings } from "./Settings";
 
 const apiFetch = wp.apiFetch;
 const { createContext, useContext, useEffect, useState, useCallback } =
@@ -25,7 +25,7 @@ export default function TemplatesProvider({ children }) {
   const [template, setTemplate] = useState(null);
   const [config, setConfig] = useState(null);
 
-  const flushStore = useFlushStore();
+  const fetchSettings = useFetchSettings();
 
   useEffect(() => {
     if (!template) {
@@ -64,7 +64,10 @@ export default function TemplatesProvider({ children }) {
           fields,
         },
       })
-        .then(() => flushStore())
+        .then(({ success }) => {
+          success && fetchSettings();
+          return success;
+        })
         .catch(() => setError(__("Template submit error", "forms-bridge")))
         .finally(() => setLoading(false));
     },

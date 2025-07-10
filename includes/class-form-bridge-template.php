@@ -941,6 +941,8 @@ class Form_Bridge_Template
                 'status' => 500,
             ]);
         }
+
+        return true;
     }
 
     /**
