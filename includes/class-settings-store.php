@@ -5,7 +5,7 @@ namespace FORMS_BRIDGE;
 use WPCT_PLUGIN\Settings_Store as Base_Settings_Store;
 
 if (!defined('ABSPATH')) {
-    exit();
+    exit;
 }
 
 /**
@@ -69,6 +69,15 @@ class Settings_Store extends Base_Settings_Store
                 },
                 9
             );
+
+            $store::use_cleaner(
+                'general',
+                static function () {
+                    \HTTP_BRIDGE\Settings_Store::settings(
+                        'general'
+                    )->backends = [];
+                },
+            )
         });
     }
 }

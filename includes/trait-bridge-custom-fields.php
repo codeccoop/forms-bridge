@@ -5,7 +5,7 @@ namespace FORMS_BRIDGE;
 use FBAPI;
 
 if (!defined('ABSPATH')) {
-    exit();
+    exit;
 }
 
 trait Form_Bridge_Custom_Fields
