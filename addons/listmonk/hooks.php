@@ -11,13 +11,6 @@ add_filter(
             return $defaults;
         }
 
-        $defaults = apply_filters(
-            'forms_bridge_template_defaults',
-            $defaults,
-            'rest',
-            $schema
-        );
-
         return wpct_plugin_merge_object(
             [
                 'fields' => [
@@ -80,6 +73,7 @@ add_filter(
                                 'label' => 'data.results[].name',
                             ],
                         ],
+                        'is_multi' => true,
                         'required' => true,
                     ],
                 ],
@@ -147,29 +141,6 @@ add_filter(
                     $data['bridge']['custom_fields']
                 );
             }
-        }
-
-        $header_names = array_column($data['backend']['headers'], 'name');
-        $user_index = array_search('user', $header_names);
-        $token_index = array_search('token', $header_names);
-
-        if ($user_index !== false && $token_index !== false) {
-            $user = $data['backend']['headers'][$user_index]['value'];
-            $token = $data['backend']['headers'][$token_index]['value'];
-
-            $headers = [];
-            foreach ($data['backend']['headers'] as $header) {
-                if (!in_array($header['name'], ['user', 'token'], true)) {
-                    $headers[] = $header;
-                }
-            }
-
-            $headers[] = [
-                'name' => 'Authorization',
-                'value' => "token {$user}:{$token}",
-            ];
-
-            $data['backend']['headers'] = $headers;
         }
 
         return $data;

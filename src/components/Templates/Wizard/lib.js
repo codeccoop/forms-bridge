@@ -29,7 +29,12 @@ export function validateBackend(backend, schema, fields) {
   if (!isValid) return isValid;
 
   if (schema.base_url && backend.base_url !== schema.base_url) {
-    return false;
+    if (schema.base_url !== backend.base_url) {
+      const url = schema.base_url.replace(/{\w+}/g, ".+");
+      if (new RegExp(url).test(backend.base_url) === false) {
+        return false;
+      }
+    }
   } else if (!validateUrl(backend.base_url)) {
     return false;
   }
@@ -58,13 +63,16 @@ export function mockBackend(data, defaults = {}) {
         name: k,
         value: data[k],
       })),
-    authentication: {
-      type: defaults.authentication?.type || "Basic",
-      client_id: data.client_id || defaults.authentication?.client_id,
-      client_secret:
-        data.client_secret || defaults.authentication?.client_secret,
-    },
   };
+
+  if (defaults.authentication?.type || (data.client_id && data.client_secret)) {
+    mock.authentication = {
+      type: defaults.authentication?.type || "Basic",
+      client_id: data.client_id || defaults.authentication.client_id,
+      client_secret:
+        data.client_secret || defaults.authentication.client_secret,
+    };
+  }
 
   if (Array.isArray(defaults.headers)) {
     defaults.headers.forEach(({ name, value }) => {

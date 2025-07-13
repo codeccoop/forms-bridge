@@ -2,7 +2,6 @@
 
 namespace FORMS_BRIDGE;
 
-use FBAPI;
 use HTTP_BRIDGE\Http_Client;
 use WP_Error;
 
@@ -116,7 +115,8 @@ class Odoo_Form_Bridge extends Form_Bridge
     /**
      * JSON RPC login request.
      *
-     * @param array $credential Credential data.
+     * @param Credential $credential
+     * @param Http_Backend $backend
      *
      * @return array|WP_Error Tuple with RPC session id and user id.
      */
@@ -129,9 +129,9 @@ class Odoo_Form_Bridge extends Form_Bridge
         $session_id = Forms_Bridge::slug() . '-' . time();
 
         $payload = self::rpc_payload($session_id, 'common', 'login', [
-            $credential['database'],
-            $credential['user'],
-            $credential['password'],
+            $credential->database,
+            $credential->user,
+            $credential->password,
         ]);
 
         $response = $backend->post(self::endpoint, $payload);
@@ -194,11 +194,11 @@ class Odoo_Form_Bridge extends Form_Bridge
             'object',
             'execute',
             [
-                $credential['database'],
+                $credential->database,
                 $uid,
-                $credential['password'],
+                $credential->password,
                 $this->endpoint,
-                $this->method ?? 'create',
+                $this->method,
                 $payload,
             ],
             $more_args

@@ -626,11 +626,26 @@ class Addon extends Singleton
      * @param string $backend Target backend name.
      * @params string|null $credential Target credential name.
      *
-     * @return array
+     * @return array|WP_Error
      */
     public function fetch($endpoint, $backend, $credential = null)
     {
-        return [];
+        return [
+            'headers' => [],
+            'cookies' => [],
+            'filename' => null,
+            'body' => '',
+            'response' => [
+                'status' => 202,
+                'message' => 'Accepted',
+            ],
+            'http_response' => [
+                'data' => null,
+                'headers' => null,
+                'status' => null,
+            ],
+            'data' => [],
+        ];
     }
 
     /**

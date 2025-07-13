@@ -13,42 +13,35 @@ add_filter(
             return $schema;
         }
 
-        return wpct_plugin_merge_object(
-            [
-                'properties' => [
-                    'method' => [
-                        'enum' => ['GET'],
-                        'value' => 'GET',
-                    ],
-                    'spreadsheet' => [
-                        '$ref' => '#/gsheets/spreadsheets/id',
-                        'description' => __(
-                            'ID of the spreadhseet',
-                            'forms-bridge'
-                        ),
-                        'type' => 'string',
-                    ],
-                    'tab' => [
-                        'description' => __(
-                            'Name of the spreadsheet tab',
-                            'forms-bridge'
-                        ),
-                        'type' => 'string',
-                        'minLength' => 1,
-                    ],
-                    'endpoint' => [
-                        'description' => __(
-                            'Concatenation of the spreadsheet ID and the tab name by double colons',
-                            'forms-bridge'
-                        ),
-                        'type' => 'string',
-                        'pattern' => '^.*::.*$',
-                    ],
-                ],
-                'required' => ['spreadsheet', 'tab'],
-            ],
-            $schema
-        );
+        $schema['properties']['method']['enum'] = ['GET'];
+        $schema['properties']['method']['value'] = ['GET'];
+
+        $schema['properties']['spreadsheet'] = [
+            '$ref' => '#/gsheets/spreadsheets/id',
+            'description' => __('ID of the spreadhseet', 'forms-bridge'),
+            'type' => 'string',
+        ];
+
+        $schema['required'][] = 'spreadsheet';
+
+        $schema['properties']['tab'] = [
+            'description' => __('Name of the spreadsheet tab', 'forms-bridge'),
+            'type' => 'string',
+            'minLength' => 1,
+        ];
+
+        $schema['required'][] = 'tab';
+
+        $schema['properties']['endpoint'] = [
+            'description' => __(
+                'Concatenation of the spreadsheet ID and the tab name by double colons',
+                'forms-bridge'
+            ),
+            'type' => 'string',
+            'pattern' => '^.*::.*$',
+        ];
+
+        return $schema;
     },
     10,
     2

@@ -31,8 +31,14 @@ return [
                 'Email of the owner user of the lead',
                 'forms-bridge'
             ),
-            'type' => 'string',
-            'required' => true,
+            'type' => 'options',
+            'options' => [
+                'endpoint' => 'res.users',
+                'finger' => [
+                    'value' => 'result[].id',
+                    'label' => 'result[].name',
+                ],
+            ],
         ],
         [
             'ref' => '#bridge/custom_fields[]',
@@ -53,9 +59,25 @@ return [
         ],
         [
             'ref' => '#bridge/custom_fields[]',
+            'name' => 'expected_revenue',
+            'label' => __('Expected revenue', 'forms-bridge'),
+            'type' => 'number',
+            'min' => 0,
+            'default' => 0,
+        ],
+        [
+            'ref' => '#bridge/custom_fields[]',
             'name' => 'tag_ids',
             'label' => __('Lead tags', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'options',
+            'options' => [
+                'endpoint' => 'crm.tag',
+                'finger' => [
+                    'value' => 'result[].id',
+                    'label' => 'result[].name',
+                ],
+            ],
+            'is_multi' => true,
         ],
     ],
     'bridge' => [
@@ -63,7 +85,7 @@ return [
         'mutations' => [
             [
                 [
-                    'from' => 'user_id',
+                    'from' => '?user_id',
                     'to' => 'user_id',
                     'cast' => 'integer',
                 ],
@@ -71,6 +93,16 @@ return [
                     'from' => 'company_name',
                     'to' => 'name',
                     'cast' => 'string',
+                ],
+                [
+                    'from' => '?priority',
+                    'to' => 'priority',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => '?expected_revenue',
+                    'to' => 'expected_revenue',
+                    'cast' => 'number',
                 ],
             ],
             [

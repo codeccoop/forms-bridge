@@ -12,7 +12,7 @@ const { __ } = wp.i18n;
 
 const FIELDS_ORDER = ["name", "base_url", "headers"];
 
-export default function BackendStep({ fields, data, setData, wired }) {
+export default function BackendStep({ fields, data, setData, wired, fetched }) {
   const [backends] = useBackends();
   const names = useBackendNames();
   const [{ backend: config }] = useTemplateConfig();
@@ -48,7 +48,6 @@ export default function BackendStep({ fields, data, setData, wired }) {
     if (nameConflict) return;
 
     const backend = mockBackend(state, config);
-    console.log("Mock backend", backend);
     if (validateBackend(backend, config, fields)) {
       return backend;
     }
@@ -97,7 +96,7 @@ export default function BackendStep({ fields, data, setData, wired }) {
   }, [config]);
 
   const statusIcon = useMemo(() => {
-    if (wired === true) {
+    if (wired === true && fetched === true) {
       return "👌";
     } else if (wired === false) {
       return "👎";
@@ -106,7 +105,7 @@ export default function BackendStep({ fields, data, setData, wired }) {
     }
 
     return null;
-  }, [wired, backend]);
+  }, [wired, fetched, backend]);
 
   return (
     <TemplateStep

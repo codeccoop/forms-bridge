@@ -464,7 +464,9 @@ class REST_Settings_Controller extends Base_Controller
                             self::class,
                             'permission_callback',
                         ],
-                        'args' => $args['credential'],
+                        'args' => [
+                            'credential' => $args['credential'],
+                        ],
                     ],
                 ]
             );
@@ -792,6 +794,9 @@ class REST_Settings_Controller extends Base_Controller
             if (is_wp_error($credential)) {
                 return self::bad_request();
             }
+
+            $credential['enabled'] = true;
+            $credential['is_valid'] = true;
         }
 
         $addon = FBAPI::get_addon($addon);
@@ -800,7 +805,7 @@ class REST_Settings_Controller extends Base_Controller
         }
 
         self::temp_backend_registration($backend);
-        self::temp_credential_registration($credential, $addon::name);
+        self::temp_credential_registration($credential, $addon);
 
         return [$addon, $backend['name'], $credential['name'] ?? null];
     }
@@ -811,6 +816,7 @@ class REST_Settings_Controller extends Base_Controller
             $addon,
             $request
         );
+
         if (is_wp_error($handler)) {
             return $handler;
         }
@@ -961,7 +967,7 @@ class REST_Settings_Controller extends Base_Controller
 
                 if (!isset($credential)) {
                     $credential_class = $addon::credential_class;
-                    $credential = new $credential_class($data, $addon);
+                    $credential = new $credential_class($data, $addon::name);
 
                     if ($credential->is_valid) {
                         $credentials[] = $credential;

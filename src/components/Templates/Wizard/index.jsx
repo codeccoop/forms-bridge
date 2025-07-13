@@ -6,7 +6,7 @@ import { refToGroup, getGroupFields } from "./lib";
 import useWiredBackend from "./useWiredBackend";
 import { prependEmptyOption } from "../../../lib/utils";
 
-const { Button } = wp.components;
+const { Button, Notice } = wp.components;
 const { useMemo, useState, useEffect, useCallback } = wp.element;
 const apiFetch = wp.apiFetch;
 const { __ } = wp.i18n;
@@ -18,6 +18,7 @@ export default function TemplateWizard({ integration, onSubmit }) {
   const [authorized, setAuthorized] = useState(null);
   const [fetched, setFetched] = useState(false);
   const [fieldOptions, setFieldOptions] = useState([]);
+  const [fetchError, setFetchError] = useState(false);
 
   const [config, setConfig] = useTemplateConfig();
   const [template] = useTemplate();
@@ -75,11 +76,13 @@ export default function TemplateWizard({ integration, onSubmit }) {
       Object.keys(groups).map((group) => [group, {}])
     );
 
+    const fields = config?.fields || [];
     return fields.reduce((defaults, field) => {
-      if (field.default) {
+      if (field.default || field.value) {
+        const value = field.value || field.default;
         const group = refToGroup(field.ref);
         defaults[group] = defaults[group];
-        defaults[group][field.name] = field.default;
+        defaults[group][field.name] = value;
       } else if (field.type === "options" && field.required) {
         const group = refToGroup(field.ref);
         defaults[group] = defaults[group] || {};
@@ -91,7 +94,7 @@ export default function TemplateWizard({ integration, onSubmit }) {
 
       return defaults;
     }, template);
-  }, [fields, groups]);
+  }, [config, groups]);
 
   useEffect(() => {
     setData(defaults);
@@ -192,9 +195,13 @@ export default function TemplateWizard({ integration, onSubmit }) {
       })
         .then((fieldOptions) => {
           setFieldOptions(fieldOptions);
+          setFetchError(false);
           setFetched(true);
         })
-        .catch(() => setFetched(false));
+        .catch(() => {
+          setFetched(false);
+          setFetchError(true);
+        });
     },
     [tab, template]
   );
@@ -219,12 +226,20 @@ export default function TemplateWizard({ integration, onSubmit }) {
   return (
     <div style={{ width: "575px", minHeight: "125px" }}>
       <hr style={{ margin: "1rem 0" }} />
+      {fetchError && (
+        <div style={{ marginBottom: "10px" }}>
+          <Notice status="error" politeness="assertive" isDismissible={false}>
+            {__("Unable to fetch data from the backend", "forms-bridge")}
+          </Notice>
+        </div>
+      )}
       <Step
         integration={integration}
         fields={stepFields}
         data={data[group] || {}}
         setData={patchData}
         wired={wired}
+        fetched={fetched}
       />
       <div
         style={{

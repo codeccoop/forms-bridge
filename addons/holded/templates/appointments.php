@@ -222,6 +222,21 @@ return [
                 'required' => true,
             ],
             [
+                'label' => __('Address', 'forms-bridge'),
+                'name' => 'address',
+                'type' => 'text',
+            ],
+            [
+                'label' => __('Zip code', 'forms-bridge'),
+                'name' => 'postalCode',
+                'type' => 'text',
+            ],
+            [
+                'label' => __('City', 'forms-bridge'),
+                'name' => 'city',
+                'type' => 'text',
+            ],
+            [
                 'label' => __('Country', 'forms-bridge'),
                 'name' => 'country',
                 'type' => 'options',

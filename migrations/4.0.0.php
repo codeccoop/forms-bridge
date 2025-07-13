@@ -6,6 +6,15 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
+$rest = get_option('forms-bridge_rest-api');
+add_option('forms-bridge_rest', $rest);
+delete_option('forms-bridge_rest-api');
+
+$registry = get_option('forms_bridge_addons');
+$registry['rest'] = $registry['rest-api'];
+unset($registry['rest-api']);
+update_option('forms_bridge_addons', $registry);
+
 $setting_names = [
     'bigin',
     'brevo',
@@ -16,7 +25,7 @@ $setting_names = [
     'listmonk',
     'mailchimp',
     'odoo',
-    'rest-api',
+    'rest',
     'zoho',
 ];
 
@@ -32,6 +41,7 @@ foreach ($setting_names as $setting_name) {
         $data['bridges'] = [];
     }
 
+    $backends = [];
     foreach ($data['bridges'] as &$bridge_data) {
         if (!isset($bridge_data['workflow'])) {
             continue;
@@ -56,6 +66,12 @@ foreach ($setting_names as $setting_name) {
             $bridge_data,
             $bridge_class::schema()
         );
+
+        if ($backend = $bridge_data['backend'] ?? null) {
+            if (!in_array($backend, $backends, true)) {
+                $backends[] = $backend;
+            }
+        }
     }
 
     if (
@@ -70,62 +86,68 @@ foreach ($setting_names as $setting_name) {
         unset($data['credentials']);
     }
 
-    update_option($option, $data);
-}
-
-$http = get_option('http-bridge_general', []);
-
-if (isset($http['backends'])) {
-    foreach ($http['backends'] as &$backend) {
-        $header_names = array_column($backend['headers'], 'name');
-        $user_index = array_search('api_user', $header_names);
-        $token_index = array_search('token', $header_names);
-
-        if ($user_index !== false && $token_index !== false) {
-            $user = $backend['headers'][$user_index]['value'];
-            $token = $backend['headers'][$user_index]['value'];
-
-            $headers = [];
-            foreach ($backend['headers'] as $header) {
-                if (!in_array($header['name'], ['api_user', 'token'], true)) {
-                    $headers[] = $header;
-                }
+    if ($option === 'forms-bridge_listmonk') {
+        foreach ($backends as $name) {
+            $backend = FBAPI::get_backend($name);
+            if (!$backend) {
+                continue;
             }
 
-            $headers[] = [
-                'name' => 'Authorization',
-                'value' => "token {$user}:{$token}",
-            ];
-
-            $backend['headers'] = $headers;
-        } elseif (strstr($backend['base_url'], 'api.mailchimp.com')) {
-            $index = array_search(
-                'api-key',
-                array_column($backend['headers'], 'name')
-            );
-
-            if ($index !== false) {
-                $key = $backend['headers'][$index]['value'];
-                $backend['headers'][] = [
-                    'name' => 'Authorization',
-                    'value' => 'Basic ' . base64_encode("forms-bridge:{$key}"),
+            $headers = $backend->headers;
+            if (isset($headers['api_user'], $headers['token'])) {
+                $data = [
+                    'name' => $backend->name,
+                    'base_url' => $backend->base_url,
+                    'authentication' => [
+                        'type' => 'Token',
+                        'client_id' => $headers['api_user'],
+                        'client_secret' => $headers['token'],
+                    ],
+                    'headers' => [],
                 ];
 
-                array_splice($backend['headers'], $index, 1);
+                unset($headers['api_user']);
+                unset($headers['token']);
+
+                foreach ($headers as $name => $value) {
+                    $data['headers'][] = ['name' => $name, 'value' => $value];
+                }
+
+                FBAPI::save_backend($data);
+            }
+        }
+    } elseif ($option === 'forms-bridge_mailchimp') {
+        foreach ($backends as $name) {
+            $backend = FBAPI::get_backend($name);
+            if (!$backend) {
+                continue;
+            }
+
+            $headers = $backend->headers;
+            if (isset($headers['api-key'])) {
+                $data = [
+                    'name' => $backend->name,
+                    'base_url' => $backend->base_url,
+                    'authentication' => [
+                        'type' => 'Basic',
+                        'client_id' => 'forms-bridge',
+                        'client_secret' => $headers['api-key'],
+                    ],
+                    'headers' => [],
+                ];
+
+                unset($headers['api-key']);
+
+                foreach ($headers as $name => $value) {
+                    $data['headers'][] = ['name' => $name, 'value' => $value];
+                }
+
+                FBAPI::save_backend($data);
             }
         }
     }
 
-    update_option('http-bridge_general', $http);
+    update_option($option, $data);
 }
-
-$rest = get_option('forms-bridge_rest-api');
-add_option('forms-bridge_rest', $rest);
-delete_option('forms-bridge_rest-api');
-
-$registry = get_option('forms_bridge_addons');
-$registry['rest'] = $registry['rest-api'];
-unset($registry['rest-api']);
-update_option('forms_bridge_addons', $registry);
 
 // TODO: Add type and token attributes to zoho credentials

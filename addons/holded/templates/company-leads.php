@@ -27,7 +27,14 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'funnelId',
             'label' => __('Funnel', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'options',
+            'options' => [
+                'endpoint' => '/api/crm/v1/funnels',
+                'finger' => [
+                    'value' => '[].id',
+                    'label' => '[].name',
+                ],
+            ],
             'required' => true,
         ],
         [

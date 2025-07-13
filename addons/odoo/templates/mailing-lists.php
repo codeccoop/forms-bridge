@@ -25,7 +25,15 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'list_ids',
             'label' => __('Mailing lists', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'options',
+            'options' => [
+                'endpoint' => 'mailing.list',
+                'finger' => [
+                    'value' => 'result[].id',
+                    'label' => 'result[].name',
+                ],
+            ],
+            'is_multi' => true,
             'required' => true,
         ],
     ],

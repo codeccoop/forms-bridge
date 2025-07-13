@@ -1,4 +1,3 @@
-const { useEffect } = wp.element;
 const { __ } = wp.i18n;
 
 function Field({ data, error }) {
@@ -24,6 +23,7 @@ function Field({ data, error }) {
         />
       );
     case "options":
+      if (!Array.isArray(data.options)) return null;
       return (
         <OptionsField
           required={!!data.required}
@@ -31,7 +31,7 @@ function Field({ data, error }) {
           value={data.value}
           onChange={data.onChange}
           options={data.options}
-          multiple={!!data.multiple}
+          multiple={!!data.is_multi}
         />
       );
     case "string":
@@ -138,7 +138,7 @@ function OptionsField({
   onChange,
   required,
   multiple,
-  options,
+  options = [],
   error,
 }) {
   const constraints = {};

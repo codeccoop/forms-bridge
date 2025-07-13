@@ -116,7 +116,7 @@ class Zoho_Addon extends Addon
      * @param string $backend Backend name.
      * @param string $credential Credential name.
      *
-     * @return array
+     * @return array|WP_Error
      */
     public function fetch($endpoint, $backend, $credential = null)
     {
@@ -129,12 +129,7 @@ class Zoho_Addon extends Addon
             'method' => 'GET',
         ]);
 
-        $response = $bridge->submit();
-        if (is_wp_error($response)) {
-            return [];
-        }
-
-        return $response['data'];
+        return $bridge->submit();
     }
 
     /**

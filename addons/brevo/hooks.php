@@ -11,13 +11,6 @@ add_filter(
             return $defaults;
         }
 
-        $defaults = apply_filters(
-            'forms_bridge_template_defaults',
-            $defaults,
-            'rest',
-            $schema
-        );
-
         return wpct_plugin_merge_object(
             [
                 'fields' => [
@@ -65,19 +58,6 @@ add_filter(
     },
     10,
     3
-);
-
-add_filter(
-    'forms_bridge_template_schema',
-    function ($schema, $addon) {
-        if ($addon !== 'brevo') {
-            return $schema;
-        }
-
-        return apply_filters('forms_bridge_template_schema', $schema, 'rest');
-    },
-    10,
-    2
 );
 
 add_filter(

@@ -11,22 +11,13 @@ add_filter(
             return $schema;
         }
 
-        return wpct_plugin_merge_object(
-            [
-                'properties' => [
-                    'credential' => [
-                        'type' => 'string',
-                        'description' => __(
-                            'Name of the OAuth credential',
-                            'forms-bridge'
-                        ),
-                        'default' => '',
-                    ],
-                ],
-                'required' => ['credential'],
-            ],
-            $schema
-        );
+        $schema['properties']['credential'] = [
+            'type' => 'string',
+            'description' => __('Name of the OAuth credential', 'forms-bridge'),
+            'default' => '',
+        ];
+
+        return $schema;
     },
     10,
     2

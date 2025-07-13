@@ -130,7 +130,6 @@ export default function WorkflowProvider({
         return jobNames;
       }, []);
 
-    console.log(newJobNames);
     if (newJobNames.length) {
       fetchJobs(newJobNames).then((newJobs) => {
         newJobs = jobs

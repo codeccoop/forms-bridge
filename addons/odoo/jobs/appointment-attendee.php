@@ -12,7 +12,6 @@ function forms_bridge_odoo_appointment_attendees($payload, $bridge)
         return $partner;
     }
 
-    $payload['partner_ids'] = (array) ($payload['partner_ids'] ?? []);
     $payload['partner_ids'][] = $partner['id'];
 
     if (isset($payload['user_id'])) {

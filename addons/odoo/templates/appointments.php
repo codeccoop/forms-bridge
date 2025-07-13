@@ -24,12 +24,19 @@ return [
         [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'user_id',
-            'label' => __('Owner email', 'forms-bridge'),
+            'label' => __('Host', 'forms-bridge'),
             'description' => __(
-                'Email of the owner user of the appointment',
+                'Name of the host user of the appointment',
                 'forms-bridge'
             ),
-            'type' => 'string',
+            'type' => 'options',
+            'options' => [
+                'endpoint' => 'res.users',
+                'finger' => [
+                    'value' => 'result.[].id',
+                    'label' => 'result.[].name',
+                ],
+            ],
             'required' => true,
         ],
         [
@@ -54,13 +61,27 @@ return [
             'type' => 'number',
             'default' => 1,
         ],
+        [
+            'ref' => '#bridge/custom_fields[]',
+            'name' => 'categ_ids',
+            'label' => __('Appointment tags', 'forms-bridge'),
+            'type' => 'options',
+            'options' => [
+                'endpoint' => 'calendar.event.type',
+                'finger' => [
+                    'value' => 'result.[].id',
+                    'label' => 'result.[].name',
+                ],
+            ],
+            'is_multi' => true,
+        ],
     ],
     'bridge' => [
         'endpoint' => 'calendar.event',
         'mutations' => [
             [
                 [
-                    'from' => 'user_id',
+                    'from' => '?user_id',
                     'to' => 'user_id',
                     'cast' => 'integer',
                 ],

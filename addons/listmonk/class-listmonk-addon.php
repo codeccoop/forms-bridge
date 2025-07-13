@@ -55,8 +55,6 @@ class Listmonk_Addon extends Addon
             self::name
         );
 
-        // self::register_backend_authorization($backend);
-
         $response = $bridge->submit();
         return !is_wp_error($response);
     }
@@ -68,7 +66,7 @@ class Listmonk_Addon extends Addon
      * @param string $backend Backend name.
      * @param null $credential Credential name.
      *
-     * @return array
+     * @return array|WP_Error
      */
     public function fetch($endpoint, $backend, $credential = null)
     {
@@ -82,14 +80,7 @@ class Listmonk_Addon extends Addon
             self::name
         );
 
-        self::register_backend_authorization($backend);
-
-        $response = $bridge->submit();
-        if (is_wp_error($response)) {
-            return [];
-        }
-
-        return $response;
+        return $bridge->submit();
     }
 
     /**
@@ -141,30 +132,6 @@ class Listmonk_Addon extends Addon
         }
 
         return [];
-    }
-
-    private static function register_backend_authorization($name)
-    {
-        add_filter(
-            'http_bridge_backend_headers',
-            static function ($headers, $backend) use ($name) {
-                if ($backend->name !== $name) {
-                    return $headers;
-                }
-
-                if (isset($headers['user'], $headers['token'])) {
-                    $headers[
-                        'authorization'
-                    ] = "token {$headers['user']}:{$headers['token']}";
-                    unset($headers['user']);
-                    unset($headers['token']);
-                }
-
-                return $headers;
-            },
-            10,
-            2
-        );
     }
 }
 

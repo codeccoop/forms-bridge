@@ -65,9 +65,9 @@ class Finan_Coop_Addon extends Addon
      *
      * @param string $endpoint API endpoint.
      * @param string $backend Backend name.
-     * @params null $credential Credential data.
+     * @params null $credential Credential name.
      *
-     * @return array
+     * @return array|WP_Error
      */
     public function fetch($endpoint, $backend, $credential = null)
     {
@@ -81,12 +81,7 @@ class Finan_Coop_Addon extends Addon
             'financoop'
         );
 
-        $response = $bridge->submit();
-        if (is_wp_error($response)) {
-            return [];
-        }
-
-        return $response['data']['data'];
+        return $bridge->submit();
     }
 
     /**

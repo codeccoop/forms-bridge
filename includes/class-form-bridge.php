@@ -220,7 +220,10 @@ class Form_Bridge
      */
     public function __construct($data, $addon)
     {
-        $this->data = wpct_plugin_sanitize_with_schema($data, static::schema());
+        $this->data = wpct_plugin_sanitize_with_schema(
+            $data,
+            static::schema($addon)
+        );
         $this->addon = $addon;
 
         if ($this->is_valid) {

@@ -11,13 +11,6 @@ add_filter(
             return $defaults;
         }
 
-        $defaults = apply_filters(
-            'forms_bridge_template_defaults',
-            $defaults,
-            'rest',
-            $schema
-        );
-
         return wpct_plugin_merge_object(
             [
                 'fields' => [
@@ -33,76 +26,22 @@ add_filter(
                     [
                         'ref' => '#backend',
                         'name' => 'base_url',
-                        'value' => 'https://{dc}.api.mailchimp.com',
-                    ],
-                    [
-                        'ref' => '#backend/headers[]',
-                        'name' => 'datacenter',
-                        'label' => __('Datacenter', 'forms-bridge'),
                         'description' => __(
-                            'First part of the URL of your mailchimp account or last part of your API key',
+                            'If needed, replace the datacenter param from the URL to match your account servers.',
                             'forms-bridge'
                         ),
-                        'required' => true,
-                        'type' => 'options',
-                        'options' => [
-                            [
-                                'label' => 'us1',
-                                'value' => 'us1',
-                            ],
-                            [
-                                'label' => 'us2',
-                                'value' => 'us2',
-                            ],
-                            [
-                                'label' => 'us3',
-                                'value' => 'us3',
-                            ],
-                            [
-                                'label' => 'us4',
-                                'value' => 'us4',
-                            ],
-                            [
-                                'label' => 'us5',
-                                'value' => 'us5',
-                            ],
-                            [
-                                'label' => 'us6',
-                                'value' => 'us6',
-                            ],
-                            [
-                                'label' => 'us7',
-                                'value' => 'us7',
-                            ],
-                            [
-                                'label' => 'us8',
-                                'value' => 'us8',
-                            ],
-                            [
-                                'label' => 'us9',
-                                'value' => 'us9',
-                            ],
-                            [
-                                'label' => 'us10',
-                                'value' => 'us10',
-                            ],
-                            [
-                                'label' => 'us11',
-                                'value' => 'us11',
-                            ],
-                            [
-                                'label' => 'us12',
-                                'value' => 'us12',
-                            ],
-                            [
-                                'label' => 'us13',
-                                'value' => 'us13',
-                            ],
-                        ],
+                        'default' => 'https://{dc}.api.mailchimp.com',
                     ],
                     [
-                        'ref' => '#backend/headers[]',
-                        'name' => 'api-key',
+                        'ref' => '#backend/authentication',
+                        'name' => 'client_id',
+                        'label' => __('Client ID', 'forms-bridge'),
+                        'type' => 'string',
+                        'value' => 'forms-bridge',
+                    ],
+                    [
+                        'ref' => '#backend/authentication',
+                        'name' => 'client_secret',
                         'label' => __('API key', 'forms-bridge'),
                         'description' => __(
                             'Get it from your <a href="https://us1.admin.mailchimp.com/account/api/" target="_blank">account</a>',
@@ -116,11 +55,43 @@ add_filter(
                         'name' => 'method',
                         'value' => 'POST',
                     ],
+                    [
+                        'ref' => '#bridge/custom_fields[]',
+                        'name' => 'list_id',
+                        'label' => __('Audience', 'forms-bridge'),
+                        'type' => 'options',
+                        'options' => [
+                            'endpoint' => '/3.0/lists',
+                            'finger' => [
+                                'value' => 'lists[].id',
+                                'label' => 'lists[].name',
+                            ],
+                        ],
+                        'required' => true,
+                    ],
+                    [
+                        'ref' => '#bridge/custom_fields[]',
+                        'name' => 'skip_merge_validation',
+                        'label' => __(
+                            'Skip merge fields validation',
+                            'forms-bridge'
+                        ),
+                        'type' => 'boolean',
+                        'default' => false,
+                    ],
                 ],
                 'bridge' => [
                     'backend' => '',
                     'endpoint' => '',
                     'method' => 'POST',
+                ],
+                'backend' => [
+                    'name' => 'Mailchimp API',
+                    'base_url' => 'https://{dc}.api.mailchimp.com',
+                    'authentication' => [
+                        'type' => 'Basic',
+                        'client_id' => 'forms-bridge',
+                    ],
                 ],
             ],
             $defaults,
@@ -138,34 +109,28 @@ add_filter(
             return $data;
         }
 
-        $header_names = array_column($data['backend']['header'], 'name');
         $custom_field_names = array_column(
             $data['bridge']['custom_fields'],
             'name'
         );
 
-        $index = array_search('datacenter', $header_names);
+        $index = array_search('skip_merge_validation', $custom_field_names);
         if ($index !== false) {
-            $dc = $data['backend']['headers'][$index]['value'];
-            $data['backend']['base_url'] = preg_replace(
-                '/\{dc\}/',
-                $dc,
-                $data['backend']['base_url']
-            );
+            if (!empty($data['bridge']['custom_field'][$index])) {
+                $endpoint = $data['bridge']['endpoint'];
+                $parsed = wp_parse_url($endpoint);
 
-            array_splice($data['backend']['headers'], $index, 1);
-        }
+                $path = $parsed['path'] ?? '';
 
-        $index = array_search('api-key', $header_names);
-        if ($index !== false) {
-            $key = $data['backend']['headers'][$index];
+                $query = [];
+                wp_parse_str($parsed['query'] ?? '', $query);
+                $query['skip_merge_validation'] = 'true';
+                $querystr = http_build_query($query);
 
-            $data['backend']['headers'][] = [
-                'name' => 'Authorization',
-                'value' => 'Basic ' . base64_encode("forms-bridge:{$key}"),
-            ];
+                $data['bridge']['endpoint'] = $path . '?' . $querystr;
+            }
 
-            array_splice($data['backend']['headers'], $index, 1);
+            array_splice($data['bridge']['custom_fields'], $index, 1);
         }
 
         $index = array_search('list_id', $custom_field_names);

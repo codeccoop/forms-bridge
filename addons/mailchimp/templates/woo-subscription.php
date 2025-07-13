@@ -24,13 +24,6 @@ return [
         ],
         [
             'ref' => '#bridge/custom_fields[]',
-            'name' => 'list_id',
-            'label' => __('Audience', 'forms-bridge'),
-            'type' => 'string',
-            'required' => true,
-        ],
-        [
-            'ref' => '#bridge/custom_fields[]',
             'name' => 'status',
             'label' => __('Subscription status', 'forms-bridge'),
             'type' => 'options',

@@ -11,37 +11,27 @@ add_filter(
             return $schema;
         }
 
-        $schema = wpct_plugin_merge_object(
-            [
-                'properties' => [
-                    'credential' => [
-                        'type' => 'string',
-                        'description' => __(
-                            'Name of the database credential',
-                            'forms-bridge'
-                        ),
-                        'default' => '',
-                    ],
-                    'endpoint' => [
-                        'name' => __('Model', 'forms-bridge'),
-                        'description' => __(
-                            'Name of the target db model',
-                            'forms-bridge'
-                        ),
-                    ],
-                    'method' => [
-                        'description' => __(
-                            'RPC call method name',
-                            'forms-bridge'
-                        ),
-                        'default' => 'create',
-                    ],
-                ],
-                'required' => ['credential'],
-            ],
-            $schema
+        $schema['properties']['credential'] = [
+            'type' => 'string',
+            'description' => __(
+                'Name of the database credential',
+                'forms-bridge'
+            ),
+            'default' => '',
+        ];
+
+        $schema['required'][] = 'credential';
+
+        $schema['properties']['endpoint']['name'] = __('Model', 'forms-bridge');
+        $schema['properties']['endpoint']['description'] = __(
+            'Name of the target DB model',
+            'forms-bridge'
         );
 
+        $schema['properties']['method']['description'] = __(
+            'RPC call method name',
+            'forms-bridge'
+        );
         $schema['properties']['method']['enum'] = [
             'search',
             'search_read',
@@ -79,6 +69,10 @@ add_filter(
                         'ref' => '#credential',
                         'name' => 'database',
                         'label' => __('Database', 'forms-bridge'),
+                        'description' => __(
+                            'Name of the database',
+                            'forms-bridge'
+                        ),
                         'type' => 'string',
                         'required' => true,
                     ],
@@ -86,12 +80,20 @@ add_filter(
                         'ref' => '#credential',
                         'name' => 'user',
                         'label' => __('User', 'forms-bridge'),
+                        'description' => __(
+                            'User name or email',
+                            'forms-bridge'
+                        ),
                         'type' => 'string',
                         'required' => true,
                     ],
                     [
                         'ref' => '#credential',
                         'name' => 'password',
+                        'description' => __(
+                            'User password or API token',
+                            'forms-bridge'
+                        ),
                         'label' => __('Password', 'forms-bridge'),
                         'type' => 'string',
                         'required' => true,
@@ -181,14 +183,36 @@ add_filter(
             array_splice($data['bridge']['custom_fields'], $index, 1);
         }
 
+        $index = array_search('categ_ids', $custom_field_names);
+        if ($index !== false) {
+            $field = $data['bridge']['custom_fields'][$index];
+            $tags = $field['value'] ?? [];
+
+            for ($i = 0; $i < count($tags); $i++) {
+                $data['bridge']['custom_fields'][] = [
+                    'name' => "categ_ids[{$i}]",
+                    'value' => $tags[$i],
+                ];
+
+                $data['bridge']['mutations'][0][] = [
+                    'from' => "categ_ids[{$i}]",
+                    'to' => "categ_ids[{$i}]",
+                    'cast' => 'integer',
+                ];
+            }
+
+            array_splice($data['bridge']['custom_fields'], $index, 1);
+        }
+
         $index = array_search('list_ids', $custom_field_names);
         if ($index !== false) {
             $field = $data['bridge']['custom_fields'][$index];
+            $lists = $field['value'] ?? [];
 
-            for ($i = 0; $i < count($field['value']); $i++) {
+            for ($i = 0; $i < count($lists); $i++) {
                 $data['bridge']['custom_fields'][] = [
                     'name' => "list_ids[{$i}]",
-                    'value' => $field['value'][$i],
+                    'value' => $lists[$i],
                 ];
 
                 $data['bridge']['mutations'][0][] = [
@@ -214,33 +238,36 @@ add_filter(
             return $schema;
         }
 
-        return wpct_plugin_merge_object(
-            [
-                '$schema' => 'http://json-schema.org/draft-04/schema#',
-                'title' => 'odoo-credential',
-                'type' => 'object',
-                'description' => __(
-                    'Odoo database RPC login credentials',
-                    'forms-bridge'
-                ),
-                'properties' => [
-                    'database' => [
-                        'type' => 'string',
-                        'minLength' => 1,
-                    ],
-                    'user' => [
-                        'type' => 'string',
-                        'minLength' => 1,
-                    ],
-                    'password' => [
-                        'type' => 'string',
-                        'minLength' => 1,
-                    ],
-                ],
-                'required' => ['database', 'user', 'password'],
-            ],
-            $schema
-        );
+        $schema = array_merge($schema, [
+            '$schema' => 'http://json-schema.org/draft-04/schema#',
+            'title' => 'odoo-credential',
+            'type' => 'object',
+            'description' => __(
+                'Odoo database RPC login credentials',
+                'forms-bridge'
+            ),
+        ]);
+
+        $schema['properties']['database'] = [
+            'type' => 'string',
+            'minLength' => 1,
+        ];
+
+        $schema['properties']['user'] = [
+            'type' => 'string',
+            'minLength' => 1,
+        ];
+
+        $schema['properties']['password'] = [
+            'type' => 'string',
+            'minLength' => 1,
+        ];
+
+        $schema['required'][] = 'database';
+        $schema['required'][] = 'user';
+        $schema['required'][] = 'password';
+
+        return $schema;
     },
     10,
     2

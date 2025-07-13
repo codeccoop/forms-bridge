@@ -11,13 +11,6 @@ add_filter(
             return $defaults;
         }
 
-        $defaults = apply_filters(
-            'forms_bridge_template_defaults',
-            $defaults,
-            'rest',
-            $schema
-        );
-
         return wpct_plugin_merge_object(
             [
                 'fields' => [

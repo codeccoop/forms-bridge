@@ -32,7 +32,7 @@ class Credential
                             'forms-bridge'
                         ),
                         'type' => 'boolean',
-                        'default' => false,
+                        'default' => true,
                     ],
                     'is_valid' => [
                         'description' => __(

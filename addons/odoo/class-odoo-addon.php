@@ -73,9 +73,9 @@ class Odoo_Addon extends Addon
      *
      * @param string $endpoint Target model name.
      * @param string $backend Target backend name.
-     * @param string|null $credential Target credential name.
+     * @param string $credential Target credential name.
      *
-     * @return array
+     * @return array|WP_Error
      */
     public function fetch($endpoint, $backend, $credential = null)
     {
@@ -90,12 +90,7 @@ class Odoo_Addon extends Addon
             self::name
         );
 
-        $response = $bridge->submit([], ['id', 'name']);
-        if (is_wp_error($response)) {
-            return [];
-        }
-
-        return $response['data']['result'];
+        return $bridge->submit([], ['id', 'name']);
     }
 
     /**

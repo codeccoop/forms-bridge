@@ -1,4 +1,3 @@
-const { useEffect } = wp.element;
 const { TextControl, SelectControl } = wp.components;
 const { __ } = wp.i18n;
 
@@ -10,16 +9,6 @@ const OPTIONS = [
 ];
 
 export default function BackendAuthentication({ data = {}, setData }) {
-  useEffect(() => {
-    if (!data.type) {
-      setData({});
-    } else if (data.type === "Bearer") {
-      const copy = { ...data };
-      delete copy.client_id;
-      setData(copy);
-    }
-  }, [data.type]);
-
   return (
     <div style={{ display: "flex", gap: "0.5rem" }}>
       <div style={{ width: "250px", marginTop: "calc(8px)" }}>

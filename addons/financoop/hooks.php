@@ -25,13 +25,6 @@ add_filter(
             return $defaults;
         }
 
-        $defaults = apply_filters(
-            'forms_bridge_template_defaults',
-            $defaults,
-            'rest',
-            $schema
-        );
-
         return wpct_plugin_merge_object(
             [
                 'fields' => [
@@ -143,14 +136,14 @@ add_filter(
         );
 
         $addon = FBAPI::get_addon('financoop');
-        $campaign = $addon->fetch(
+        $response = $addon->fetch(
             'financoop',
             $data['backend'],
             $endpoint,
             null
         );
 
-        if (empty($campaign) || is_wp_error($campaign)) {
+        if (is_wp_error($response)) {
             return new WP_Error(
                 'financoop_api_error',
                 __('Can\'t fetch campaign data', 'forms-bridge'),
@@ -158,6 +151,7 @@ add_filter(
             );
         }
 
+        $campaign = $response['data']['data'];
         $field_names = array_column($data['form']['fields'], 'name');
 
         $index = array_search('donation_amount', $field_names);

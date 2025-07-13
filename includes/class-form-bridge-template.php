@@ -76,6 +76,8 @@ class Form_Bridge_Template
         $bridge_schema = FBAPI::get_bridge_schema($addon);
         $credential_schema = FBAPI::get_credential_schema($addon);
 
+        $backend_schema['properties']['authentication']['required'] = [];
+
         return apply_filters(
             'forms_bridge_template_schema',
             [
@@ -700,7 +702,7 @@ class Form_Bridge_Template
         );
 
         $requireds = array_filter($all_fields, static function ($field) {
-            return ($field['required'] ?? false) && empty($field['value']);
+            return ($field['required'] ?? false) && !isset($field['value']);
         });
 
         if (count($requireds) || count($fields) > count($all_fields)) {

@@ -34,7 +34,14 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'serviceId',
             'label' => __('Service', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'options',
+            'options' => [
+                'endpoint' => '/api/invoicing/v1/services',
+                'finger' => [
+                    'value' => '[].id',
+                    'label' => '[].name',
+                ],
+            ],
             'required' => true,
         ],
     ],

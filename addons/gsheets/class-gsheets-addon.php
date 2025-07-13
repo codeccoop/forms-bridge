@@ -205,9 +205,9 @@ class Google_Sheets_Addon extends Addon
      *
      * @param string $endpoint Concatenation of spreadsheet ID and tab name.
      * @param string $backend Backend name.
-     * @params null $credential Credential name.
+     * @param string $credential Credential name.
      *
-     * @return array
+     * @return array|WP_Error
      */
     public function fetch($endpoint, $backend, $credential = null)
     {
@@ -224,12 +224,7 @@ class Google_Sheets_Addon extends Addon
             self::name
         );
 
-        $response = $bridge->submit();
-        if (is_wp_error($response)) {
-            return [];
-        }
-
-        return $response['data'];
+        return $bridge->submit();
     }
 
     /**

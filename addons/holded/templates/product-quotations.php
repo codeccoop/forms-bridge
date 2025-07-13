@@ -34,7 +34,14 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'sku',
             'label' => __('Product', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'options',
+            'options' => [
+                'endpoint' => '/api/invoicing/v1/products',
+                'finger' => [
+                    'value' => '[].sku',
+                    'label' => '[].name',
+                ],
+            ],
             'required' => true,
         ],
     ],

@@ -64,7 +64,7 @@ class Dolibarr_Addon extends Addon
      * @param string $backend Backend name.
      * @param null $credential Credential data.
      *
-     * @return array
+     * @return array|WP_Error
      */
     public function fetch($endpoint, $backend, $credential = null)
     {
@@ -78,13 +78,7 @@ class Dolibarr_Addon extends Addon
             'dolibarr'
         );
 
-        $response = $bridge->submit();
-
-        if (is_wp_error($response)) {
-            return [];
-        }
-
-        return $response['data'];
+        return $bridge->submit();
     }
 
     /**

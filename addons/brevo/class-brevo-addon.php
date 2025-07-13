@@ -67,7 +67,7 @@ class Brevo_Addon extends Addon
      * @param string $backend Backend name.
      * @param null $credential Credential name.
      *
-     * @return array Fetched records.
+     * @return array|WP_Error
      */
     public function fetch($endpoint, $backend, $credential = null)
     {
@@ -81,12 +81,7 @@ class Brevo_Addon extends Addon
             'brevo'
         );
 
-        $response = $bridge->submit();
-        if (is_wp_error($response)) {
-            return [];
-        }
-
-        return $response['data'];
+        return $bridge->submit();
     }
 
     /**
