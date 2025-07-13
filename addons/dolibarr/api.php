@@ -198,7 +198,7 @@ function forms_bridge_dolibarr_create_contact(
     if (!$update) {
         $contact = forms_bridge_dolibarr_search_contact($payload, $bridge);
 
-        if (isset($contact['id'])) {
+        if (!is_wp_error($contact) && isset($contact['id'])) {
             $payload['id'] = $contact['id'];
             return forms_bridge_dolibarr_update_contact($payload, $bridge);
         }
@@ -287,7 +287,7 @@ function forms_bridge_dolibarr_create_thirdparty(
             $bridge
         );
 
-        if (isset($thirdparty['id'])) {
+        if (!is_wp_error($thirdparty) && isset($thirdparty['id'])) {
             $payload['id'] = $thirdparty['id'];
             $payload['code_client'] = $thirdparty['code_client'];
             return forms_bridge_dolibarr_update_thirdparty($payload, $bridge);

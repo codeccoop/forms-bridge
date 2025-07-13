@@ -53,10 +53,9 @@ require_once 'includes/class-menu.php';
 require_once 'includes/class-form-bridge.php';
 require_once 'includes/class-form-bridge-template.php';
 require_once 'includes/class-job.php';
-
-// Abstracts
-require_once 'integrations/abstract-integration.php';
-require_once 'addons/abstract-addon.php';
+require_once 'includes/class-credential.php';
+require_once 'includes/class-integration.php';
+require_once 'includes/class-addon.php';
 
 // Post types
 require_once 'post_types/job.php';

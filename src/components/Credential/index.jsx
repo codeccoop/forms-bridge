@@ -1,9 +1,11 @@
 // source
 import RemoveButton from "../RemoveButton";
 import { useCredentials } from "../../hooks/useAddon";
-import CredentialFields from "./Fields";
+import CredentialFields, { INTERNALS } from "./Fields";
+import ToggleControl from "../Toggle";
+import { downloadJson } from "../../lib/utils";
 
-const { __experimentalSpacer: Spacer } = wp.components;
+const { Button } = wp.components;
 const { useState, useEffect, useMemo, useCallback } = wp.element;
 const { __ } = wp.i18n;
 
@@ -22,15 +24,19 @@ export default function Credential({ data, update, remove, schema }) {
 
   const validate = useCallback(
     (data) => {
-      return !!Object.keys(schema.properties).reduce((isValid, prop) => {
-        const value = data[prop];
+      return !!Object.keys(schema.properties)
+        .filter((prop) => !INTERNALS.includes(prop))
+        .reduce((isValid, prop) => {
+          const value = data[prop];
 
-        if (schema.properties[prop].pattern) {
-          isValid = new RegExp(schema.properties[prop].pattern).test(value);
-        }
+          if (schema.properties[prop].pattern) {
+            isValid =
+              isValid &&
+              new RegExp(schema.properties[prop].pattern).test(value);
+          }
 
-        return isValid && value;
-      }, true);
+          return isValid && value;
+        }, true);
     },
     [schema]
   );
@@ -39,13 +45,24 @@ export default function Credential({ data, update, remove, schema }) {
     return validate(state) && !nameConflict;
   }, [state, nameConflict]);
 
+  if (!isValid && state.is_valid) {
+    setState({ ...state, is_valid: false });
+    update({ ...state, is_valid: false });
+  }
+
   useEffect(() => {
-    if (isValid) update(state);
+    if (isValid) update({ ...state, is_valid: true });
   }, [isValid, state]);
 
   useEffect(() => {
     setState(data);
   }, [data.name]);
+
+  const exportConfig = () => {
+    const credentialData = { ...data };
+    INTERNALS.forEach((prop) => delete credentialData[prop]);
+    downloadJson(credentialData, credentialData.name + " credential config");
+  };
 
   return (
     <div
@@ -58,7 +75,7 @@ export default function Credential({ data, update, remove, schema }) {
       <div
         style={{
           display: "flex",
-          gap: "1em",
+          gap: "0.5rem",
           flexWrap: "wrap",
         }}
       >
@@ -73,16 +90,61 @@ export default function Credential({ data, update, remove, schema }) {
           }}
         />
       </div>
-      <Spacer paddingY="calc(8px)" />
       <div
         style={{
+          marginTop: "10px",
           display: "flex",
           gap: "0.5rem",
         }}
       >
-        <RemoveButton onClick={() => remove(data)}>
+        <RemoveButton onClick={() => remove(data)} style={{ width: "100px" }}>
           {__("Remove", "forms-bridge")}
         </RemoveButton>
+        <Button
+          size="compact"
+          variant="tertiary"
+          style={{
+            height: "40px",
+            width: "40px",
+            justifyContent: "center",
+            fontSize: "1.5em",
+            border: "1px solid",
+            color: "gray",
+          }}
+          onClick={exportConfig}
+          __next40pxDefaultSize
+          label={__("Download bridge config", "forms-bridge")}
+          showTooltip
+        >
+          ⬇
+        </Button>
+        <div
+          style={{
+            marginLeft: "15px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ToggleControl
+            disabled={!isValid}
+            checked={state.enabled && isValid}
+            onChange={() => setState({ ...state, enabled: !state.enabled })}
+            __nextHasNoMarginBottom
+          />
+          {(!isValid || !state.enabled) && (
+            <span
+              style={{
+                marginLeft: "5px",
+                fontStyle: "normal",
+                fontSize: "12px",
+                color: "rgb(117, 117, 117)",
+              }}
+            >
+              {__("Disabled", "forms-bridge")}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

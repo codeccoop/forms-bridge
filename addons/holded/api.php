@@ -48,11 +48,7 @@ function forms_bridge_holded_create_contact($payload, $bridge, $update = false)
     if (!$update) {
         $contact = forms_bridge_holded_search_contact($payload, $bridge);
 
-        if (is_wp_error($contact)) {
-            return $contact;
-        }
-
-        if ($contact) {
+        if (!is_wp_error($contact) && isset($contact['id'])) {
             $patch['id'] = $contact['id'];
             return forms_bridge_holded_update_contact($patch, $bridge);
         }

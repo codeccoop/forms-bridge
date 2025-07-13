@@ -1,6 +1,14 @@
 import { StringField, OptionsField } from "../Bridge/Fields";
 const { useEffect, useMemo } = wp.element;
 
+export const INTERNALS = [
+  "enabled",
+  "is_valid",
+  "access_token",
+  "refresh_token",
+  "expires_at",
+];
+
 export default function CredentialFields({
   data,
   setData,
@@ -35,40 +43,52 @@ export default function CredentialFields({
 
   useEffect(() => {
     const defaults = fields.reduce((defaults, field) => {
-      if (field.default && !data[field.name]) {
-        defaults[field.name] = field.defaut;
+      if (
+        field.default &&
+        !Object.prototype.hasOwnProperty.call(data, field.name)
+      ) {
+        defaults[field.name] = field.default;
+      } else if (field.value && field.value !== data[field.name]) {
+        defaults[field.name] = field.value;
       }
+
       return defaults;
     }, {});
 
     if (Object.keys(defaults).length) {
       setData({ ...data, ...defaults });
     }
-  }, [fields]);
+  }, [data, fields]);
 
   return fields
-    .filter((field) => !field.default)
+    .filter((field) => !field.value)
+    .sort((a, b) => (a.name === "name" ? -1 : 0))
     .map((field) => {
       switch (field.type) {
         case "string":
           return (
-            <StringField
-              label={field.label}
-              value={data[field.name]}
-              setValue={(value) => setData({ ...data, [field.name]: value })}
-              error={errors[field.name]}
-            />
+            <div style={{ flex: 1, maxWidth: "250px" }}>
+              <StringField
+                style={{ maxWidth: "300px" }}
+                label={field.label}
+                value={data[field.name] || ""}
+                setValue={(value) => setData({ ...data, [field.name]: value })}
+                error={errors[field.name]}
+              />
+            </div>
           );
         case "options":
           return (
-            <OptionsField
-              label={field.label}
-              value={data[field.name]}
-              setValue={(value) => setData({ ...data, [field.name]: value })}
-              options={field.options}
-              optional={optionals}
-              error={errors[field.name]}
-            />
+            <div style={{ flex: 1, maxWidth: "250px" }}>
+              <OptionsField
+                label={field.label}
+                value={data[field.name] || ""}
+                setValue={(value) => setData({ ...data, [field.name]: value })}
+                options={field.options}
+                optional={optionals}
+                error={errors[field.name]}
+              />
+            </div>
           );
       }
     });

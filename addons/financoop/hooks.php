@@ -5,16 +5,30 @@ if (!defined('ABSPATH')) {
 }
 
 add_filter(
+    'forms_bridge_bridge_schema',
+    function ($schema, $addon) {
+        if ($addon !== 'financoop') {
+            return $schema;
+        }
+
+        $schema['properties']['method']['enum'] = 'POST';
+        return $schema;
+    },
+    10,
+    2
+);
+
+add_filter(
     'forms_bridge_template_defaults',
-    function ($defaults, $api, $schema) {
-        if ($api !== 'financoop') {
+    function ($defaults, $addon, $schema) {
+        if ($addon !== 'financoop') {
             return $defaults;
         }
 
         $defaults = apply_filters(
             'forms_bridge_template_defaults',
             $defaults,
-            'rest-api',
+            'rest',
             $schema
         );
 
@@ -58,6 +72,11 @@ add_filter(
                         'label' => 'API Key',
                         'type' => 'string',
                         'required' => true,
+                    ],
+                    [
+                        'ref' => '#bridge',
+                        'name' => 'method',
+                        'value' => 'POST',
                     ],
                 ],
                 'bridge' => [
@@ -123,7 +142,8 @@ add_filter(
             array_slice(explode('/', $data['bridge']['endpoint']), 0, 4)
         );
 
-        $campaign = Addon::fetch(
+        $addon = FBAPI::get_addon('financoop');
+        $campaign = $addon->fetch(
             'financoop',
             $data['backend'],
             $endpoint,

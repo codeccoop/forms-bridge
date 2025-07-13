@@ -23,7 +23,9 @@ export default function useWiredBackend({
   const backend = useMemo(() => {
     if (!config) return;
 
+    console.log("Backend data", data);
     const backend = mockBackend(data, config, fields);
+    console.log("Wired backend", backend);
     if (validateBackend(backend, config, fields)) {
       return backend;
     }

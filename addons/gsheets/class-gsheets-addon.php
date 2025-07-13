@@ -8,12 +8,12 @@ if (!defined('ABSPATH')) {
 
 require_once 'vendor/autoload.php';
 
-require_once 'class-gs-store.php';
-require_once 'class-gs-client.php';
-require_once 'class-gs-rest-controller.php';
-require_once 'class-gs-ajax-controller.php';
-require_once 'class-gs-service.php';
-require_once 'class-gs-form-bridge.php';
+require_once 'class-gsheets-store.php';
+require_once 'class-gsheets-client.php';
+require_once 'class-gsheets-rest-controller.php';
+require_once 'class-gsheets-ajax-controller.php';
+require_once 'class-gsheets-service.php';
+require_once 'class-gsheets-form-bridge.php';
 require_once 'hooks.php';
 
 /**
@@ -59,18 +59,20 @@ class Google_Sheets_Addon extends Addon
 
     public function load()
     {
+        parent::load();
+
         Settings_Store::ready(static function ($store) {
             self::register_setting_proxy($store);
         });
 
-        \HTTP_BRIDGE\Settings_Store::ready(static function ($store) {
+        Http_Store::ready(static function ($store) {
             self::register_backend_proxy($store);
         });
 
         add_filter(
             'forms_bridge_prune_empties',
             static function ($prune, $bridge) {
-                if ($bridge instanceof Google_Sheets_Form_Bridge) {
+                if ($bridge->addon === 'gsheets') {
                     return false;
                 }
 
@@ -147,19 +149,6 @@ class Google_Sheets_Addon extends Addon
     }
 
     /**
-     * Sanitizes the setting value before updates.
-     *
-     * @param array $data Setting data.
-     *
-     * @return array Sanitized data.
-     */
-    protected static function sanitize_setting($data)
-    {
-        $data['bridges'] = self::sanitize_bridges($data['bridges']);
-        return $data;
-    }
-
-    /**
      * Validate bridge settings. Filters bridges with inconsistencies with
      * current store state.
      *
@@ -201,36 +190,39 @@ class Google_Sheets_Addon extends Addon
     /**
      * Performs a request against the backend to check the connexion status.
      *
-     * @param string $backend Target backend name.
-     * @params WP_REST_Request $request Current REST request.
+     * @param string $backend Backend name.
+     * @params string $credential Credential name.
      *
-     * @return array Ping result.
+     * @return boolean
      */
-    protected function do_ping($backend, $request)
+    public function ping($backend, $credential = null)
     {
-        return ['success' => Google_Sheets_Service::is_authorized()];
+        return Google_Sheets_Service::is_authorized();
     }
 
     /**
      * Performs a GET request against the backend endpoint and retrive the response data.
      *
-     * @param string $backend Target backend name.
-     * @param string $endpoint Target endpoint name.
-     * @params null $credential Credential data, ignored.
+     * @param string $endpoint Concatenation of spreadsheet ID and tab name.
+     * @param string $backend Backend name.
+     * @params null $credential Credential name.
      *
-     * @return array Fetched records.
+     * @return array
      */
-    protected function do_fetch($backend, $endpoint, $credential)
+    public function fetch($endpoint, $backend, $credential = null)
     {
         [$spreadsheet, $tab] = explode('::', $endpoint);
 
-        $bridge = new Google_Sheets_Form_Bridge([
-            'name' => '__gs-' . time(),
-            'endpoint' => $endpoint,
-            'spreadsheet' => $spreadsheet,
-            'tab' => $tab,
-            'method' => 'read',
-        ]);
+        $bridge = new Google_Sheets_Form_Bridge(
+            [
+                'name' => '__gs-' . time(),
+                'endpoint' => $endpoint,
+                'spreadsheet' => $spreadsheet,
+                'tab' => $tab,
+                'method' => 'read',
+            ],
+            self::name
+        );
 
         $response = $bridge->submit();
         if (is_wp_error($response)) {
@@ -244,24 +236,42 @@ class Google_Sheets_Addon extends Addon
      * Performs an introspection of the backend endpoint and returns API fields
      * and accepted content type.
      *
-     * @param string $backend Target backend name.
      * @param string $endpoint Concatenation of spreadsheet ID and tab name.
-     * @params null $credential Credential data, ignored.
+     * @param string $backend Backend name.
+     * @params null $credential Credential name.
      *
      * @return array List of fields and content type of the endpoint.
      */
-    protected function get_endpoint_schema($backend, $endpoint, $credential)
+    public function get_endpoint_schema($endpoint, $backend, $credential = null)
     {
         [$spreadsheet, $tab] = explode('::', $endpoint);
 
-        $bridge = new Google_Sheets_Form_Bridge([
-            'name' => '__gs-' . time(),
-            'endpoint' => $endpoint,
-            'spreadsheet' => $spreadsheet,
-            'tab' => $tab,
-        ]);
+        $bridge = new Google_Sheets_Form_Bridge(
+            [
+                'name' => '__gs-' . time(),
+                'endpoint' => $endpoint,
+                'spreadsheet' => $spreadsheet,
+                'tab' => $tab,
+                'method' => 'schema',
+            ],
+            self::name
+        );
 
-        return $bridge->endpoint_schema;
+        $response = $bridge->submit();
+
+        if (is_wp_error($response)) {
+            return [];
+        }
+
+        $fields = [];
+        foreach ($response['data'] as $field) {
+            $fields[] = [
+                'name' => $field,
+                'schema' => ['type' => 'string'],
+            ];
+        }
+
+        return $fields;
     }
 }
 

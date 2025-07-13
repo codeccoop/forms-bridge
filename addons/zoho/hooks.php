@@ -5,44 +5,28 @@ if (!defined('ABSPATH')) {
 }
 
 add_filter(
-    'forms_bridge_template_schema',
-    function ($schema, $api) {
-        if ($api !== 'zoho') {
+    'forms_bridge_bridge_schema',
+    function ($schema, $addon) {
+        if ($addon !== 'zoho') {
             return $schema;
         }
 
-        $schema['properties']['credential'] = [
-            'type' => 'object',
-            'description' => __('Zoho OAuth API credentials', 'forms-bridge'),
-            'properties' => [
-                'name' => ['type' => 'string'],
-                'organization_id' => ['type' => 'string'],
-                'client_id' => ['type' => 'string'],
-                'client_secret' => ['type' => 'string'],
-            ],
-            'required' => [
-                'name',
-                'organization_id',
-                'client_id',
-                'client_secret',
-            ],
-            'additionalProperties' => false,
-        ];
-
-        $schema['properties']['bridge']['properties'] = array_merge(
-            $schema['properties']['bridge']['properties'],
+        return wpct_plugin_merge_object(
             [
-                'credential' => ['type' => 'string'],
-                'endpoint' => ['type' => 'string'],
-                'scope' => ['type' => 'string'],
-            ]
+                'properties' => [
+                    'credential' => [
+                        'type' => 'string',
+                        'description' => __(
+                            'Name of the OAuth credential',
+                            'forms-bridge'
+                        ),
+                        'default' => '',
+                    ],
+                ],
+                'required' => ['credential'],
+            ],
+            $schema
         );
-
-        $schema['properties']['bridge']['required'][] = 'credential';
-        $schema['properties']['bridge']['required'][] = 'endpoint';
-        $schema['properties']['bridge']['required'][] = 'scope';
-
-        return $schema;
     },
     10,
     2
@@ -50,8 +34,8 @@ add_filter(
 
 add_filter(
     'forms_bridge_template_defaults',
-    function ($defaults, $api, $schema) {
-        if ($api !== 'zoho') {
+    function ($defaults, $addon, $schema) {
+        if ($addon !== 'zoho') {
             return $defaults;
         }
 
@@ -87,14 +71,7 @@ add_filter(
                         'required' => true,
                     ],
                     [
-                        'ref' => '#bridge',
-                        'name' => 'endpoint',
-                        'label' => __('Endpoint', 'forms-bridge'),
-                        'type' => 'string',
-                        'required' => true,
-                    ],
-                    [
-                        'ref' => '#bridge',
+                        'ref' => '#credential',
                         'name' => 'scope',
                         'label' => __('Scope', 'forms-bridge'),
                         'description' => __(
@@ -102,7 +79,8 @@ add_filter(
                             'forms-bridge'
                         ),
                         'type' => 'string',
-                        'value' => 'ZohoCRM.modules.ALL',
+                        'value' =>
+                            'ZohoCRM.modules.ALL,ZohoCRM.settings.layouts.READ,ZohoCRM.users.READ',
                         'required' => true,
                     ],
                     [
@@ -155,7 +133,6 @@ add_filter(
                 'bridge' => [
                     'backend' => 'Zoho API',
                     'endpoint' => '',
-                    'scope' => 'ZohoCRM.modules.ALL',
                     'credential' => '',
                 ],
                 'credential' => [
@@ -163,6 +140,8 @@ add_filter(
                     'organization_id' => '',
                     'client_id' => '',
                     'client_secret' => '',
+                    'scope' =>
+                        'ZohoCRM.modules.ALL,ZohoCRM.settings.layouts.READ,ZohoCRM.users.READ',
                 ],
                 'backend' => [
                     'headers' => [
@@ -213,6 +192,76 @@ add_filter(
         }
 
         return $data;
+    },
+    10,
+    2
+);
+
+add_filter(
+    'forms_bridge_credential_schema',
+    function ($schema, $addon) {
+        if ($addon !== 'zoho') {
+            return $schema;
+        }
+
+        return [
+            '$schema' => 'http://json-schema.org/draft-04/schema#',
+            'title' => 'zoho-credential',
+            'type' => 'object',
+            'description' => __('Zoho OAuth API credential', 'forms-bridge'),
+            'properties' => [
+                'name' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'type' => [
+                    'type' => 'string',
+                    'enum' => ['Server-based', 'Self Client'],
+                ],
+                'client_id' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'client_secret' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'scope' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                    'default' =>
+                        'ZohoCRM.modules.ALL,ZohoCRM.settings.layouts.READ,ZohoCRM.users.READ',
+                ],
+                'organization_id' => [
+                    'type' => 'string',
+                    'minLength' => 10,
+                ],
+                'access_token' => [
+                    'type' => 'string',
+                    'show_in_rest' => false,
+                ],
+                'refresh_token' => [
+                    'type' => 'string',
+                    'show_in_rest' => false,
+                ],
+                'expires_at' => [
+                    'type' => 'integer',
+                    'show_in_rest' => false,
+                ],
+                'enabled' => [
+                    'type' => 'boolean',
+                    'default' => false,
+                ],
+            ],
+            'required' => [
+                'name',
+                'type',
+                'client_id',
+                'client_secret',
+                'scope',
+            ],
+            'additionalProperties' => false,
+        ];
     },
     10,
     2

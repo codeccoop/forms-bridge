@@ -38,6 +38,7 @@ const DEFAULTS = {
 export default function Bridges() {
   const { bridge: schema } = useSchemas();
   const [bridges, setBridges] = useBridges();
+
   const [tabFocus, setTabFocus] = useState(null);
 
   const tabs = bridges

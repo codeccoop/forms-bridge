@@ -6,15 +6,15 @@ if (!defined('ABSPATH')) {
 
 add_filter(
     'forms_bridge_template_defaults',
-    function ($defaults, $api, $schema) {
-        if ($api !== 'dolibarr') {
+    function ($defaults, $addon, $schema) {
+        if ($addon !== 'dolibarr') {
             return $defaults;
         }
 
         $defaults = apply_filters(
             'forms_bridge_template_defaults',
             $defaults,
-            'rest-api',
+            'rest',
             $schema
         );
 
@@ -38,10 +38,6 @@ add_filter(
                         'name' => 'method',
                         'value' => 'POST',
                     ],
-                ],
-                'bridge' => [
-                    'endpoint' => '',
-                    'method' => 'POST',
                 ],
                 'backend' => [
                     'name' => 'Dolibarr',

@@ -5,31 +5,51 @@ if (!defined('ABSPATH')) {
 }
 
 add_filter(
-    'forms_bridge_template_schema',
-    function ($schema, $api) {
-        if ($api !== 'odoo') {
+    'forms_bridge_bridge_schema',
+    function ($schema, $addon) {
+        if ($addon !== 'odoo') {
             return $schema;
         }
 
-        $schema['properties']['bridge']['properties']['endpoint'] = [
-            'type' => 'string',
-        ];
-
-        $schema['properties']['bridge']['required'][] = 'endpoint';
-
-        $schema['properties']['credential'] = [
-            'type' => 'object',
-            'description' => __(
-                'Database credentials to perform RPC authentications',
-                'forms-bridge'
-            ),
-            'properties' => [
-                'name' => ['type' => 'string'],
-                'database' => ['type' => 'string'],
-                'user' => ['type' => 'string'],
-                'password' => ['type' => 'string'],
+        $schema = wpct_plugin_merge_object(
+            [
+                'properties' => [
+                    'credential' => [
+                        'type' => 'string',
+                        'description' => __(
+                            'Name of the database credential',
+                            'forms-bridge'
+                        ),
+                        'default' => '',
+                    ],
+                    'endpoint' => [
+                        'name' => __('Model', 'forms-bridge'),
+                        'description' => __(
+                            'Name of the target db model',
+                            'forms-bridge'
+                        ),
+                    ],
+                    'method' => [
+                        'description' => __(
+                            'RPC call method name',
+                            'forms-bridge'
+                        ),
+                        'default' => 'create',
+                    ],
+                ],
+                'required' => ['credential'],
             ],
-            'required' => ['name', 'user', 'database', 'password'],
+            $schema
+        );
+
+        $schema['properties']['method']['enum'] = [
+            'search',
+            'search_read',
+            'read',
+            'write',
+            'create',
+            'unlink',
+            'fields_get',
         ];
 
         return $schema;
@@ -40,8 +60,8 @@ add_filter(
 
 add_filter(
     'forms_bridge_template_defaults',
-    function ($defaults, $api, $schema) {
-        if ($api !== 'odoo') {
+    function ($defaults, $addon, $schema) {
+        if ($addon !== 'odoo') {
             return $defaults;
         }
 
@@ -86,6 +106,14 @@ add_filter(
                         'name' => 'endpoint',
                         'label' => __('Model', 'forms-bridge'),
                         'type' => 'string',
+                        'required' => true,
+                    ],
+                    [
+                        'ref' => '#bridge',
+                        'name' => 'method',
+                        'label' => __('Method', 'forms-bridge'),
+                        'type' => 'string',
+                        'value' => 'create',
                         'required' => true,
                     ],
                 ],
@@ -174,6 +202,45 @@ add_filter(
         }
 
         return $data;
+    },
+    10,
+    2
+);
+
+add_filter(
+    'forms_bridge_credential_schema',
+    function ($schema, $addon) {
+        if ($addon !== 'odoo') {
+            return $schema;
+        }
+
+        return wpct_plugin_merge_object(
+            [
+                '$schema' => 'http://json-schema.org/draft-04/schema#',
+                'title' => 'odoo-credential',
+                'type' => 'object',
+                'description' => __(
+                    'Odoo database RPC login credentials',
+                    'forms-bridge'
+                ),
+                'properties' => [
+                    'database' => [
+                        'type' => 'string',
+                        'minLength' => 1,
+                    ],
+                    'user' => [
+                        'type' => 'string',
+                        'minLength' => 1,
+                    ],
+                    'password' => [
+                        'type' => 'string',
+                        'minLength' => 1,
+                    ],
+                ],
+                'required' => ['database', 'user', 'password'],
+            ],
+            $schema
+        );
     },
     10,
     2

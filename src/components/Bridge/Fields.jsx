@@ -14,6 +14,15 @@ export const INTERNALS = [
   "mutations",
 ];
 
+const ORDER = [
+  "name",
+  "form_id",
+  "backend",
+  "credential",
+  "endpoint",
+  "method",
+];
+
 export default function BridgeFields({
   data,
   setData,
@@ -54,6 +63,7 @@ export default function BridgeFields({
   const credentialOptions = useMemo(() => {
     return prependEmptyOption(
       credentials
+        .filter(({ is_valid, enabled }) => is_valid && enabled)
         .map(({ name }) => ({ label: name, value: name }))
         .sort((a, b) => (a.label > b.label ? 1 : -1))
     );
@@ -61,6 +71,7 @@ export default function BridgeFields({
 
   const fields = useMemo(() => {
     if (!schema) return [];
+
     return Object.keys(schema.properties)
       .filter((name) => !INTERNALS.includes(name))
       .map((name) => ({
@@ -104,9 +115,15 @@ export default function BridgeFields({
 
   useEffect(() => {
     const defaults = fields.reduce((defaults, field) => {
-      if (field.default && !data[field.name]) {
+      if (
+        field.default &&
+        !Object.prototype.hasOwnProperty.call(data, field.name)
+      ) {
         defaults[field.name] = field.default;
+      } else if (field.value && field.value !== data[field.name]) {
+        defaults[field.name] = field.value;
       }
+
       return defaults;
     }, {});
 
@@ -116,28 +133,37 @@ export default function BridgeFields({
   }, [data, fields]);
 
   return fields
-    .filter((field) => !field.default)
+    .filter((field) => !field.value)
+    .sort((a, b) =>
+      ORDER.includes(a.name) && ORDER.includes(b.name)
+        ? ORDER.indexOf(a.name) - ORDER.indexOf(b.name)
+        : 0
+    )
     .map((field) => {
       switch (field.type) {
         case "string":
           return (
-            <StringField
-              error={errors[field.name]}
-              label={field.label}
-              value={data[field.name] || ""}
-              setValue={(value) => setData({ ...data, [field.name]: value })}
-            />
+            <div style={{ flex: 1, maxWidth: "250px" }}>
+              <StringField
+                error={errors[field.name]}
+                label={field.label}
+                value={data[field.name] || ""}
+                setValue={(value) => setData({ ...data, [field.name]: value })}
+              />
+            </div>
           );
         case "options":
           return (
-            <OptionsField
-              error={errors[field.name]}
-              label={field.label}
-              value={data[field.name] || ""}
-              setValue={(value) => setData({ ...data, [field.name]: value })}
-              options={field.options}
-              optional={optionals}
-            />
+            <div style={{ flex: 1, maxWidth: "250px" }}>
+              <OptionsField
+                error={errors[field.name]}
+                label={field.label}
+                value={data[field.name] || ""}
+                setValue={(value) => setData({ ...data, [field.name]: value })}
+                options={field.options}
+                optional={optionals}
+              />
+            </div>
           );
       }
     });
@@ -145,7 +171,7 @@ export default function BridgeFields({
 
 export function StringField({ label, value, setValue, error }) {
   return (
-    <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
+    <div style={{ flex: 1 }}>
       <TextControl
         label={label}
         value={value}
@@ -171,7 +197,7 @@ export function OptionsField({
   }
 
   return (
-    <div style={{ flex: 1, minWidth: "150px", maxWidth: "250px" }}>
+    <div style={{ flex: 1 }}>
       <SelectControl
         label={label}
         value={value}

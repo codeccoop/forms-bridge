@@ -2,6 +2,7 @@
 import useBackendNames from "../../hooks/useBackendNames";
 import RemoveButton from "../RemoveButton";
 import BackendHeaders from "./Headers";
+import BackendAuthentication from "./Authentication";
 import { downloadJson } from "../../lib/utils";
 
 const { TextControl, Button, __experimentalSpacer: Spacer } = wp.components;
@@ -53,10 +54,11 @@ export default function Backend({ update, remove, data }) {
       <div
         style={{
           display: "flex",
-          gap: "1em",
+          gap: "0.5rem",
         }}
       >
         <TextControl
+          style={{ minWidth: "250px" }}
           label={__("Backend name", "forms-bridge")}
           help={
             nameConflict
@@ -69,7 +71,7 @@ export default function Backend({ update, remove, data }) {
           __next40pxDefaultSize
         />
         <TextControl
-          style={{ minWidth: "300px" }}
+          style={{ minWidth: "350px" }}
           label={__("Backend base URL", "forms-bridge")}
           value={state.base_url}
           onChange={(base_url) => setState({ ...state, base_url })}
@@ -77,23 +79,28 @@ export default function Backend({ update, remove, data }) {
           __next40pxDefaultSize
         />
       </div>
-      <Spacer paddingY="calc(8px)" />
+      <Spacer paddingY="calc(4px)" />
       <BackendHeaders
         headers={state.headers}
         setHeaders={(headers) => setState({ ...state, headers })}
       />
-      <Spacer paddingY="calc(8px)" />
+      <Spacer paddingY="calc(4px)" />
+      <BackendAuthentication
+        data={data.authentication}
+        setData={(authentication) => setState({ ...state, authentication })}
+      />
+      <Spacer paddingY="calc(4px)" />
       <div
         style={{
           display: "flex",
-          gap: "1em",
+          gap: "0.5rem",
           flexWrap: "wrap",
         }}
       >
         <RemoveButton
           onClick={() => remove(data)}
           style={{
-            width: "150px",
+            width: "100px",
             marginTop: "auto",
             justifyContent: "center",
           }}

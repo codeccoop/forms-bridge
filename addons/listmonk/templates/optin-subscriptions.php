@@ -17,11 +17,6 @@ return [
             'value' => '/api/subscribers',
         ],
         [
-            'ref' => '#bridge',
-            'name' => 'method',
-            'value' => 'POST',
-        ],
-        [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'status',
             'label' => __('Subscription status', 'forms-bridge'),

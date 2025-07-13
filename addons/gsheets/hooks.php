@@ -7,9 +7,57 @@ if (!defined('ABSPATH')) {
 }
 
 add_filter(
+    'forms_bridge_bridge_schema',
+    function ($schema, $addon) {
+        if ($addon !== 'gsheets') {
+            return $schema;
+        }
+
+        return wpct_plugin_merge_object(
+            [
+                'properties' => [
+                    'method' => [
+                        'enum' => ['GET'],
+                        'value' => 'GET',
+                    ],
+                    'spreadsheet' => [
+                        '$ref' => '#/gsheets/spreadsheets/id',
+                        'description' => __(
+                            'ID of the spreadhseet',
+                            'forms-bridge'
+                        ),
+                        'type' => 'string',
+                    ],
+                    'tab' => [
+                        'description' => __(
+                            'Name of the spreadsheet tab',
+                            'forms-bridge'
+                        ),
+                        'type' => 'string',
+                        'minLength' => 1,
+                    ],
+                    'endpoint' => [
+                        'description' => __(
+                            'Concatenation of the spreadsheet ID and the tab name by double colons',
+                            'forms-bridge'
+                        ),
+                        'type' => 'string',
+                        'pattern' => '^.*::.*$',
+                    ],
+                ],
+                'required' => ['spreadsheet', 'tab'],
+            ],
+            $schema
+        );
+    },
+    10,
+    2
+);
+
+add_filter(
     'forms_bridge_template_schema',
-    function ($schema, $api) {
-        if ($api !== 'gsheets') {
+    function ($schema, $addon) {
+        if ($addon !== 'gsheets') {
             return $schema;
         }
 
@@ -49,8 +97,8 @@ add_filter(
 
 add_filter(
     'forms_bridge_template_defaults',
-    function ($defaults, $api, $schema) {
-        if ($api !== 'gsheets') {
+    function ($defaults, $addon, $schema) {
+        if ($addon !== 'gsheets') {
             return $defaults;
         }
 

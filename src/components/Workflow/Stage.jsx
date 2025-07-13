@@ -19,7 +19,6 @@ const {
   __experimentalItem: Item,
   ToggleControl,
   Button,
-  __experimentalSpacer: Spacer,
 } = wp.components;
 const { useState, useMemo, useEffect } = wp.element;
 const { __ } = wp.i18n;
@@ -267,9 +266,11 @@ export default function WorkflowStage({ setEdit, setMappers }) {
       >
         <div style={{ display: "flex", gap: "0.5em" }}>
           <Button
+            style={{ width: "100px", justifyContent: "center" }}
             disabled={step === 0 || step === outputStep}
             variant={mode === "snippet" ? "primary" : "secondary"}
             onClick={() => switchMode("snippet")}
+            __next40pxDefaultSize
           >
             {__("Snippet", "forms-bridge")}
           </Button>
@@ -277,6 +278,7 @@ export default function WorkflowStage({ setEdit, setMappers }) {
             disabled={step === outputStep}
             variant={mode === "mappers" ? "primary" : "secondary"}
             onClick={() => switchMode("mappers")}
+            __next40pxDefaultSize
           >
             {__("Mutations (%s)", "forms-bridge").replace(
               "%s",
@@ -285,9 +287,11 @@ export default function WorkflowStage({ setEdit, setMappers }) {
           </Button>
         </div>
         <Button
-          variant="primary"
+          style={{ width: "100px", justifyContent: "center" }}
+          variant="secondary"
           disabled={step === 0 || step === outputStep}
           onClick={() => setEdit(true)}
+          __next40pxDefaultSize
         >
           {__("Edit", "forms-bridge")}
         </Button>

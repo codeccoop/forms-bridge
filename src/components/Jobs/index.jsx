@@ -2,6 +2,7 @@
 import { useJobs } from "../../hooks/useAddon";
 import { prependEmptyOption } from "../../lib/utils";
 import { useJob, useJobConfig } from "../../providers/Jobs";
+import RemoveButton from "../RemoveButton";
 import JobInterface from "../Workflow/JobInterface";
 import JobModal from "./Modal";
 import JobSnippet from "./Snippet";
@@ -71,9 +72,9 @@ export default function Jobs() {
       >
         <p>{__("Manage and edit addon jobs", "forms-bridge")}</p>
         <div style={{ display: "flex", gap: "1em" }}>
-          <div style={{ width: "300px" }}>
+          <div style={{ width: "250px" }}>
             <SelectControl
-              value={job}
+              value={job || ""}
               onChange={setJob}
               options={jobOptions}
               __nextHasNoMarginBottom
@@ -108,16 +109,24 @@ export default function Jobs() {
                       alignItems: "end",
                     }}
                   >
-                    <Button variant="primary" onClick={() => setEdit(true)}>
+                    <Button
+                      variant="secondary"
+                      onClick={() => setEdit(true)}
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        width: "100px",
+                      }}
+                      __next40pxDefaultSize
+                    >
                       {__("Edit", "forms-bridge")}
                     </Button>
-                    <Button
-                      variant="primary"
-                      isDestructive
+                    <RemoveButton
                       onClick={() => reset(job)}
+                      style={{ width: "100px" }}
                     >
                       {__("Reset", "forms-bridge")}
-                    </Button>
+                    </RemoveButton>
                   </div>
                 </div>
                 <Spacer paddingTop="calc(8px)" />

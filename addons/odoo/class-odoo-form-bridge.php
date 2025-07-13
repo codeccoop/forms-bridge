@@ -2,6 +2,7 @@
 
 namespace FORMS_BRIDGE;
 
+use FBAPI;
 use HTTP_BRIDGE\Http_Client;
 use WP_Error;
 
@@ -14,13 +15,6 @@ if (!defined('ABSPATH')) {
  */
 class Odoo_Form_Bridge extends Form_Bridge
 {
-    /**
-     * Handles bridge class API name.
-     *
-     * @var string
-     */
-    protected $api = 'odoo';
-
     /**
      * Handles the Odoo JSON-RPC well known endpoint.
      *
@@ -35,47 +29,6 @@ class Odoo_Form_Bridge extends Form_Bridge
      */
     private static $session;
 
-    public static function schema()
-    {
-        $schema = parent::schema();
-
-        $schema['properties']['credential'] = [
-            'name' => __('Database', 'forms-bridge'),
-            'description' => __(
-                'Name of the database credential',
-                'forms-bridge'
-            ),
-            'type' => 'string',
-        ];
-
-        $schema['required'][] = 'credential';
-
-        $schema['properties']['endpoint'] = [
-            'name' => __('Model', 'forms-bridge'),
-            'description' => __('Name of the target db model', 'forms-bridge'),
-            'type' => 'string',
-        ];
-
-        $schema['required'][] = 'endpoint';
-
-        $schema['properties']['method'] = [
-            'name' => __('Method', 'forms-bridge'),
-            'description' => __('RPC call method name', 'forms-bridge'),
-            'type' => 'string',
-            'enum' => [
-                'search',
-                'search_read',
-                'read',
-                'write',
-                'create',
-                'unlink',
-                'get_fields',
-            ],
-            'default' => 'create',
-        ];
-
-        return $schema;
-    }
     /**
      * RPC payload decorator.
      *
@@ -92,7 +45,7 @@ class Odoo_Form_Bridge extends Form_Bridge
         $service,
         $method,
         $args,
-        $more_args = null
+        $more_args = []
     ) {
         if (!empty($more_args)) {
             $args[] = $more_args;
@@ -204,33 +157,14 @@ class Odoo_Form_Bridge extends Form_Bridge
     }
 
     /**
-     * Bridge's credential data getter.
-     *
-     * @return array|null
-     */
-    protected function credential()
-    {
-        if (!$this->is_valid) {
-            return;
-        }
-
-        $credentials = Forms_Bridge::setting($this->api)->credentials ?: [];
-        foreach ($credentials as $credential) {
-            if ($credential['name'] === $this->data['credential']) {
-                return $credential;
-            }
-        }
-    }
-
-    /**
      * Submits submission to the backend.
      *
      * @param array $payload Submission data.
-     * @param array $attachments Submission's attached files.
+     * @param array|null $more_args Additional RPC call params.
      *
-     * @return array|WP_Error Http request response.
+     * @return array|WP_Error Http
      */
-    protected function do_submit($payload, $more_args = null)
+    public function submit($payload = [], $more_args = [])
     {
         $credential = $this->credential();
         $backend = $this->backend();
@@ -278,58 +212,5 @@ class Odoo_Form_Bridge extends Form_Bridge
         }
 
         return $response;
-    }
-
-    /**
-     * Bridge's endpoint fields schema getter.
-     *
-     * @return array
-     */
-    protected function endpoint_schema()
-    {
-        $response = $this->patch([
-            'name' => 'odoo-api-schema-introspection',
-            'method' => 'fields_get',
-        ])->submit([]);
-
-        if (is_wp_error($response)) {
-            return [];
-        }
-
-        $fields = [];
-        foreach ($response['data']['result'] as $name => $spec) {
-            if ($spec['readonly']) {
-                continue;
-            }
-
-            if ($spec['type'] === 'char' || $spec['type'] === 'html') {
-                $schema = ['type' => 'string'];
-            } elseif ($spec['type'] === 'float') {
-                $schema = ['type' => 'number'];
-            } elseif (
-                in_array(
-                    $spec['type'],
-                    ['one2many', 'many2one', 'many2many'],
-                    true
-                )
-            ) {
-                $schema = [
-                    'type' => 'array',
-                    'items' => [['type' => 'integer'], ['type' => 'string']],
-                    'additionalItems' => false,
-                ];
-            } else {
-                $schema = ['type' => $spec['type']];
-            }
-
-            $schema['required'] = $spec['required'];
-
-            $fields[] = [
-                'name' => $name,
-                'schema' => $schema,
-            ];
-        }
-
-        return $fields;
     }
 }

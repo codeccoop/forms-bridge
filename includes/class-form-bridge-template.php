@@ -5,8 +5,8 @@ namespace FORMS_BRIDGE;
 use Exception;
 use Error;
 use FBAPI;
-use HTTP_BRIDGE\Http_Backend;
 use WP_Error;
+use HTTP_BRIDGE\Settings_Store as Http_Store;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -41,39 +41,40 @@ class Form_Bridge_Template
      */
     private $data;
 
+    private static function child_schema_to_template($schema)
+    {
+        foreach ($schema['properties'] as &$prop_schema) {
+            if ($prop_schema['type'] === 'string') {
+                $prop_schema['default'] = '';
+                unset($prop_schema['minLength']);
+                unset($prop_schema['pattern']);
+                unset($prop_schema['format']);
+            } elseif ($prop_schema['type'] === 'array') {
+                $prop_schema['default'] = [];
+                unset($prop_schema['minItems']);
+            }
+        }
+
+        if (!isset($schema['default'])) {
+            $schema['default'] = [];
+        }
+
+        return $schema;
+    }
+
     /**
      * Handles the common template data json schema. The schema is common for all
      * Form_Bridge_Templates.
      *
-     * @param string $addon Template addon namespace.
+     * @param string $addon Addon name.
      *
      * @return array
      */
     public static function schema($addon = null)
     {
+        $backend_schema = FBAPI::get_backend_schema();
         $bridge_schema = FBAPI::get_bridge_schema($addon);
-        $backend_schema = Http_Backend::schema();
-
-        foreach ($bridge_schema['properties'] as &$schema) {
-            if ($schema['type'] === 'string') {
-                $schema['default'] = '';
-                unset($schema['minLength']);
-                unset($schema['pattern']);
-            } elseif ($schema['type'] === 'array') {
-                $schema['default'] = [];
-                unset($schema['minItems']);
-            }
-        }
-
-        foreach ($backend_schema['properties'] as &$schema) {
-            if ($schema['type'] === 'string') {
-                $schema['default'] = '';
-                unset($schema['minLength']);
-            } elseif ($schema['type'] === 'array') {
-                $schema['default'] = [];
-                unset($schema['minItems']);
-            }
-        }
+        $credential_schema = FBAPI::get_credential_schema($addon);
 
         return apply_filters(
             'forms_bridge_template_schema',
@@ -344,20 +345,13 @@ class Form_Bridge_Template
                         'required' => ['title', 'fields'],
                         'additionalProperties' => false,
                     ],
-                    'bridge' => $bridge_schema,
-                    'backend' => $backend_schema,
-                    'credential' => [
-                        'description' => __(
-                            'API credential setting',
-                            'forms-bridge'
-                        ),
-                        'type' => 'object',
-                        'properties' => [
-                            'name' => ['type' => 'string'],
-                        ],
-                        'additionalProperties' => true,
-                        'required' => ['name'],
-                    ],
+                    'bridge' => self::child_schema_to_template($bridge_schema),
+                    'backend' => self::child_schema_to_template(
+                        $backend_schema
+                    ),
+                    'credential' => self::child_schema_to_template(
+                        $credential_schema
+                    ),
                 ],
                 'additionalProperties' => false,
                 'required' => [
@@ -366,6 +360,7 @@ class Form_Bridge_Template
                     'integrations',
                     'fields',
                     'form',
+                    'backend',
                     'bridge',
                 ],
             ],
@@ -426,6 +421,7 @@ class Form_Bridge_Template
                         'type' => 'string',
                         'required' => true,
                         'default' => 'https://',
+                        'format' => 'uri',
                     ],
                     [
                         'ref' => '#bridge',
@@ -433,9 +429,51 @@ class Form_Bridge_Template
                         'label' => __('Bridge name', 'forms-bridge'),
                         'type' => 'string',
                         'required' => true,
+                        'minLength' => 1,
+                    ],
+                    [
+                        'ref' => '#bridge',
+                        'name' => 'endpoint',
+                        'label' => __('Endpoint', 'forms-bridge'),
+                        'type' => 'string',
+                        'required' => true,
+                        'default' => '',
+                    ],
+                    [
+                        'ref' => '#bridge',
+                        'name' => 'method',
+                        'label' => __('Method', 'forms-bridge'),
+                        'type' => 'options',
+                        'options' => [
+                            [
+                                'label' => 'GET',
+                                'value' => 'GET',
+                            ],
+                            [
+                                'label' => 'POST',
+                                'value' => 'POST',
+                            ],
+                            [
+                                'label' => 'PUT',
+                                'value' => 'PUT',
+                            ],
+                            [
+                                'label' => 'PATCH',
+                                'value' => 'PATCH',
+                            ],
+                            [
+                                'label' => 'DELETE',
+                                'value' => 'DELETE',
+                            ],
+                        ],
+                        'required' => true,
+                        'default' => 'POST',
                     ],
                 ],
-                'bridge' => [],
+                'bridge' => [
+                    'endpoint' => '',
+                    'method' => 'POST',
+                ],
                 'backend' => [
                     'headers' => [
                         [
@@ -968,8 +1006,7 @@ class Form_Bridge_Template
      */
     final protected function backend_exists($name)
     {
-        $backends =
-            \HTTP_BRIDGE\Settings_Store::setting('general')->backends ?: [];
+        $backends = Http_Store::setting('general')->backends ?: [];
         return array_search($name, array_column($backends, 'name')) !== false;
     }
 
@@ -982,7 +1019,7 @@ class Form_Bridge_Template
      */
     private function create_backend($data)
     {
-        $setting = \HTTP_BRIDGE\Settings_Store::setting('general');
+        $setting = Http_Store::setting('general');
         $backends = $setting->backends ?: [];
 
         do_action_ref_array('forms_bridge_before_template_backend', [
@@ -1010,7 +1047,7 @@ class Form_Bridge_Template
      */
     private function remove_backend($name)
     {
-        $setting = \HTTP_BRIDGE\Settings_Store::setting('general');
+        $setting = Http_Store::setting('general');
         $backends = $setting->backends ?: [];
 
         $setting->backends = array_filter($backends, static function (
@@ -1109,10 +1146,10 @@ class Form_Bridge_Template
      */
     private function create_credential($data)
     {
-        $name_conflict = $this->credential_exists($data['name']);
-        if ($name_conflict) {
-            return;
-        }
+        // $name_conflict = $this->credential_exists($data['name']);
+        // if ($name_conflict) {
+        //     return;
+        // }
 
         $setting = Forms_Bridge::setting($this->addon);
         $credentials = $setting->credentials ?: [];

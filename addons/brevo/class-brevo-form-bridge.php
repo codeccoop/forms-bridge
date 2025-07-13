@@ -9,22 +9,8 @@ if (!defined('ABSPATH')) {
 /**
  * Form bridge implamentation for the REST API protocol.
  */
-class Brevo_Form_Bridge extends Rest_Form_Bridge
+class Brevo_Form_Bridge extends Form_Bridge
 {
-    /**
-     * Handles bridge class API name.
-     *
-     * @var string
-     */
-    public const addon = 'brevo';
-
-    public static function schema()
-    {
-        $schema = parent::schema();
-        $schema['properties']['method']['default'] = 'POST';
-        return $schema;
-    }
-
     /**
      * Gets bridge's default body encoding schema.
      *
@@ -41,11 +27,11 @@ class Brevo_Form_Bridge extends Rest_Form_Bridge
      * @param array $payload Payload data.
      * @param array $attachments Submission's attached files.
      *
-     * @return array|WP_Error Http request response.
+     * @return array|WP_Error
      */
-    protected function do_submit($payload, $attachments = [])
+    public function submit($payload = [], $attachments = [])
     {
-        $response = parent::do_submit($payload, $attachments);
+        $response = parent::submit($payload, $attachments);
 
         if (is_wp_error($response)) {
             $error_response = $response->get_error_data()['response'];
@@ -86,220 +72,5 @@ class Brevo_Form_Bridge extends Rest_Form_Bridge
         }
 
         return $response;
-    }
-
-    /**
-     * Bridge's endpoint fields schema getter.
-     *
-     * @return array
-     */
-    protected function endpoint_schema()
-    {
-        if (strstr($this->endpoint, 'contacts')) {
-            $response = $this->patch([
-                'name' => 'brevo-contacts-attributes',
-                'endpoint' => '/v3/contacts/attributes',
-                'method' => 'GET',
-            ])->submit([]);
-
-            if (is_wp_error($response)) {
-                return [];
-            }
-
-            if ($this->endpoint === '/v3/contacts/doubleOptinConfirmation') {
-                $fields = [
-                    [
-                        'name' => 'email',
-                        'schema' => ['type' => 'string'],
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'includeListIds',
-                        'schema' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'integer'],
-                        ],
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'excludeListIds',
-                        'schema' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'integer'],
-                        ],
-                    ],
-                    [
-                        'name' => 'templateId',
-                        'schema' => ['type' => 'integer'],
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'redirectionUrl',
-                        'schema' => ['type' => 'string'],
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'attributes',
-                        'schema' => [
-                            'type' => 'object',
-                            'properties' => [],
-                        ],
-                    ],
-                ];
-            } else {
-                $fields = [
-                    [
-                        'name' => 'email',
-                        'schema' => ['type' => 'string'],
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'ext_id',
-                        'schema' => ['type' => 'string'],
-                    ],
-                    [
-                        'name' => 'emailBlacklisted',
-                        'schema' => ['type' => 'boolean'],
-                    ],
-                    [
-                        'name' => 'smsBlacklisted',
-                        'schema' => ['type' => 'boolean'],
-                    ],
-                    [
-                        'name' => 'listIds',
-                        'schema' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'integer'],
-                        ],
-                    ],
-                    [
-                        'name' => 'updateEnabled',
-                        'schema' => ['type' => 'boolean'],
-                    ],
-                    [
-                        'name' => 'smtpBlacklistSender',
-                        'schema' => ['type' => 'boolean'],
-                    ],
-                    [
-                        'name' => 'attributes',
-                        'schema' => [
-                            'type' => 'object',
-                            'properties' => [],
-                        ],
-                    ],
-                ];
-            }
-
-            foreach ($response['data']['attributes'] as $attribute) {
-                $fields[] = [
-                    'name' => 'attributes.' . $attribute['name'],
-                    'schema' => ['type' => 'string'],
-                ];
-            }
-
-            return $fields;
-        } else {
-            preg_match('/\/([a-z]+)$/', $this->endpoint, $matches);
-            $module = $matches[1];
-            $response = $this->patch([
-                'name' => "brevo-{$module}-attributes",
-                'endpoint' => "/v3/crm/attributes/{$module}",
-                'method' => 'GET',
-            ])->submit([]);
-
-            if (is_wp_error($response)) {
-                return [];
-            }
-
-            if ($module === 'companies') {
-                $fields = [
-                    [
-                        'name' => 'name',
-                        'schema' => ['type' => 'string'],
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'countryCode',
-                        'schema' => ['type' => 'integer'],
-                    ],
-                    [
-                        'name' => 'linkedContactsIds',
-                        'schema' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'integer'],
-                        ],
-                    ],
-                    [
-                        'name' => 'linkedDealsIds',
-                        'schema' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'integer'],
-                        ],
-                    ],
-                    [
-                        'name' => 'attributes',
-                        'schema' => [
-                            'type' => 'object',
-                            'properties' => [],
-                        ],
-                    ],
-                ];
-            } elseif ($module === 'deals') {
-                $fields = [
-                    [
-                        'name' => 'name',
-                        'schema' => ['type' => 'string'],
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'linkedDealsIds',
-                        'schema' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'integer'],
-                        ],
-                    ],
-                    [
-                        'name' => 'linkedCompaniesIds',
-                        'schema' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'integer'],
-                        ],
-                    ],
-                    [
-                        'name' => 'attributes',
-                        'schema' => [
-                            'type' => 'object',
-                            'properties' => [],
-                        ],
-                    ],
-                ];
-            }
-
-            foreach ($response['data'] as $attribute) {
-                switch ($attribute['attributeTypeName']) {
-                    case 'number':
-                        $type = 'number';
-                        break;
-                    case 'text':
-                        $type = 'string';
-                        break;
-                    case 'user':
-                        $type = 'email';
-                        break;
-                    case 'date':
-                        $type = 'date';
-                        break;
-                    default:
-                        $type = 'string';
-                }
-
-                $fields[] = [
-                    'name' => 'attributes.' . $attribute['internalName'],
-                    'schema' => ['type' => $type],
-                ];
-            }
-
-            return $fields;
-        }
     }
 }

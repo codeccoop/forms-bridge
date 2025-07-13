@@ -206,6 +206,9 @@ class FBAPI
     public static function save_bridge($data, $addon)
     {
         $addon = self::get_addon($addon);
+        if (!$addon) {
+            return false;
+        }
 
         $bridge_class = $addon::bridge_class;
         $bridge = new $bridge_class($data);
@@ -251,8 +254,7 @@ class FBAPI
             return;
         }
 
-        $bridge_class = $addon::bridge_class;
-        return $bridge_class::schema();
+        return Form_Bridge::schema($addon::name);
     }
 
     /**
@@ -541,7 +543,7 @@ class FBAPI
      */
     public static function get_credential($name, $addon)
     {
-        $credentials = self::get_credentials($addon);
+        $credentials = self::get_addon_credentials($addon);
 
         foreach ($credentials as $credential) {
             if ($credential->name === $name) {
@@ -560,10 +562,16 @@ class FBAPI
      */
     public static function save_credential($data, $addon)
     {
-        $credential = new Credential($data, $addon);
+        $addon = self::get_addon($addon);
+        if (!$addon) {
+            return false;
+        }
+
+        $credential_class = $addon::credential_class;
+        $credential = new $credential_class($data, $addon);
 
         if (!$credential->is_valid) {
-            return $credential->config;
+            return false;
         }
 
         return $credential->save();
@@ -597,6 +605,11 @@ class FBAPI
      */
     public static function get_credential_schema($addon)
     {
-        return Credential::schema($addon);
+        $addon = self::get_addon($addon);
+        if (!$addon) {
+            return;
+        }
+
+        return Credential::schema($addon::name);
     }
 }

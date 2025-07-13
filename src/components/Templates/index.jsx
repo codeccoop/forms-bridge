@@ -84,12 +84,10 @@ export default function Templates() {
     }
   });
 
-  if (!templates.length || !integrations.length) return;
-
   return (
     <>
       <Button
-        disabled={!!error}
+        disabled={!!error || !templates.length || !integrations.length}
         variant="secondary"
         onClick={() => setIsOpen(true)}
         style={{

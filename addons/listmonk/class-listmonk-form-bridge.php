@@ -11,15 +11,8 @@ if (!defined('ABSPATH')) {
 /**
  * Form bridge implamentation for the REST API protocol.
  */
-class Listmonk_Form_Bridge extends Rest_Form_Bridge
+class Listmonk_Form_Bridge extends Form_Bridge
 {
-    /**
-     * Handles bridge class API name.
-     *
-     * @var string
-     */
-    protected $api = 'listmonk';
-
     /**
      * Gets bridge's default body encoding schema.
      *
@@ -36,11 +29,11 @@ class Listmonk_Form_Bridge extends Rest_Form_Bridge
      * @param array $payload Payload data.
      * @param array $attachments Submission's attached files.
      *
-     * @return array|WP_Error Http request response.
+     * @return array|WP_Error
      */
-    protected function do_submit($payload, $attachments = [])
+    public function submit($payload = [], $attachments = [])
     {
-        $response = parent::do_submit($payload, $attachments);
+        $response = parent::submit($payload, $attachments);
 
         if (is_wp_error($response)) {
             $error_response = $response->get_error_data()['response'] ?? null;
@@ -79,46 +72,5 @@ class Listmonk_Form_Bridge extends Rest_Form_Bridge
         }
 
         return $response;
-    }
-
-    protected function endpoint_schema()
-    {
-        if ($this->endpoint === '/api/subscribers') {
-            return [
-                [
-                    'name' => 'email',
-                    'schema' => ['type' => 'string'],
-                    'required' => true,
-                ],
-                [
-                    'name' => 'name',
-                    'schema' => ['type' => 'string'],
-                ],
-                [
-                    'name' => 'status',
-                    'schema' => ['type' => 'string'],
-                ],
-                [
-                    'name' => 'lists',
-                    'schema' => [
-                        'type' => 'array',
-                        'items' => ['type' => 'number'],
-                    ],
-                ],
-                [
-                    'name' => 'preconfirm_subscriptions',
-                    'schema' => ['type' => 'boolean'],
-                ],
-                [
-                    'name' => 'attribs',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => [],
-                    ],
-                ],
-            ];
-        }
-
-        return [];
     }
 }

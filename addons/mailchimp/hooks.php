@@ -6,15 +6,15 @@ if (!defined('ABSPATH')) {
 
 add_filter(
     'forms_bridge_template_defaults',
-    function ($defaults, $api, $schema) {
-        if ($api !== 'mailchimp') {
+    function ($defaults, $addon, $schema) {
+        if ($addon !== 'mailchimp') {
             return $defaults;
         }
 
         $defaults = apply_filters(
             'forms_bridge_template_defaults',
             $defaults,
-            'rest-api',
+            'rest',
             $schema
         );
 

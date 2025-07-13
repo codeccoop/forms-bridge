@@ -15,68 +15,11 @@ if (!defined('ABSPATH')) {
 class Zoho_Form_Bridge extends Form_Bridge
 {
     /**
-     * Handles bridge class API name.
-     *
-     * @var string
-     */
-    public const addon = 'zoho';
-
-    /**
-     * Handles the oauth access token transient name.
-     *
-     * @var string
-     */
-    protected const token_transient = 'forms-bridge-zoho-oauth-access-token';
-
-    /**
      * Handles the zoho oauth service name.
      *
      * @var string
      */
     protected const zoho_oauth_service = 'ZohoCRM';
-
-    public static function schema()
-    {
-        $schema = parent::schema();
-
-        $schema['properties']['credential'] = [
-            'name' => __('Credential', 'forms-bridge'),
-            'description' => __('OAuth credential', 'forms-bridge'),
-            'type' => 'string',
-        ];
-
-        // $schema['required'][] = 'credential';
-
-        $schema['properties']['endpoint'] = [
-            'name' => __('Endpoint', 'forms-bridge'),
-            'description' => __('HTTP API endpoint', 'forms-bridge'),
-            'type' => 'string',
-        ];
-
-        // $schema['required'][] = 'endpoint';
-
-        $schema['properties']['scope'] = [
-            'name' => __('OAuth scope', 'forms-bridge'),
-            'description' => __(
-                'API scopes list separated by commas',
-                'forms-bridge'
-            ),
-            'type' => 'string',
-            'default' => 'ZohoCRM.modules.ALL',
-        ];
-
-        $schema['required'][] = 'scope';
-
-        $schema['properties']['method'] = [
-            'description' => __('HTTP method', 'forms-bridge'),
-            'type' => 'string',
-            'enum' => ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-            'default' => 'POST',
-        ];
-
-        $schema['required'][] = 'method';
-        return $schema;
-    }
 
     /**
      * Returns json as static bridge content type.
@@ -86,95 +29,6 @@ class Zoho_Form_Bridge extends Form_Bridge
     protected function content_type()
     {
         return 'application/json';
-    }
-
-    /**
-     * Bridge's credential data getter.
-     *
-     * @return array|null
-     */
-    protected function credential()
-    {
-        if (!$this->is_valid) {
-            return;
-        }
-
-        $credentials = Forms_Bridge::setting($this->api)->credentials ?: [];
-        foreach ($credentials as $credential) {
-            if ($credential['name'] === $this->data['credential']) {
-                return $credential;
-            }
-        }
-    }
-
-    /**
-     * Compare two scope strings and return true if the first one is compatible with the second one.
-     *
-     * @param string $scope Zoho OAuth scope string.
-     * @param string $required Zoho OAuth scope string.
-     *
-     * @return boolean
-     */
-    private static function check_oauth_scope($scope, $required)
-    {
-        $scopes = array_filter(array_map('trim', explode(',', $scope)));
-        $requireds = array_filter(array_map('trim', explode(',', $required)));
-
-        $is_valid = true;
-        foreach ($requireds as $required) {
-            $chunks = explode('.', $required);
-
-            if (count($chunks) < 3) {
-                return false;
-            } elseif (count($chunks) > 3) {
-                [$rapp, $rmodule, $rsubmodule, $rpermission] = $chunks;
-            } else {
-                [$rapp, $rmodule, $rpermission] = $chunks;
-                $rsubmodule = null;
-            }
-
-            $match = false;
-            foreach ($scopes as $scope) {
-                $chunks = explode('.', $scope);
-
-                if (count($chunks) < 3) {
-                    continue;
-                } elseif (count($chunks) > 3) {
-                    [$sapp, $smodule, $ssubmodule, $spermission] = $chunks;
-                } else {
-                    [$sapp, $smodule, $spermission] = $chunks;
-                    $ssubmodule = null;
-                }
-
-                if ($rapp !== $sapp) {
-                    continue;
-                }
-
-                if ($rmodule !== $smodule) {
-                    continue;
-                }
-
-                if ($rsubmodule) {
-                    if ($ssubmodule === null && $spermission === 'ALL') {
-                        $match = true;
-                        break;
-                    } elseif ($rsubmodule !== $ssubmodule) {
-                        continue;
-                    }
-                }
-
-                $match =
-                    $spermission === 'ALL' || $spermission === $rpermission;
-
-                if ($match) {
-                    break;
-                }
-            }
-
-            $is_valid = $is_valid && $match;
-        }
-
-        return $is_valid;
     }
 
     /**
@@ -280,17 +134,6 @@ class Zoho_Form_Bridge extends Form_Bridge
     }
 
     /**
-     * Check for credentials validity without publishing the private access token.
-     *
-     * @return boolean
-     */
-    public function check_credential()
-    {
-        $access_token = $this->get_access_token();
-        return $access_token !== null;
-    }
-
-    /**
      * Performs an http request to the Zoho API backend.
      *
      * @param array $payload Payload data.
@@ -298,9 +141,14 @@ class Zoho_Form_Bridge extends Form_Bridge
      *
      * @return array|WP_Error Http request response.
      */
-    protected function do_submit($payload, $attachments = [])
+    public function submit($payload = [], $attachments = [])
     {
-        $access_token = $this->get_access_token();
+        $credential = $this->credential();
+        if (!$credential) {
+            return new WP_Error('unauthorized');
+        }
+
+        $access_token = $credential->get_access_token();
         if (empty($access_token)) {
             return new WP_Error(
                 'unauthorized',
@@ -341,55 +189,5 @@ class Zoho_Form_Bridge extends Form_Bridge
         }
 
         return $response;
-    }
-
-    /**
-     * Bridge's endpoint fields schema getter.
-     *
-     * @param string|null $endpoint Layout metadata endpoint.
-     *
-     * @return array
-     */
-    protected function endpoint_schema($endpoint = '/crm/v7/settings/layouts')
-    {
-        if (!preg_match('/\/([A-Z].+$)/', $this->endpoint, $matches)) {
-            return [];
-        }
-
-        $module = str_replace('/upsert', '', $matches[1]);
-
-        $response = $this->patch([
-            'name' => 'zoho-api-schema-introspection',
-            'endpoint' => $endpoint,
-            'scope' => static::zoho_oauth_service . '.settings.layouts.READ',
-            'method' => 'GET',
-        ])->submit(['module' => $module]);
-
-        if (is_wp_error($response)) {
-            return [];
-        }
-
-        $fields = [];
-        foreach ($response['data']['layouts'] as $layout) {
-            foreach ($layout['sections'] as $section) {
-                foreach ($section['fields'] as $field) {
-                    $type = $field['json_type'];
-                    if ($type === 'jsonobject') {
-                        $type = 'object';
-                    } elseif ($type === 'jsonarray') {
-                        $type = 'array';
-                    } elseif ($type === 'double') {
-                        $type = 'number';
-                    }
-
-                    $fields[] = [
-                        'name' => $field['api_name'],
-                        'schema' => ['type' => $type],
-                    ];
-                }
-            }
-        }
-
-        return $fields;
     }
 }

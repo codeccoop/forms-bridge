@@ -80,10 +80,11 @@ export default function NewBackend({ add }) {
       <div
         style={{
           display: "flex",
-          gap: "1em",
+          gap: "0.5rem",
         }}
       >
         <TextControl
+          style={{ minWidth: "250px" }}
           label={__("Backend name", "forms-bridge")}
           help={
             nameConflict
@@ -96,7 +97,7 @@ export default function NewBackend({ add }) {
           __next40pxDefaultSize
         />
         <TextControl
-          style={{ minWidth: "300px" }}
+          style={{ minWidth: "350px" }}
           label={__("Backend base URL", "forms-bridge")}
           value={baseUrl}
           onChange={setBaseUrl}
@@ -104,11 +105,11 @@ export default function NewBackend({ add }) {
           __next40pxDefaultSize
         />
       </div>
-      <Spacer paddingY="calc(8px)" />
+      <Spacer />
       <div
         style={{
           display: "flex",
-          gap: "1em",
+          gap: "0.5rem",
           flexWrap: "wrap",
         }}
       >
@@ -116,7 +117,7 @@ export default function NewBackend({ add }) {
           variant="primary"
           onClick={create}
           style={{
-            width: "150px",
+            width: "100px",
             justifyContent: "center",
             marginTop: "auto",
           }}

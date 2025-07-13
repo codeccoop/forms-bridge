@@ -28,6 +28,10 @@ export default function JobsProvider({ children }) {
   const flushStore = useFlushStore();
 
   useEffect(() => {
+    setJob(null);
+  }, [addon]);
+
+  useEffect(() => {
     if (job) {
       fetch(job);
     }

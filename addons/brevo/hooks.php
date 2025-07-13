@@ -6,15 +6,15 @@ if (!defined('ABSPATH')) {
 
 add_filter(
     'forms_bridge_template_defaults',
-    function ($defaults, $api, $schema) {
-        if ($api !== 'brevo') {
+    function ($defaults, $addon, $schema) {
+        if ($addon !== 'brevo') {
             return $defaults;
         }
 
         $defaults = apply_filters(
             'forms_bridge_template_defaults',
             $defaults,
-            'rest-api',
+            'rest',
             $schema
         );
 
@@ -69,16 +69,12 @@ add_filter(
 
 add_filter(
     'forms_bridge_template_schema',
-    function ($schema, $api) {
-        if ($api !== 'brevo') {
+    function ($schema, $addon) {
+        if ($addon !== 'brevo') {
             return $schema;
         }
 
-        return apply_filters(
-            'forms_bridge_template_schema',
-            $schema,
-            'rest-api'
-        );
+        return apply_filters('forms_bridge_template_schema', $schema, 'rest');
     },
     10,
     2

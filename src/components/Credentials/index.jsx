@@ -54,7 +54,7 @@ export default function Credentials() {
     if (index === -1) index = credentials.length;
     const newcredentials = credentials
       .slice(0, index)
-      .concat([data])
+      .concat([{ enabled: false, ...data }])
       .concat(credentials.slice(index + 1, credentials.length));
 
     setCredentials(newcredentials);

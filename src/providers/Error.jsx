@@ -1,4 +1,4 @@
-const { createContext, useContext, useState } = wp.element;
+const { createContext, useContext, useState, useEffect } = wp.element;
 const { Notice } = wp.components;
 
 const ErrorContext = createContext([]);
@@ -10,6 +10,12 @@ export default function ErrorProvider({ children }) {
     if (error) setErrors([...errors, error]);
     else setErrors(errors.slice(1));
   };
+
+  useEffect(() => {
+    if (errors.length) {
+      window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+    }
+  }, [errors]);
 
   return (
     <ErrorContext.Provider value={[errors[0], updateErrors]}>

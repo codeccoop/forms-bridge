@@ -58,6 +58,18 @@ foreach ($setting_names as $setting_name) {
         );
     }
 
+    if (
+        !in_array($option, [
+            'forms-bridge_odoo',
+            'forms-bridge_zoho',
+            'forms-bridge_bigin',
+            'forms-bridge_gsheets',
+            true,
+        ])
+    ) {
+        unset($data['credentials']);
+    }
+
     update_option($option, $data);
 }
 
@@ -106,3 +118,14 @@ if (isset($http['backends'])) {
 
     update_option('http-bridge_general', $http);
 }
+
+$rest = get_option('forms-bridge_rest-api');
+add_option('forms-bridge_rest', $rest);
+delete_option('forms-bridge_rest-api');
+
+$registry = get_option('forms_bridge_addons');
+$registry['rest'] = $registry['rest-api'];
+unset($registry['rest-api']);
+update_option('forms_bridge_addons', $registry);
+
+// TODO: Add type and token attributes to zoho credentials

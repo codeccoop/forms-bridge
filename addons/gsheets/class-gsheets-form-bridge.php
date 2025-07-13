@@ -20,39 +20,6 @@ class Google_Sheets_Form_Bridge extends Form_Bridge
      */
     protected $api = 'gsheets';
 
-    public static function schema()
-    {
-        $schema = parent::schema();
-
-        $schema['properties']['spreadsheet'] = [
-            '$ref' => '#/gsheets/spreadsheets/id',
-            'description' => __('ID of the spreadhseet', 'forms-bridge'),
-            'type' => 'string',
-        ];
-
-        $schema['required'][] = 'spreadsheet';
-
-        $schema['properties']['tab'] = [
-            'description' => __('Name of the spreadsheet tab', 'forms-bridge'),
-            'type' => 'string',
-            'minLength' => 1,
-        ];
-
-        $schema['required'][] = 'tab';
-
-        $schema['properties']['endpoint'] = [
-            'description' => __(
-                'Concatenation of the spreadsheet ID and the tab name by double colons',
-                'forms-bridge'
-            ),
-            'type' => 'string',
-            'pattern' => '^.*::.*$',
-            'default' => '${spreadsheet}::${tab}',
-        ];
-
-        $schema['required'][] = 'endpoint';
-        return $schema;
-    }
     /**
      * Retrives the bridge's backend instance.
      *
@@ -68,32 +35,6 @@ class Google_Sheets_Form_Bridge extends Form_Bridge
     }
 
     /**
-     * Bridge's spreadsheet fields schema getter.
-     *
-     * @return array
-     */
-    protected function endpoint_schema()
-    {
-        $response = $this->patch([
-            'method' => 'schema',
-        ])->submit();
-
-        if (is_wp_error($response) || empty($response['data'])) {
-            return [];
-        }
-
-        $fields = [];
-        foreach ($response['data'] as $field) {
-            $fields[] = [
-                'name' => $field,
-                'schema' => ['type' => 'string'],
-            ];
-        }
-
-        return $fields;
-    }
-
-    /**
      * Performs a gRPC request to the Google Sheets API.
      *
      * @param array $payload Submission data.
@@ -101,7 +42,7 @@ class Google_Sheets_Form_Bridge extends Form_Bridge
      *
      * @return array|WP_Error Http request response.
      */
-    protected function do_submit($payload, $attachments = [])
+    public function submit($payload = [], $attachments = [])
     {
         $payload = self::flatten_payload($payload);
 

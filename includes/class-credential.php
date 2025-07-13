@@ -14,7 +14,7 @@ class Credential
             'forms_bridge_credential_schema',
             [
                 '$schema' => 'http://json-schema.org/draft-04/schema#',
-                'title' => 'form-bridge-schema',
+                'title' => 'credential-schema',
                 'type' => 'object',
                 'properties' => [
                     'name' => [
@@ -26,16 +26,24 @@ class Credential
                         'type' => 'string',
                         'minLength' => 1,
                     ],
-                    'auth_url' => [
-                        'name' => __('Auth URL', 'forms-bridge'),
+                    'enabled' => [
                         'description' => __(
-                            'OAuth authrization URL',
+                            'Boolean flag to enable/disable a bridge',
                             'forms-bridge'
                         ),
-                        'type' => 'string',
+                        'type' => 'boolean',
+                        'default' => false,
+                    ],
+                    'is_valid' => [
+                        'description' => __(
+                            'Validation result of the bridge setting',
+                            'forms-bridge'
+                        ),
+                        'type' => 'boolean',
+                        'default' => false,
                     ],
                 ],
-                'required' => ['name'],
+                'required' => ['name', 'enabled', 'is_valid'],
                 'additionalProperties' => false,
             ],
             $addon
@@ -57,7 +65,7 @@ class Credential
         );
 
         if ($this->is_valid) {
-            $this->id = $this->addon . '-' . $data['name'];
+            $this->id = $addon . '-' . $data['name'];
         }
     }
 
@@ -79,6 +87,34 @@ class Credential
                 return $this->data[$name] ?? null;
         }
     }
+
+    protected function refresh_access_token()
+    {
+        $refresh_token = $this->refresh_token;
+        if (!$refresh_token) {
+            return;
+        }
+    }
+
+    public function get_access_token()
+    {
+        if (!$this->is_valid) {
+            return;
+        }
+
+        $access_token = $this->access_token;
+        if (!$access_token) {
+            return;
+        }
+
+        if ($this->expires_at > time()) {
+            $access_token = $this->refresh_access_token();
+        }
+
+        return $access_token;
+    }
+
+    public function oauth_grant() {}
 
     public function data()
     {

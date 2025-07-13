@@ -9,9 +9,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Integration abstract class.
+ * Integration base class.
  */
-abstract class Integration extends Singleton
+class Integration extends Singleton
 {
     /**
      * Handles integration's registry option name.
@@ -20,9 +20,9 @@ abstract class Integration extends Singleton
      */
     private const registry = 'forms_bridge_integrations';
 
-    public const title = 'Abstract Integration';
+    public const title = '';
 
-    public const name = 'abstract-integration';
+    public const name = '';
 
     /**
      * Handles available integrations state.
@@ -30,32 +30,24 @@ abstract class Integration extends Singleton
      * @var array<string, Integration|null> $integrations.
      */
     private static $integrations = [];
-    // 'gf' => null,
-    // 'wpforms' => null,
-    // 'wpcf7' => null,
-    // 'ninja' => null,
-    // 'woo' => null,
-    // 'formidable' => null,
-    // 'forminator' => null,
-    // ];
 
     private static function check_dependencies($integration)
     {
         switch ($integration) {
             case 'wpcf7':
-                $deps = ['contact-form-7/wp-contact-form-7.php'];
+                $dep = 'contact-form-7/wp-contact-form-7.php';
                 break;
             case 'gf':
-                $deps = ['gravityforms/gravityforms.php'];
+                $dep = 'gravityforms/gravityforms.php';
                 break;
             case 'wpforms':
-                $deps = ['wpforms-lite/wpforms.php', 'wpforms/wpforms.php'];
+                $dep = 'wpforms/wpforms.php';
                 break;
             case 'ninja':
-                $deps = ['ninja-forms/ninja-forms.php'];
+                $dep = 'ninja-forms/ninja-forms.php';
                 break;
             case 'woo':
-                $deps = ['woocommerce/woocommerce.php'];
+                $dep = 'woocommerce/woocommerce.php';
                 break;
             // case 'formidable':
             //     $plugin = 'formidable/formidable.php';
@@ -67,16 +59,7 @@ abstract class Integration extends Singleton
                 return false;
         }
 
-        $is_active = false;
-        foreach ($deps as $dep) {
-            $is_active = Forms_Bridge::is_plugin_active($dep);
-
-            if ($is_active) {
-                break;
-            }
-        }
-
-        return $is_active;
+        return Forms_Bridge::is_plugin_active($dep);
     }
 
     /**
@@ -97,7 +80,7 @@ abstract class Integration extends Singleton
                 continue;
             }
 
-            $index = "{$integration_dir}/class-integration.php";
+            $index = "{$integration_dir}/class-{$integration}-integration.php";
             $has_deps = self::check_dependencies($integration);
 
             if (is_file($index) && is_readable($index) && $has_deps) {
@@ -164,14 +147,14 @@ abstract class Integration extends Singleton
      */
     public static function load_integrations()
     {
-        $integrations_dir = dirname(__FILE__);
+        $integrations_dir = FORMS_BRIDGE_INTEGRATIONS_DIR;
         $registry = self::registry();
 
         foreach ($registry as $integration => $enabled) {
             $has_dependencies = self::check_dependencies($integration);
 
             if ($has_dependencies) {
-                require_once "{$integrations_dir}/{$integration}/class-integration.php";
+                require_once "{$integrations_dir}/{$integration}/class-{$integration}-integration.php";
 
                 if ($enabled) {
                     self::$integrations[$integration]->load();
@@ -330,28 +313,37 @@ abstract class Integration extends Singleton
     /**
      * Integration initializer to be fired on wp init.
      */
-    abstract protected function init();
+    protected function init() {}
 
     /**
      * Retrives the current form.
      *
      * @return array Form data.
      */
-    abstract public function form();
+    public function form()
+    {
+        return;
+    }
 
     /**
      * Retrives form by ID.
      *
      * @return array Form data.
      */
-    abstract public function get_form_by_id($form_id);
+    public function get_form_by_id($form_id)
+    {
+        return;
+    }
 
     /**
      * Retrives available forms.
      *
      * @return array Collection of form data.
      */
-    abstract public function forms();
+    public function forms()
+    {
+        return [];
+    }
 
     /**
      * Creates a form from a given template fields.
@@ -360,7 +352,10 @@ abstract class Integration extends Singleton
      *
      * @return int|null ID of the new form.
      */
-    abstract public function create_form($data);
+    public function create_form($data)
+    {
+        return;
+    }
 
     /**
      * Removes a form by ID.
@@ -369,23 +364,35 @@ abstract class Integration extends Singleton
      *
      * @return boolean Removal result.
      */
-    abstract public function remove_form($form_id);
+    public function remove_form($form_id)
+    {
+        return false;
+    }
 
-    abstract public function submission_id();
+    public function submission_id()
+    {
+        return;
+    }
 
     /**
      * Retrives the current form submission.
      *
      * @param boolean $raw Control if the submission is serialized before exit.
      *
-     * @return array Submission data.
+     * @return array|null Submission data.
      */
-    abstract public function submission($raw);
+    public function submission($raw)
+    {
+        return;
+    }
 
     /**
      * Retrives the current submission uploaded files.
      *
-     * @return array Collection of uploaded files.
+     * @return array|null Collection of uploaded files.
      */
-    abstract public function uploads();
+    public function uploads()
+    {
+        return;
+    }
 }

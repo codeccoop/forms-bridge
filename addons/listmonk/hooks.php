@@ -6,15 +6,15 @@ if (!defined('ABSPATH')) {
 
 add_filter(
     'forms_bridge_template_defaults',
-    function ($defaults, $api, $schema) {
-        if ($api !== 'listmonk') {
+    function ($defaults, $addon, $schema) {
+        if ($addon !== 'listmonk') {
             return $defaults;
         }
 
         $defaults = apply_filters(
             'forms_bridge_template_defaults',
             $defaults,
-            'rest-api',
+            'rest',
             $schema
         );
 
@@ -31,8 +31,15 @@ add_filter(
                         'default' => 'Listmonk API',
                     ],
                     [
-                        'ref' => '#backend/headers[]',
-                        'name' => 'user',
+                        'ref' => '#backend/authentication',
+                        'name' => 'type',
+                        'label' => __('Authentication', 'forms-bridge'),
+                        'type' => 'string',
+                        'value' => 'Token',
+                    ],
+                    [
+                        'ref' => '#backend/authentication',
+                        'name' => 'client_id',
                         'label' => __('API user', 'forms-bridge'),
                         'description' => __(
                             'You have to generate an API user on your listmonk instance. See the <a href="https://listmonk.app/docs/roles-and-permissions/#api-users">documentation</a> for more information',
@@ -42,8 +49,8 @@ add_filter(
                         'required' => true,
                     ],
                     [
-                        'ref' => '#backend/headers[]',
-                        'name' => 'token',
+                        'ref' => '#backend/authentication',
+                        'name' => 'client_secret',
                         'label' => __('API token', 'forms-bridge'),
                         'description' => __(
                             'Token of the API user. The token will be shown only once on user creation time, be sure to copy its value and store it in a save place',
@@ -55,7 +62,7 @@ add_filter(
                     [
                         'ref' => '#bridge',
                         'name' => 'method',
-                        'default' => 'POST',
+                        'value' => 'POST',
                     ],
                     [
                         'ref' => '#bridge/custom_fields[]',
@@ -65,7 +72,14 @@ add_filter(
                             'Select, at least, one list that users will subscribe to',
                             'forms-bridge'
                         ),
-                        'type' => 'string',
+                        'type' => 'options',
+                        'options' => [
+                            'endpoint' => '/api/lists',
+                            'finger' => [
+                                'value' => 'data.results[].id',
+                                'label' => 'data.results[].name',
+                            ],
+                        ],
                         'required' => true,
                     ],
                 ],
@@ -85,6 +99,10 @@ add_filter(
                             'name' => 'Accept',
                             'value' => 'application/json',
                         ],
+                    ],
+                    'authentication' => [
+                        'type' => 'Token',
+                        'client_secret' => 'api-token',
                     ],
                 ],
             ],

@@ -36,7 +36,13 @@ export default function Settings() {
             <CardHeader>
               <Heading level={3}>{__(tab.title, "forms-bridge")}</Heading>
               <img
-                style={{ width: "auto", height: "25px" }}
+                style={{
+                  width: "auto",
+                  height: "25px",
+                  maxWidth: "90px",
+                  objectFit: "contain",
+                  objectPosition: "center",
+                }}
                 className="addon-logo"
               />
             </CardHeader>

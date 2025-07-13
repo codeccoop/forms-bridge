@@ -5,6 +5,7 @@ import { useError } from "./Error";
 const { createContext, useContext, useMemo, useEffect, useState, useCallback } =
   wp.element;
 const apiFetch = wp.apiFetch;
+const { __ } = wp.i18n;
 
 const SchemasContext = createContext({
   template: {},
@@ -40,11 +41,11 @@ export default function SchemasProvider({ children }) {
   }, [tab]);
 
   const schema = useMemo(() => {
-    const { bridge, template = {} } = schemas[tab] || {};
+    const { bridge, credential } = schemas[tab] || {};
 
     return {
       bridge,
-      credential: template.properties?.credential,
+      credential,
     };
   }, [tab, schemas]);
 

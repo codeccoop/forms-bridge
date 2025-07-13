@@ -17,6 +17,8 @@ export function validateBackend(backend, schema, fields) {
     let value;
     if (ref === "#backend/headers[]") {
       value = backend.headers.find((header) => header.name === name)?.value;
+    } else if (ref.includes("#backend/authentication")) {
+      value = backend.authentication?.[name];
     } else {
       value = backend[name];
     }
@@ -49,11 +51,19 @@ export function mockBackend(data, defaults = {}) {
     name: data.name || defaults.name,
     base_url: data.base_url || defaults.base_url,
     headers: Object.keys(data)
-      .filter((k) => !["name", "base_url"].includes(k))
+      .filter(
+        (k) => !["name", "base_url", "client_id", "client_secret"].includes(k)
+      )
       .map((k) => ({
         name: k,
         value: data[k],
       })),
+    authentication: {
+      type: defaults.authentication?.type || "Basic",
+      client_id: data.client_id || defaults.authentication?.client_id,
+      client_secret:
+        data.client_secret || defaults.authentication?.client_secret,
+    },
   };
 
   if (Array.isArray(defaults.headers)) {

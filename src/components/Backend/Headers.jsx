@@ -15,67 +15,22 @@ const WELL_KNOWN_CONTENT_TYPES = {
 
 function ContentTypeHeader({ setValue, value }) {
   return (
-    <div className="components-base-control__label">
-      <label
-        className="components-base-control__label"
-        style={{
-          fontSize: "11px",
-          textTransform: "uppercase",
-          fontWeight: 500,
-          marginBottom: "calc(8px)",
-        }}
-      >
-        {__("Content encoding", "forms-bridge")}
-        <br />
-        <span
-          style={{
-            color: "#757575",
-            fontStyle: "normal",
-            fontSize: "12px",
-            marginTop: "calc(8px)",
-            textTransform: "none",
-            fontWeight: "400",
-          }}
-        >
-          {__(
-            "Select how Forms Bridge should encode your form submissions.",
-            "forms-bridge"
-          )}
-        </span>
-        <br />
-        <span
-          style={{
-            color: "#757575",
-            fontStyle: "normal",
-            fontSize: "12px",
-            marginTop: "calc(8px)",
-            textTransform: "none",
-            fontWeight: "400",
-          }}
-        >
-          ⚠{" "}
-          {__(
-            "If your backend uses custom encoding, Forms Bridge will need a string payload. You can use the `forms_bridge_payload` hook to encode your form submission as string.",
-            "forms-bridge"
-          )}
-        </span>
-      </label>
-      <div style={{ width: "250px", marginTop: "calc(8px)" }}>
-        <SelectControl
-          value={WELL_KNOWN_CONTENT_TYPES[value] ? value : ""}
-          onChange={setValue}
-          options={Object.keys(WELL_KNOWN_CONTENT_TYPES)
-            .map((type) => ({
-              label: WELL_KNOWN_CONTENT_TYPES[type],
-              value: type,
-            }))
-            .concat([
-              { label: __("Custom encoding", "forms-bridge"), value: "" },
-            ])}
-          __next40pxDefaultSize
-          __nextHasNoMarginBottom
-        />
-      </div>
+    <div style={{ width: "250px", marginTop: "calc(8px)" }}>
+      <SelectControl
+        label={__("Content encoding")}
+        value={WELL_KNOWN_CONTENT_TYPES[value] ? value : ""}
+        onChange={setValue}
+        options={Object.keys(WELL_KNOWN_CONTENT_TYPES)
+          .map((type) => ({
+            label: WELL_KNOWN_CONTENT_TYPES[type],
+            value: type,
+          }))
+          .concat([
+            { label: __("Custom encoding", "forms-bridge"), value: "" },
+          ])}
+        __next40pxDefaultSize
+        __nextHasNoMarginBottom
+      />
     </div>
   );
 }
@@ -134,7 +89,7 @@ export default function BackendHeaders({ headers, setHeaders }) {
   return (
     <>
       <ContentTypeHeader value={contentType} setValue={setContentType} />
-      <Spacer paddingY="calc(8px)" />
+      <Spacer paddingY="calc(4px)" />
       <div className="components-base-control__label">
         <label
           className="components-base-control__label"
@@ -145,7 +100,7 @@ export default function BackendHeaders({ headers, setHeaders }) {
             marginBottom: "calc(8px)",
           }}
         >
-          {__("Backend HTTP Headers", "forms-bridge")}
+          {__("HTTP Headers", "forms-bridge")}
         </label>
         <table
           style={{

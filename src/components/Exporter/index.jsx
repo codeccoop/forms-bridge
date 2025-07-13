@@ -2,6 +2,7 @@
 import { useError } from "../../providers/Error";
 import { useLoading } from "../../providers/Loading";
 import { useFetchSettings, useSettings } from "../../providers/Settings";
+import { uploadJson } from "../../lib/utils";
 
 const apiFetch = wp.apiFetch;
 const { useState, useEffect, useCallback } = wp.element;
@@ -39,37 +40,23 @@ export default function Exporter() {
   }, [settings]);
 
   const importConfig = useCallback(() => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "application/json";
-    document.body.appendChild(input);
-    input.click();
-    input.addEventListener("change", () => {
-      const file = input.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const settings = JSON.parse(reader.result);
-          setSettings(settings).catch(() =>
-            setError(
-              __("It has been an error with config import", "forms-bridge")
-            )
+    uploadJson()
+      .then((settings) => {
+        setSettings(settings).catch(() => {
+          setError(
+            __("It has been an error with config import", "forms-bridge")
           );
-        } catch {
+        });
+      })
+      .catch((err) => {
+        if (err.name === "SyntaxError") {
           setError(__("JSON syntax error", "forms-bridge"));
-          return;
+        } else {
+          setError(
+            __("Something went wrong with the file upload", "forms-bridge")
+          );
         }
-      };
-
-      reader.onerror = () =>
-        setError(
-          __("Something went wrong with the file upload", "forms-bridge")
-        );
-
-      reader.readAsText(file);
-    });
+      });
   }, [setSettings]);
 
   const wipeConfig = useCallback(() => {
@@ -114,7 +101,7 @@ export default function Exporter() {
       <div style={{ display: "flex", gap: "0.5rem" }}>
         <Button
           disabled={!!error || loading}
-          variant="primary"
+          variant="secondary"
           description={__("Export Forms Bridge config as JSON", "forms-bridge")}
           onClick={downloadConfig}
           style={{ width: "150px", justifyContent: "center" }}
@@ -124,7 +111,7 @@ export default function Exporter() {
         </Button>
         <Button
           disabled={!!error || loading}
-          variant="secondary"
+          variant="primary"
           description={__("Import Forms Bridge JSON config", "forms-bridge")}
           onClick={() => setShowModal("import")}
           style={{ width: "150px", justifyContent: "center" }}

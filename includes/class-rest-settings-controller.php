@@ -6,6 +6,7 @@ use WP_Error;
 use WP_REST_Server;
 use WPCT_PLUGIN\REST_Settings_Controller as Base_Controller;
 use FBAPI;
+use HTTP_BRIDGE\Http_Backend;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -673,15 +674,17 @@ class REST_Settings_Controller extends Base_Controller
 
     private static function get_template_options($addon, $request)
     {
-        [$backend] = \HTTP_BRIDGE\Settings_Store::sanitize_backends([
-            $request['backend'],
-        ]);
-
-        if (empty($backend)) {
-            return self::bad_request();
+        $handler = self::prepare_addon_backend_request_handler(
+            $addon,
+            $request
+        );
+        if (is_wp_error($handler)) {
+            return $handler;
         }
 
-        $template = FBAPI::get_template($request['name'], $addon);
+        [$addon, $backend, $credential] = $handler;
+
+        $template = FBAPI::get_template($request['name'], $addon::name);
         if (!$template) {
             return self::not_found();
         }
@@ -693,35 +696,28 @@ class REST_Settings_Controller extends Base_Controller
         $field_options = [];
         $fields = $template->fields;
         foreach ($fields as $field) {
-            if (isset($field['options']['endpoint'])) {
+            if ($endpoint = $field['options']['endpoint'] ?? null) {
                 if (is_string($field['options']['finger'])) {
-                    $field['options']['finger'] = [
+                    $finger = [
                         'value' => $field['options']['finger'],
                     ];
+                } else {
+                    $finger = $field['options']['finger'];
                 }
 
-                $value_pointer = $field['options']['finger']['value'];
+                $value_pointer = $finger['value'];
 
                 if (!JSON_Finger::validate($value_pointer)) {
                     return self::internal_server_error();
                 }
 
-                if (
-                    $label_pointer =
-                        $field['options']['finger']['label'] ??
-                        $field['options']['finger']['value']
-                ) {
-                    if (!JSON_Finger::validate($label_pointer)) {
-                        return self::internal_server_error();
-                    }
+                $label_pointer = $finger['label'] ?? $finger['value'];
+
+                if (!JSON_Finger::validate($label_pointer)) {
+                    return self::internal_server_error();
                 }
 
-                $response = Addon::fetch(
-                    $addon,
-                    $backend,
-                    $field['options']['endpoint'],
-                    $request['credential']
-                );
+                $response = $addon->fetch($endpoint, $backend, $credential);
 
                 if (is_wp_error($response)) {
                     $error = self::internal_server_error();
@@ -732,9 +728,9 @@ class REST_Settings_Controller extends Base_Controller
                 $options = [];
                 $data = $response['data'];
 
-                $finger = new JSON_Finger($data);
+                $json_finger = new JSON_Finger($data);
 
-                $values = $finger->get($value_pointer);
+                $values = $json_finger->get($value_pointer);
 
                 if (!wp_is_numeric_array($values)) {
                     return self::internal_server_error();
@@ -744,7 +740,7 @@ class REST_Settings_Controller extends Base_Controller
                     $options[] = ['value' => $value, 'label' => $value];
                 }
 
-                $labels = $finger->get($label_pointer);
+                $labels = $json_finger->get($label_pointer);
                 if (
                     wp_is_numeric_array($labels) &&
                     count($labels) === count($values)
@@ -765,17 +761,63 @@ class REST_Settings_Controller extends Base_Controller
         return $field_options;
     }
 
-    private static function ping_backend($addon, $request)
-    {
-        [$backend] = \HTTP_BRIDGE\Settings_Store::sanitize_backends([
+    /**
+     * Performs a request validation and sanitization
+     *
+     * @param string $addon Target addon name.
+     * @param WP_REST_Request $request Request instance.
+     *
+     * @return [Addon, string, string|null]|WP_Error
+     */
+    private static function prepare_addon_backend_request_handler(
+        $addon,
+        $request
+    ) {
+        $backend = wpct_plugin_sanitize_with_schema(
             $request['backend'],
-        ]);
+            FBAPI::get_backend_schema()
+        );
 
-        if (empty($backend)) {
+        if (is_wp_error($backend)) {
             return self::bad_request();
         }
 
-        $result = Addon::ping($addon, $backend, $request['credential']);
+        $credential = $request['credential'];
+        if (!empty($credential)) {
+            $credential = wpct_plugin_sanitize_with_schema(
+                $credential,
+                FBAPI::get_credential_schema($addon)
+            );
+
+            if (is_wp_error($credential)) {
+                return self::bad_request();
+            }
+        }
+
+        $addon = FBAPI::get_addon($addon);
+        if (!$addon) {
+            return self::bad_request();
+        }
+
+        self::temp_backend_registration($backend);
+        self::temp_credential_registration($credential, $addon::name);
+
+        return [$addon, $backend['name'], $credential['name'] ?? null];
+    }
+
+    private static function ping_backend($addon, $request)
+    {
+        $handler = self::prepare_addon_backend_request_handler(
+            $addon,
+            $request
+        );
+        if (is_wp_error($handler)) {
+            return $handler;
+        }
+
+        [$addon, $backend, $credential] = $handler;
+
+        $result = $addon->ping($backend, $credential);
 
         if (is_wp_error($result)) {
             $error = self::bad_request();
@@ -783,24 +825,25 @@ class REST_Settings_Controller extends Base_Controller
             return $error;
         }
 
-        return $result;
+        return ['success' => $result];
     }
 
     private static function get_endpoint_schema($addon, $request)
     {
-        [$backend] = \HTTP_BRIDGE\Settings_Store::sanitize_backends([
-            $request['backend'],
-        ]);
-
-        if (empty($backend)) {
-            return self::bad_request();
+        $handler = self::prepare_addon_backend_request_handler(
+            $addon,
+            $request
+        );
+        if (is_wp_error($handler)) {
+            return $handler;
         }
 
-        $schema = Addon::endpoint_schema(
-            $addon,
-            $backend,
+        [$addon, $backend, $credential] = $handler;
+
+        $schema = $addon->get_endpoint_schema(
             $request['endpoint'],
-            $request['credential']
+            $backend,
+            $credential
         );
 
         if (is_wp_error($schema)) {
@@ -814,15 +857,16 @@ class REST_Settings_Controller extends Base_Controller
 
     private static function addon_schemas($name)
     {
-        $addon = Addon::addon($name);
-
-        $bridge_class = $addon::bridge_class;
-        $bridge = $bridge_class::schema();
-        $template = Form_Bridge_Template::schema($addon::name);
+        $bridge = FBAPI::get_bridge_schema($name);
+        $credential = FBAPI::get_credential_schema($name);
 
         return [
-            'bridge' => $bridge,
-            'template' => $template,
+            'bridge' => wpct_plugin_prune_rest_private_schema_properties(
+                $bridge
+            ),
+            'credential' => wpct_plugin_prune_rest_private_schema_properties(
+                $credential
+            ),
         ];
     }
 
@@ -858,4 +902,76 @@ class REST_Settings_Controller extends Base_Controller
     private static function transient_backend($addon, $request) {}
 
     private static function transient_credential($adodn, $request) {}
+
+    /**
+     * Ephemeral backend registration as an interceptor to allow
+     * api fetch, ping and introspection of non registered backends.
+     *
+     * @param array $data Backend data.
+     */
+    private static function temp_backend_registration($data)
+    {
+        if (empty($data) || !isset($data['name'])) {
+            return;
+        }
+
+        add_filter(
+            'http_bridge_backends',
+            static function ($backends) use ($data) {
+                foreach ($backends as $candidate) {
+                    if ($candidate->name === $data['name']) {
+                        $backend = $candidate;
+                        break;
+                    }
+                }
+
+                if (!isset($backend)) {
+                    $backend = new Http_Backend($data);
+
+                    if ($backend->is_valid) {
+                        $backends[] = $backend;
+                    }
+                }
+
+                return $backends;
+            },
+            99,
+            1
+        );
+    }
+
+    private static function temp_credential_registration($data, $addon)
+    {
+        if (empty($data) || !isset($data['name'])) {
+            return;
+        }
+
+        add_filter(
+            'forms_bridge_credentials',
+            static function ($credentials, $ns) use ($data, $addon) {
+                if ($ns && $ns !== $addon::name) {
+                    return $credentials;
+                }
+
+                foreach ($credentials as $candidate) {
+                    if ($candidate->name === $data['name']) {
+                        $credential = $candidate;
+                    }
+                }
+
+                if (!isset($credential)) {
+                    $credential_class = $addon::credential_class;
+                    $credential = new $credential_class($data, $addon);
+
+                    if ($credential->is_valid) {
+                        $credentials[] = $credential;
+                    }
+                }
+
+                return $credentials;
+            },
+            99,
+            2
+        );
+    }
 }

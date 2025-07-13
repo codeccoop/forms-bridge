@@ -5,6 +5,19 @@ if (!defined('ABSPATH')) {
 }
 
 add_filter(
+    'forms_bridge_bridge_schema',
+    function ($schema, $addon) {
+        if ($addon !== 'bigin') {
+            return $schema;
+        }
+
+        return apply_filters('forms_bridge_bridge_schema', $schema, 'zoho');
+    },
+    10,
+    2
+);
+
+add_filter(
     'forms_bridge_template_schema',
     function ($schema, $addon) {
         if ($addon !== 'bigin') {
@@ -19,8 +32,8 @@ add_filter(
 
 add_filter(
     'forms_bridge_template_defaults',
-    function ($defaults, $schema, $api) {
-        if ($api !== 'bigin') {
+    function ($defaults, $schema, $addon) {
+        if ($addon !== 'bigin') {
             return $defaults;
         }
 
@@ -35,14 +48,15 @@ add_filter(
             [
                 'fields' => [
                     [
-                        'ref' => '#bridge',
+                        'ref' => '#credential',
                         'name' => 'scope',
-                        'value' => 'ZohoBigin.modules.ALL',
+                        'value' =>
+                            'BiginCRM.modules.ALL,BiginCRM.settings.layouts.READ,BiginCRM.users.READ',
                     ],
                 ],
-                'bridge' => [
-                    'backend' => 'Zoho API',
-                    'scope' => 'ZohoBigin.modules.ALL',
+                'credential' => [
+                    'scope' =>
+                        'BiginCRM.modules.ALL,BiginCRM.settings.layouts.READ,BiginCRM.users.READ',
                 ],
             ],
             $defaults,
@@ -51,4 +65,42 @@ add_filter(
     },
     20,
     3
+);
+
+add_filter(
+    'forms_bridge_credential_schema',
+    function ($schema, $addon) {
+        if ($addon !== 'bigin') {
+            return $schema;
+        }
+
+        $schema = apply_filters(
+            'forms_bridge_credential_schema',
+            $schema,
+            'zoho'
+        );
+
+        $schema['properties']['scope']['default'] =
+            'ZohoBigin.modules.ALL,ZohoBigin.settings.layouts.READ,ZohoBigin.users.READ';
+        return $schema;
+    },
+    10,
+    2
+);
+
+add_filter(
+    'forms_bridge_template_data',
+    function ($data, $template_id) {
+        if (strpos($template_id, 'bigin-') !== 0) {
+            return $data;
+        }
+
+        return apply_filters(
+            'forms_bridge_template_data',
+            $data,
+            'zoho-' . $template_id
+        );
+    },
+    10,
+    2
 );

@@ -48,6 +48,7 @@ export default function BackendStep({ fields, data, setData, wired }) {
     if (nameConflict) return;
 
     const backend = mockBackend(state, config);
+    console.log("Mock backend", backend);
     if (validateBackend(backend, config, fields)) {
       return backend;
     }
@@ -75,13 +76,21 @@ export default function BackendStep({ fields, data, setData, wired }) {
       });
     }
 
-    const data = backend.headers.reduce(
-      (data, { name, value }) => ({ ...data, [name]: value }),
-      { name: backend.name, base_url: backend.base_url }
-    );
+    const data = { name: backend.name, base_url: backend.base_url };
+
+    backend.headers
+      .filter(({ name }) => {
+        return fields.find((f) => f.name === name);
+      })
+      .forEach(({ name, value }) => (data[name] = value));
+
+    if (backend.authentication?.type) {
+      data.client_id = backend.authentication.client_id;
+      data.client_secret = backend.authentication.client_secret;
+    }
 
     setData(data);
-  }, [reuse, backend]);
+  }, [reuse, backend, fields]);
 
   useEffect(() => {
     setReuse("");

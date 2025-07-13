@@ -5,7 +5,7 @@ import BridgeFields, { INTERNALS } from "./Fields";
 import Templates from "../Templates";
 import { uploadJson } from "../../lib/utils";
 
-const { Button, __experimentalSpacer: Spacer } = wp.components;
+const { Button } = wp.components;
 const { useState, useMemo, useCallback } = wp.element;
 const { __ } = wp.i18n;
 
@@ -13,12 +13,12 @@ export default function NewBridge({ add, schema }) {
   const [data, setData] = useState({});
 
   const [error, setError] = useError();
-  const bridgeNames = useBridgeNames();
+  const names = useBridgeNames();
 
   const nameConflict = useMemo(() => {
     if (!data.name) return false;
-    return bridgeNames.has(data.name.trim());
-  }, [bridgeNames, data.name]);
+    return names.has(data.name.trim());
+  }, [names, data.name]);
 
   const create = () => {
     setData({});
@@ -45,7 +45,7 @@ export default function NewBridge({ add, schema }) {
     return validate(data);
   }, [data]);
 
-  function uploadConfig() {
+  const uploadConfig = useCallback(() => {
     uploadJson()
       .then((data) => {
         const isValid = validate(data);
@@ -56,25 +56,26 @@ export default function NewBridge({ add, schema }) {
         }
 
         let i = 1;
-        while (bridgeNames.has(data.name)) {
-          data.name = data.name.replace(/\([0-9]+\)/, "") + ` (${i})`;
+        while (names.has(data.name)) {
+          data.name = data.name.replace(/ \([0-9]+\)/, "") + ` (${i})`;
           i++;
         }
 
         add(data);
       })
       .catch((err) => {
-        if (!err) return;
-
-        console.error(err);
-        setError(
-          __(
-            "An error has ocurred while uploading the bridge config",
-            "forms-bridge"
-          )
-        );
+        if (err.name === "SyntaxError") {
+          setError(__("JSON syntax error", "forms-bridge"));
+        } else {
+          setError(
+            __(
+              "An error has ocurred while uploading the bridge config",
+              "forms-bridge"
+            )
+          );
+        }
       });
-  }
+  }, [names]);
 
   return (
     <div
@@ -84,62 +85,71 @@ export default function NewBridge({ add, schema }) {
         backgroundColor: "rgb(245, 245, 245)",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          gap: "1em",
-          flexWrap: "wrap",
-        }}
-      >
-        <BridgeFields
-          data={data}
-          setData={setData}
-          schema={schema}
-          optionals={true}
-          errors={{
-            name: nameConflict
-              ? __("This name is already in use", "forms-bridge")
-              : false,
-          }}
-        />
-      </div>
-      <Spacer paddingY="calc(8px)" />
-      <div
-        style={{
-          display: "flex",
-          gap: "1em",
-          flexWrap: "wrap",
-        }}
-      >
-        <Button
-          variant="primary"
-          onClick={create}
-          style={{ width: "150px", justifyContent: "center" }}
-          disabled={nameConflict || !isValid}
-          __next40pxDefaultSize
-        >
-          {__("Add", "forms-bridge")}
-        </Button>
-        <Templates />
-        <Button
-          variant="tertiary"
-          size="compact"
+      <div style={{ display: "flex", gap: "2rem" }}>
+        <div style={{ flex: 1 }}>
+          <div
+            style={{
+              display: "flex",
+              gap: "0.5rem",
+              flexWrap: "wrap",
+            }}
+          >
+            <BridgeFields
+              data={data}
+              setData={setData}
+              schema={schema}
+              optionals={true}
+              errors={{
+                name: nameConflict
+                  ? __("This name is already in use", "forms-bridge")
+                  : false,
+              }}
+            />
+          </div>
+          <div style={{ marginTop: "10px", display: "flex", gap: "0.5rem" }}>
+            <Button
+              variant="primary"
+              onClick={create}
+              style={{ width: "100px", justifyContent: "center" }}
+              disabled={nameConflict || !isValid}
+              __next40pxDefaultSize
+            >
+              {__("Add", "forms-bridge")}
+            </Button>
+            <Button
+              variant="tertiary"
+              size="compact"
+              style={{
+                width: "40px",
+                height: "40px",
+                justifyContent: "center",
+                fontSize: "1.5em",
+                border: "1px solid",
+                color: "grey",
+              }}
+              disabled={!!error}
+              onClick={uploadConfig}
+              __next40pxDefaultSize
+              label={__("Upload bridge config", "forms-bridge")}
+              showTooltip
+            >
+              ⬆
+            </Button>
+          </div>
+        </div>
+        <div
           style={{
-            width: "40px",
-            height: "40px",
-            justifyContent: "center",
-            fontSize: "1.5em",
-            border: "1px solid",
-            color: "grey",
+            marginTop: "23px",
+            paddingLeft: "2rem",
+            borderLeft: "1px solid",
           }}
-          disabled={!!error}
-          onClick={uploadConfig}
-          __next40pxDefaultSize
-          label={__("Upload bridge config", "forms-bridge")}
-          showTooltip
         >
-          ⬆
-        </Button>
+          <div
+            style={{ display: "flex", gap: "0.5rem", flexDirection: "column" }}
+          >
+            <Templates />
+          </div>
+        </div>
       </div>
     </div>
   );
