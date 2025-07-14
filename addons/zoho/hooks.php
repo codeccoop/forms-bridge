@@ -42,9 +42,52 @@ add_filter(
                     ],
                     [
                         'ref' => '#credential',
-                        'name' => 'organization_id',
-                        'label' => __('Organization ID', 'forms-bridge'),
-                        'type' => 'string',
+                        'name' => 'type',
+                        'label' => __('Auhentication type', 'forms-bridge'),
+                        'type' => 'options',
+                        'options' => [
+                            [
+                                'value' => 'Server-based',
+                                'label' => 'Server-based',
+                            ],
+                            [
+                                'value' => 'Self Client',
+                                'label' => 'Self Client',
+                            ],
+                        ],
+                        'required' => true,
+                    ],
+                    [
+                        'ref' => '#credential',
+                        'name' => 'region',
+                        'label' => __('Datacenter', 'forms-bridge'),
+                        'type' => 'options',
+                        'options' => [
+                            [
+                                'value' => 'zoho.com',
+                                'label' => 'zoho.com',
+                            ],
+                            [
+                                'value' => 'zoho.eu',
+                                'label' => 'zoho.eu',
+                            ],
+                            [
+                                'value' => 'zoho.in',
+                                'label' => 'zoho.in',
+                            ],
+                            [
+                                'value' => 'zoho.com.cn',
+                                'label' => 'zoho.com.cn',
+                            ],
+                            [
+                                'value' => 'zoho.com.au',
+                                'label' => 'zoho.com.au',
+                            ],
+                            [
+                                'value' => 'zoho.jp',
+                                'label' => 'zoho.jp',
+                            ],
+                        ],
                         'required' => true,
                     ],
                     [
@@ -60,6 +103,16 @@ add_filter(
                         'label' => __('Client secret', 'forms-bridge'),
                         'type' => 'string',
                         'required' => true,
+                    ],
+                    [
+                        'ref' => '#credential',
+                        'name' => 'organization_id',
+                        'label' => __('Organization ID', 'forms-bridge'),
+                        'description' => __(
+                            'Required if you want to use Self Client authentication protocol',
+                            'forms-bridge'
+                        ),
+                        'type' => 'string',
                     ],
                     [
                         'ref' => '#credential',
@@ -120,6 +173,11 @@ add_filter(
                         'default' => 'https://www.zohoapis.com',
                         'required' => true,
                     ],
+                    [
+                        'ref' => '#bridge',
+                        'name' => 'method',
+                        'value' => 'POST',
+                    ],
                 ],
                 'bridge' => [
                     'backend' => 'Zoho API',
@@ -128,13 +186,15 @@ add_filter(
                 ],
                 'credential' => [
                     'name' => '',
-                    'organization_id' => '',
+                    'type' => '',
                     'client_id' => '',
                     'client_secret' => '',
+                    'organization_id' => '',
                     'scope' =>
                         'ZohoCRM.modules.ALL,ZohoCRM.settings.layouts.READ,ZohoCRM.users.READ',
                 ],
                 'backend' => [
+                    'base_url' => 'https://www.zohoapis.{region}',
                     'headers' => [
                         [
                             'name' => 'Accept',
@@ -208,6 +268,19 @@ add_filter(
                 'type' => [
                     'type' => 'string',
                     'enum' => ['Server-based', 'Self Client'],
+                    'default' => 'Server-based',
+                ],
+                'region' => [
+                    'type' => 'string',
+                    'enum' => [
+                        'zoho.com',
+                        'zoho.eu',
+                        'zoho.in',
+                        'zoho.com.cn',
+                        'zoho.com.au',
+                        'zoho.jp',
+                    ],
+                    'default' => 'zoho.com',
                 ],
                 'client_id' => [
                     'type' => 'string',
@@ -225,21 +298,28 @@ add_filter(
                 ],
                 'organization_id' => [
                     'type' => 'string',
-                    'minLength' => 10,
+                    'default' => '',
                 ],
                 'access_token' => [
                     'type' => 'string',
-                    'show_in_rest' => false,
+                    'default' => '',
+                    'public' => false,
                 ],
                 'refresh_token' => [
                     'type' => 'string',
-                    'show_in_rest' => false,
+                    'default' => '',
+                    'public' => false,
                 ],
                 'expires_at' => [
                     'type' => 'integer',
-                    'show_in_rest' => false,
+                    'default' => 0,
+                    'public' => false,
                 ],
                 'enabled' => [
+                    'type' => 'boolean',
+                    'default' => true,
+                ],
+                'is_valid' => [
                     'type' => 'boolean',
                     'default' => false,
                 ],
@@ -247,9 +327,13 @@ add_filter(
             'required' => [
                 'name',
                 'type',
+                'region',
                 'client_id',
                 'client_secret',
                 'scope',
+                'access_token',
+                'refresh_token',
+                'expires_at',
             ],
             'additionalProperties' => false,
         ];

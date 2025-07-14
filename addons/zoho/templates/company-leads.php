@@ -24,7 +24,14 @@ return [
                 'Email of the owner user of the deal',
                 'forms-bridge'
             ),
-            'type' => 'string',
+            'type' => 'options',
+            'options' => [
+                'endpoint' => '/crm/v7/users',
+                'finger' => [
+                    'value' => 'users[].id',
+                    'label' => 'users[].full_name',
+                ],
+            ],
         ],
         [
             'ref' => '#bridge/custom_fields[]',

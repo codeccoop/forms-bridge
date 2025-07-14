@@ -439,7 +439,7 @@ class REST_Settings_Controller extends Base_Controller
 
             $addon = $addon::name;
 
-            $schema = Form_Bridge_Template::schema($addon);
+            $schema = FBAPI::get_credential_schema($addon);
             $args = [];
 
             foreach ($schema['properties'] as $name => $prop_schema) {
@@ -465,7 +465,7 @@ class REST_Settings_Controller extends Base_Controller
                             'permission_callback',
                         ],
                         'args' => [
-                            'credential' => $args['credential'],
+                            'credential' => $schema,
                         ],
                     ],
                 ]
@@ -479,21 +479,6 @@ class REST_Settings_Controller extends Base_Controller
                     'callback' => static function ($request) use ($addon) {
                         return self::oauth_redirect($addon, $request);
                     },
-                    'permission_callback' => [
-                        self::class,
-                        'permission_callback',
-                    ],
-                    'args' => [
-                        'name' => [
-                            'type' => 'string',
-                            'description' => __(
-                                'Credential name',
-                                'forms-bridge'
-                            ),
-                            'required' => true,
-                            'minLength' => 1,
-                        ],
-                    ],
                 ]
             );
         }
@@ -723,7 +708,12 @@ class REST_Settings_Controller extends Base_Controller
 
                 if (is_wp_error($response)) {
                     $error = self::internal_server_error();
-                    $error->add($response);
+                    $error->add(
+                        $response->get_error_code(),
+                        $response->get_error_message(),
+                        $response->get_error_data()
+                    );
+
                     return $error;
                 }
 
@@ -827,7 +817,12 @@ class REST_Settings_Controller extends Base_Controller
 
         if (is_wp_error($result)) {
             $error = self::bad_request();
-            $error->add($result);
+            $error->add(
+                $result->get_error_code(),
+                $result->get_error_message(),
+                $result->get_error_data()
+            );
+
             return $error;
         }
 
@@ -854,7 +849,12 @@ class REST_Settings_Controller extends Base_Controller
 
         if (is_wp_error($schema)) {
             $error = self::internal_server_error();
-            $error->add($schema);
+            $error->add(
+                $schema->get_error_code(),
+                $schema->get_error_message(),
+                $schema->get_error_data()
+            );
+
             return $error;
         }
 
@@ -867,12 +867,8 @@ class REST_Settings_Controller extends Base_Controller
         $credential = FBAPI::get_credential_schema($name);
 
         return [
-            'bridge' => wpct_plugin_prune_rest_private_schema_properties(
-                $bridge
-            ),
-            'credential' => wpct_plugin_prune_rest_private_schema_properties(
-                $credential
-            ),
+            'bridge' => $bridge,
+            'credential' => $credential,
         ];
     }
 
@@ -880,10 +876,17 @@ class REST_Settings_Controller extends Base_Controller
     {
         $addon = Addon::addon($addon);
 
-        $redirect = $addon->oauth_grant($request['name']);
+        $redirect = $addon->oauth_grant($request['credential']);
+
         if (is_wp_error($redirect)) {
             $error = self::internal_server_error();
-            $error->add($redirect);
+            $error->add(
+                $redirect->get_error_code(),
+                $redirect->get_error_message(),
+                $redirect->get_error_data()
+            );
+
+            return $error;
         }
 
         if (!$redirect) {
@@ -896,18 +899,23 @@ class REST_Settings_Controller extends Base_Controller
     private static function oauth_redirect($addon, $request)
     {
         $addon = Addon::addon($addon);
+
         $result = $addon->oauth_redirect_callback($request);
 
         if (!$result) {
             return self::bad_request('bad_request');
         }
 
-        return ['success' => true];
+        $url =
+            site_url() .
+            '/wp-admin/options-general.php?page=forms-bridge&tab=' .
+            $addon::name;
+        if (wp_redirect($url)) {
+            exit(302);
+        }
+
+        return ['success' => false];
     }
-
-    private static function transient_backend($addon, $request) {}
-
-    private static function transient_credential($adodn, $request) {}
 
     /**
      * Ephemeral backend registration as an interceptor to allow

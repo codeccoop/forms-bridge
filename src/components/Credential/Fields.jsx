@@ -4,9 +4,9 @@ const { useEffect, useMemo } = wp.element;
 export const INTERNALS = [
   "enabled",
   "is_valid",
-  "access_token",
+  // "access_token",
   "refresh_token",
-  "expires_at",
+  // "expires_at",
 ];
 
 export default function CredentialFields({
@@ -14,12 +14,14 @@ export default function CredentialFields({
   setData,
   schema,
   optionals = false,
+  disabled = false,
   errors,
 }) {
   const fields = useMemo(() => {
     if (!schema) return [];
 
     return Object.keys(schema.properties)
+      .filter((name) => schema.properties[name].public !== false)
       .map((name) => ({
         ...schema.properties[name],
         label: schema.properties[name].name || name,
@@ -74,6 +76,7 @@ export default function CredentialFields({
                 value={data[field.name] || ""}
                 setValue={(value) => setData({ ...data, [field.name]: value })}
                 error={errors[field.name]}
+                disabled={disabled}
               />
             </div>
           );
@@ -87,6 +90,7 @@ export default function CredentialFields({
                 options={field.options}
                 optional={optionals}
                 error={errors[field.name]}
+                disabled={disabled}
               />
             </div>
           );

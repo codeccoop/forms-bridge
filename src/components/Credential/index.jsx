@@ -4,12 +4,18 @@ import { useCredentials } from "../../hooks/useAddon";
 import CredentialFields, { INTERNALS } from "./Fields";
 import ToggleControl from "../Toggle";
 import { downloadJson } from "../../lib/utils";
+import { useLoading } from "../../providers/Loading";
+import { useError } from "../../providers/Error";
 
 const { Button } = wp.components;
 const { useState, useEffect, useMemo, useCallback } = wp.element;
+const apiFetch = wp.apiFetch;
 const { __ } = wp.i18n;
 
-export default function Credential({ data, update, remove, schema }) {
+export default function Credential({ addon, data, update, remove, schema }) {
+  const [loading, setLoading] = useLoading();
+  const [error, setError] = useError();
+
   const [state, setState] = useState({ ...data });
 
   const [credentials] = useCredentials();
@@ -27,7 +33,13 @@ export default function Credential({ data, update, remove, schema }) {
       return !!Object.keys(schema.properties)
         .filter((prop) => !INTERNALS.includes(prop))
         .reduce((isValid, prop) => {
+          if (!isValid) return isValid;
+
           const value = data[prop];
+
+          if (!schema.required.includes(prop)) {
+            return isValid;
+          }
 
           if (schema.properties[prop].pattern) {
             isValid =
@@ -42,7 +54,7 @@ export default function Credential({ data, update, remove, schema }) {
   );
 
   const isValid = useMemo(() => {
-    return validate(state) && !nameConflict;
+    return validate(state);
   }, [state, nameConflict]);
 
   if (!isValid && state.is_valid) {
@@ -50,9 +62,13 @@ export default function Credential({ data, update, remove, schema }) {
     update({ ...state, is_valid: false });
   }
 
+  const frozen = useMemo(() => {
+    return !!data.access_token;
+  }, [data]);
+
   useEffect(() => {
-    if (isValid) update({ ...state, is_valid: true });
-  }, [isValid, state]);
+    if (!nameConflict) update({ ...state, is_valid: isValid });
+  }, [isValid, nameConflict, state]);
 
   useEffect(() => {
     setState(data);
@@ -62,6 +78,27 @@ export default function Credential({ data, update, remove, schema }) {
     const credentialData = { ...data };
     INTERNALS.forEach((prop) => delete credentialData[prop]);
     downloadJson(credentialData, credentialData.name + " credential config");
+  };
+
+  const authorize = () => {
+    setLoading(true);
+
+    apiFetch({
+      path: `forms-bridge/v1/${addon}/oauth/grant`,
+      method: "POST",
+      data: { credential: data },
+    })
+      .then(({ redirect }) => {
+        if (redirect === window.location.href) {
+          window.location.reload();
+        } else {
+          window.open(redirect);
+        }
+      })
+      .catch(() => {
+        setError(__("Error while authorizing credential", "forms-bridge"));
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -80,6 +117,7 @@ export default function Credential({ data, update, remove, schema }) {
         }}
       >
         <CredentialFields
+          disabled={frozen}
           data={state}
           setData={setState}
           schema={schema}
@@ -118,6 +156,24 @@ export default function Credential({ data, update, remove, schema }) {
         >
           ⬇
         </Button>
+        {schema.properties.access_token && (
+          <Button
+            onClick={authorize}
+            variant={data.access_token ? "secondary" : "primary"}
+            isDestructive={!!data.access_token}
+            disabled={loading || error}
+            style={{
+              justifyContent: "center",
+              width: "100px",
+            }}
+            __next40pxDefaultSize
+            __nextHasNoMarginBottom
+          >
+            {data.access_token
+              ? __("Revoke", "forms-bridge")
+              : __("Authorize", "forms-bridge")}
+          </Button>
+        )}
         <div
           style={{
             marginLeft: "15px",

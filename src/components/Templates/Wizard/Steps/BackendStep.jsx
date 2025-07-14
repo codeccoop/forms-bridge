@@ -5,9 +5,10 @@ import TemplateStep from "./Step";
 import Field from "../../Field";
 import { sortByNamesOrder, prependEmptyOption } from "../../../../lib/utils";
 import { validateBackend, mockBackend } from "../lib";
+import diff from "../../../../lib/diff";
 
 const { SelectControl } = wp.components;
-const { useMemo, useState, useEffect } = wp.element;
+const { useMemo, useState, useEffect, useRef } = wp.element;
 const { __ } = wp.i18n;
 
 const FIELDS_ORDER = ["name", "base_url", "headers"];
@@ -23,6 +24,18 @@ export default function BackendStep({ fields, data, setData, wired, fetched }) {
   );
 
   const [state, setState] = useState({ ...data });
+
+  const defaults = useMemo(() => {
+    return fields.reduce((defaults, field) => {
+      let val = field.default || config?.[field.name] || "";
+      if (!val && field.type === "options" && field.required) {
+        val = field.options[0].value;
+      }
+
+      defaults[field.name] = val;
+      return defaults;
+    }, {});
+  }, [fields, config]);
 
   const validBackends = useMemo(
     () =>
@@ -42,7 +55,7 @@ export default function BackendStep({ fields, data, setData, wired, fetched }) {
 
   const nameConflict = useMemo(() => {
     return state.name && names.has(state.name.trim());
-  }, [reuse, names, state.name]);
+  }, [names, state.name]);
 
   const mockedBackend = useMemo(() => {
     if (nameConflict) return;
@@ -61,18 +74,12 @@ export default function BackendStep({ fields, data, setData, wired, fetched }) {
 
   useEffect(() => {
     if (!backend) {
-      setData({
-        name: config.name || "",
-        base_url: config.base_url || "https://",
-      });
+      setData(null);
       return;
     }
 
     if (reuse) {
-      setState({
-        name: config.name || "",
-        base_url: config.base_url || "https://",
-      });
+      setState({ ...defaults });
     }
 
     const data = { name: backend.name, base_url: backend.base_url };
@@ -91,8 +98,15 @@ export default function BackendStep({ fields, data, setData, wired, fetched }) {
     setData(data);
   }, [reuse, backend, fields]);
 
+  const fromConfig = useRef(config);
   useEffect(() => {
-    setReuse("");
+    if (diff(config, fromConfig.current)) {
+      setReuse("");
+    }
+
+    return () => {
+      fromConfig.current = config;
+    };
   }, [config]);
 
   const statusIcon = useMemo(() => {
@@ -138,6 +152,11 @@ export default function BackendStep({ fields, data, setData, wired, fetched }) {
               value: state[field.name] || "",
               onChange: (value) => setState({ ...state, [field.name]: value }),
             }}
+            error={
+              field.name === "name" &&
+              nameConflict &&
+              __("This name is already in use", "forms-bridge")
+            }
           />
         ))}
     </TemplateStep>

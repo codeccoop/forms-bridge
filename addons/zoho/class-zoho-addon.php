@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) {
 }
 
 require_once 'class-zoho-form-bridge.php';
+require_once 'class-zoho-credential.php';
 require_once 'hooks.php';
 require_once 'api.php';
 
@@ -43,25 +44,41 @@ class Zoho_Addon extends Addon
      */
     public const bridge_class = '\FORMS_BRIDGE\Zoho_Form_Bridge';
 
+    public const credential_class = '\FORMS_BRIDGE\Zoho_Credential';
+
     /**
      * Credential data sanitization.
      *
      * @param array $credential Credential data.
+     * @param array $schema Credential schema.
      *
      * @return array
      */
-    protected static function sanitize_credential($credential)
+    protected static function sanitize_credential($credential, $schema)
     {
+        $credential = parent::sanitize_credential($credential, $schema);
+        if (!$credential) {
+            return;
+        }
+
         if ($credential['type'] === 'Server-based') {
-            $enabled =
+            $credential['organization_id'] = '';
+            $is_valid =
                 !empty($credential['access_token']) &&
                 !empty($credential['refresh_token']) &&
                 !empty($credential['expires_at']);
         } else {
-            $enabled = !empty($credential['organization_id']);
+            $credential['refresh_token'] = '';
+            $is_valid =
+                !empty($credential['organization_id']) &&
+                !empty($credential['access_token']) &&
+                !empty($credential['expires_at']);
         }
 
-        $credential['enabled'] = $enabled;
+        $credential['is_valid'] = $credential['is_valid'] && $is_valid;
+        $credential['enabled'] =
+            $credential['enabled'] && $credential['is_valid'];
+
         return $credential;
     }
 
@@ -91,13 +108,16 @@ class Zoho_Addon extends Addon
     public function ping($backend, $credential = null)
     {
         $bridge_class = static::bridge_class;
-        $bridge = new $bridge_class([
-            'name' => '__zoho-' . time(),
-            'credential' => $credential,
-            'backend' => $backend,
-            'endpoint' => '/',
-            'method' => 'GET',
-        ]);
+        $bridge = new $bridge_class(
+            [
+                'name' => '__zoho-' . time(),
+                'credential' => $credential,
+                'backend' => $backend,
+                'endpoint' => '/',
+                'method' => 'GET',
+            ],
+            static::name
+        );
 
         $credential = $bridge->credential;
         if (!$credential) {
@@ -105,8 +125,27 @@ class Zoho_Addon extends Addon
         }
 
         $backend = $bridge->backend;
+
+        $parsed = wp_parse_url($backend->base_url);
+        $host = $parsed['host'] ?? '';
+
+        if (
+            !preg_match(
+                '/www\.zohoapis\.(\w{2,3}(\.\w{2})?)$/',
+                $host,
+                $matches
+            )
+        ) {
+            return false;
+        }
+
+        $region = $matches[1];
+        if (!preg_match('/' . $region . '$/', $credential->region)) {
+            return false;
+        }
+
         $access_token = $credential->get_access_token($backend);
-        return $access_token && !is_wp_error($access_token);
+        return !!$access_token;
     }
 
     /**
@@ -121,13 +160,16 @@ class Zoho_Addon extends Addon
     public function fetch($endpoint, $backend, $credential = null)
     {
         $bridge_class = static::bridge_class;
-        $bridge = new $bridge_class([
-            'name' => '__zoho-' . time(),
-            'backend' => $backend,
-            'credential' => $credential,
-            'endpoint' => $endpoint,
-            'method' => 'GET',
-        ]);
+        $bridge = new $bridge_class(
+            [
+                'name' => '__zoho-' . time(),
+                'backend' => $backend,
+                'credential' => $credential,
+                'endpoint' => $endpoint,
+                'method' => 'GET',
+            ],
+            static::name
+        );
 
         return $bridge->submit();
     }
@@ -156,13 +198,16 @@ class Zoho_Addon extends Addon
         $module = $matches[1];
 
         $bridge_class = static::bridge_class;
-        $bridge = new $bridge_class([
-            'name' => '__zoho-' . time(),
-            'backend' => $backend,
-            'credential' => $credential,
-            'endpoint' => '/crm/v7/settings/layouts',
-            'method' => 'GET',
-        ]);
+        $bridge = new $bridge_class(
+            [
+                'name' => '__zoho-' . time(),
+                'backend' => $backend,
+                'credential' => $credential,
+                'endpoint' => '/crm/v7/settings/layouts',
+                'method' => 'GET',
+            ],
+            static::name
+        );
 
         $response = $bridge->submit(['module' => $module]);
 

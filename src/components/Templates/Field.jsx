@@ -82,7 +82,11 @@ function TextField({ name, value, onChange, required, error }) {
         style={style}
         {...constraints}
       />
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && (
+        <p style={{ margin: "5px 0 0", fontSize: "12px", color: "red" }}>
+          {error}
+        </p>
+      )}
     </>
   );
 }

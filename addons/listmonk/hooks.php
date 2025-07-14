@@ -96,7 +96,6 @@ add_filter(
                     ],
                     'authentication' => [
                         'type' => 'Token',
-                        'client_secret' => 'api-token',
                     ],
                 ],
             ],

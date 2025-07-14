@@ -27,6 +27,8 @@ export default function Bridge({ data, update, remove, schema }) {
       return !!Object.keys(schema.properties)
         .filter((prop) => !INTERNALS.includes(prop))
         .reduce((isValid, prop) => {
+          if (!isValid) return isValid;
+
           const value = data[prop];
 
           if (schema.properties[prop].pattern) {

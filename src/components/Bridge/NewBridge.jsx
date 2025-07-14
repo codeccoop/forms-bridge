@@ -30,7 +30,14 @@ export default function NewBridge({ add, schema }) {
       return !!Object.keys(schema.properties)
         .filter((prop) => !INTERNALS.includes(prop))
         .reduce((isValid, prop) => {
+          if (!isValid) return isValid;
+
           const value = data[prop];
+
+          if (!schema.required.includes(prop)) {
+            return isValid;
+          }
+
           if (schema.properties[prop].pattern) {
             isValid = new RegExp(schema.properties[prop].pattern).test(value);
           }

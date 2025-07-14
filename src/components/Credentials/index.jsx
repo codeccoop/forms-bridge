@@ -4,6 +4,7 @@ import NewCredential from "../Credential/NewCredential";
 import CopyIcon from "../CopyIcon";
 import { useCredentials } from "../../hooks/useAddon";
 import { useSchemas } from "../../providers/Schemas";
+import useTab from "../../hooks/useTab";
 
 const { PanelBody, TabPanel } = wp.components;
 const { useState } = wp.element;
@@ -23,6 +24,8 @@ function TabTitle({ name, focus, setFocus, copy }) {
 }
 
 export default function Credentials() {
+  const [addon] = useTab();
+
   const { credential: schema } = useSchemas();
   const [credentials, setCredentials] = useCredentials();
 
@@ -103,6 +106,7 @@ export default function Credentials() {
             }
             return (
               <Credential
+                addon={addon}
                 data={credential}
                 schema={schema}
                 remove={removeCredential}

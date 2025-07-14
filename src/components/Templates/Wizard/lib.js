@@ -8,6 +8,17 @@ export function getGroupFields(fields, group) {
   return fields.filter(({ ref }) => new RegExp("^\#" + group).test(ref));
 }
 
+export function validateCredential(credential, fields) {
+  if (!credential?.name) return false;
+
+  return fields.reduce((isValid, { name, required }) => {
+    if (!isValid || !required) return isValid;
+
+    const val = credential[name];
+    return isValid && val !== undefined && val !== null && val !== "";
+  }, true);
+}
+
 export function validateBackend(backend, schema, fields) {
   if (!backend?.name) return false;
 

@@ -3,6 +3,8 @@ import TemplateStep from "./Step";
 import Field from "../../Field";
 import { prependEmptyOption, sortByNamesOrder } from "../../../../lib/utils";
 import { useCredentials } from "../../../../hooks/useAddon";
+import { validateCredential } from "../lib";
+import diff from "../../../../lib/diff";
 
 const { useMemo, useState, useEffect, useRef } = wp.element;
 const { SelectControl } = wp.components;
@@ -10,81 +12,97 @@ const { __ } = wp.i18n;
 
 const FIELDS_ORDER = ["name"];
 
-function validateCredential(credential, schema, fields) {
-  const isValid = fields.reduce((isValid, { name }) => {
-    return isValid && !!credential[name];
-  }, true);
-
-  if (!isValid) return isValid;
-
-  return Object.keys(schema).reduce((isValid, name) => {
-    return isValid && !!credential[name];
-  }, isValid);
-}
-
 export default function CredentialStep({ fields, data, setData }) {
   const [credentials] = useCredentials();
+  const { credential: config } = useTemplateConfig();
 
   const names = useMemo(
     () => new Set(credentials.map(({ name }) => name)),
     [credentials]
   );
 
-  const { credential: schema = {} } = useTemplateConfig();
-
-  const validCredentials = useMemo(() => {
-    return credentials.filter((credential) =>
-      validateCredential(credential, schema, fields)
-    );
-  }, [credentials]);
-
-  const credentialOptions = useMemo(() => {
-    return prependEmptyOption(
-      validCredentials.map(({ name }) => ({ label: name, value: name }))
-    );
-  }, [validCredentials]);
-
-  const previousReuse = useRef(data.name || "");
-  const [reuse, setReuse] = useState(data.name || "");
-
-  const [name, setName] = useState(data.name || "");
-  const nameConflict = useMemo(
-    () => data.name !== name.trim() && names.has(name.trim()),
-    [names, name]
-  );
-
-  useEffect(() => {
-    if (reuse !== previousReuse.current) {
-      setName("");
-      setData();
-    } else if (!reuse && !nameConflict && data.name !== name) {
-      setData({ name });
-    }
-
-    previousReuse.current = reuse;
-  }, [data.name, reuse, name, nameConflict]);
-
-  const credential = useMemo(
-    () => validCredentials.find(({ name }) => name === reuse),
-    [reuse, validCredentials]
-  );
-
-  useEffect(() => {
-    if (!credential || reuse !== previousReuse.current) return;
-    setData({ ...credential });
-  }, [credential]);
-
   const sortedFields = useMemo(
     () => sortByNamesOrder(fields, FIELDS_ORDER),
     [fields]
   );
 
-  const filteredFields = useMemo(() => {
-    if (credential) return [];
-    return sortedFields.slice(1);
-  }, [sortedFields, credential]);
+  const [state, setState] = useState({ ...data });
 
-  const nameField = useMemo(() => sortedFields[0], [sortedFields]);
+  const defaults = useMemo(() => {
+    return fields.reduce((defaults, field) => {
+      let val = field.default || config?.[field.name] || "";
+      if (!val && field.type === "options" && field.required) {
+        val = field.options[0].value;
+      }
+
+      defaults[field.name] = val;
+      return defaults;
+    }, {});
+  }, [fields, config]);
+
+  const validCredentials = useMemo(() => {
+    return credentials.filter((credential) =>
+      validateCredential(credential, fields)
+    );
+  }, [credentials, fields]);
+
+  const credentialOptions = useMemo(() => {
+    return prependEmptyOption(
+      validCredentials
+        .map(({ name }) => ({ label: name, value: name }))
+        .sort((a, b) => (a.label > b.label ? 1 : -1))
+    );
+  }, [validCredentials]);
+
+  const [reuse, setReuse] = useState(() => {
+    return (
+      credentialOptions.find(({ value }) => value === data.name)?.value || ""
+    );
+  });
+
+  const nameConflict = useMemo(
+    () => state.name && names.has(state.name.trim()),
+    [names, state.name]
+  );
+
+  const credential = useMemo(() => {
+    let credential = validCredentials.find((c) => c.name === reuse);
+    if (credential) return credential;
+    if (validateCredential(state, fields)) {
+      return state;
+    }
+  }, [validCredentials, reuse, state, nameConflict]);
+
+  useEffect(() => {
+    if (!credential) {
+      setData(null);
+      return;
+    }
+
+    if (reuse) {
+      setState({ ...defaults });
+    }
+
+    setData({ ...credential });
+  }, [credential]);
+
+  const fromConfig = useRef(config);
+  useEffect(() => {
+    if (diff(config, fromConfig.current)) {
+      setReuse("");
+    }
+
+    return () => {
+      fromConfig.current = config;
+    };
+  }, [config]);
+
+  useEffect(() => {
+    const credential = validCredentials.find((c) => c.name === data.name);
+    if (credential) {
+      setReuse(credential.name);
+    }
+  }, [data.name, validCredentials]);
 
   return (
     <TemplateStep
@@ -101,29 +119,21 @@ export default function CredentialStep({ fields, data, setData }) {
           __next40pxDefaultSize
         />
       )}
-      {!reuse && (
-        <Field
-          data={{
-            ...nameField,
-            value: name,
-            onChange: setName,
-          }}
-          error={
-            nameConflict
-              ? __("This name is already in use", "forms-bridge")
-              : false
-          }
-        />
-      )}
-      {filteredFields.map((field) => (
-        <Field
-          data={{
-            ...field,
-            value: data[field.name] || "",
-            onChange: (value) => setData({ [field.name]: value }),
-          }}
-        />
-      ))}
+      {!reuse &&
+        sortedFields.map((field) => (
+          <Field
+            data={{
+              ...field,
+              value: data[field.name] || "",
+              onChange: (value) => setData({ [field.name]: value }),
+            }}
+            error={
+              field.name === "name" &&
+              nameConflict &&
+              __("This name is already in use", "forms-bridge")
+            }
+          />
+        ))}
     </TemplateStep>
   );
 }

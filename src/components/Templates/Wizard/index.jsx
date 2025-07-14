@@ -4,6 +4,7 @@ import useTab from "../../../hooks/useTab";
 import useStepper from "./useStepper";
 import { refToGroup, getGroupFields } from "./lib";
 import useWiredBackend from "./useWiredBackend";
+import useAuthorizedCredential from "./useAuthorizedCredential";
 import { prependEmptyOption } from "../../../lib/utils";
 
 const { Button, Notice } = wp.components;
@@ -15,7 +16,6 @@ export default function TemplateWizard({ integration, onSubmit }) {
   const [tab] = useTab();
 
   const [data, setData] = useState({});
-  const [authorized, setAuthorized] = useState(null);
   const [fetched, setFetched] = useState(false);
   const [fieldOptions, setFieldOptions] = useState([]);
   const [fetchError, setFetchError] = useState(false);
@@ -101,10 +101,21 @@ export default function TemplateWizard({ integration, onSubmit }) {
     resetStepper();
   }, [fields, defaults]);
 
+  const {
+    credential,
+    authorized,
+    authorize,
+    error: authError,
+  } = useAuthorizedCredential({
+    data: data.credential,
+    fields: groups.credential,
+  });
+
   const [backend, wired] = useWiredBackend({
     data: data.backend,
     fields: groups.backend,
-    credential: data.credential,
+    credential,
+    authorized,
   });
 
   useEffect(() => {
@@ -117,7 +128,7 @@ export default function TemplateWizard({ integration, onSubmit }) {
   }, [wired]);
 
   useEffect(() => {
-    if (!wired) return;
+    if (group !== "backend" || !wired || !authorized) return;
     fetchOptions(backend, data.credential);
   }, [wired, data.credential]);
 
@@ -218,7 +229,9 @@ export default function TemplateWizard({ integration, onSubmit }) {
     }, true);
   }, [data]);
 
-  const canGoForward = isStepDone && (group === "backend" ? fetched : true);
+  const needsAuth = credential && !authorized;
+  const canGoForward =
+    isStepDone && (group !== "backend" || fetched) && !needsAuth;
 
   if (!config?.fields.length) return;
   if (data[group] === undefined) return;
@@ -226,7 +239,7 @@ export default function TemplateWizard({ integration, onSubmit }) {
   return (
     <div style={{ width: "575px", minHeight: "125px" }}>
       <hr style={{ margin: "1rem 0" }} />
-      {fetchError && (
+      {group === "backend" && fetchError && (
         <div style={{ marginBottom: "10px" }}>
           <Notice status="error" politeness="assertive" isDismissible={false}>
             {__("Unable to fetch data from the backend", "forms-bridge")}
@@ -241,6 +254,36 @@ export default function TemplateWizard({ integration, onSubmit }) {
         wired={wired}
         fetched={fetched}
       />
+      {authError && (
+        <div style={{ marginBottom: "10px" }}>
+          <Notice status="error" politeness="assertive" isDismissible={false}>
+            {__("The credential cannot be authorized", "forms-bridge")}
+          </Notice>
+        </div>
+      )}
+      {needsAuth && (
+        <div style={{ margin: "10px 0" }}>
+          <Notice
+            isDismissible={false}
+            status="warning"
+            actions={[
+              {
+                label: __("Authorize", "forms-bridge"),
+                onClick: authorize,
+                variant: "secondary",
+                size: "compact",
+              },
+            ]}
+          >
+            <p>
+              {__(
+                "Send an authorization request to validate the credential",
+                "forms-bridge"
+              )}
+            </p>
+          </Notice>
+        </div>
+      )}
       <div
         style={{
           padding: "1rem 0 0",

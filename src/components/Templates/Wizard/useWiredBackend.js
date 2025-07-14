@@ -10,6 +10,7 @@ export default function useWiredBackend({
   data = {},
   fields = [],
   credential = {},
+  authorized,
 }) {
   const [tab] = useTab();
   const { backend: config } = useTemplateConfig()[0] || {};
@@ -18,7 +19,7 @@ export default function useWiredBackend({
 
   useEffect(() => {
     setWired(null);
-  }, [config]);
+  }, [config, authorized]);
 
   const backend = useMemo(() => {
     if (!config) return;
@@ -57,10 +58,10 @@ export default function useWiredBackend({
   useEffect(() => {
     clearTimeout(timeout.current);
 
-    if (!backend || wired !== null) return;
+    if (!backend || !authorized || wired !== null) return;
 
     timeout.current = setTimeout(() => ping(backend, credential), 500);
-  }, [config, wired, backend, credential]);
+  }, [config, wired, backend, credential, authorized]);
 
   return [backend, wired];
 }

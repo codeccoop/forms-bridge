@@ -24,18 +24,35 @@ export default function NewCredential({ add, schema }) {
   }, [names, data.name]);
 
   const create = () => {
+    const credential = { ...data, name: data.name.trim() };
+    Object.keys(schema.properties).forEach((prop) => {
+      if (schema.required.includes(prop) && !credential[prop]) {
+        credential[prop] = schema.properties[prop].default;
+      }
+    });
+
     setData({});
-    add({ ...data, name: data.name.trim() });
+    add(credential);
   };
 
   const validate = useCallback(
     (data) => {
       return Object.keys(schema.properties)
         .filter((prop) => !INTERNALS.includes(prop))
+        .filter((prop) => !["access_token", "expires_at"].includes(prop))
         .reduce((isValid, prop) => {
+          if (!isValid) return isValid;
+
           const value = data[prop];
+
+          if (!schema.required.includes(prop)) {
+            return isValid;
+          }
+
           if (schema.properties[prop].pattern) {
-            isValid = new RegExp(schema.properties[prop].pattern).test(value);
+            isValid =
+              isValid &&
+              new RegExp(schema.properties[prop].pattern).test(value);
           }
 
           return isValid && value;

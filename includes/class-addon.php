@@ -6,6 +6,7 @@ use HTTP_BRIDGE\Settings_Store as Http_Store;
 use TypeError;
 use WPCT_PLUGIN\Singleton;
 use FBAPI;
+use WP_Error;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -49,7 +50,7 @@ class Addon extends Singleton
      *
      * @var string
      */
-    public const bridge_class = '\FORMS_BRIDGE\Forms_Bridge';
+    public const bridge_class = '\FORMS_BRIDGE\Form_Bridge';
 
     /**
      * Handles the addon's credential class name.
@@ -369,13 +370,14 @@ class Addon extends Singleton
         $uniques = [];
         $sanitized = [];
 
+        $schema = FBAPI::get_credential_schema(static::name);
         foreach ($credentials as $credential) {
             $credential['name'] = trim($credential['name']);
             if (in_array($credential['name'], $uniques, true)) {
                 continue;
             }
 
-            $credential = static::sanitize_credential($credential);
+            $credential = static::sanitize_credential($credential, $schema);
             if ($credential) {
                 $sanitized[] = $credential;
             }
@@ -388,24 +390,28 @@ class Addon extends Singleton
      * Common credential validation method.
      *
      * @param array $credential Credential data.
+     * @param array $schema Credential schema.
      *
      * @return array|null
      */
-    protected static function sanitize_credential($credential)
+    protected static function sanitize_credential($credential, $schema)
     {
         $is_valid = true;
+        $internals = ['is_valid', 'enabled'];
         foreach ($credential as $prop => $val) {
-            if (in_array($prop, ['is_valid', 'enabled'], true)) {
+            if (in_array($prop, $internals, true)) {
                 continue;
             }
 
-            $is_valid = $is_valid && $val;
+            $required = $schema['properties'][$prop]['required'] ?? false;
+            $is_valid = $is_valid && (!$required || $val);
         }
 
         $credential['is_valid'] = $is_valid;
-        $credential['enabled'] = boolval(
-            isset($credential['enabled']) ? $credential['enabled'] : false
-        );
+        $credential['enabled'] =
+            boolval(
+                isset($credential['enabled']) ? $credential['enabled'] : false
+            ) && $is_valid;
 
         return $credential;
     }
@@ -612,7 +618,7 @@ class Addon extends Singleton
      * @param string $backend Target backend name.
      * @params string|null $credential Target credential name.
      *
-     * @return boolean
+     * @return boolean|WP_Error
      */
     public function ping($backend, $credential = null)
     {
@@ -656,7 +662,7 @@ class Addon extends Singleton
      * @param string $backend Target backend name.
      * @params string|null $credential Credential name to use.
      *
-     * @return array
+     * @return array|WP_Error
      */
     public function get_endpoint_schema($endpoint, $backend, $credential = null)
     {
@@ -870,6 +876,23 @@ class Addon extends Singleton
         }
 
         return $loaded;
+    }
+
+    public function oauth_grant($credential)
+    {
+        $credential['is_valid'] = true;
+        $credential_class = static::credential_class;
+        $credential = new $credential_class($credential, static::name);
+        return $credential->oauth_grant();
+    }
+
+    public function oauth_redirect_callback($request)
+    {
+        $credential_class = static::credential_class;
+        return $credential_class::oauth_redirect_callback(
+            $request,
+            static::name
+        );
     }
 
     // public static function get_api()

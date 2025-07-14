@@ -169,10 +169,11 @@ export default function BridgeFields({
     });
 }
 
-export function StringField({ label, value, setValue, error }) {
+export function StringField({ label, value, setValue, error, disabled }) {
   return (
     <div style={{ flex: 1 }}>
       <TextControl
+        disabled={disabled}
         label={label}
         value={value}
         onChange={setValue}
@@ -191,6 +192,7 @@ export function OptionsField({
   setValue,
   optional,
   error,
+  disabled,
 }) {
   if (optional) {
     options = prependEmptyOption(options);
@@ -199,6 +201,7 @@ export function OptionsField({
   return (
     <div style={{ flex: 1 }}>
       <SelectControl
+        disabled={disabled}
         label={label}
         value={value}
         onChange={setValue}
