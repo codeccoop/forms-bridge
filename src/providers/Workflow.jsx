@@ -139,9 +139,7 @@ export default function WorkflowProvider({
     if (newJobNames.length) {
       fetchJobs(newJobNames).then((newJobs) => {
         newJobs = jobs
-          .filter((job) => {
-            workflow.indexOf(job.name) !== -1;
-          })
+          .filter((job) => workflow.indexOf(job.name) !== -1)
           .concat(newJobs)
           .sort((a, b) => {
             return workflow.indexOf(a.name) - workflow.indexOf(b.name);
@@ -153,9 +151,12 @@ export default function WorkflowProvider({
       const newJobs = workflow.map((jobName) => {
         return jobs.find((job) => job.name === jobName);
       });
-      setJobs(newJobs);
+
+      if (newJobs.length < jobs.length) {
+        setJobs(newJobs);
+      }
     }
-  }, [addon, workflow]);
+  }, [addon, jobs, workflow]);
 
   const fetchJobs = useCallback(
     (workflow) => {
@@ -175,39 +176,42 @@ export default function WorkflowProvider({
     [addon]
   );
 
-  const workflowJobs = useMemo(
-    () =>
-      [
+  const workflowJobs = useMemo(() => {
+    const workflowJobs = workflow
+      .map((name) => jobs.find((j) => j.name === name))
+      .filter((j) => j)
+      .map((j) => ({ ...j }));
+
+    return [
+      {
+        name: "form-job",
+        title: __("Form submission", "forms-bridge"),
+        description: __(
+          "Form submission after mappers has been applied",
+          "forms-bridge"
+        ),
+        mappers: mutations[0] || [],
+        input: [],
+        output: [],
+      },
+    ]
+      .concat(
+        workflowJobs.map((job, i) => ({
+          ...job,
+          mappers: mutations[i + 1] || [],
+        }))
+      )
+      .concat([
         {
-          name: "form-job",
-          title: __("Form submission", "forms-bridge"),
-          description: __(
-            "Form submission after mappers has been applied",
-            "forms-bridge"
-          ),
-          mappers: mutations[0] || [],
+          name: "output-job",
+          title: __("Output payload", "forms-bridge"),
+          description: __("Workflow output payload", "forms-bridge"),
+          mappers: [],
           input: [],
           output: [],
         },
-      ]
-        .concat(
-          jobs.map((job, i) => ({
-            ...job,
-            mappers: mutations[i + 1] || [],
-          }))
-        )
-        .concat([
-          {
-            name: "output-job",
-            title: __("Output payload", "forms-bridge"),
-            description: __("Workflow output payload", "forms-bridge"),
-            mappers: [],
-            input: [],
-            output: [],
-          },
-        ]),
-    [mutations, jobs]
-  );
+      ]);
+  }, [workflow, mutations, jobs]);
 
   const formFields = useMemo(() => {
     if (!form) return [];

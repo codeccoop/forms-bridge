@@ -12,10 +12,18 @@ export default function ToggleControl({
   disabled,
   help,
   label,
+  noEdit = false,
 }) {
   const style = useRef(document.createElement("style"));
   useEffect(() => {
-    style.current.appendChild(document.createTextNode(CSS));
+    let css = CSS;
+
+    if (noEdit) {
+      css +=
+        ".fb-toggle-control .components-form-toggle.is-disabled { opacity: 1 }";
+    }
+
+    style.current.appendChild(document.createTextNode(css));
     document.head.appendChild(style.current);
 
     return () => {

@@ -12,20 +12,28 @@ const { ToggleControl, Button } = wp.components;
 const { useState, useMemo, useEffect, useCallback, useRef } = wp.element;
 const { __ } = wp.i18n;
 
-export default function WorkflowStage({ setEdit, setMappers }) {
+export default function WorkflowStage({ setEdit, setMappers: setJobMappers }) {
   const [step, _, outputStep] = useWorkflowStepper();
   const workflowJob = useWorkflowJob();
   const [fields = [], diff] = useWorkflowStage();
 
   const [showDiff, setShowDiff] = useState(false);
   const [showMutations, setShowMutations] = useState(false);
-  const [mode, setMode] = useState("payload");
 
   const skipped = useMemo(() => {
     return Array.from(diff.missing).length > 0;
   }, [diff]);
 
+  const modeRef = useRef("payload");
+  const [mode, setMode] = useState("payload");
   useEffect(() => {
+    if (modeRef.current === "mappers") {
+      setJobMappers(
+        step,
+        mappers.filter(({ from, to }) => from && to)
+      );
+    }
+
     if (mode !== "payload") {
       setMode("payload");
     }
@@ -33,12 +41,20 @@ export default function WorkflowStage({ setEdit, setMappers }) {
     if (showMutations) {
       setShowMutations(false);
     }
+
+    return () => {
+      modeRef.current = mode;
+    };
   }, [step]);
 
-  const mappers = useMemo(() => {
-    if (!workflowJob) return [];
-    return workflowJob.mappers;
+  const jobMappers = useMemo(() => {
+    return workflowJob?.mappers || [];
   }, [workflowJob]);
+
+  const [mappers, setMappers] = useState(jobMappers);
+  useEffect(() => {
+    setMappers(jobMappers);
+  }, [jobMappers]);
 
   const validMappers = useMemo(
     () => mappers.filter((mapper) => mapper.from && mapper.to),
@@ -61,7 +77,7 @@ export default function WorkflowStage({ setEdit, setMappers }) {
       delete mapper.index;
     });
 
-    setMappers(step, mappers);
+    setMappers(mappers);
   }).current;
 
   const jobInputs = useMemo(() => {

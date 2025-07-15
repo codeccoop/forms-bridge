@@ -26,14 +26,6 @@ class Credential
                         'type' => 'string',
                         'minLength' => 1,
                     ],
-                    'enabled' => [
-                        'description' => __(
-                            'Boolean flag to enable/disable a bridge',
-                            'forms-bridge'
-                        ),
-                        'type' => 'boolean',
-                        'default' => true,
-                    ],
                     'is_valid' => [
                         'description' => __(
                             'Validation result of the bridge setting',
@@ -43,7 +35,7 @@ class Credential
                         'default' => false,
                     ],
                 ],
-                'required' => ['name', 'enabled', 'is_valid'],
+                'required' => ['name', 'is_valid'],
                 'additionalProperties' => false,
             ],
             $addon

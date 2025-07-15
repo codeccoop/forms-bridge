@@ -2,7 +2,7 @@
 import CustomFieldsTable from "./Table";
 
 const { Button, Modal } = wp.components;
-const { useState, useMemo, useEffect, useRef } = wp.element;
+const { useState, useEffect, useRef } = wp.element;
 const { __ } = wp.i18n;
 
 const CSS = `.components-modal__frame.no-scrollable .components-modal__content {
@@ -18,15 +18,16 @@ export default function CustomFields({ customFields, setCustomFields }) {
   const [state, setState] = useState(customFields);
 
   const handleSetState = useRef((customFields) => {
-    customFields.forEach((constant) => {
-      delete constant.index;
+    const state = customFields.map(({ name, value }) => {
+      return { name, value };
     });
 
-    setState(customFields);
+    setState(state);
   }).current;
 
   const onClose = () => {
-    setCustomFields(state);
+    const customFields = state.filter(({ name, value }) => name && value);
+    setCustomFields(customFields);
     setOpen(false);
   };
 
@@ -45,7 +46,6 @@ export default function CustomFields({ customFields, setCustomFields }) {
       <Button
         variant="secondary"
         onClick={() => setOpen(true)}
-        style={{ width: "150px", justifyContent: "center" }}
         __next40pxDefaultSize
       >
         {__("Custom fields", "forms-bridge")} ({customFields.length})

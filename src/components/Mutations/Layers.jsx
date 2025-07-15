@@ -181,6 +181,8 @@ export default function MutationLayers({ fields, mappers, setMappers }) {
 
     if (index === mappers.length) {
       setTimeout(() => {
+        if (!tableWrapper.current) return;
+
         tableWrapper.current.scrollTo(
           0,
           tableWrapper.current.children[0].offsetHeight

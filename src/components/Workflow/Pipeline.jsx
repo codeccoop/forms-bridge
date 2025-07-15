@@ -1,6 +1,7 @@
 import { useWorkflowStepper } from "../../providers/Workflow";
 import { useJobs } from "../../hooks/useAddon";
-import { prependEmptyOption } from "../../lib/utils";
+import FieldWrapper from "../FieldWrapper";
+import useResponsive from "../../hooks/useResponsive";
 
 const {
   __experimentalItemGroup: ItemGroup,
@@ -8,7 +9,7 @@ const {
   SelectControl,
   Button,
 } = wp.components;
-const { useMemo } = wp.element;
+const { useMemo, useCallback } = wp.element;
 const { __ } = wp.i18n;
 
 export default function WorkflowPipeline({ workflow, setWorkflow, setEdit }) {
@@ -17,14 +18,12 @@ export default function WorkflowPipeline({ workflow, setWorkflow, setEdit }) {
 
   const jobOptions = useMemo(
     () =>
-      prependEmptyOption(
-        jobs
-          .map((job) => ({
-            value: job.name,
-            label: job.title,
-          }))
-          .sort((a, b) => (a.label > b.label ? 1 : -1))
-      ),
+      jobs
+        .map((job) => ({
+          value: job.name,
+          label: job.title,
+        }))
+        .sort((a, b) => (a.label > b.label ? 1 : -1)),
     [jobs]
   );
 
@@ -67,25 +66,31 @@ export default function WorkflowPipeline({ workflow, setWorkflow, setEdit }) {
     }, 100);
   };
 
-  const appendJob = (index) => {
-    const newWorkflow = workflow
-      .slice(0, index + 1)
-      .concat([jobs[0].name])
-      .concat(workflow.slice(index + 1, workflow.length));
+  const appendJob = useCallback(
+    (index) => {
+      const newWorkflow = workflow
+        .slice(0, index + 1)
+        .concat([jobOptions[0].value])
+        .concat(workflow.slice(index + 1, workflow.length));
 
-    setWorkflow(newWorkflow);
-  };
+      setWorkflow(newWorkflow);
+    },
+    [workflow, jobOptions]
+  );
 
-  const setJob = (jobName, index) => {
-    if (!jobName) return;
+  const setJob = useCallback(
+    (jobName, index) => {
+      if (!jobName) return;
 
-    const newWorkflow = workflow
-      .slice(0, index)
-      .concat([jobName])
-      .concat(workflow.slice(index + 1, workflow.length));
+      const newWorkflow = workflow
+        .slice(0, index)
+        .concat([jobName])
+        .concat(workflow.slice(index + 1, workflow.length));
 
-    setWorkflow(newWorkflow);
-  };
+      setWorkflow(newWorkflow);
+    },
+    [workflow]
+  );
 
   return (
     <div
@@ -135,6 +140,8 @@ export default function WorkflowPipeline({ workflow, setWorkflow, setEdit }) {
 }
 
 function PipelineStep({ name, title, index, options, append, update, remove }) {
+  const isResponsive = useResponsive();
+
   const [step, setStep] = useWorkflowStepper();
 
   const isCurrent = step === index;
@@ -184,13 +191,15 @@ function PipelineStep({ name, title, index, options, append, update, remove }) {
       </div>
       <div style={{ flex: 1 }}>
         {(isFocus && (
-          <SelectControl
-            value={name}
-            onChange={(name) => update(name, index - 1)}
-            options={options.filter((opt) => (index <= 1 ? true : opt.value))}
-            __nextHasNoMarginBottom
-            __next40pxDefaultSize
-          />
+          <FieldWrapper min="150px" isResponsive={isResponsive}>
+            <SelectControl
+              value={name}
+              onChange={(name) => update(name, index - 1)}
+              options={options}
+              __nextHasNoMarginBottom
+              __next40pxDefaultSize
+            />
+          </FieldWrapper>
         )) || (
           <p
             style={{
@@ -203,7 +212,7 @@ function PipelineStep({ name, title, index, options, append, update, remove }) {
               overflow: "hidden",
               textOverflow: "ellipsis",
               position: "relative",
-              maxWidth: "241px",
+              width: "clamp(150px, 15vw, 250px)",
             }}
             onClick={() => setStep(index)}
           >
@@ -236,7 +245,7 @@ function PipelineStep({ name, title, index, options, append, update, remove }) {
           <Button
             size="compact"
             variant="secondary"
-            disabled={!name}
+            disabled={!name || options.length <= 1}
             onClick={() => append(index - 1)}
             style={{ width: "32px" }}
             __next40pxDefaultSize

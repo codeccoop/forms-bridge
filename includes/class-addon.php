@@ -424,9 +424,8 @@ class Addon extends Singleton
     protected static function sanitize_credential($credential, $schema)
     {
         $is_valid = true;
-        $internals = ['is_valid', 'enabled'];
         foreach ($credential as $prop => $val) {
-            if (in_array($prop, $internals, true)) {
+            if ($prop === 'is_valid') {
                 continue;
             }
 
@@ -435,11 +434,6 @@ class Addon extends Singleton
         }
 
         $credential['is_valid'] = $is_valid;
-        $credential['enabled'] =
-            boolval(
-                isset($credential['enabled']) ? $credential['enabled'] : false
-            ) && $is_valid;
-
         return $credential;
     }
 

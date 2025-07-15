@@ -8,7 +8,7 @@ import StagePayload from "../Workflow/Payload";
 const { useEffect, useMemo } = wp.element;
 const { __ } = wp.i18n;
 
-export default function BridgePayload({ height }) {
+export default function BridgePayload({ height, focus }) {
   const [, setWorkflowStep, workflowLength] = useWorkflowStepper();
   const workflowJob = useWorkflowJob();
 
@@ -19,8 +19,9 @@ export default function BridgePayload({ height }) {
   const [fields = []] = useWorkflowStage();
 
   useEffect(() => {
+    if (!focus) return;
     setWorkflowStep(workflowLength - 1);
-  }, [workflowLength]);
+  }, [focus, workflowLength]);
 
   if (!height) {
     return (

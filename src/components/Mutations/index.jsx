@@ -57,15 +57,16 @@ export default function Mutations({
   }, [form, customFields]);
 
   const handleSetState = useRef((mappers) => {
-    mappers.forEach((mapper) => {
-      delete mapper.index;
+    const state = mappers.map(({ from, to, cast }) => {
+      return { from, to, cast };
     });
 
-    setState(mappers);
+    setState(state);
   }).current;
 
   const onClose = () => {
-    setMappers(state);
+    const mappers = state.filter(({ from, to, cast }) => from && to && cast);
+    setMappers(mappers);
     setOpen(false);
   };
 
@@ -85,7 +86,6 @@ export default function Mutations({
         disabled={!form}
         variant="secondary"
         onClick={() => setOpen(true)}
-        style={{ width: "150px", justifyContent: "center" }}
         __next40pxDefaultSize
       >
         {__("Mappers", "forms-bridge")} ({mappers.length})

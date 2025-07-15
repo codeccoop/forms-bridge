@@ -64,7 +64,7 @@ export default function BridgeFields({
   const credentialOptions = useMemo(() => {
     return prependEmptyOption(
       credentials
-        .filter(({ is_valid, enabled }) => is_valid && enabled)
+        .filter(({ is_valid }) => is_valid)
         .map(({ name }) => ({ label: name, value: name }))
         .sort((a, b) => (a.label > b.label ? 1 : -1))
     );

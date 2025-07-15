@@ -140,7 +140,6 @@ export default function Credential({
       .finally(() => setLoading(false));
   };
 
-  const enabled = isValid && state.enabled;
   const authorizable = !!schema.properties.access_token;
 
   return (
@@ -199,7 +198,6 @@ export default function Credential({
               color="var(--wp-components-color-accent,var(--wp-admin-theme-color,#3858e9))"
             />
           </Button>
-
           <Button
             size="compact"
             variant="tertiary"
@@ -249,9 +247,9 @@ export default function Credential({
           }}
         >
           <ToggleControl
-            disabled={!isValid}
-            checked={enabled}
-            onChange={() => setState({ ...state, enabled: !state.enabled })}
+            disabled={true}
+            checked={isValid}
+            noEdit
             __nextHasNoMarginBottom
           />
           <span
@@ -259,14 +257,14 @@ export default function Credential({
               width: "50px",
               fontStyle: "normal",
               fontSize: "12px",
-              color: enabled
+              color: isValid
                 ? "var(--wp-components-color-accent,var(--wp-admin-theme-color,#3858e9))"
                 : "rgb(117, 117, 117)",
             }}
           >
-            {!isValid || !state.enabled
-              ? __("Disabled", "forms-bridge")
-              : __("Enabled", "forms-bridge")}
+            {!isValid
+              ? __("Invalid", "forms-bridge")
+              : __("Valid", "forms-bridge")}
           </span>
         </div>
         <Button

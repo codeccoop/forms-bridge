@@ -16,18 +16,24 @@ import BridgePayload from "./Payload";
 import Mutations from "../Mutations";
 import useBackends from "../../hooks/useBackends";
 import { useError } from "../../providers/Error";
+import { useCredentials } from "../../hooks/useAddon";
+import useTab from "../../hooks/useTab";
 
 const { Button } = wp.components;
 const { useState, useEffect, useMemo, useCallback, useRef } = wp.element;
+const apiFetch = wp.apiFetch;
 const { __ } = wp.i18n;
 
 export default function Bridge({ data, update, remove, schema, copy }) {
-  const [loading] = useLoading();
+  const [addon] = useTab();
+
+  const [loading, setLoading] = useLoading();
   const [error, setError] = useError();
   const isResponsive = useResponsive();
 
   const name = useRef(data.name);
   const [state, setState] = useState({ ...data });
+  const [workflowOpen, setWorkflowOpen] = useState(false);
 
   const names = useBridgeNames();
 
@@ -38,6 +44,10 @@ export default function Bridge({ data, update, remove, schema, copy }) {
   }, [names, state.name]);
 
   const [backends] = useBackends();
+  const backend = useMemo(() => {
+    return backends.find(({ name }) => name === state.backend);
+  }, [backends, state.backend]);
+
   const includeFiles = useMemo(() => {
     const headers =
       backends.find(({ name }) => name === state.backend)?.headers || [];
@@ -46,6 +56,13 @@ export default function Bridge({ data, update, remove, schema, copy }) {
     )?.value;
     return contentType !== undefined && contentType !== "multipart/form-data";
   }, [backends, state.backend]);
+
+  const [credentials] = useCredentials();
+  const credential = useMemo(() => {
+    return credentials
+      .filter(({ is_valid }) => is_valid)
+      .find(({ name }) => name === state.credential);
+  }, [credentials, data.credential]);
 
   const validate = useCallback(
     (data) => {
@@ -96,6 +113,7 @@ export default function Bridge({ data, update, remove, schema, copy }) {
     if (data.name !== name.current) {
       name.current = data.name;
       setState(data);
+      setPing(false);
     }
   }, [data.name]);
 
@@ -103,6 +121,7 @@ export default function Bridge({ data, update, remove, schema, copy }) {
   useEffect(() => {
     if (reloaded.current && diff(data, state)) {
       setState(data);
+      setPing(false);
     }
 
     return () => {
@@ -119,8 +138,34 @@ export default function Bridge({ data, update, remove, schema, copy }) {
   const [height, setHeight] = useState(0);
   useEffect(() => {
     setHeight(0);
+    if (!fieldsRef.current) return;
     setTimeout(() => setHeight(fieldsRef.current.offsetHeight), 100);
   }, [schema]);
+
+  const [ping, setPing] = useState(false);
+
+  useEffect(() => {
+    setPing(false);
+  }, [state.backend, state.credential]);
+
+  const doPing = useCallback(() => {
+    setLoading(true);
+
+    apiFetch({
+      path: `forms-bridge/v1/${addon}/backend/ping`,
+      method: "POST",
+      data: { backend, credential },
+    })
+      .then(({ success }) => {
+        if (success) setPing(true);
+        else setError(__("Backend is unreachable", "forms-bridge"));
+      })
+      .catch(() => {
+        setPing(false);
+        setError(__("Backend is unreachable", "forms-bridge"));
+      })
+      .finally(() => setLoading(false));
+  }, [addon, backend, credential]);
 
   const enabled = isValid && state.enabled;
 
@@ -207,11 +252,14 @@ export default function Bridge({ data, update, remove, schema, copy }) {
               ⬇
             </Button>
             <Button
-              disabled={!!error}
+              disabled={!!error || loading || ping}
               size="compact"
               variant="primary"
-              onClick={() => setError("No ping", "forms-bridge")}
+              onClick={doPing}
               style={{
+                background: ping
+                  ? "#4ab866"
+                  : "var(--wp-components-color-accent,var(--wp-admin-theme-color,#3858e9))",
                 marginLeft: "auto",
                 height: "40px",
                 justifyContent: "center",
@@ -219,7 +267,7 @@ export default function Bridge({ data, update, remove, schema, copy }) {
               __nextHasNoMarginBottom
               __next40pxDefaultSize
             >
-              Ping
+              ping
             </Button>
           </div>
         </div>
@@ -236,7 +284,7 @@ export default function Bridge({ data, update, remove, schema, copy }) {
                 }
           }
         >
-          <BridgePayload height={height} />
+          <BridgePayload height={height} focus={!workflowOpen} />
           <div
             style={{
               paddingTop: "16px",
@@ -269,10 +317,6 @@ export default function Bridge({ data, update, remove, schema, copy }) {
                 includeFiles={includeFiles}
               />
               <Workflow
-                backend={state.backend}
-                formId={state.form_id}
-                customFields={state.custom_fields}
-                mutations={state.mutations}
                 workflow={state.workflow}
                 setWorkflow={(workflow) => setState({ ...state, workflow })}
                 setMutationMappers={(mutation, mappers) => {
@@ -284,6 +328,8 @@ export default function Bridge({ data, update, remove, schema, copy }) {
                       .concat(state.mutations.slice(mutation + 1)),
                   });
                 }}
+                open={workflowOpen}
+                setOpen={setWorkflowOpen}
               />
             </div>
             <div

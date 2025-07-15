@@ -76,9 +76,6 @@ class Zoho_Addon extends Addon
         }
 
         $credential['is_valid'] = $credential['is_valid'] && $is_valid;
-        $credential['enabled'] =
-            $credential['enabled'] && $credential['is_valid'];
-
         return $credential;
     }
 
