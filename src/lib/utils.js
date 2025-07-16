@@ -7,14 +7,14 @@ export function debounce(fn, ms = 500) {
   };
 }
 
-export function validateUrl(url) {
+export function validateUrl(url, base = false) {
   try {
     url = new URL(url);
   } catch {
     return false;
   }
 
-  if (url.pathname !== "/" || url.hash !== "" || url.search !== "") {
+  if (base === true && (url.hash !== "" || url.search !== "")) {
     return false;
   }
 

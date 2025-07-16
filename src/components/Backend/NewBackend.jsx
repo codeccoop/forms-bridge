@@ -36,7 +36,7 @@ export default function NewBackend({ add }) {
   }, [names, data.name]);
 
   const invalidUrl = useMemo(() => {
-    return !validateUrl(data.base_url);
+    return !validateUrl(data.base_url, true);
   }, [data.base_url]);
 
   const create = () => {

@@ -30,7 +30,7 @@ export default function Backend({ update, remove, data, copy }) {
   }, [names, state.name]);
 
   const invalidUrl = useMemo(() => {
-    return !validateUrl(state.base_url);
+    return !validateUrl(state.base_url, true);
   }, [state.base_url]);
 
   const isValid = useMemo(

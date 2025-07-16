@@ -1,0 +1,73 @@
+{
+  "title": "Contacts",
+  "description": "Simple contact form connected to a csv",
+  "fields": [
+    {
+      "ref": "#form",
+      "name": "title",
+      "default": "Contacts"
+    },
+    {
+      "ref": "#backend/authentication",
+      "name": "type",
+      "value": "Basic",
+      "type": "string"
+    },
+    {
+      "ref": "#backend/authentication",
+      "name": "client_id",
+      "label": "Username",
+      "type": "string",
+      "required": true
+    },
+    {
+      "ref": "#backend/authentication",
+      "name": "client_secret",
+      "label": "Password",
+      "type": "string",
+      "required": true
+    },
+    {
+      "ref": "#bridge",
+      "name": "endpoint",
+      "label": "Filepath",
+      "pattern": ".+\.csv$"
+    }
+  ],
+  "form": {
+    "title": "Contacts",
+    "fields": [
+      {
+        "name": "email",
+        "label": "Your email",
+        "type": "email",
+        "required": true
+      },
+      {
+        "name": "firstname",
+        "label": "Your first name",
+        "type": "text",
+        "required": true
+      },
+      {
+        "name": "lastname",
+        "label": "Your last name",
+        "type": "text",
+        "required": true
+      },
+      {
+        "name": "phone",
+        "label": "Your phone",
+        "type": "text"
+      }
+    ]
+  },
+  "bridge": {
+    "custom_fields": [
+      {
+        "name": "language",
+        "value": "$language"
+      }
+    ]
+  }
+}

@@ -484,7 +484,10 @@ class Form_Bridge_Template
                         ],
                     ],
                 ],
-                'form' => [],
+                'form' => [
+                    'title' => '',
+                    'fields' => [],
+                ],
             ],
             $addon,
             $schema
@@ -537,6 +540,8 @@ class Form_Bridge_Template
 
         if ($this->is_valid) {
             $this->id = $this->addon . '-' . $data['name'];
+        } else {
+            $a = 1;
         }
     }
 
