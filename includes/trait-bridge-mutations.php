@@ -3,7 +3,7 @@
 namespace FORMS_BRIDGE;
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit();
 }
 
 trait Form_Bridge_Mutations
