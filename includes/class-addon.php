@@ -691,7 +691,7 @@ class Addon extends Singleton
         return [];
     }
 
-    private static function autoload_posts($post_type, $api)
+    private static function autoload_posts($post_type, $addon)
     {
         if (!in_array($post_type, ['fb-bridge-template', 'fb-job'])) {
             return [];
@@ -700,8 +700,8 @@ class Addon extends Singleton
         return get_posts([
             'post_type' => $post_type,
             'posts_per_page' => -1,
-            'meta_key' => '_fb-api',
-            'meta_value' => $api,
+            'meta_key' => '_fb-addon',
+            'meta_value' => $addon,
         ]);
     }
 

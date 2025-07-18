@@ -65,7 +65,10 @@ export default function JobsProvider({ children }) {
         method: "POST",
         data: config,
       })
-        .then(setConfig)
+        .then((config) => {
+          setJob(config.name);
+          setConfig(config);
+        })
         .catch(() => setError(__("Job submit error", "forms-bridge")))
         .finally(() => setLoading(false));
     },
@@ -85,19 +88,20 @@ export default function JobsProvider({ children }) {
         path: `forms-bridge/v1/${addon}/jobs/${job}`,
         method: "DELETE",
       })
-        .then(() => {
-          return apiFetch({
-            path: `forms-bridge/v1/${addon}/jobs/${job}`,
-            method: "GET",
-          })
-            .then((config) => setConfig(config))
-            .catch((err) => {
-              if (err.code !== "not_found") throw err;
-              flushStore();
-              setJob(null);
-            });
+        .then((config) => {
+          if (config?.name) {
+            setJob(config.name);
+            setConfig(config);
+          } else {
+            setConfig(null);
+            setJob(null);
+            flushStore();
+          }
         })
-        .catch(() => setError(__("Job reset error", "forms-bridge")))
+        .catch((err) => {
+          console.log(err);
+          setError(__("Job reset error", "forms-bridge"));
+        })
         .finally(() => setLoading(false));
     },
     [addon]

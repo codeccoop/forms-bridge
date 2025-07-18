@@ -1,5 +1,6 @@
 // source
 import useResponsive from "../../hooks/useResponsive";
+import { useJob } from "../../providers/Jobs";
 import { useWorkflowStage, useWorkflowStepper } from "../../providers/Workflow";
 import JobEditor from "../JobEditor";
 import WorkflowPipeline from "./Pipeline";
@@ -18,6 +19,7 @@ export default function Workflow({
 }) {
   const isResponsive = useResponsive(920);
 
+  const [, setJob] = useJob();
   const [edit, setEdit] = useState(null);
 
   const [, setWorkflowStep, workflowLength] = useWorkflowStepper();
@@ -30,8 +32,15 @@ export default function Workflow({
 
   const onClose = useCallback(() => {
     setWorkflowStep(workflowLength - 1);
+    setEdit(false);
+    setJob(null);
     setOpen(false);
   }, [workflowLength]);
+
+  const onEditClose = useRef(() => {
+    setJob(null);
+    setEdit(false);
+  }).current;
 
   return (
     <>
@@ -71,7 +80,7 @@ export default function Workflow({
               flexDirection: isResponsive ? "column" : "row",
             }}
           >
-            {(edit && <JobEditor close={() => setEdit(false)} />) || (
+            {(edit && <JobEditor close={onEditClose} />) || (
               <>
                 <div
                   style={
@@ -99,6 +108,7 @@ export default function Workflow({
                   <WorkflowPipeline
                     workflow={workflow}
                     setWorkflow={setWorkflow}
+                    setEdit={() => setEdit(true)}
                   />
                 </div>
                 <div
@@ -110,7 +120,10 @@ export default function Workflow({
                   }}
                 >
                   <WorkflowStage
-                    setEdit={setEdit}
+                    setEdit={(job) => {
+                      setJob(job);
+                      setEdit(true);
+                    }}
                     setMappers={(step, mappers) =>
                       setMutationMappers(step, mappers)
                     }

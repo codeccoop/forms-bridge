@@ -129,7 +129,7 @@ export default function WorkflowPipeline({ workflow, setWorkflow, setEdit }) {
         <Button
           style={{ width: "100px", justifyContent: "center" }}
           variant="primary"
-          onClick={() => setEdit(-1)}
+          onClick={() => setEdit()}
           __next40pxDefaultSize
         >
           {__("New job", "forms-bridge")}

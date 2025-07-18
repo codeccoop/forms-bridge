@@ -197,9 +197,24 @@ function ArrayItems({
     );
   }
 
+  if (items.type === "array") {
+    return (
+      <ArrayItems
+        items={items.items}
+        showDiff={showDiff}
+        enter={enter}
+        exit={exit}
+        mutated={mutated}
+        touched={touched}
+        arrayItem={arrayItem + 1}
+        simple={simple}
+      />
+    );
+  }
+
   const type =
     items.type +
-    Array.apply(null, Array(arrayItem))
+    Array.apply(null, Array(arrayItem + 1))
       .map(() => "[]")
       .join("");
 

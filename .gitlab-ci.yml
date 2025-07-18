@@ -37,20 +37,10 @@ build:
   image: node:latest
   script:
     - npm install && npm run build
-    - find . -name node_modules -type d | xargs rm -rf
+    - rm -rf node_modules
   artifacts:
     paths:
       - assets/plugin.bundle.js
-      - addons/**/*/addon.bundle.js
-
-vendor:
-  stage: build
-  image: composer:latest
-  script:
-    - cd addons/gsheets && composer install
-  artifacts:
-    paths:
-      - addons/gsheets/vendor
 
 package:
   image: codeccoop/wp-cli:latest
@@ -67,7 +57,6 @@ package:
     - find deps/i18n -name '*.php' -exec sed -i "s/wpct_i18n_/forms_bridge_/g" {} \;
     - find . -name '*.php' -exec sed -i 's/WPCT_I18N/FORMS_BRIDGE\\I18n/g' {} \;
     - wp dist-archive . ./$ZIP
-    - mkdir forms-bridge && mv addons forms-bridge && zip -r $ZIP forms-bridge/addons/**/vendor -x "*.sh" -x "*.asc" -x "*.phar*" -x "*.cnf" -x "*.pubkey"
   artifacts:
     paths:
       - $ZIP

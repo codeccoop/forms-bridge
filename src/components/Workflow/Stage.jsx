@@ -245,7 +245,7 @@ export default function WorkflowStage({ setEdit, setMappers: setJobMappers }) {
           style={{ width: "100px", justifyContent: "center" }}
           variant="secondary"
           disabled={step === 0 || step === outputStep}
-          onClick={() => setEdit(true)}
+          onClick={() => setEdit(workflowJob.name)}
           __next40pxDefaultSize
         >
           {__("Edit", "forms-bridge")}

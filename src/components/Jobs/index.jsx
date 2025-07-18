@@ -182,7 +182,7 @@ function JobsContent({ loading, config, setEdit, reset }) {
           </Button>
           <RemoveButton
             label={__("Reset", "forms-bridge")}
-            onClick={() => reset(job)}
+            onClick={() => reset(config.name)}
             icon
           />
         </div>

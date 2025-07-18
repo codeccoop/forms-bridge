@@ -538,15 +538,17 @@ class REST_Settings_Controller extends Base_Controller
             return self::not_found();
         }
 
-        $job = $job->reset();
-        if (!$job) {
-            return ['success' => false];
+        $reset = $job->reset();
+        if (!$reset) {
+            return $job->data();
         }
 
         $job = FBAPI::get_job($request['name'], $addon);
         if ($job) {
             return $job->data();
         }
+
+        return [];
     }
 
     /**
