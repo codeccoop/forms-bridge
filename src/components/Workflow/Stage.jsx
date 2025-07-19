@@ -36,10 +36,6 @@ export default function WorkflowStage({
       if (mode !== "payload") {
         setMode("payload");
       }
-
-      if (showMutations) {
-        setShowMutations(false);
-      }
     }
 
     return () => {

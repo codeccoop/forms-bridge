@@ -12,7 +12,6 @@ function forms_bridge_bigin_appointment_participant($payload, $bridge)
         return $payload;
     }
 
-    $payload['Participants'] = $payload['Participants'] ?? [];
     $payload['Participants'][] = [
         'type' => 'contact',
         'participant' => $contact['id'],

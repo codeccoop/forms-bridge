@@ -638,16 +638,29 @@ class Job
      */
     private function output_payload($payload)
     {
-        foreach ($this->input as $input_field) {
-            $persist = false;
+        $input_fields = array_column($this->input, 'name');
+
+        foreach ($input_fields as $input_field) {
             foreach ($this->output as $output_field) {
                 if ($input_field['name'] === $output_field['name']) {
+                    if (is_array($output_field['requires'])) {
+                        $requires = array_filter(
+                            $output_field['requires'],
+                            fn($name) => array_search($name, $input_fields) !==
+                                false
+                        );
+
+                        if (count($requires)) {
+                            break;
+                        }
+                    }
+
                     $persist = true;
                     break;
                 }
             }
 
-            if (!$persist) {
+            if (!isset($persist)) {
                 unset($payload[$input_field['name']]);
             }
         }

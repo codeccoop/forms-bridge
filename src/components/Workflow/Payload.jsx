@@ -46,27 +46,30 @@ export default function StagePayload({
 
         if (to !== from) {
           payloadDiff.enter.add(to);
-          payloadDiff.exit.add(from);
 
           if (payloadDiff.enter.has(from)) {
             payloadDiff.enter.delete(from);
-          } else if (payloadDiff.mutated.has(from)) {
-            payloadDiff.mutated.delete(from);
-            payloadDiff.mutated.add(to);
+          } else {
+            payloadDiff.exit.add(from);
           }
         } else {
-          let name = from;
-          while (nameMutations[name] && nameMutations[name] !== name) {
-            name = nameMutations[name];
-          }
-
-          const field = fields.find((field) => field.name === name);
-          if (!field) {
-            return;
-          }
-
-          if (!checkType(field.type, castValue(field.type, mapper))) {
+          if (payloadDiff.mutated.has(from)) {
+            payloadDiff.mutated.delete(from);
             payloadDiff.mutated.add(to);
+          } else {
+            let name = from;
+            while (nameMutations[name] && nameMutations[name] !== name) {
+              name = nameMutations[name];
+            }
+
+            const field = fields.find((field) => field.name === name);
+            if (!field) {
+              return;
+            }
+
+            if (!checkType(field.type, castValue(field.type, mapper))) {
+              payloadDiff.mutated.add(to);
+            }
           }
         }
       });

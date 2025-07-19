@@ -4,7 +4,8 @@ export default function JobSnippet({ id, snippet }) {
   const highlighted = useMemo(() => {
     const code = `function forms_bridge_job_${id.replace(/-/g, "_")}($payload, $bridge)
 {
-${snippet}
+${snippet.replace(/(\n|\t)+$/, "")}
+
     return $payload;
 }`;
 
