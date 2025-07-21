@@ -797,8 +797,8 @@ class REST_Settings_Controller extends Base_Controller
             return self::bad_request();
         }
 
-        self::temp_backend_registration($backend);
-        self::temp_credential_registration($credential, $addon);
+        Http_Backend::temp_registration($backend);
+        Credential::temp_registration($credential, $addon::name);
 
         return [$addon, $backend['name'], $credential['name'] ?? null];
     }
@@ -918,77 +918,5 @@ class REST_Settings_Controller extends Base_Controller
         }
 
         return ['success' => false];
-    }
-
-    /**
-     * Ephemeral backend registration as an interceptor to allow
-     * api fetch, ping and introspection of non registered backends.
-     *
-     * @param array $data Backend data.
-     */
-    private static function temp_backend_registration($data)
-    {
-        if (empty($data) || !isset($data['name'])) {
-            return;
-        }
-
-        add_filter(
-            'http_bridge_backends',
-            static function ($backends) use ($data) {
-                foreach ($backends as $candidate) {
-                    if ($candidate->name === $data['name']) {
-                        $backend = $candidate;
-                        break;
-                    }
-                }
-
-                if (!isset($backend)) {
-                    $backend = new Http_Backend($data);
-
-                    if ($backend->is_valid) {
-                        $backends[] = $backend;
-                    }
-                }
-
-                return $backends;
-            },
-            99,
-            1
-        );
-    }
-
-    private static function temp_credential_registration($data, $addon)
-    {
-        if (empty($data) || !isset($data['name'])) {
-            return;
-        }
-
-        add_filter(
-            'forms_bridge_credentials',
-            static function ($credentials, $ns) use ($data, $addon) {
-                if ($ns && $ns !== $addon::name) {
-                    return $credentials;
-                }
-
-                foreach ($credentials as $candidate) {
-                    if ($candidate->name === $data['name']) {
-                        $credential = $candidate;
-                    }
-                }
-
-                if (!isset($credential)) {
-                    $credential_class = $addon::credential_class;
-                    $credential = new $credential_class($data, $addon::name);
-
-                    if ($credential->is_valid) {
-                        $credentials[] = $credential;
-                    }
-                }
-
-                return $credentials;
-            },
-            99,
-            2
-        );
     }
 }

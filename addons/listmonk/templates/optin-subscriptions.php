@@ -20,7 +20,7 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'status',
             'label' => __('Subscription status', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 [
                     'label' => __('Enabled', 'forms-bridge'),

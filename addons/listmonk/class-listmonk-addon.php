@@ -51,6 +51,7 @@ class Listmonk_Addon extends Addon
                 'endpoint' => '/api/lists',
                 'method' => 'GET',
                 'backend' => $backend,
+                'credential' => $credential,
             ],
             self::name
         );
@@ -76,6 +77,7 @@ class Listmonk_Addon extends Addon
                 'method' => 'GET',
                 'endpoint' => $endpoint,
                 'backend' => $backend,
+                'credential' => $credential,
             ],
             self::name
         );

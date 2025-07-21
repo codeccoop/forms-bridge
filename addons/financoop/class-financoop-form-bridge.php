@@ -13,6 +13,8 @@ if (!defined('ABSPATH')) {
  */
 class Finan_Coop_Form_Bridge extends Form_Bridge
 {
+    private static $request;
+
     /**
      * Returns json as static bridge content type.
      *
@@ -65,6 +67,16 @@ class Finan_Coop_Form_Bridge extends Form_Bridge
             2
         );
 
+        add_filter(
+            'http_bridge_request',
+            static function ($request) {
+                self::$request = $request;
+                return $request;
+            },
+            10,
+            1
+        );
+
         $response = parent::submit($payload);
 
         if (is_wp_error($response)) {
@@ -72,21 +84,38 @@ class Finan_Coop_Form_Bridge extends Form_Bridge
         }
 
         if (isset($response['data']['error'])) {
-            return new WP_Error(
-                'financoop_rpc_error',
+            $error = new WP_Error(
+                'response_code_' . $response['data']['error']['code'],
                 $response['data']['error']['message'],
                 $response['data']['error']['data']
             );
+
+            $error_data = ['response' => $response];
+            if (self::$request) {
+                $error_data['request'] = self::$request;
+            }
+
+            $error->add_data($error_data);
+            return $error;
         }
 
         if (isset($response['data']['result']['error'])) {
-            return new WP_Error(
-                'financoop_api_error',
+            $error = new WP_Error(
+                'response_code_' . $response['data']['result']['error']['code'],
                 $response['data']['result']['error']['message'],
                 $response['data']['result']['error']['data']
             );
+
+            $error_data = ['response' => $response];
+            if (self::$request) {
+                $error_data['request'] = self::$request;
+            }
+
+            $error->add_data($error_data);
+            return $error;
         }
 
+        $response['data'] = $response['data']['data'] ?? [];
         return $response;
     }
 }

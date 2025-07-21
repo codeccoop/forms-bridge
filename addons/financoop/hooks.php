@@ -1,5 +1,8 @@
 <?php
 
+use FORMS_BRIDGE\Credential;
+use HTTP_BRIDGE\Http_Backend;
+
 if (!defined('ABSPATH')) {
     exit();
 }
@@ -11,7 +14,7 @@ add_filter(
             return $schema;
         }
 
-        $schema['properties']['method']['enum'] = ['POST'];
+        $schema['properties']['method']['enum'] = ['GET', 'POST'];
         return $schema;
     },
     10,
@@ -36,8 +39,15 @@ add_filter(
                     [
                         'ref' => '#bridge/custom_fields[]',
                         'name' => 'campaign_id',
-                        'label' => __('Campaign ID', 'forms-bridge'),
-                        'type' => 'number',
+                        'label' => __('Campaign', 'forms-bridge'),
+                        'type' => 'select',
+                        'options' => [
+                            'endpoint' => '/api/campaign',
+                            'finger' => [
+                                'value' => '[].id',
+                                'label' => '[].name',
+                            ],
+                        ],
                         'required' => true,
                     ],
                     [
@@ -45,31 +55,39 @@ add_filter(
                         'name' => 'name',
                         'default' => 'FinanCoop',
                     ],
-                    // [
-                    //     'ref' => '#backend/headers[]',
-                    //     'name' => 'X-Odoo-Db',
-                    //     'label' => 'Database',
-                    //     'type' => 'string',
-                    //     'required' => true,
-                    // ],
-                    // [
-                    //     'ref' => '#backend/headers[]',
-                    //     'name' => 'X-Odoo-Username',
-                    //     'label' => 'Username',
-                    //     'type' => 'string',
-                    //     'required' => true,
-                    // ],
-                    // [
-                    //     'ref' => '#backend/headers[]',
-                    //     'name' => 'X-Odoo-Api-Key',
-                    //     'label' => 'API Key',
-                    //     'type' => 'string',
-                    //     'required' => true,
-                    // ],
                     [
-                        'ref' => '#bridge',
-                        'name' => 'method',
-                        'value' => 'POST',
+                        'ref' => '#credential',
+                        'name' => 'name',
+                        'label' => __('Name', 'forms-bridge'),
+                        'type' => 'text',
+                        'required' => true,
+                    ],
+                    [
+                        'ref' => '#credential',
+                        'name' => 'schema',
+                        'type' => 'text',
+                        'value' => 'RPC',
+                    ],
+                    [
+                        'ref' => '#credential',
+                        'name' => 'realm',
+                        'label' => __('Database', 'forms-bridge'),
+                        'type' => 'text',
+                        'required' => true,
+                    ],
+                    [
+                        'ref' => '#credential',
+                        'name' => 'client_id',
+                        'label' => __('Username', 'forms-bridge'),
+                        'type' => 'text',
+                        'required' => true,
+                    ],
+                    [
+                        'ref' => '#credential',
+                        'name' => 'client_secret',
+                        'label' => __('API Key', 'forms-bridge'),
+                        'type' => 'text',
+                        'required' => true,
                     ],
                 ],
                 'bridge' => [
@@ -83,6 +101,9 @@ add_filter(
                             'value' => 'application/json',
                         ],
                     ],
+                ],
+                'credential' => [
+                    'schema' => 'RPC',
                 ],
             ],
             $defaults,
@@ -115,10 +136,6 @@ add_filter(
             );
 
             array_splice($data['bridge']['custom_fields'], $index, 1);
-
-            $data['bridge']['custom_fields'] = array_values(
-                $data['bridge']['custom_fields']
-            );
         } else {
             return new WP_Error(
                 'invalid_fields',
@@ -135,12 +152,14 @@ add_filter(
             array_slice(explode('/', $data['bridge']['endpoint']), 0, 4)
         );
 
+        Http_Backend::temp_registration($data['backend']);
+        Credential::temp_registration($data['credential'], 'financoop');
+
         $addon = FBAPI::get_addon('financoop');
         $response = $addon->fetch(
-            'financoop',
-            $data['backend'],
             $endpoint,
-            null
+            $data['backend']['name'],
+            $data['credential']['name']
         );
 
         if (is_wp_error($response)) {
@@ -151,7 +170,7 @@ add_filter(
             );
         }
 
-        $campaign = $response['data']['data'];
+        $campaign = $response['data'];
         $field_names = array_column($data['form']['fields'], 'name');
 
         $index = array_search('donation_amount', $field_names);

@@ -124,8 +124,8 @@ export default function CredentialStep({ fields, data, setData }) {
           <Field
             data={{
               ...field,
-              value: data[field.name] || "",
-              onChange: (value) => setData({ [field.name]: value }),
+              value: state[field.name] || "",
+              onChange: (value) => setState({ ...state, [field.name]: value }),
             }}
             error={
               field.name === "name" &&

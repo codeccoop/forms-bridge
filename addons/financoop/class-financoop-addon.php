@@ -54,6 +54,7 @@ class Finan_Coop_Addon extends Addon
                 'endpoint' => '/api/campaign',
                 'method' => 'GET',
                 'backend' => $backend,
+                'credential' => $credential,
             ],
             'financoop'
         );
@@ -78,6 +79,7 @@ class Finan_Coop_Addon extends Addon
                 'name' => '__financoop-' . time(),
                 'endpoint' => $endpoint,
                 'backend' => $backend,
+                'credential' => $credential,
                 'method' => 'GET',
             ],
             'financoop'

@@ -17,7 +17,13 @@ function forms_bridge_financoop_vat_id($payload)
     } elseif ($country_code) {
         $vat_prefix = $country_code;
     } else {
-        $vat_prefix = strtoupper(explode('_', get_locale())[0]);
+        $locale = get_locale();
+
+        if ($locale === 'ca') {
+            $locale = 'es';
+        }
+
+        $vat_prefix = strtoupper(explode('_', $locale)[0]);
     }
 
     if (!isset($forms_bridge_iso2_countries[$vat_prefix])) {

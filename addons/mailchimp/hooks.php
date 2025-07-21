@@ -34,16 +34,23 @@ add_filter(
                     ],
                     [
                         'ref' => '#credential',
+                        'name' => 'name',
+                        'label' => __('Name', 'forms-bridge'),
+                        'type' => 'text',
+                        'required' => true,
+                    ],
+                    [
+                        'ref' => '#credential',
                         'name' => 'schema',
                         'label' => __('Authentication schema', 'forms-bridge'),
-                        'type' => 'string',
+                        'type' => 'text',
                         'value' => 'Basic',
                     ],
                     [
                         'ref' => '#credential',
                         'name' => 'client_id',
                         'label' => __('Client ID', 'forms-bridge'),
-                        'type' => 'string',
+                        'type' => 'text',
                         'value' => 'forms-bridge',
                     ],
                     [
@@ -54,7 +61,7 @@ add_filter(
                             'Get it from your <a href="https://us1.admin.mailchimp.com/account/api/" target="_blank">account</a>',
                             'forms-bridge'
                         ),
-                        'type' => 'string',
+                        'type' => 'text',
                         'required' => true,
                     ],
                     [
@@ -66,7 +73,7 @@ add_filter(
                         'ref' => '#bridge/custom_fields[]',
                         'name' => 'list_id',
                         'label' => __('Audience', 'forms-bridge'),
-                        'type' => 'options',
+                        'type' => 'select',
                         'options' => [
                             'endpoint' => '/3.0/lists',
                             'finger' => [
@@ -123,19 +130,17 @@ add_filter(
         );
 
         if ($index !== false) {
-            if (!empty($data['bridge']['custom_field'][$index])) {
-                $endpoint = $data['bridge']['endpoint'];
-                $parsed = wp_parse_url($endpoint);
+            $endpoint = $data['bridge']['endpoint'];
+            $parsed = wp_parse_url($endpoint);
 
-                $path = $parsed['path'] ?? '';
+            $path = $parsed['path'] ?? '';
 
-                $query = [];
-                wp_parse_str($parsed['query'] ?? '', $query);
-                $query['skip_merge_validation'] = 'true';
-                $querystr = http_build_query($query);
+            $query = [];
+            wp_parse_str($parsed['query'] ?? '', $query);
+            $query['skip_merge_validation'] = 'true';
+            $querystr = http_build_query($query);
 
-                $data['bridge']['endpoint'] = $path . '?' . $querystr;
-            }
+            $data['bridge']['endpoint'] = $path . '?' . $querystr;
 
             array_splice($data['bridge']['custom_fields'], $index, 1);
         }

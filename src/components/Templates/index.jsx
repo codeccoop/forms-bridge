@@ -28,6 +28,7 @@ export default function Templates() {
   const [integrations] = useIntegrations();
   const integrationOptions = useMemo(() => {
     return integrations
+      .filter(({ enabled }) => enabled)
       .map(({ name, title }) => ({
         value: name,
         label: title,

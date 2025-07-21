@@ -257,8 +257,8 @@ class JSON_Finger
     {
         $pointer = (string) $pointer;
 
-        if ($this->$pointer) {
-            return $this->$pointer;
+        if (isset($this->data[$pointer])) {
+            return $this->data[$pointer];
         }
 
         if (strstr($pointer, '[]') !== false) {

@@ -5,6 +5,20 @@ if (!defined('ABSPATH')) {
 }
 
 add_filter(
+    'forms_bridge_bridge_schema',
+    function ($schema, $addon) {
+        if ($addon !== 'listmonk') {
+            return $schema;
+        }
+
+        $schema['required'][] = 'credential';
+        return $schema;
+    },
+    10,
+    2
+);
+
+add_filter(
     'forms_bridge_template_defaults',
     function ($defaults, $addon, $schema) {
         if ($addon !== 'listmonk') {
@@ -25,9 +39,16 @@ add_filter(
                     ],
                     [
                         'ref' => '#credential',
+                        'name' => 'name',
+                        'label' => __('Name', 'forms-bridge'),
+                        'type' => 'text',
+                        'required' => true,
+                    ],
+                    [
+                        'ref' => '#credential',
                         'name' => 'schema',
                         'label' => __('Authentication', 'forms-bridge'),
-                        'type' => 'string',
+                        'type' => 'text',
                         'value' => 'Token',
                     ],
                     [
@@ -38,7 +59,7 @@ add_filter(
                             'You have to generate an API user on your listmonk instance. See the <a href="https://listmonk.app/docs/roles-and-permissions/#api-users">documentation</a> for more information',
                             'forms-bridge'
                         ),
-                        'type' => 'string',
+                        'type' => 'text',
                         'required' => true,
                     ],
                     [
@@ -49,7 +70,7 @@ add_filter(
                             'Token of the API user. The token will be shown only once on user creation time, be sure to copy its value and store it in a save place',
                             'forms-bridge'
                         ),
-                        'type' => 'string',
+                        'type' => 'text',
                         'required' => true,
                     ],
                     [
@@ -65,7 +86,7 @@ add_filter(
                             'Select, at least, one list that users will subscribe to',
                             'forms-bridge'
                         ),
-                        'type' => 'options',
+                        'type' => 'select',
                         'options' => [
                             'endpoint' => '/api/lists',
                             'finger' => [

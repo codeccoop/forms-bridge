@@ -22,7 +22,7 @@ return [
         //     'ref' => '#bridge/custom_fields[]',
         //     'name' => 'tax_receipt_option',
         //     'label' => __('Tax receipt', 'forms-bridge'),
-        //     'type' => 'options',
+        //     'type' => 'select',
         //     'options' => [
         //         [
         //             'label' => 'foo',
@@ -97,7 +97,7 @@ return [
             [
                 'label' => __('Nationality', 'forms-bridge'),
                 'name' => 'country',
-                'type' => 'options',
+                'type' => 'select',
                 'options' => array_map(function ($country_code) {
                     global $forms_bridge_iso2_countries;
                     return [

@@ -20,7 +20,7 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'status',
             'label' => __('Subscription status', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 [
                     'label' => __('Subscribed', 'forms-bridge'),
@@ -54,7 +54,7 @@ return [
                 'Tag names separated by commas',
                 'forms-bridge'
             ),
-            'type' => 'string',
+            'type' => 'text',
         ],
         [
             'ref' => '#form',
