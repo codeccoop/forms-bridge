@@ -78,7 +78,7 @@ function forms_bridge_dolibarr_search_thirdparty($payload, $bridge)
         return;
     }
 
-    $sqlfilters = implode(' and ', $sqlfilters);
+    $sqlfilters = implode(' or ', $sqlfilters);
 
     $response = $bridge
         ->patch([
@@ -111,6 +111,8 @@ function forms_bridge_dolibarr_search_thirdparty($payload, $bridge)
 
 function forms_bridge_dolibarr_get_next_code_client($payload, $bridge)
 {
+    $required = isset($payload['client']) && $payload['client'] != '0';
+
     $response = $bridge
         ->patch([
             'name' => 'dolibarr-get-next-code-client',
@@ -118,27 +120,41 @@ function forms_bridge_dolibarr_get_next_code_client($payload, $bridge)
             'method' => 'GET',
         ])
         ->submit([
-            'sortfield' => 't.code_client',
+            'sortfield' => 't.rowid',
             'sortorder' => 'DESC',
             'limit' => 1,
         ]);
 
     if (is_wp_error($response)) {
+        if (!$required) {
+            $payload['code_client'] = '';
+            return $payload;
+        }
+
         return $response;
     }
 
     $previous_code_client = $response['data'][0]['code_client'];
 
-    [$prefix, $number] = explode('-', $previous_code_client);
+    try {
+        [$prefix, $number] = explode('-', $previous_code_client);
 
-    if (empty($number)) {
-        $number = $prefix;
-        $prefix = '';
-    }
+        if (empty($number)) {
+            $number = $prefix;
+            $prefix = '';
+        }
 
-    $next = strval($number + 1);
-    while (strlen($next) < strlen($number)) {
-        $next = '0' . $next;
+        $next = strval($number + 1);
+        while (strlen($next) < strlen($number)) {
+            $next = '0' . $next;
+        }
+    } catch (Error) {
+        if (!$required) {
+            $payload['code_client'] = '';
+            return $payload;
+        }
+
+        return new WP_Error('unkown_code_format');
     }
 
     if (preg_match('/^CU[0-9]{4}$/', $prefix)) {
@@ -163,7 +179,7 @@ function forms_bridge_dolibarr_get_next_project_ref($payload, $bridge)
             'method' => 'GET',
         ])
         ->submit([
-            'sortfield' => 't.ref',
+            'sortfield' => 't.rowid',
             'sortorder' => 'DESC',
             'limit' => 1,
         ]);
@@ -289,7 +305,11 @@ function forms_bridge_dolibarr_create_thirdparty(
 
         if (!is_wp_error($thirdparty) && isset($thirdparty['id'])) {
             $payload['id'] = $thirdparty['id'];
-            $payload['code_client'] = $thirdparty['code_client'];
+
+            if (isset($thirdparty['code_client'])) {
+                $payload['code_client'] = $thirdparty['code_client'];
+            }
+
             return forms_bridge_dolibarr_update_thirdparty($payload, $bridge);
         }
     }

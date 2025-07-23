@@ -22,6 +22,46 @@ return [
             'name' => 'endpoint',
             'value' => '/api/index.php/orders',
         ],
+        [
+            'ref' => '#bridge/custom_fields[]',
+            'name' => 'typent_id',
+            'label' => __('Thirdparty type', 'forms-bridge'),
+            'type' => 'select',
+            'options' => [
+                [
+                    'label' => __('Large company', 'forms-bridge'),
+                    'value' => '2',
+                ],
+                [
+                    'label' => __('Medium company', 'forms-bridge'),
+                    'value' => '3',
+                ],
+                [
+                    'label' => __('Small company', 'forms-bridge'),
+                    'value' => '4',
+                ],
+                [
+                    'label' => __('Governmental', 'forms-bridge'),
+                    'value' => '5',
+                ],
+                [
+                    'label' => __('Startup', 'forms-bridge'),
+                    'value' => '1',
+                ],
+                [
+                    'label' => __('Retailer', 'forms-bridge'),
+                    'value' => '7',
+                ],
+                [
+                    'label' => __('Private individual', 'forms-bridge'),
+                    'value' => '8',
+                ],
+                [
+                    'label' => __('Other', 'forms-bridge'),
+                    'value' => '100',
+                ],
+            ],
+        ],
     ],
     'bridge' => [
         'endpoint' => '/api/index.php/orders',

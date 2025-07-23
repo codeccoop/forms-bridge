@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-global $forms_bridge_dolibarr_countries;
+global $forms_bridge_iso2_countries;
 
 return [
     'title' => __('Company Leads', 'forms-bridge'),
@@ -23,7 +23,7 @@ return [
             'name' => 'userownerid',
             'label' => __('Owner', 'forms-bridge'),
             'description' => __('Owner user of the lead', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 'endpoint' => '/api/index.php/users',
                 'finger' => ['value' => '[].id', 'label' => '[].email'],
@@ -32,8 +32,8 @@ return [
         [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'typent_id',
-            'label' => __('Third party type', 'forms-bridge'),
-            'type' => 'options',
+            'label' => __('Company type', 'forms-bridge'),
+            'type' => 'select',
             'options' => [
                 [
                     'label' => __('Large company', 'forms-bridge'),
@@ -51,13 +51,21 @@ return [
                     'label' => __('Governmental', 'forms-bridge'),
                     'value' => '5',
                 ],
+                [
+                    'label' => __('Startup', 'forms-bridge'),
+                    'value' => '1',
+                ],
+                [
+                    'label' => __('Other', 'forms-bridge'),
+                    'value' => '100',
+                ],
             ],
         ],
         [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'stcomm_id',
             'label' => __('Prospect status', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 [
                     'label' => __('Never contacted', 'forms-bridge'),
@@ -85,7 +93,7 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'opp_status',
             'label' => __('Lead status', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 [
                     'label' => __('Prospection', 'forms-bridge'),
@@ -151,17 +159,16 @@ return [
                 'required' => true,
             ],
             [
-                'name' => 'country_id',
+                'name' => 'country',
                 'label' => __('Country', 'forms-bridge'),
-                'type' => 'options',
-                'options' => array_map(function ($country_id) {
-                    global $forms_bridge_dolibarr_countries;
+                'type' => 'select',
+                'options' => array_map(function ($country_code) {
+                    global $forms_bridge_iso2_countries;
                     return [
-                        'value' => $country_id,
-                        'label' =>
-                            $forms_bridge_dolibarr_countries[$country_id],
+                        'value' => $country_code,
+                        'label' => $forms_bridge_iso2_countries[$country_code],
                     ];
-                }, array_keys($forms_bridge_dolibarr_countries)),
+                }, array_keys($forms_bridge_iso2_countries)),
                 'required' => true,
             ],
             [
@@ -218,6 +225,14 @@ return [
         'mutations' => [
             [
                 [
+                    'from' => '?userownerid',
+                    'to' => 'userid',
+                    'cast' => 'integer',
+                ],
+            ],
+            [],
+            [
+                [
                     'from' => 'company_name',
                     'to' => 'name',
                     'cast' => 'string',
@@ -228,20 +243,23 @@ return [
                     'cast' => 'copy',
                 ],
                 [
-                    'from' => 'userownerid',
-                    'to' => 'userid',
-                    'cast' => 'integer',
+                    'from' => 'email',
+                    'to' => 'contact_email',
+                    'cast' => 'copy',
                 ],
             ],
-            [],
             [
                 [
                     'from' => 'socid',
                     'to' => 'lead_socid',
                     'cast' => 'copy',
                 ],
+                [
+                    'from' => 'contact_email',
+                    'to' => 'email',
+                    'cast' => 'string',
+                ],
             ],
-            [],
             [
                 [
                     'from' => 'lead_socid',
@@ -251,6 +269,7 @@ return [
             ],
         ],
         'workflow' => [
+            'iso2-country-code',
             'country-id',
             'contact-socid',
             'contact-id',

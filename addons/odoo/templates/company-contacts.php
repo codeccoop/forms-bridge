@@ -41,21 +41,20 @@ return [
                     'cast' => 'string',
                 ],
             ],
-            [
-                [
-                    'from' => 'country',
-                    'to' => 'country',
-                    'cast' => 'null',
-                ],
-            ],
             [],
             [
                 [
-                    'from' => 'country_code',
-                    'to' => 'country_code',
-                    'cast' => 'null',
+                    'from' => 'email',
+                    'to' => 'contact_email',
+                    'cast' => 'copy',
+                ],
+                [
+                    'from' => 'phone',
+                    'to' => 'contact_phone',
+                    'cast' => 'copy',
                 ],
             ],
+            [],
             [
                 [
                     'from' => 'contact_name',
@@ -135,13 +134,13 @@ return [
             ],
             [
                 'label' => __('Your email', 'forms-bridge'),
-                'name' => 'contact_email',
+                'name' => 'email',
                 'type' => 'email',
                 'required' => true,
             ],
             [
                 'label' => __('Your phone', 'forms-bridge'),
-                'name' => 'contact_phone',
+                'name' => 'phone',
                 'type' => 'text',
             ],
         ],

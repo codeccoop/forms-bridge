@@ -8,20 +8,22 @@ function forms_bridge_odoo_vat_id($payload)
 {
     global $forms_bridge_iso2_countries;
 
-    $prefixed = preg_match(
-        '/^[A-Z]{2}/',
-        strtoupper($payload['vat']),
-        $matches
-    );
+    $prefixed = preg_match('/^[A-Z]{2}/i', $payload['vat'], $matches);
 
-    $country_code = strtoupper($payload['country_code'] ?? '');
+    $country_code = strtoupper($payload['country'] ?? '');
 
     if ($prefixed) {
         $vat_prefix = $matches[0];
     } elseif ($country_code) {
         $vat_prefix = $country_code;
     } else {
-        $vat_prefix = strtoupper(explode('_', get_locale())[0]);
+        $locale = get_locale();
+
+        if ($locale === 'ca') {
+            $locale = 'es';
+        }
+
+        $vat_prefix = strtoupper(explode('_', $locale)[0]);
     }
 
     if (!isset($forms_bridge_iso2_countries[$vat_prefix])) {
@@ -60,7 +62,7 @@ return [
             'required' => true,
         ],
         [
-            'name' => 'country_code',
+            'name' => 'country',
             'schema' => ['type' => 'string'],
         ],
     ],
@@ -70,9 +72,9 @@ return [
             'schema' => ['type' => 'string'],
         ],
         [
-            'name' => 'country_code',
+            'name' => 'country',
             'schema' => ['type' => 'string'],
-            'requires' => ['country_code'],
+            'requires' => ['country'],
         ],
     ],
 ];

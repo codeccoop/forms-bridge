@@ -21,40 +21,35 @@ return [
             'name' => 'userownerid',
             'label' => __('Owner', 'forms-bridge'),
             'description' => __('Host user of the event', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'select',
+            'options' => [
+                'endpoint' => '/api/index.php/users',
+                'finger' => [
+                    'value' => '[].id',
+                    'label' => '[].email',
+                ],
+            ],
             'required' => true,
         ],
         [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'type_code',
             'label' => __('Event type', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
-                [
-                    'label' => __('Meeting', 'forms-bridge'),
-                    'value' => 'AC_RDV',
-                ],
-                [
-                    'label' => __('Phone call', 'forms-bridge'),
-                    'value' => 'AC_TEL',
-                ],
-                [
-                    'label' => __('Intervention on site', 'forms-bridge'),
-                    'value' => 'AC_INT',
-                ],
-                [
-                    'label' => __('Other', 'forms-bridge'),
-                    'value' => 'AC_OTH',
+                'endpoint' => '/api/index.php/setup/dictionary/event_types',
+                'finger' => [
+                    'value' => '[].code',
+                    'label' => '[].label',
                 ],
             ],
-            'default' => 'AC_RDV',
             'required' => true,
         ],
         [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'label',
             'label' => __('Event label', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'text',
             'required' => true,
             'default' => __('Web appointment', 'forms-bridge'),
         ],
@@ -73,9 +68,69 @@ return [
             'default' => 1,
         ],
         [
+            'ref' => '#bridge/custom_fields[]',
+            'name' => 'client',
+            'label' => __('Thirdparty status', 'forms-bridge'),
+            'type' => 'select',
+            'options' => [
+                [
+                    'value' => '1',
+                    'label' => __('Client', 'forms-bridge'),
+                ],
+                [
+                    'value' => '2',
+                    'label' => __('Prospect', 'forms-bridge'),
+                ],
+                [
+                    'value' => '3',
+                    'label' => __('Client/Prospect', 'forms-bridge'),
+                ],
+                [
+                    'value' => '0',
+                    'label' => __(
+                        'Neither customer nor supplier',
+                        'forms-bridge'
+                    ),
+                ],
+            ],
+            'required' => true,
+        ],
+        [
+            'ref' => '#bridge/custom_fields[]',
+            'name' => 'typent_id',
+            'label' => __('Company type', 'forms-bridge'),
+            'type' => 'select',
+            'options' => [
+                [
+                    'label' => __('Large company', 'forms-bridge'),
+                    'value' => '2',
+                ],
+                [
+                    'label' => __('Medium company', 'forms-bridge'),
+                    'value' => '3',
+                ],
+                [
+                    'label' => __('Small company', 'forms-bridge'),
+                    'value' => '4',
+                ],
+                [
+                    'label' => __('Governmental', 'forms-bridge'),
+                    'value' => '5',
+                ],
+                [
+                    'label' => __('Startup', 'forms-bridge'),
+                    'value' => '1',
+                ],
+                [
+                    'label' => __('Other', 'forms-bridge'),
+                    'value' => '100',
+                ],
+            ],
+        ],
+        [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('Web Appointments', 'forms-bridge'),
+            'default' => __('Appointments', 'forms-bridge'),
         ],
     ],
     'form' => [
@@ -119,7 +174,7 @@ return [
             [
                 'name' => 'hour',
                 'label' => __('Hour', 'forms-bridge'),
-                'type' => 'options',
+                'type' => 'select',
                 'required' => true,
                 'options' => [
                     [
@@ -223,7 +278,7 @@ return [
             [
                 'name' => 'minute',
                 'label' => __('Minute', 'forms-bridge'),
-                'type' => 'options',
+                'type' => 'select',
                 'required' => true,
                 'options' => [
                     ['label' => '00', 'value' => '00.0'],
@@ -252,7 +307,7 @@ return [
                     'cast' => 'string',
                 ],
                 [
-                    'from' => 'duration',
+                    'from' => '?duration',
                     'to' => 'duration',
                     'cast' => 'number',
                 ],

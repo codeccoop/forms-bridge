@@ -8,16 +8,22 @@ function forms_bridge_odoo_country_id_from_code($payload, $bridge)
 {
     global $forms_bridge_iso2_countries;
 
-    if (!isset($forms_bridge_iso2_countries[$payload['country_code']])) {
-        return new WP_Error('Invalid ISO-2 country code', 'forms-bridge');
+    if (!isset($forms_bridge_iso2_countries[$payload['country']])) {
+        if (!isset($forms_bridge_iso2_countries[$payload['country_code']])) {
+            return new WP_Error('Invalid ISO-2 country code', 'forms-bridge');
+        }
+
+        // backward compatibility
+        $payload['country'] = $payload['country_code'];
     }
 
     $response = $bridge
         ->patch([
+            'name' => 'odoo-get-country-id',
             'endpoint' => 'res.country',
             'method' => 'search',
         ])
-        ->submit([['code', '=', $payload['country_code']]]);
+        ->submit([['code', '=', $payload['country']]]);
 
     if (is_wp_error($response)) {
         return $response;
@@ -36,16 +42,16 @@ return [
     'method' => 'forms_bridge_odoo_country_id_from_code',
     'input' => [
         [
-            'name' => 'country_code',
+            'name' => 'country',
             'schema' => ['type' => 'string'],
             'required' => true,
         ],
-    ],
-    'output' => [
         [
             'name' => 'country_code',
             'schema' => ['type' => 'string'],
         ],
+    ],
+    'output' => [
         [
             'name' => 'country_id',
             'schema' => ['type' => 'integer'],

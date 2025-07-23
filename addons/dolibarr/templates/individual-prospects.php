@@ -21,7 +21,7 @@ return [
             'name' => 'stcomm_id',
             'label' => __('Prospect status', 'forms-bridge'),
             'required' => true,
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 [
                     'label' => __('Never contacted', 'forms-bridge'),

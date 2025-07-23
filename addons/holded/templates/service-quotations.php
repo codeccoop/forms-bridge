@@ -28,13 +28,13 @@ return [
             'name' => 'tags',
             'label' => __('Tags', 'forms-bridge'),
             'description' => __('Tags separated by commas', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'text',
         ],
         [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'serviceId',
             'label' => __('Service', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 'endpoint' => '/api/invoicing/v1/services',
                 'finger' => [
@@ -73,7 +73,7 @@ return [
                     'cast' => 'integer',
                 ],
                 [
-                    'from' => 'tags',
+                    'from' => '?tags',
                     'to' => 'quotation_tags',
                     'cast' => 'inherit',
                 ],
@@ -116,11 +116,6 @@ return [
             [
                 [
                     'from' => 'country',
-                    'to' => 'country',
-                    'cast' => 'null',
-                ],
-                [
-                    'from' => 'country_code',
                     'to' => 'countryCode',
                     'cast' => 'string',
                 ],
@@ -134,7 +129,7 @@ return [
             ],
             [
                 [
-                    'from' => 'quotation_tags',
+                    'from' => '?quotation_tags',
                     'to' => 'tags',
                     'cast' => 'inherit',
                 ],
@@ -194,7 +189,7 @@ return [
             [
                 'label' => __('Country', 'forms-bridge'),
                 'name' => 'country',
-                'type' => 'options',
+                'type' => 'select',
                 'options' => array_map(function ($country_code) {
                     global $forms_bridge_iso2_countries;
                     return [

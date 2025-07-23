@@ -56,7 +56,7 @@ class Integration extends BaseIntegration
     public function form()
     {
         $form_id = !empty($_POST['wpforms']['id'])
-            ? absint($_POST['wpforms']['id'])
+            ? abs(intval($_POST['wpforms']['id']))
             : 0;
 
         if (!$form_id) {
@@ -350,11 +350,51 @@ class Integration extends BaseIntegration
                 ][$format] ?? '';
         }
 
+        switch ($field['type']) {
+            case 'url':
+                $type = 'url';
+                break;
+            case 'email':
+                $type = 'email';
+                break;
+            case 'radio':
+            case 'payment-select':
+            case 'payment-multiple':
+            case 'payment-checkbox':
+            case 'select':
+            case 'checkbox':
+                $type = 'select';
+                break;
+            case 'number-slider':
+            case 'number':
+                $type = 'number';
+                break;
+            case 'file-upload':
+                $type = 'file';
+                break;
+            case 'repeater':
+                $type = 'mixed';
+                break;
+            case 'date-time':
+                $type = 'date';
+                break;
+            case 'name':
+            case 'text':
+            case 'textarea':
+            case 'password':
+            case 'payment-total':
+            case 'payment-single':
+            case 'address':
+            default:
+                $type = 'text';
+                break;
+        }
+
         return apply_filters(
             'forms_bridge_form_field_data',
             [
                 'id' => (int) ($field['id'] ?? 0),
-                'type' => $field['type'],
+                'type' => $type,
                 'name' => $field['label'] ?? '',
                 'label' => $field['label'] ?? '',
                 'required' => ($field['required'] ?? '') === '1',

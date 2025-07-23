@@ -27,7 +27,7 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'type',
             'label' => __('Contact type', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 [
                     'label' => __('Unspecified', 'forms-bridge'),
@@ -62,7 +62,7 @@ return [
             'name' => 'tags',
             'label' => __('Tags', 'forms-bridge'),
             'description' => __('Tags separated by commas', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'text',
         ],
     ],
     'bridge' => [
@@ -120,11 +120,6 @@ return [
             [
                 [
                     'from' => 'country',
-                    'to' => 'country',
-                    'cast' => 'null',
-                ],
-                [
-                    'from' => 'country_code',
                     'to' => 'countryCode',
                     'cast' => 'string',
                 ],
@@ -175,7 +170,7 @@ return [
             [
                 'label' => __('Country', 'forms-bridge'),
                 'name' => 'country',
-                'type' => 'options',
+                'type' => 'select',
                 'options' => array_map(function ($country_code) {
                     global $forms_bridge_iso2_countries;
                     return [

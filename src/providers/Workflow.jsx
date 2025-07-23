@@ -112,7 +112,7 @@ export default function WorkflowProvider({
   workflow = [],
 }) {
   const [addon] = useTab();
-  const [, setError] = useError();
+  const [error, setError] = useError();
 
   const [jobOnEditor] = useJobConfig();
 
@@ -129,6 +129,10 @@ export default function WorkflowProvider({
   useEffect(() => {
     if (!workflow.length || !addon) {
       setJobs([]);
+      return;
+    }
+
+    if (error) {
       return;
     }
 

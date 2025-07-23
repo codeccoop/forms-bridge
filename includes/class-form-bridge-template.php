@@ -822,6 +822,24 @@ class Form_Bridge_Template
 
         if ($integration === 'woo') {
             $data['form']['id'] = 1;
+        } elseif ($integration === 'wpforms') {
+            $mappers = [];
+            foreach ($data['form']['fields'] as &$field) {
+                if ($field['type'] !== 'file') {
+                    $mappers[] = [
+                        'from' => JSON_Finger::sanitize_key($field['label']),
+                        'to' => $field['name'],
+                        'cast' => 'inherit',
+                    ];
+                }
+
+                $field['name'] = $field['label'];
+            }
+
+            $data['bridge']['mutations'][0] = array_merge(
+                $mappers,
+                $data['bridge']['mutations'][0] ?? []
+            );
         }
 
         $integration_instance = Integration::integration($integration);

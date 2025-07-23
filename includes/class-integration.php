@@ -81,9 +81,8 @@ class Integration extends Singleton
             }
 
             $index = "{$integration_dir}/class-{$integration}-integration.php";
-            $has_deps = self::check_dependencies($integration);
 
-            if (is_file($index) && is_readable($index) && $has_deps) {
+            if (is_file($index) && is_readable($index)) {
                 $registry[$integration] = boolval(
                     $state[$integration] ?? false
                 );
@@ -109,8 +108,7 @@ class Integration extends Singleton
     {
         $registry = self::registry();
         foreach ($integrations as $name => $enabled) {
-            $has_deps = self::check_dependencies($name);
-            if (!($has_deps && isset($registry[$name]))) {
+            if (!isset($registry[$name])) {
                 continue;
             }
 

@@ -351,7 +351,7 @@ export default function CustomFieldsTable({ customFields, setCustomFields }) {
                     <Button
                       size="compact"
                       variant="secondary"
-                      disabled={!name || !value}
+                      disabled={!name || value === ""}
                       onClick={() => addCustomField(i + 1)}
                       style={{
                         width: "40px",

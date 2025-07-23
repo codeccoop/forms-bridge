@@ -15,7 +15,10 @@ function forms_bridge_dolibarr_skip_thirdparty($payload, $bridge)
     if (isset($thirdparty['id'])) {
         $patch = $payload;
         $patch['id'] = $thirdparty['id'];
-        $patch['code_client'] = $thirdparty['code_client'];
+
+        if (isset($thirdparty['code_client'])) {
+            $patch['code_client'] = $thirdparty['code_client'];
+        }
 
         $response = forms_bridge_dolibarr_update_thirdparty($patch, $bridge);
 

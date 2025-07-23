@@ -337,11 +337,52 @@ class Integration extends BaseIntegration
             }
         }
 
+        switch ($field->type) {
+            case 'list':
+            case 'checkbox':
+            case 'multiselect':
+            case 'multi_choice':
+            case 'image_choice':
+            case 'option':
+            case 'select':
+            case 'radio':
+                $type = 'select';
+                break;
+            case 'number':
+            case 'total':
+            case 'quantity':
+                $type = 'number';
+                break;
+            case 'consent':
+                $type = 'boolean';
+                break;
+            case 'fileupload':
+                $type = 'file';
+                break;
+            case 'email':
+                $type = 'email';
+                break;
+            case 'website':
+                $type = 'url';
+                break;
+            case 'date':
+                $type = 'date';
+                break;
+            case 'address':
+            case 'product':
+            case 'textarea':
+            case 'name':
+            case 'shipping':
+            default:
+                $type = 'text';
+                break;
+        }
+
         $field = apply_filters(
             'forms_bridge_form_field_data',
             [
                 'id' => $field->id,
-                'type' => $field->type,
+                'type' => $type,
                 'name' => $name,
                 'label' => $label,
                 'required' => $field->isRequired,
@@ -431,8 +472,7 @@ class Integration extends BaseIntegration
                         'additionalItems' => true,
                     ];
                 }
-            // no break
-            case 'list':
+
                 return [
                     'type' => 'array',
                     'items' => ['type' => 'string'],

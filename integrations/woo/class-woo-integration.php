@@ -529,7 +529,7 @@ class Integration extends BaseIntegration
 
             $billing_field = &$fields[$index];
             $billing_field['schema']['properties'][$name] = [
-                'type' => 'string',
+                'type' => 'text',
             ];
         }
 
@@ -543,7 +543,7 @@ class Integration extends BaseIntegration
 
             $shipping_field = &$fields[$index];
             $shipping_field['schema']['properties'][$name] = [
-                'type' => 'string',
+                'type' => 'text',
             ];
         }
 

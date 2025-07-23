@@ -312,9 +312,54 @@ class Integration extends BaseIntegration
             }
         }
 
+        switch ($settings['type']) {
+            case 'email':
+                $type = 'email';
+                break;
+            case 'checkbox':
+                $type = 'boolean';
+                break;
+            case 'date':
+                $type = 'date';
+                break;
+            case 'select':
+            case 'radio':
+            case 'listradio':
+            case 'listselect':
+            case 'listcountry':
+            case 'liststate':
+            case 'listimage':
+            case 'listmultiselect':
+            case 'listcheckbox':
+                $type = 'select';
+                break;
+            case 'starrating':
+            case 'number':
+                $type = 'number';
+                break;
+            case 'repeater':
+                $type = 'mixed';
+                break;
+            case 'file_upload':
+                $type = 'file';
+                break;
+            case 'textbox':
+            case 'lastname':
+            case 'firstname':
+            case 'address':
+            case 'zip':
+            case 'city':
+            case 'spam':
+            case 'phone':
+            case 'textarea':
+            default:
+                $type = 'text';
+                break;
+        }
+
         return [
             'id' => $id,
-            'type' => $settings['type'],
+            'type' => $type,
             'name' => $name,
             'label' => $settings['label'],
             'required' => isset($settings['required'])

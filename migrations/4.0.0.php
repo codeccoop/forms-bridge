@@ -41,6 +41,10 @@ foreach ($setting_names as $setting_name) {
         $data['bridges'] = [];
     }
 
+    if (!isset($data['credentials'])) {
+        $data['credentials'] = [];
+    }
+
     $backends = [];
     foreach ($data['bridges'] as &$bridge_data) {
         if (!isset($bridge_data['workflow'])) {
@@ -74,18 +78,6 @@ foreach ($setting_names as $setting_name) {
         }
     }
 
-    if (
-        !in_array($option, [
-            'forms-bridge_odoo',
-            'forms-bridge_zoho',
-            'forms-bridge_bigin',
-            'forms-bridge_gsheets',
-            true,
-        ])
-    ) {
-        unset($data['credentials']);
-    }
-
     if ($option === 'forms-bridge_listmonk') {
         foreach ($backends as $name) {
             $backend = FBAPI::get_backend($name);
@@ -98,12 +90,14 @@ foreach ($setting_names as $setting_name) {
                 $data = [
                     'name' => $backend->name,
                     'base_url' => $backend->base_url,
-                    'authentication' => [
-                        'type' => 'Token',
-                        'client_id' => $headers['api_user'],
-                        'client_secret' => $headers['token'],
-                    ],
                     'headers' => [],
+                ];
+
+                $credential = [
+                    'name' => $backend->name,
+                    'schema' => 'Token',
+                    'client_id' => $headers['api_user'],
+                    'client_secret' => $headers['token'],
                 ];
 
                 unset($headers['api_user']);
@@ -114,6 +108,7 @@ foreach ($setting_names as $setting_name) {
                 }
 
                 FBAPI::save_backend($data);
+                $data['credentials'][] = $credential;
             }
         }
     } elseif ($option === 'forms-bridge_mailchimp') {
@@ -128,12 +123,14 @@ foreach ($setting_names as $setting_name) {
                 $data = [
                     'name' => $backend->name,
                     'base_url' => $backend->base_url,
-                    'authentication' => [
-                        'type' => 'Basic',
-                        'client_id' => 'forms-bridge',
-                        'client_secret' => $headers['api-key'],
-                    ],
                     'headers' => [],
+                ];
+
+                $credential = [
+                    'name' => $backend->name,
+                    'schema' => 'Basic',
+                    'client_id' => 'forms-bridge',
+                    'client_secret' => $headers['api-key'],
                 ];
 
                 unset($headers['api-key']);
@@ -143,11 +140,64 @@ foreach ($setting_names as $setting_name) {
                 }
 
                 FBAPI::save_backend($data);
+                $data['credentials'][] = $credential;
             }
         }
+    } elseif ($option = 'forms-bridge_financoop') {
+        foreach ($backends as $name) {
+            $backend = FBAPI::get_backend($name);
+            if (!$backend) {
+                continue;
+            }
+
+            $headers = $backend->headers;
+            if (
+                isset(
+                    $headers['X-Odoo-Db'],
+                    $headers['X-Odoo-Username'],
+                    $headers['X-Odoo-Api-Key']
+                )
+            ) {
+                $data = [
+                    'name' => $backend->name,
+                    'base_url' => $backend->base_url,
+                    'headers' => [],
+                ];
+
+                $credential = [
+                    'name' => $backend->name,
+                    'schema' => 'RPC',
+                    'client_id' => $headers['X-Odoo-Username'],
+                    'client_secret' => $headers['X-Odoo-Api-Key'],
+                    'realm' => $headers['X-Odoo-Db'],
+                ];
+
+                unset($headers['X-Odoo-Db']);
+                unset($headers['X-Odoo-Username']);
+                unset($headers['X-Odoo-Api-Key']);
+
+                foreach ($headers as $name => $value) {
+                    $data['headers'][] = ['name' => $name, 'value' => $value];
+                }
+
+                FBAPI::save_backend($data);
+                $data['credentials'][] = $credential;
+            }
+        }
+    } elseif ($option === 'forms-bridge_odoo') {
+        $credentials = [];
+        foreach ($data['credentials'] as $credential) {
+            $credentials[] = [
+                'name' => $credential['name'],
+                'schema' => 'RPC',
+                'client_id' => $credential['user'],
+                'client_secret' => $credential['password'],
+                'realm' => $credential['database'],
+            ];
+        }
+
+        $data['credentials'] = $credentials;
     }
 
     update_option($option, $data);
 }
-
-// TODO: Add type and token attributes to zoho credentials

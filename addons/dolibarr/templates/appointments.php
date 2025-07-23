@@ -21,7 +21,7 @@ return [
             'name' => 'userownerid',
             'label' => __('Owner', 'forms-bridge'),
             'description' => __('Host user of the event', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'select',
             'options' => [
                 'endpoint' => '/api/index.php/users',
                 'finger' => [
@@ -29,38 +29,27 @@ return [
                     'label' => '[].email',
                 ],
             ],
+            'required' => true,
         ],
         [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'type_code',
             'label' => __('Event type', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
-                [
-                    'label' => __('Meeting', 'forms-bridge'),
-                    'value' => 'AC_RDV',
-                ],
-                [
-                    'label' => __('Phone call', 'forms-bridge'),
-                    'value' => 'AC_TEL',
-                ],
-                [
-                    'label' => __('Intervention on site', 'forms-bridge'),
-                    'value' => 'AC_INT',
-                ],
-                [
-                    'label' => __('Other', 'forms-bridge'),
-                    'value' => 'AC_OTH',
+                'endpoint' => '/api/index.php/setup/dictionary/event_types',
+                'finger' => [
+                    'value' => '[].code',
+                    'label' => '[].label',
                 ],
             ],
-            'default' => 'AC_RDV',
             'required' => true,
         ],
         [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'label',
             'label' => __('Event label', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'text',
             'required' => true,
             'default' => __('Web appointment', 'forms-bridge'),
         ],
@@ -114,7 +103,7 @@ return [
             [
                 'name' => 'hour',
                 'label' => __('Hour', 'forms-bridge'),
-                'type' => 'options',
+                'type' => 'select',
                 'required' => true,
                 'options' => [
                     [
@@ -218,7 +207,7 @@ return [
             [
                 'name' => 'minute',
                 'label' => __('Minute', 'forms-bridge'),
-                'type' => 'options',
+                'type' => 'select',
                 'required' => true,
                 'options' => [
                     ['label' => '00', 'value' => '00.0'],
@@ -245,6 +234,11 @@ return [
                     'from' => '?duration',
                     'to' => 'duration',
                     'cast' => 'number',
+                ],
+                [
+                    'from' => 'userownerid',
+                    'to' => 'userownerid',
+                    'cast' => 'integer',
                 ],
             ],
             [

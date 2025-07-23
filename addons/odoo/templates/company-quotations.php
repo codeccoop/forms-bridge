@@ -76,25 +76,24 @@ return [
                     'to' => 'order_line[0][2].product_id',
                     'cast' => 'integer',
                 ],
-            ],
-            [
-                [
-                    'from' => 'country',
-                    'to' => 'country',
-                    'cast' => 'null',
-                ],
-            ],
-            [],
-            [
                 [
                     'from' => 'company-name',
                     'to' => 'name',
                     'cast' => 'string',
                 ],
+            ],
+            [],
+            [],
+            [
                 [
-                    'from' => 'country_code',
-                    'to' => 'country_code',
-                    'cast' => 'null',
+                    'from' => 'email',
+                    'to' => 'contact_email',
+                    'cast' => 'copy',
+                ],
+                [
+                    'from' => 'phone',
+                    'to' => 'contact_phone',
+                    'cast' => 'copy',
                 ],
             ],
             [
@@ -107,6 +106,16 @@ return [
                     'from' => 'parent_id',
                     'to' => 'company_partner_id',
                     'cast' => 'copy',
+                ],
+                [
+                    'from' => 'contact_email',
+                    'to' => 'email',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => 'contact_phone',
+                    'to' => 'phone',
+                    'cast' => 'string',
                 ],
             ],
             [

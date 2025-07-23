@@ -82,21 +82,6 @@ return [
                     'cast' => 'integer',
                 ],
             ],
-            [
-                [
-                    'from' => 'country',
-                    'to' => 'country',
-                    'cast' => 'null',
-                ],
-            ],
-            [],
-            [
-                [
-                    'from' => 'country_code',
-                    'to' => 'country_code',
-                    'cast' => 'null',
-                ],
-            ],
         ],
         'workflow' => ['iso2-country-code', 'vat-id', 'country-id', 'contact'],
     ],

@@ -36,6 +36,9 @@ export default function Integrations() {
     [integrations]
   );
 
+  const adminUrl =
+    (window.location.pathname.match(/(.*)(?=\/wp-admin\/)/, "") || [])[0] || "";
+
   if (!(isMulti || isEmpty)) return;
 
   return (
@@ -53,21 +56,34 @@ export default function Integrations() {
           </p>
           <ul>
             <li>
-              <a href="/wp-admin/plugin-install.php?s=contact%2520form%25207&tab=search&type=term">
+              <a
+                href={`${adminUrl}/wp-admin/plugin-install.php?s=contact%2520form%25207&tab=search&type=term`}
+              >
                 Contact Form 7
               </a>
             </li>
             <li>
-              <a href="https://www.gravityforms.com/">GravityForms</a>
-            </li>
-            <li>
-              <a href="/wp-admin/plugin-install.php?s=wpforms%2520lite&tab=search&type=term">
-                WPForms Lite
+              <a href="https://www.gravityforms.com/" target="_blank">
+                GravityForms
               </a>
             </li>
             <li>
-              <a href="/wp-admin/plugin-install.php?s=ninja%2520forms&tab=search&type=term">
+              <a href="https://wpforms.com/" target="_blank">
+                WPForms
+              </a>
+            </li>
+            <li>
+              <a
+                href={`${adminUrl}/wp-admin/plugin-install.php?s=ninja%2520forms&tab=search&type=term`}
+              >
                 NinjaForms
+              </a>
+            </li>
+            <li>
+              <a
+                href={`${adminUrl}/wp-admin/plugin-install.php?s=woocommerce&tab=search&type=term`}
+              >
+                WooCommerce
               </a>
             </li>
           </ul>

@@ -46,10 +46,6 @@ export default function FormsProvider({ children }) {
       .finally(() => setLoading(false));
   }).current;
 
-  // useEffect(() => {
-  //   fetch();
-  // }, []);
-
   return (
     <FormsContext.Provider value={[forms, fetch]}>
       {children}

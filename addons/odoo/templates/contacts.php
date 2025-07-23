@@ -45,13 +45,7 @@ return [
                     'cast' => 'string',
                 ],
             ],
-            [
-                [
-                    'from' => 'country',
-                    'to' => 'country',
-                    'cast' => 'null',
-                ],
-            ],
+            [],
         ],
         'workflow' => [
             'iso2-country-code',

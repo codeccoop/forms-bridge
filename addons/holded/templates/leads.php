@@ -27,7 +27,7 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'funnelId',
             'label' => __('Funnel', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 'endpoint' => '/api/crm/v1/funnels',
                 'finger' => [
@@ -64,7 +64,7 @@ return [
             'name' => 'tags',
             'label' => __('Contact tags', 'forms-bridge'),
             'description' => __('Tags separated by commas', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'text',
         ],
     ],
     'bridge' => [
@@ -115,15 +115,15 @@ return [
                     'to' => 'billAddress.city',
                     'cast' => 'string',
                 ],
+                [
+                    'from' => '?tags',
+                    'to' => 'lead_tags',
+                    'cast' => 'inherit',
+                ],
             ],
             [
                 [
                     'from' => 'country',
-                    'to' => 'country',
-                    'cast' => 'null',
-                ],
-                [
-                    'from' => 'country_code',
                     'to' => 'countryCode',
                     'cast' => 'string',
                 ],
@@ -133,6 +133,13 @@ return [
                     'from' => 'countryCode',
                     'to' => 'billAddress.countryCode',
                     'cast' => 'string',
+                ],
+            ],
+            [
+                [
+                    'from' => '?lead_tags',
+                    'to' => 'tags',
+                    'cast' => 'inherit',
                 ],
             ],
         ],
@@ -182,7 +189,7 @@ return [
             [
                 'label' => __('Country', 'forms-bridge'),
                 'name' => 'country',
-                'type' => 'options',
+                'type' => 'select',
                 'options' => array_map(function ($country_code) {
                     global $forms_bridge_iso2_countries;
                     return [

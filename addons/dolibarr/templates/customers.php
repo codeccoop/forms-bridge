@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-global $forms_bridge_dolibarr_countries;
+global $forms_bridge_iso2_countries;
 
 return [
     'title' => __('Customers', 'forms-bridge'),
@@ -17,6 +17,38 @@ return [
             'ref' => '#bridge',
             'name' => 'endpoint',
             'value' => '/api/index.php/contacts',
+        ],
+        [
+            'ref' => '#bridge/custom_fields[]',
+            'name' => 'typent_id',
+            'label' => __('Customer type', 'forms-bridge'),
+            'type' => 'select',
+            'options' => [
+                [
+                    'label' => __('Large company', 'forms-bridge'),
+                    'value' => '2',
+                ],
+                [
+                    'label' => __('Medium company', 'forms-bridge'),
+                    'value' => '3',
+                ],
+                [
+                    'label' => __('Small company', 'forms-bridge'),
+                    'value' => '4',
+                ],
+                [
+                    'label' => __('Governmental', 'forms-bridge'),
+                    'value' => '5',
+                ],
+                [
+                    'label' => __('Startup', 'forms-bridge'),
+                    'value' => '1',
+                ],
+                [
+                    'label' => __('Other', 'forms-bridge'),
+                    'value' => '100',
+                ],
+            ],
         ],
         [
             'ref' => '#form',
@@ -58,17 +90,16 @@ return [
                 'required' => true,
             ],
             [
-                'name' => 'country_id',
+                'name' => 'country',
                 'label' => __('Country', 'forms-bridge'),
-                'type' => 'options',
-                'options' => array_map(function ($country_id) {
-                    global $forms_bridge_dolibarr_countries;
+                'type' => 'select',
+                'options' => array_map(function ($country_code) {
+                    global $forms_bridge_iso2_countries;
                     return [
-                        'value' => $country_id,
-                        'label' =>
-                            $forms_bridge_dolibarr_countries[$country_id],
+                        'value' => $country_code,
+                        'label' => $forms_bridge_iso2_countries[$country_code],
                     ];
-                }, array_keys($forms_bridge_dolibarr_countries)),
+                }, array_keys($forms_bridge_iso2_countries)),
                 'required' => true,
             ],
             [
@@ -110,15 +141,12 @@ return [
                 'value' => '1',
             ],
             [
-                'name' => 'typent_id',
-                'value' => '4',
-            ],
-            [
                 'name' => 'client',
                 'value' => '1',
             ],
         ],
         'mutations' => [
+            [],
             [
                 [
                     'from' => 'company_name',
@@ -136,6 +164,11 @@ return [
             ],
             [],
         ],
-        'workflow' => ['country-id', 'contact-socid', 'skip-if-contact-exists'],
+        'workflow' => [
+            'iso2-country-code',
+            'country-id',
+            'contact-socid',
+            'skip-if-contact-exists',
+        ],
     ],
 ];

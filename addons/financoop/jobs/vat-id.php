@@ -8,9 +8,9 @@ function forms_bridge_financoop_vat_id($payload)
 {
     global $forms_bridge_iso2_countries;
 
-    $prefixed = preg_match('/^[A-Z]{2}/', $payload['vat'], $matches);
+    $prefixed = preg_match('/^[A-Z]{2}/i', $payload['vat'], $matches);
 
-    $country_code = strtoupper($payload['country_code'] ?? '');
+    $country_code = strtoupper($payload['country'] ?? '');
 
     if ($prefixed) {
         $vat_prefix = $matches[0];
@@ -62,7 +62,7 @@ return [
             'required' => true,
         ],
         [
-            'name' => 'country_code',
+            'name' => 'country',
             'schema' => ['type' => 'string'],
         ],
     ],
@@ -72,9 +72,9 @@ return [
             'schema' => ['type' => 'string'],
         ],
         [
-            'name' => 'country_code',
+            'name' => 'country',
             'schema' => ['type' => 'string'],
-            'requires' => ['country_code'],
+            'requires' => ['country'],
         ],
     ],
 ];

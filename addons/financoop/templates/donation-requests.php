@@ -54,8 +54,8 @@ return [
             [
                 [
                     'from' => 'country',
-                    'to' => 'country',
-                    'cast' => 'null',
+                    'to' => 'country_code',
+                    'cast' => 'string',
                 ],
             ],
         ],

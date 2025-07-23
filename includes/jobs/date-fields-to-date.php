@@ -44,8 +44,9 @@ function forms_bridge_job_format_date_fields($payload)
     $form_data = FBAPI::get_current_form();
     $date_index = array_search(
         'date',
-        array_column($form_data['fields'], 'name')
+        array_column($form_data['fields'], 'type')
     );
+
     $date_format = $form_data['fields'][$date_index]['format'] ?? '';
 
     if (strstr($date_format, '-')) {

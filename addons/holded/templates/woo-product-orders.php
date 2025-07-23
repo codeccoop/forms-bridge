@@ -27,7 +27,7 @@ return [
             'name' => 'tags',
             'label' => __('Tags', 'forms-bridge'),
             'description' => __('Tags separated by commas', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'text',
         ],
     ],
     'bridge' => [

@@ -24,10 +24,6 @@ return [
             'name' => 'country',
             'schema' => ['type' => 'string'],
         ],
-        [
-            'name' => 'country_code',
-            'schema' => ['type' => 'string'],
-        ],
     ],
 ];
 
@@ -43,12 +39,12 @@ function forms_bridge_job_iso3_country_code($payload)
         }
 
         if (isset($countries[$payload['country']])) {
-            $payload['country_code'] = $countries[$payload['country']];
+            $payload['country'] = $countries[$payload['country']];
         } else {
-            $payload['country_code'] = null;
+            $payload['country'] = null;
         }
     } else {
-        $payload['country_code'] = $country_code;
+        $payload['country'] = $country_code;
     }
 
     return $payload;

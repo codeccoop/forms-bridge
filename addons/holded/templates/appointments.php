@@ -27,7 +27,7 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'event_name',
             'label' => __('Event name', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'text',
             'required' => true,
             'default' => 'Web appointment',
         ],
@@ -35,7 +35,7 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'kind',
             'label' => __('Event type', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 [
                     'value' => 'meeting',
@@ -69,7 +69,7 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'type',
             'label' => __('Contact type', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 [
                     'label' => __('Unspecified', 'forms-bridge'),
@@ -104,7 +104,7 @@ return [
             'name' => 'tags',
             'label' => __('Tags', 'forms-bridge'),
             'description' => __('Tags separated by commas', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'text',
         ],
     ],
     'bridge' => [
@@ -151,6 +151,11 @@ return [
                     'to' => 'billAddress.city',
                     'cast' => 'string',
                 ],
+                [
+                    'from' => '?tags',
+                    'to' => 'event_tags',
+                    'cast' => 'inherit',
+                ],
             ],
             [
                 [
@@ -184,6 +189,11 @@ return [
                     'from' => 'event_name',
                     'to' => 'name',
                     'cast' => 'string',
+                ],
+                [
+                    'from' => '?event_tags',
+                    'to' => 'tags',
+                    'cast' => 'inherit',
                 ],
             ],
         ],
@@ -239,7 +249,7 @@ return [
             [
                 'label' => __('Country', 'forms-bridge'),
                 'name' => 'country',
-                'type' => 'options',
+                'type' => 'select',
                 'options' => array_map(function ($country_code) {
                     global $forms_bridge_iso2_countries;
                     return [
@@ -258,7 +268,7 @@ return [
             [
                 'name' => 'hour',
                 'label' => __('Hour', 'forms-bridge'),
-                'type' => 'options',
+                'type' => 'select',
                 'required' => true,
                 'options' => [
                     [
@@ -362,7 +372,7 @@ return [
             [
                 'name' => 'minute',
                 'label' => __('Minute', 'forms-bridge'),
-                'type' => 'options',
+                'type' => 'select',
                 'required' => true,
                 'options' => [
                     ['label' => '00', 'value' => '00.0'],

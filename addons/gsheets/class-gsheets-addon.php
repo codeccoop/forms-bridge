@@ -8,13 +8,6 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
-// require_once 'vendor/autoload.php';
-
-// require_once 'class-gsheets-store.php';
-// require_once 'class-gsheets-client.php';
-// require_once 'class-gsheets-rest-controller.php';
-// require_once 'class-gsheets-ajax-controller.php';
-// require_once 'class-gsheets-service.php';
 require_once 'class-gsheets-form-bridge.php';
 require_once 'class-gsheets-credential.php';
 require_once 'hooks.php';
@@ -46,13 +39,6 @@ class Google_Sheets_Addon extends Addon
     public const bridge_class = '\FORMS_BRIDGE\Google_Sheets_Form_Bridge';
 
     public const credential_class = '\FORMS_BRIDGE\Google_Sheets_Credential';
-
-    protected static function defaults()
-    {
-        $defaults = parent::defaults();
-        $defaults['credentials'] = [];
-        return $defaults;
-    }
 
     public function load()
     {

@@ -37,7 +37,7 @@ add_filter(
                         'ref' => '#backend/headers[]',
                         'name' => 'DOLAPIKEY',
                         'label' => __('API key', 'forms-bridge'),
-                        'type' => 'string',
+                        'type' => 'text',
                         'required' => true,
                     ],
                     [
@@ -90,7 +90,16 @@ add_filter(
             $data['form']['fields'] = array_filter(
                 $data['form']['fields'],
                 function ($field) {
-                    return !in_array($field['name'], ['hour', 'minute'], true);
+                    return !in_array(
+                        $field['name'],
+                        [
+                            'hour',
+                            'minute',
+                            __('Hour', 'forms-bridge'),
+                            __('Minute', 'forms-bridge'),
+                        ],
+                        true
+                    );
                 }
             );
 

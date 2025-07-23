@@ -21,7 +21,11 @@ return [
             'name' => 'userownerid',
             'label' => __('Owner', 'forms-bridge'),
             'description' => __('Owner user of the lead', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'select',
+            'options' => [
+                'endpoint' => '/api/index.php/users',
+                'finger' => ['value' => '[].id', 'label' => '[].email'],
+            ],
             'required' => true,
         ],
         [
@@ -29,7 +33,7 @@ return [
             'name' => 'stcomm_id',
             'label' => __('Prospect status', 'forms-bridge'),
             'required' => true,
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 [
                     'label' => __('Never contacted', 'forms-bridge'),
@@ -58,7 +62,7 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'opp_status',
             'label' => __('Lead status', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 [
                     'label' => __('Prospection', 'forms-bridge'),

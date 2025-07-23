@@ -50,21 +50,21 @@ add_filter(
                         'ref' => '#credential',
                         'name' => 'name',
                         'label' => __('Name', 'forms-bridge'),
-                        'type' => 'string',
+                        'type' => 'text',
                         'required' => true,
                     ],
                     [
                         'ref' => '#credential',
                         'name' => 'client_id',
                         'label' => __('Client ID', 'forms-bridge'),
-                        'type' => 'string',
+                        'type' => 'text',
                         'required' => true,
                     ],
                     [
                         'ref' => '#credential',
                         'name' => 'client_secret',
                         'label' => __('Client secret', 'forms-bridge'),
-                        'type' => 'string',
+                        'type' => 'text',
                         'required' => true,
                     ],
                     [
@@ -75,7 +75,7 @@ add_filter(
                         //     'See <a href="https://www.zoho.com/accounts/protocol/oauth/scope.html">the documentation</a> for more information',
                         //     'forms-bridge'
                         // ),
-                        'type' => 'string',
+                        'type' => 'text',
                         'value' =>
                             'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets',
                         'required' => true,
@@ -84,7 +84,7 @@ add_filter(
                         'ref' => '#bridge',
                         'name' => 'endpoint',
                         'label' => __('Spreadsheet', 'forms-bridge'),
-                        'type' => 'options',
+                        'type' => 'select',
                         'options' => [
                             'endpoint' => '/drive/v3/files',
                             'finger' => [
@@ -103,7 +103,7 @@ add_filter(
                         'ref' => '#bridge',
                         'name' => 'tab',
                         'label' => __('Tab', 'forms-bridge'),
-                        'type' => 'string',
+                        'type' => 'text',
                         'default' => '',
                     ],
                     [

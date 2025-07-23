@@ -4,6 +4,8 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
+global $forms_bridge_iso2_countries;
+
 return [
     'title' => __('Proposals', 'forms-bridge'),
     'description' => __(
@@ -21,7 +23,7 @@ return [
             'name' => 'stcomm_id',
             'label' => __('Prospect status', 'forms-bridge'),
             'required' => true,
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 [
                     'label' => __('Never contacted', 'forms-bridge'),
@@ -50,7 +52,14 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'fk_product',
             'label' => __('Product', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'select',
+            'options' => [
+                'endpoint' => '/api/index.php/products',
+                'finger' => [
+                    'value' => '[].id',
+                    'label' => '[].label',
+                ],
+            ],
             'required' => true,
         ],
         [
@@ -118,17 +127,16 @@ return [
                 'required' => true,
             ],
             [
-                'name' => 'country_id',
+                'name' => 'country',
                 'label' => __('Country', 'forms-bridge'),
-                'type' => 'options',
-                'options' => array_map(function ($country_id) {
-                    global $forms_bridge_dolibarr_countries;
+                'type' => 'select',
+                'options' => array_map(function ($country_code) {
+                    global $forms_bridge_iso2_countries;
                     return [
-                        'value' => $country_id,
-                        'label' =>
-                            $forms_bridge_dolibarr_countries[$country_id],
+                        'value' => $country_code,
+                        'label' => $forms_bridge_iso2_countries[$country_code],
                     ];
-                }, array_keys($forms_bridge_dolibarr_countries)),
+                }, array_keys($forms_bridge_iso2_countries)),
                 'required' => true,
             ],
         ],
@@ -158,6 +166,7 @@ return [
             ],
         ],
         'mutations' => [
+            [],
             [
                 [
                     'from' => 'firstname',
@@ -186,6 +195,6 @@ return [
                 ],
             ],
         ],
-        'workflow' => ['country-id', 'contact-socid'],
+        'workflow' => ['iso2-country-code', 'country-id', 'contact-socid'],
     ],
 ];

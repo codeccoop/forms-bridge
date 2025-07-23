@@ -7,46 +7,44 @@ if (!defined('ABSPATH')) {
 global $forms_bridge_iso2_countries;
 
 return [
-    'title' => __('Company Prospects', 'forms-bridge'),
+    'title' => __('Thirdparties', 'forms-bridge'),
     'description' => __(
-        'Leads form template. The resulting bridge will convert form submissions into company prospects linked to new contacts.',
+        'Contact form template. The resulting bridge will convert form submissions into thirdparties.',
         'forms-bridge'
     ),
     'fields' => [
         [
             'ref' => '#bridge',
             'name' => 'endpoint',
-            'value' => '/api/index.php/contacts',
+            'value' => '/api/index.php/thirdparties',
         ],
         [
             'ref' => '#bridge/custom_fields[]',
-            'name' => 'stcomm_id',
-            'label' => __('Prospect status', 'forms-bridge'),
-            'required' => true,
+            'name' => 'client',
+            'label' => __('Thirdparty status', 'forms-bridge'),
             'type' => 'select',
             'options' => [
                 [
-                    'label' => __('Never contacted', 'forms-bridge'),
-                    'value' => '0',
-                ],
-                [
-                    'label' => __('To contact', 'forms-bridge'),
                     'value' => '1',
+                    'label' => __('Client', 'forms-bridge'),
                 ],
                 [
-                    'label' => __('Contact in progress', 'forms-bridge'),
                     'value' => '2',
+                    'label' => __('Prospect', 'forms-bridge'),
                 ],
                 [
-                    'label' => __('Contacted', 'forms-bridge'),
                     'value' => '3',
+                    'label' => __('Client/Prospect', 'forms-bridge'),
                 ],
                 [
-                    'label' => __('Do not contact', 'forms-bridge'),
-                    'value' => '-1',
+                    'value' => '0',
+                    'label' => __(
+                        'Neither customer nor supplier',
+                        'forms-bridge'
+                    ),
                 ],
             ],
-            'default' => '0',
+            'required' => true,
         ],
         [
             'ref' => '#bridge/custom_fields[]',
@@ -75,29 +73,56 @@ return [
                     'value' => '1',
                 ],
                 [
+                    'label' => __('Retailer', 'forms-bridge'),
+                    'value' => '7',
+                ],
+                [
+                    'label' => __('Private individual', 'forms-bridge'),
+                    'value' => '8',
+                ],
+                [
                     'label' => __('Other', 'forms-bridge'),
                     'value' => '100',
                 ],
             ],
         ],
+        // [
+        //     'ref' => '#bridge/custom_fields[]',
+        //     'name' => 'fournisseur',
+        //     'label' => __('Provider', 'forms-bridge'),
+        //     'type' => 'boolean',
+        //     'default' => false,
+        // ],
         [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('Company Prospects', 'forms-bridge'),
+            'default' => __('Thirdparties', 'forms-bridge'),
         ],
     ],
     'form' => [
-        'title' => __('Company Prospects', 'forms-bridge'),
+        'title' => __('Thirdparties', 'forms-bridge'),
         'fields' => [
             [
-                'name' => 'company_name',
-                'label' => __('Company name', 'forms-bridge'),
+                'name' => 'name',
+                'label' => __('Name', 'forms-bridge'),
                 'type' => 'text',
                 'required' => true,
             ],
             [
-                'name' => 'idprof1',
+                'name' => 'tva_intra',
                 'label' => __('Tax ID', 'forms-bridge'),
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
+                'name' => 'email',
+                'label' => __('Email', 'forms-bridge'),
+                'type' => 'email',
+                'required' => true,
+            ],
+            [
+                'name' => 'phone',
+                'label' => __('Phone', 'forms-bridge'),
                 'type' => 'text',
                 'required' => true,
             ],
@@ -133,30 +158,6 @@ return [
                 'required' => true,
             ],
             [
-                'name' => 'firstname',
-                'label' => __('First name', 'forms-bridge'),
-                'type' => 'text',
-                'required' => true,
-            ],
-            [
-                'name' => 'lastname',
-                'label' => __('Last name', 'forms-bridge'),
-                'type' => 'text',
-                'required' => true,
-            ],
-            [
-                'name' => 'email',
-                'label' => __('Email', 'forms-bridge'),
-                'type' => 'email',
-                'required' => true,
-            ],
-            [
-                'name' => 'poste',
-                'label' => __('Job position', 'forms-bridge'),
-                'type' => 'text',
-                'required' => true,
-            ],
-            [
                 'name' => 'note_private',
                 'label' => __('Comments', 'forms-bridge'),
                 'type' => 'textarea',
@@ -164,45 +165,18 @@ return [
         ],
     ],
     'bridge' => [
-        'endpoint' => '/api/index.php/contacts',
+        'endpoint' => '/api/index.php/thirdparties',
         'custom_fields' => [
             [
                 'name' => 'status',
                 'value' => '1',
             ],
-            [
-                'name' => 'client',
-                'value' => '2',
-            ],
-        ],
-        'mutations' => [
-            [],
-            [],
-            [
-                [
-                    'from' => 'company_name',
-                    'to' => 'name',
-                    'cast' => 'string',
-                ],
-                [
-                    'from' => 'email',
-                    'to' => 'contact_email',
-                    'cast' => 'copy',
-                ],
-            ],
-            [
-                [
-                    'from' => 'contact_email',
-                    'to' => 'email',
-                    'cast' => 'string',
-                ],
-            ],
         ],
         'workflow' => [
             'iso2-country-code',
             'country-id',
-            'contact-socid',
-            'skip-if-contact-exists',
+            'skip-if-thirdparty-exists',
+            'next-client-code',
         ],
     ],
 ];

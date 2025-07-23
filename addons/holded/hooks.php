@@ -50,7 +50,7 @@ add_filter(
                             'Get it from your <a href="https://app.holded.com/api" target="_blank">account</a>',
                             'forms-bridge'
                         ),
-                        'type' => 'string',
+                        'type' => 'text',
                         'required' => true,
                     ],
                     [
