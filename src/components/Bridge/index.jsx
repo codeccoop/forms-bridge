@@ -2,7 +2,6 @@
 import WorkflowProvider from "../../providers/Workflow";
 import CustomFields from "../CustomFields";
 import Workflow from "../Workflow";
-import NewBridge from "./NewBridge";
 import RemoveButton from "../RemoveButton";
 import { isset, downloadJson } from "../../lib/utils";
 import BridgeFields, { INTERNALS } from "./Fields";
@@ -34,6 +33,11 @@ export default function Bridge({ data, update, remove, schema, copy, names }) {
   const name = useRef(data.name);
   const [state, setState] = useState({ ...data });
   const [workflowOpen, setWorkflowOpen] = useState(false);
+
+  const currentState = useRef(state);
+  currentState.current = state;
+
+  const patchState = (patch) => setState({ ...currentState.current, ...patch });
 
   const nameConflict = useMemo(() => {
     if (!state.name) return false;
@@ -305,8 +309,7 @@ export default function Bridge({ data, update, remove, schema, copy, names }) {
               <CustomFields
                 customFields={state.custom_fields || []}
                 setCustomFields={(custom_fields) =>
-                  setState({
-                    ...state,
+                  patchState({
                     custom_fields,
                   })
                 }
@@ -316,8 +319,7 @@ export default function Bridge({ data, update, remove, schema, copy, names }) {
                 customFields={state.custom_fields}
                 mappers={state.mutations[0]}
                 setMappers={(mappers) =>
-                  setState({
-                    ...state,
+                  patchState({
                     mutations: [mappers, ...state.mutations.slice(1)],
                   })
                 }
@@ -325,10 +327,9 @@ export default function Bridge({ data, update, remove, schema, copy, names }) {
               />
               <Workflow
                 workflow={state.workflow}
-                setWorkflow={(workflow) => setState({ ...state, workflow })}
+                setWorkflow={(workflow) => patchState({ workflow })}
                 setMutationMappers={(mutation, mappers) => {
-                  setState({
-                    ...state,
+                  patchState({
                     mutations: state.mutations
                       .slice(0, mutation)
                       .concat([mappers])
@@ -349,7 +350,7 @@ export default function Bridge({ data, update, remove, schema, copy, names }) {
               <ToggleControl
                 disabled={!isValid}
                 checked={state.enabled && isValid}
-                onChange={() => setState({ ...state, enabled: !state.enabled })}
+                onChange={() => patchState({ enabled: !state.enabled })}
                 __nextHasNoMarginBottom
               />
               <span
@@ -374,5 +375,3 @@ export default function Bridge({ data, update, remove, schema, copy, names }) {
     </WorkflowProvider>
   );
 }
-
-Bridge.NewBridge = NewBridge;

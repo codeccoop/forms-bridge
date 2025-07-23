@@ -197,6 +197,28 @@ foreach ($setting_names as $setting_name) {
         }
 
         $data['credentials'] = $credentials;
+    } elseif ($option === 'forms-bridge_zoho') {
+        $credentials = [];
+        foreach ($data['credentials'] as $credential) {
+            $credential['schema'] = 'OAuth';
+            $credential['type'] = 'Self Client';
+            $credential['realm'] =
+                'ZohoCRM.modules.ALL,ZohoCRM.settings.layouts.READ,ZohoCRM.users.READ';
+            $credentials[] = $credential;
+        }
+
+        $data['credentials'] = $credential;
+    } elseif ($option === 'forms-bridge_bigin') {
+        $credentials = [];
+        foreach ($data['credentials'] as $credential) {
+            $credential['schema'] = 'OAuth';
+            $credential['type'] = 'Self Client';
+            $credential['realm'] =
+                'BiginCRM.modules.ALL,BiginCRM.settings.layouts.READ,BiginCRM.users.READ';
+            $credentials[] = $credential;
+        }
+
+        $data['credentials'] = $credential;
     }
 
     update_option($option, $data);

@@ -47,7 +47,7 @@ class Oauth_Credential extends Credential
             ],
         ]);
 
-        $schema['requires'] = array_merge($schema['required'], [
+        $schema['required'] = array_merge($schema['required'], [
             'access_token',
             'refresh_token',
             'expires_at',

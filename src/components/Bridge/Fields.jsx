@@ -119,7 +119,7 @@ export default function BridgeFields({ data, setData, schema, errors = {} }) {
       } else if (field.type === "options") {
         if (!field.options.length && data[field.name]) {
           defaults[field.name] = "";
-        } else if (!data[field.name]) {
+        } else if (!data[field.name] || field.options.length === 1) {
           const value = field.options[0]?.value || "";
           if (value !== data[field.name]) {
             defaults[field.name] = value;

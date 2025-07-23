@@ -55,7 +55,7 @@ export default function NewCredential({ add, schema }) {
 
           if (
             !schema.required.includes(prop) &&
-            !(realmRequired && prop !== "realm")
+            !(!realmRequired || prop === "realm")
           ) {
             return isValid;
           }

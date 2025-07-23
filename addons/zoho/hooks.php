@@ -249,6 +249,16 @@ add_filter(
         $schema['properties']['realm']['default'] =
             'ZohoCRM.modules.ALL,ZohoCRM.settings.layouts.READ,ZohoCRM.users.READ';
 
+        $schema['properties']['type'] = [
+            'type' => 'string',
+            'enum' => ['Server-based', 'Self-Client'],
+            'default' => 'Server-based',
+        ];
+
+        $schema['required'][] = 'type';
+
+        $schema['properties']['organization_id'] = ['type' => 'string'];
+
         return $schema;
     },
     10,
