@@ -24,21 +24,28 @@ return [
                 'Email of the owner user of the deal',
                 'forms-bridge'
             ),
-            'type' => 'string',
+            'type' => 'select',
+            'options' => [
+                'endpoint' => '/bigin/v2/users',
+                'finger' => [
+                    'value' => 'users[].id',
+                    'label' => 'users[].full_name',
+                ],
+            ],
             'required' => true,
         ],
         [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'Deal_Name',
             'label' => __('Deal name', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'text',
             'required' => true,
         ],
         [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'Stage',
             'label' => __('Deal stage', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 [
                     'value' => 'Qualification',
@@ -71,7 +78,7 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'Sub_Pipeline',
             'label' => __('Pipeline name', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'text',
             'required' => true,
         ],
         [
@@ -88,7 +95,7 @@ return [
                 'Tag names separated by commas',
                 'forms-bridge'
             ),
-            'type' => 'string',
+            'type' => 'text',
         ],
         [
             'ref' => '#form',

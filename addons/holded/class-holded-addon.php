@@ -42,11 +42,10 @@ class Holded_Addon extends Addon
      * Performs a request against the backend to check the connexion status.
      *
      * @param string $backend Backend name.
-     * @param null $credential Credential name.
      *
      * @return boolean
      */
-    public function ping($backend, $credential = null)
+    public function ping($backend)
     {
         $bridge = new Holded_Form_Bridge(
             [
@@ -67,11 +66,10 @@ class Holded_Addon extends Addon
      *
      * @param string $endpoint API endpoint.
      * @param string $backend Backend name.
-     * @param null $credential Credential name.
      *
      * @return array|WP_Error
      */
-    public function fetch($endpoint, $backend, $credential = null)
+    public function fetch($endpoint, $backend)
     {
         $bridge = new Holded_Form_Bridge(
             [
@@ -92,11 +90,10 @@ class Holded_Addon extends Addon
      *
      * @param string $endpoint API endpoint.
      * @param string $backend Backend name.
-     * @params null $credential Credential name.
      *
      * @return array List of fields and content type of the endpoint.
      */
-    public function get_endpoint_schema($endpoint, $backend, $credential = null)
+    public function get_endpoint_schema($endpoint, $backend)
     {
         $chunks = array_values(array_filter(explode('/', $endpoint)));
         if (empty($chunks)) {

@@ -24,14 +24,21 @@ return [
                 'Email of the owner user of the event',
                 'forms-bridge'
             ),
-            'type' => 'string',
+            'type' => 'select',
+            'options' => [
+                'endpoint' => '/bigin/v2/users',
+                'finger' => [
+                    'value' => 'users[].id',
+                    'label' => 'users[].full_name',
+                ],
+            ],
             'required' => true,
         ],
         [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'Event_Title',
             'label' => __('Event title', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'text',
             'required' => true,
             'default' => __('Web Appointment', 'forms-bridge'),
         ],
@@ -92,7 +99,7 @@ return [
             [
                 'name' => 'hour',
                 'label' => __('Hour', 'forms-bridge'),
-                'type' => 'options',
+                'type' => 'select',
                 'options' => [
                     [
                         'label' => __('1 AM', 'forms-bridge'),
@@ -196,7 +203,7 @@ return [
             [
                 'name' => 'minute',
                 'label' => __('Minute', 'forms-bridge'),
-                'type' => 'options',
+                'type' => 'select',
                 'options' => [
                     ['label' => '00', 'value' => '00.0'],
                     ['label' => '05', 'value' => '05'],

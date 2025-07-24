@@ -33,30 +33,39 @@ class Zoho_Form_Bridge extends Form_Bridge
      */
     public function submit($payload = [], $attachments = [])
     {
-        $credential = $this->credential();
-        if (!$credential) {
-            return new WP_Error('unauthorized');
+        if (!$this->is_valid) {
+            return new WP_Error('invalid_bridge');
         }
 
-        $access_token = $credential->get_access_token();
-        if (empty($access_token)) {
-            return new WP_Error('unauthorized');
-        }
-
-        $method_fn = strtolower($this->method);
-        if ($method_fn === 'post' || $method_fn === 'put') {
+        $method = $this->method;
+        if ($method === 'POST' || $method === 'PUT') {
             $payload = wp_is_numeric_array($payload) ? $payload : [$payload];
             $payload = ['data' => $payload];
         }
 
-        $response = $this->backend->$method_fn(
+        add_filter(
+            'http_bridge_backend_headers',
+            function ($headers, $backend) {
+                if ($backend->name === $this->data['backend']) {
+                    if (isset($headers['Authorization'])) {
+                        $headers['Authorization'] = str_replace(
+                            'Bearer',
+                            'Zoho-oauthtoken',
+                            $headers['Authorization']
+                        );
+                    }
+                }
+
+                return $headers;
+            },
+            9,
+            2
+        );
+
+        $response = $this->backend()->$method(
             $this->endpoint,
             $payload,
-            [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'Authorization' => 'Zoho-oauthtoken ' . $access_token,
-            ],
+            [],
             $attachments
         );
 

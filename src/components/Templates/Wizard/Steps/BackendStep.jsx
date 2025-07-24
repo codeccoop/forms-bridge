@@ -1,5 +1,5 @@
 import { useTemplateConfig } from "../../../../providers/Templates";
-import useBackends from "../../../../hooks/useBackends";
+import { useBackends } from "../../../../hooks/useHttp";
 import useBackendNames from "../../../../hooks/useBackendNames";
 import TemplateStep from "./Step";
 import Field from "../../Field";
@@ -16,7 +16,7 @@ const FIELDS_ORDER = ["name", "base_url", "headers"];
 export default function BackendStep({ fields, data, setData, wired, fetched }) {
   const [backends] = useBackends();
   const names = useBackendNames();
-  const [{ backend: config }] = useTemplateConfig();
+  const [{ backend: template }] = useTemplateConfig();
 
   const sortedFields = useMemo(
     () => sortByNamesOrder(fields, FIELDS_ORDER),
@@ -26,8 +26,8 @@ export default function BackendStep({ fields, data, setData, wired, fetched }) {
   const [state, setState] = useState({ ...data });
 
   const defaults = useMemo(() => {
-    return fields.reduce((defaults, field) => {
-      let val = field.default || config?.[field.name] || "";
+    const defaults = fields.reduce((defaults, field) => {
+      let val = field.value || field.default || "";
       if (!val && field.type === "select" && field.required) {
         val = field.options[0].value;
       }
@@ -35,12 +35,19 @@ export default function BackendStep({ fields, data, setData, wired, fetched }) {
       defaults[field.name] = val;
       return defaults;
     }, {});
-  }, [fields, config]);
+
+    return {
+      base_url: template.base_url,
+      name: template.name,
+      credential: template.credential,
+      ...defaults,
+    };
+  }, [fields, template]);
 
   const validBackends = useMemo(
     () =>
-      backends.filter((backend) => validateBackend(backend, config, fields)),
-    [backends, config, fields]
+      backends.filter((backend) => validateBackend(backend, template, fields)),
+    [backends, template, fields]
   );
 
   const backendOptions = useMemo(() => {
@@ -60,11 +67,11 @@ export default function BackendStep({ fields, data, setData, wired, fetched }) {
   const mockedBackend = useMemo(() => {
     if (nameConflict) return;
 
-    const backend = mockBackend(state, config);
-    if (validateBackend(backend, config, fields)) {
+    const backend = mockBackend(state, template, fields);
+    if (validateBackend(backend, template, fields)) {
       return backend;
     }
-  }, [state, nameConflict, config, fields]);
+  }, [state, nameConflict, template, fields]);
 
   const backend = useMemo(() => {
     let backend = validBackends.find((b) => b.name === reuse);
@@ -98,16 +105,16 @@ export default function BackendStep({ fields, data, setData, wired, fetched }) {
     setData(data);
   }, [reuse, backend, fields]);
 
-  const fromConfig = useRef(config);
+  const fromTemplate = useRef(template);
   useEffect(() => {
-    if (diff(config, fromConfig.current)) {
+    if (diff(template, fromTemplate.current)) {
       setReuse("");
     }
 
     return () => {
-      fromConfig.current = config;
+      fromTemplate.current = template;
     };
-  }, [config]);
+  }, [template]);
 
   const statusIcon = useMemo(() => {
     if (wired === true && fetched === true) {

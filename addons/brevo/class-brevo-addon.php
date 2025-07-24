@@ -40,11 +40,10 @@ class Brevo_Addon extends Addon
      * Performs a request against the backend to check the connexion status.
      *
      * @param string $backend Backend name.
-     * @param null $credential Credential name.
      *
      * @return boolean
      */
-    public function ping($backend, $credential = null)
+    public function ping($backend)
     {
         $bridge = new Brevo_Form_Bridge(
             [
@@ -65,11 +64,10 @@ class Brevo_Addon extends Addon
      *
      * @param string $endpoint API endpoint.
      * @param string $backend Backend name.
-     * @param null $credential Credential name.
      *
      * @return array|WP_Error
      */
-    public function fetch($endpoint, $backend, $credential = null)
+    public function fetch($endpoint, $backend)
     {
         $bridge = new Brevo_Form_Bridge(
             [
@@ -90,11 +88,10 @@ class Brevo_Addon extends Addon
      *
      * @param string $endpoint API endpoint.
      * @param string $backend Backend name.
-     * @params null $credential Credential name.
      *
      * @return array
      */
-    public function get_endpoint_schema($endpoint, $backend, $credential = null)
+    public function get_endpoint_schema($endpoint, $backend)
     {
         $bridge = new Brevo_Form_Bridge(
             [

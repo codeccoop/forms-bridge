@@ -1,5 +1,6 @@
 // source
 import { useIntegrations } from "../../hooks/useGeneral";
+import { adminUrl } from "../../lib/utils";
 
 const {
   PanelBody,
@@ -9,7 +10,7 @@ const {
 const { useMemo, useCallback } = wp.element;
 const { __ } = wp.i18n;
 
-export default function Integrations() {
+export default function Integrations({ loading }) {
   const [integrations, setIntegrations] = useIntegrations();
 
   const toggleEnabled = useCallback(
@@ -36,10 +37,16 @@ export default function Integrations() {
     [integrations]
   );
 
-  const adminUrl =
-    (window.location.pathname.match(/(.*)(?=\/wp-admin\/)/, "") || [])[0] || "";
-
   if (!(isMulti || isEmpty)) return;
+
+  if (loading) {
+    return (
+      <PanelBody
+        title={__("Integrations", "forms-bridge")}
+        initialOpen={false}
+      ></PanelBody>
+    );
+  }
 
   return (
     <PanelBody
@@ -57,7 +64,11 @@ export default function Integrations() {
           <ul>
             <li>
               <a
-                href={`${adminUrl}/wp-admin/plugin-install.php?s=contact%2520form%25207&tab=search&type=term`}
+                href={adminUrl("plugin-install.php", {
+                  s: "contact form 7",
+                  tab: "search",
+                  type: "term",
+                })}
               >
                 Contact Form 7
               </a>
@@ -74,14 +85,22 @@ export default function Integrations() {
             </li>
             <li>
               <a
-                href={`${adminUrl}/wp-admin/plugin-install.php?s=ninja%2520forms&tab=search&type=term`}
+                href={adminUrl("plugin-install.php", {
+                  s: "ninja forms",
+                  tab: "search",
+                  type: "term",
+                })}
               >
                 NinjaForms
               </a>
             </li>
             <li>
               <a
-                href={`${adminUrl}/wp-admin/plugin-install.php?s=woocommerce&tab=search&type=term`}
+                href={adminUrl("plugin-install.php", {
+                  s: "woocommerce",
+                  tab: "search",
+                  type: "term",
+                })}
               >
                 WooCommerce
               </a>

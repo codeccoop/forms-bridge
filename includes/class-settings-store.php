@@ -29,6 +29,7 @@ class Settings_Store extends Base_Settings_Store
         parent::construct(...$args);
 
         $admin_email = get_option('admin_email');
+
         self::register_setting([
             'name' => 'general',
             'properties' => [
@@ -44,48 +45,39 @@ class Settings_Store extends Base_Settings_Store
             ],
         ]);
 
+        self::register_setting([
+            'name' => 'http',
+            'properties' => [],
+            'default' => [],
+        ]);
+
         self::ready(static function ($store) {
-            $store::use_getter('general', static function ($data) {
+            $store::use_getter('http', static function () {
                 $setting = Http_Store::setting('general');
-
-                if ($setting) {
-                    $backends = $setting->backends ?: [];
-                    $data['backends'] = $backends;
-                }
-
-                return $data;
+                return $setting->data();
             });
 
             $store::use_setter(
-                'general',
+                'http',
                 static function ($data) {
                     if (
                         !isset($data['backends']) ||
-                        !is_array($data['backends'])
+                        !isset($data['credentials'])
                     ) {
                         return $data;
                     }
 
                     $setting = Http_Store::setting('general');
-                    if (!$setting) {
-                        return $data;
-                    }
+                    $setting->update($data);
 
-                    $setting->backends = $data['backends'];
-                    unset($data['backends']);
-
-                    return $data;
+                    return [];
                 },
                 9
             );
 
             $store::use_cleaner('general', static function () {
                 $setting = Http_Store::setting('general');
-                if (!$setting) {
-                    return;
-                }
-
-                $setting->backends = [];
+                $setting->update(['backends' => [], 'credentials' => []]);
             });
         });
     }

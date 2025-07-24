@@ -11,17 +11,10 @@ add_filter(
             return $schema;
         }
 
-        $schema['properties']['credential'] = [
-            'type' => 'string',
-            'description' => __(
-                'Name of the database credential',
-                'forms-bridge'
-            ),
-        ];
-
-        $schema['required'][] = 'credential';
-
-        $schema['properties']['endpoint']['name'] = __('Model', 'forms-bridge');
+        $schema['properties']['endpoint']['title'] = __(
+            'Model',
+            'forms-bridge'
+        );
         $schema['properties']['endpoint']['description'] = __(
             'Name of the target DB model',
             'forms-bridge'
@@ -74,7 +67,7 @@ add_filter(
                     ],
                     [
                         'ref' => '#credential',
-                        'name' => 'realm',
+                        'name' => 'database',
                         'label' => __('Database', 'forms-bridge'),
                         'description' => __(
                             'Name of the database',
@@ -130,7 +123,6 @@ add_filter(
                     'name' => '',
                     'form_id' => '',
                     'backend' => '',
-                    'credential' => '',
                     'endpoint' => '',
                 ],
                 'backend' => [
@@ -144,9 +136,10 @@ add_filter(
                 ],
                 'credential' => [
                     'name' => '',
-                    'realm' => '',
+                    'schema' => 'RPC',
                     'client_id' => '',
                     'client_secret' => '',
+                    'database' => '',
                 ],
             ],
             $defaults,
@@ -272,26 +265,6 @@ add_filter(
         }
 
         return $data;
-    },
-    10,
-    2
-);
-
-add_filter(
-    'forms_bridge_credential_schema',
-    function ($schema, $addon) {
-        if ($addon !== 'odoo') {
-            return $schema;
-        }
-
-        $schema['description'] = __(
-            'Odoo database RPC login credentials',
-            'forms-bridge'
-        );
-
-        $schema['properties']['realm']['name'] = __('Database', 'forms-bridge');
-
-        return $schema;
     },
     10,
     2

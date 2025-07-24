@@ -56,11 +56,6 @@ require_once 'includes/class-job.php';
 require_once 'includes/class-integration.php';
 require_once 'includes/class-addon.php';
 
-// Credentials
-require_once 'includes/class-credential.php';
-require_once 'includes/class-oauth-credential.php';
-require_once 'includes/class-rpc-credential.php';
-
 // Post types
 require_once 'post_types/job.php';
 require_once 'post_types/bridge-template.php';

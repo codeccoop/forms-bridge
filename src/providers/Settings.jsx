@@ -17,11 +17,16 @@ const { __ } = wp.i18n;
 const DEFAULTS = Object.freeze({
   state: {
     general: {
+      loading: true,
       notification_receiver: "",
       backends: [],
       addons: [],
-      integrations: [],
+      integrations: null,
       debug: false,
+    },
+    http: {
+      backends: [],
+      credentials: [],
     },
   },
   patch: () => {},
@@ -142,13 +147,21 @@ export function useGeneral() {
   return [general, (general) => patch({ general })];
 }
 
+export function useHttp() {
+  const {
+    state: { http },
+    patch,
+  } = useContext(SettingsContext);
+  return [http, (http) => patch({ http })];
+}
+
 export function useAddons() {
   const { state, patch } = useContext(SettingsContext);
 
   const addons = useMemo(() => {
-    return Object.keys(state).reduce((addons, addon) => {
-      if (addon !== "general") {
-        addons[addon] = state[addon];
+    return Object.keys(state).reduce((addons, setting) => {
+      if (setting !== "general" && setting !== "http") {
+        addons[setting] = state[setting];
       }
 
       return addons;

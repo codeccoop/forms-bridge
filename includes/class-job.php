@@ -80,6 +80,7 @@ class Job
             'type' => 'object',
             'properties' => [
                 'name' => [
+                    'title' => _x('Name', 'Job schema', 'forms-bridge'),
                     'description' => __(
                         'Internal name of the job',
                         'forms-bridge'
@@ -88,6 +89,7 @@ class Job
                     'minLength' => 1,
                 ],
                 'title' => [
+                    'title' => _x('Title', 'Job schema', 'forms-bridge'),
                     'description' => __(
                         'Public title of the job',
                         'forms-bridge'
@@ -96,6 +98,7 @@ class Job
                     'minLength' => 1,
                 ],
                 'description' => [
+                    'title' => _x('Description', 'Job schema', 'forms-bridge'),
                     'description' => __(
                         'Short description of the job effects',
                         'forms-birdge'
@@ -104,6 +107,7 @@ class Job
                     'default' => '',
                 ],
                 'method' => [
+                    'title' => _x('Method', 'Job schema', 'forms-bridge'),
                     'description' => __(
                         'Name of the function with the job subroutine',
                         'forms-bridge'
@@ -112,6 +116,7 @@ class Job
                     'minLength' => 1,
                 ],
                 'input' => [
+                    'title' => _x('Input', 'Job schema', 'forms-bridge'),
                     'description' => __(
                         'Input fields interface schema of the job',
                         'forms-bridge'
@@ -172,6 +177,7 @@ class Job
                     'default' => [],
                 ],
                 'output' => [
+                    'title' => _x('Output', 'Job schema', 'forms-bridge'),
                     'description' => __(
                         'Output fields interface schema of the job',
                         'forms-bridge'
@@ -230,6 +236,7 @@ class Job
                     'default' => [],
                 ],
                 'snippet' => [
+                    'title' => _x('Snippet', 'Job schema', 'forms-bridge'),
                     'description' => __(
                         'PHP code representation of the job subroutine',
                         'forms-bridge'

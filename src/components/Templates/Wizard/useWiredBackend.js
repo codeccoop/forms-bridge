@@ -13,22 +13,22 @@ export default function useWiredBackend({
   authorized,
 }) {
   const [tab] = useTab();
-  const { backend: config } = useTemplateConfig()[0] || {};
+  const { backend: template } = useTemplateConfig()[0] || {};
 
   const [wired, setWired] = useState(null);
 
   useEffect(() => {
     setWired(null);
-  }, [config, authorized]);
+  }, [template, authorized]);
 
   const backend = useMemo(() => {
-    if (!config) return;
+    if (!template) return;
 
-    const backend = mockBackend(data, config, fields);
-    if (validateBackend(backend, config, fields)) {
+    const backend = mockBackend(data, template, fields);
+    if (validateBackend(backend, template, fields)) {
       return backend;
     }
-  }, [data, config, fields]);
+  }, [data, template, fields]);
 
   const lastBackend = useRef();
   useEffect(() => {
@@ -61,7 +61,7 @@ export default function useWiredBackend({
     if (!backend || !authorized || wired !== null) return;
 
     timeout.current = setTimeout(() => ping(backend, credential), 500);
-  }, [config, wired, backend, credential, authorized]);
+  }, [template, wired, backend, credential, authorized]);
 
   return [backend, wired];
 }

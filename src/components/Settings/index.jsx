@@ -1,6 +1,7 @@
 // source
 import { useAddons } from "../../hooks/useGeneral";
 import GeneralSetting from "../General";
+import HttpSetting from "../HttpSetting";
 import Addon from "../Addon";
 import useTab from "../../hooks/useTab";
 
@@ -26,9 +27,10 @@ export default function Settings() {
       .filter(({ enabled }) => enabled)
       .map(({ name, title }) => ({ name, title }));
 
-    return [{ name: "general", title: __("General", "forms-bridge") }].concat(
-      addonTabs
-    );
+    return [
+      { name: "general", title: __("General", "forms-bridge") },
+      { name: "http", title: __("HTTP", "forms-bridge") },
+    ].concat(addonTabs);
   }, [addons]);
 
   const style = useRef(document.createElement("style"));
@@ -68,7 +70,13 @@ export default function Settings() {
                 />
               </CardHeader>
               <CardBody>
-                {(tab.name === "general" && <GeneralSetting />) || <Addon />}
+                {tab.name === "general" ? (
+                  <GeneralSetting />
+                ) : tab.name === "http" ? (
+                  <HttpSetting />
+                ) : (
+                  <Addon />
+                )}
               </CardBody>
             </Card>
           </div>

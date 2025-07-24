@@ -2,13 +2,12 @@
 
 use FORMS_BRIDGE\Forms_Bridge;
 use FORMS_BRIDGE\Addon;
-use FORMS_BRIDGE\Credential;
 use FORMS_BRIDGE\Form_Bridge;
 use FORMS_BRIDGE\Form_Bridge_Template;
 use FORMS_BRIDGE\Integration;
 use FORMS_BRIDGE\Job;
-use FORMS_BRIDGE\Oauth_Credential;
-use HTTP_BRIDGE\Http_Backend;
+use HTTP_BRIDGE\Backend;
+use HTTP_BRIDGE\Credential;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -441,7 +440,7 @@ class FBAPI
     /**
      * Gets the collection of available backends.
      *
-     * @return Http_Backend[]
+     * @return Backend[]
      */
     public static function get_backends()
     {
@@ -453,7 +452,7 @@ class FBAPI
      *
      * @param string $name Backend name.
      *
-     * @return Http_Backend|null
+     * @return Backend|null
      */
     public static function get_backend($name)
     {
@@ -475,7 +474,7 @@ class FBAPI
      */
     public static function save_backend($data)
     {
-        $backend = new Http_Backend($data);
+        $backend = new Backend($data);
 
         if (!$backend->is_valid) {
             return false;
@@ -509,7 +508,7 @@ class FBAPI
      */
     public static function get_backend_schema()
     {
-        return Http_Backend::schema();
+        return Backend::schema();
     }
 
     /**
@@ -519,32 +518,19 @@ class FBAPI
      */
     public static function get_credentials()
     {
-        return apply_filters('forms_bridge_credentials', []);
-    }
-
-    /**
-     * Gets the collection of available credentials filtered by addon.
-     *
-     * @param string $addon Addon name.
-     *
-     * @return Credential[]|Oauth_Credential[]
-     */
-    public static function get_addon_credentials($addon)
-    {
-        return apply_filters('forms_bridge_credentials', [], $addon);
+        return apply_filters('http_bridge_credentials', []);
     }
 
     /**
      * Gets a credential instance by name and addon.
      *
      * @param string $name Credential name.
-     * @param string $addon Adddon name.
      *
-     * @return Credential|Oauth_Credential|null
+     * @return Credential|null
      */
-    public static function get_credential($name, $addon)
+    public static function get_credential($name)
     {
-        $credentials = self::get_addon_credentials($addon);
+        $credentials = self::get_credentials();
 
         foreach ($credentials as $credential) {
             if ($credential->name === $name) {
@@ -557,19 +543,12 @@ class FBAPI
      * Inserts or updates the credential data to the database.
      *
      * @param array $data Credential data.
-     * @param string $addon Addon name.
      *
      * @return boolean
      */
-    public static function save_credential($data, $addon)
+    public static function save_credential($data)
     {
-        $addon = self::get_addon($addon);
-        if (!$addon) {
-            return false;
-        }
-
-        $credential_class = $addon::credential_class;
-        $credential = new $credential_class($data, $addon);
+        $credential = new Credential($data);
 
         if (!$credential->is_valid) {
             return false;
@@ -582,13 +561,12 @@ class FBAPI
      * Deletes the credential data from the database.
      *
      * @param string $name Credential name.
-     * @param string $addon Addon name.
      *
      * @return boolean
      */
-    public static function delete_credential($name, $addon)
+    public static function delete_credential($name)
     {
-        $credential = self::get_credential($name, $addon);
+        $credential = self::get_credential($name);
 
         if (!$credential) {
             return false;
@@ -604,14 +582,8 @@ class FBAPI
      *
      * @return array|null
      */
-    public static function get_credential_schema($addon)
+    public static function get_credential_schema($addon = null)
     {
-        $addon = self::get_addon($addon);
-        if (!$addon) {
-            return;
-        }
-
-        $credential_class = $addon::credential_class;
-        return $credential_class::schema($addon::name);
+        return Credential::schema();
     }
 }

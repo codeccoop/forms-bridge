@@ -30,7 +30,7 @@ class Form_Bridge
             'type' => 'object',
             'properties' => [
                 'name' => [
-                    'name' => __('Name', 'forms-bridge'),
+                    'title' => _x('Name', 'Bridge schema', 'forms-bridge'),
                     'description' => __(
                         'Unique name of the bridge',
                         'forms-bridge'
@@ -39,7 +39,7 @@ class Form_Bridge
                     'minLength' => 1,
                 ],
                 'form_id' => [
-                    'name' => __('Form', 'forms-bridge'),
+                    'title' => _x('Form', 'Bridge schema', 'forms-bridge'),
                     'description' => __(
                         'Internal form id with integration prefix',
                         'forms-bridge'
@@ -49,28 +49,23 @@ class Form_Bridge
                     'default' => '',
                 ],
                 'backend' => [
-                    'name' => __('Backend', 'forms-bridge'),
+                    'title' => _x('Backend', 'Bridge schema', 'forms-bridge'),
                     'description' => __('Backend name', 'forms-bridge'),
                     'type' => 'string',
                     // 'default' => '',
                 ],
                 'endpoint' => [
-                    'name' => __('Endpoint', 'forms-bridge'),
+                    'title' => _x('Endpoint', 'Bridge schema', 'forms-bridge'),
                     'description' => __('HTTP API endpoint', 'forms-bridge'),
                     'type' => 'string',
                     'default' => '/',
                 ],
                 'method' => [
-                    'name' => __('Method', 'forms-bridge'),
+                    'title' => _x('Method', 'Bridge schema', 'forms-bridge'),
                     'description' => __('HTTP method', 'forms-bridge'),
                     'type' => 'string',
                     'enum' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
                     'default' => 'POST',
-                ],
-                'credential' => [
-                    'description' => __('Credential name', 'forms-bridge'),
-                    'type' => 'string',
-                    // 'default' => '',
                 ],
                 'custom_fields' => [
                     'description' => __(
@@ -183,7 +178,6 @@ class Form_Bridge
                 'name',
                 'form_id',
                 'backend',
-                // 'credential',
                 'method',
                 'endpoint',
                 'custom_fields',
@@ -288,7 +282,7 @@ class Form_Bridge
     /**
      * Retrives the bridge's backend instance.
      *
-     * @return Http_Backend|null
+     * @return Backend|null
      */
     protected function backend()
     {
@@ -427,28 +421,7 @@ class Form_Bridge
         $backend = $this->backend();
         $method = $this->method;
 
-        $headers = [];
-        $credential = $this->credential();
-        if ($credential) {
-            $backend = $backend->authorized(
-                $credential->schema,
-                $credential->client_id,
-                $credential->client_secret,
-                $credential->realm,
-                $this->endpoint
-            );
-
-            if (is_wp_error($backend)) {
-                return $backend;
-            }
-        }
-
-        return $backend->$method(
-            $this->endpoint,
-            $payload,
-            $headers,
-            $attachments
-        );
+        return $backend->$method($this->endpoint, $payload, [], $attachments);
     }
 
     /**

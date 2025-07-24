@@ -36,7 +36,6 @@ export default function Addon() {
   return (
     <TemplatesProvider>
       <JobsProvider>
-        <p style={{ marginTop: 0 }}>{description}</p>
         <PanelRow>
           <Bridges />
         </PanelRow>

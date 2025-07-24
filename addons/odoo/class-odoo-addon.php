@@ -49,18 +49,16 @@ class Odoo_Addon extends Addon
      * Performs a request against the backend to check the connexion status.
      *
      * @param string $backend Target backend name.
-     * @params string|null $credential Target credential name.
      *
      * @return boolean
      */
-    public function ping($backend, $credential = null)
+    public function ping($backend)
     {
         $bridge = new Odoo_Form_Bridge(
             [
                 'name' => '__odoo-' . time(),
                 'method' => 'search',
                 'endpoint' => 'res.users',
-                'credential' => $credential,
                 'backend' => $backend,
             ],
             self::name
@@ -75,11 +73,10 @@ class Odoo_Addon extends Addon
      *
      * @param string $endpoint Target model name.
      * @param string $backend Target backend name.
-     * @param string $credential Target credential name.
      *
      * @return array|WP_Error
      */
-    public function fetch($endpoint, $backend, $credential = null)
+    public function fetch($endpoint, $backend)
     {
         $bridge = new Odoo_Form_Bridge(
             [
@@ -87,7 +84,6 @@ class Odoo_Addon extends Addon
                 'method' => 'search_read',
                 'endpoint' => $endpoint,
                 'backend' => $backend,
-                'credential' => $credential,
             ],
             self::name
         );
@@ -101,11 +97,10 @@ class Odoo_Addon extends Addon
      *
      * @param string $model Target model name.
      * @param string $backend Target backend name.
-     * @params array $credential Credential data.
      *
      * @return array List of fields and content type of the model.
      */
-    public function get_endpoint_schema($model, $backend, $credential = null)
+    public function get_endpoint_schema($model, $backend)
     {
         $bridge = new Odoo_Form_Bridge(
             [
@@ -113,7 +108,6 @@ class Odoo_Addon extends Addon
                 'method' => 'fields_get',
                 'endpoint' => $model,
                 'backend' => $backend,
-                'credential' => $credential,
             ],
             self::name
         );

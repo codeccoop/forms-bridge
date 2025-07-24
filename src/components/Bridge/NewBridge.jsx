@@ -6,7 +6,7 @@ import Templates from "../Templates";
 import { isset, uploadJson } from "../../lib/utils";
 import useResponsive from "../../hooks/useResponsive";
 import BridgePayload from "./Payload";
-import useBackends from "../../hooks/useBackends";
+import { useBackends } from "../../hooks/useHttp";
 import ArrowUpIcon from "../icons/ArrowUp";
 
 const { Button } = wp.components;

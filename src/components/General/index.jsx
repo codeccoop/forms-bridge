@@ -1,7 +1,5 @@
 // source
 import useGeneral from "../../hooks/useGeneral";
-import Backends from "../Backends";
-import Backend from "../Backend";
 import Integrations from "../Integrations";
 import Addons from "../Addons";
 import Logger from "../Logger";
@@ -17,13 +15,12 @@ const { useEffect } = wp.element;
 const { __ } = wp.i18n;
 
 export default function GeneralSetting() {
-  const [{ notification_receiver, backends, debug, ...general }, setGeneral] =
+  const [{ loading, notification_receiver, debug, ...general }, setGeneral] =
     useGeneral();
 
   const update = (field) =>
     setGeneral({
       notification_receiver,
-      backends,
       debug,
       ...general,
       ...field,
@@ -54,19 +51,7 @@ export default function GeneralSetting() {
         />
       </PanelRow>
       <Spacer paddingY="calc(8px)" />
-      <PanelBody
-        title={__("Backends", "forms-bridge")}
-        initialOpen={backends.length === 0}
-      >
-        <PanelRow>
-          <Backends
-            backends={backends}
-            setBackends={(backends) => update({ backends })}
-            Backend={Backend}
-          />
-        </PanelRow>
-      </PanelBody>
-      <Integrations />
+      <Integrations loading={loading} />
       <Addons />
       <Logger />
       <PanelBody

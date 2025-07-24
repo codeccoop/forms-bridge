@@ -6,7 +6,8 @@ use WP_Error;
 use WP_REST_Server;
 use WPCT_PLUGIN\REST_Settings_Controller as Base_Controller;
 use FBAPI;
-use HTTP_BRIDGE\Http_Backend;
+use HTTP_BRIDGE\Backend;
+use HTTP_BRIDGE\Credential;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -31,7 +32,6 @@ class REST_Settings_Controller extends Base_Controller
         self::register_template_routes();
         self::register_job_routes();
         self::register_backend_routes();
-        self::register_oauth_routes();
     }
 
     /**
@@ -39,11 +39,7 @@ class REST_Settings_Controller extends Base_Controller
      */
     private static function register_forms_route()
     {
-        // forms endpoint registration
-        $namespace = self::namespace();
-        $version = self::version();
-
-        register_rest_route("{$namespace}/v{$version}", '/forms', [
+        register_rest_route('forms-bridge/v1', '/forms', [
             'methods' => WP_REST_Server::READABLE,
             'callback' => static function () {
                 return self::forms();
@@ -54,30 +50,28 @@ class REST_Settings_Controller extends Base_Controller
 
     private static function register_schema_route()
     {
-        $namespace = self::namespace();
-        $version = self::version();
-
         foreach (Addon::addons() as $addon) {
             if (!$addon->enabled) {
                 continue;
             }
 
             $addon = $addon::name;
-            register_rest_route(
-                "{$namespace}/v{$version}",
-                "/{$addon}/schemas",
-                [
-                    'methods' => WP_REST_Server::READABLE,
-                    'callback' => static function () use ($addon) {
-                        return self::addon_schemas($addon);
-                    },
-                    'permission_callback' => [
-                        self::class,
-                        'permission_callback',
-                    ],
-                ]
-            );
+            register_rest_route('forms-bridge/v1', "/{$addon}/schemas", [
+                'methods' => WP_REST_Server::READABLE,
+                'callback' => static function () use ($addon) {
+                    return self::addon_schemas($addon);
+                },
+                'permission_callback' => [self::class, 'permission_callback'],
+            ]);
         }
+
+        register_rest_route('forms-bridge/v1', '/http/schemas', [
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => static function () {
+                return self::http_schemas();
+            },
+            'permission_callback' => [self::class, 'permission_callback'],
+        ]);
     }
 
     /**
@@ -85,9 +79,6 @@ class REST_Settings_Controller extends Base_Controller
      */
     private static function register_template_routes()
     {
-        $namespace = self::namespace();
-        $version = self::version();
-
         foreach (Addon::addons() as $addon) {
             if (!$addon->enabled) {
                 continue;
@@ -108,7 +99,7 @@ class REST_Settings_Controller extends Base_Controller
             }
 
             register_rest_route(
-                "{$namespace}/v{$version}",
+                'forms-bridge/v1',
                 "/{$addon}/templates/(?P<name>[a-zA-Z0-9-_]+)",
                 [
                     [
@@ -152,50 +143,7 @@ class REST_Settings_Controller extends Base_Controller
             );
 
             register_rest_route(
-                "{$namespace}/v{$version}",
-                "/{$addon}/templates/(?P<name>[a-zA-Z0-9-_]+)/backend",
-                [
-                    'methods' => WP_REST_Server::CREATABLE,
-                    'callback' => static function ($request) use ($addon) {
-                        return self::transient_backend($addon, $request);
-                    },
-                    'permission_callback' => [
-                        self::class,
-                        'permission_callback',
-                    ],
-                    'args' => [
-                        'name' => $args['name'],
-                        'integration' => [
-                            'description' => __(
-                                'Target integration',
-                                'forms-bridge'
-                            ),
-                            'type' => 'string',
-                            'required' => true,
-                        ],
-                        'fields' => $args['fields'],
-                    ],
-                ]
-            );
-
-            register_rest_route(
-                "{$namespace}/v{$version}",
-                "/{$addon}/templates/(?P<name>[a-zA-Z0-9-_]+)/credential",
-                [
-                    'methods' => WP_REST_Server::CREATABLE,
-                    'callback' => static function ($request) use ($addon) {
-                        return self::transient_credential($addon, $request);
-                    },
-                    'permission_callback' => [
-                        self::class,
-                        'permission_callback',
-                    ],
-                    'args' => [],
-                ]
-            );
-
-            register_rest_route(
-                "{$namespace}/v{$version}",
+                'forms-bridge/v1',
                 "/{$addon}/templates/(?P<name>[a-zA-Z0-9-_]+)/use",
                 [
                     'methods' => WP_REST_Server::CREATABLE,
@@ -222,7 +170,7 @@ class REST_Settings_Controller extends Base_Controller
             );
 
             register_rest_route(
-                "{$namespace}/v{$version}",
+                'forms-bridge/v1',
                 "/{$addon}/templates/(?P<name>[a-zA-Z0-9-_]+)/options",
                 [
                     'methods' => WP_REST_Server::CREATABLE,
@@ -235,8 +183,8 @@ class REST_Settings_Controller extends Base_Controller
                     ],
                     'args' => [
                         'name' => $args['name'],
-                        'backend' => $args['backend'],
-                        'credential' => $args['credential'],
+                        'backend' => FBAPI::get_backend_schema(),
+                        'credential' => FBAPI::get_credential_schema(),
                     ],
                 ]
             );
@@ -248,9 +196,6 @@ class REST_Settings_Controller extends Base_Controller
      */
     private static function register_job_routes()
     {
-        $namespace = self::namespace();
-        $version = self::version();
-
         foreach (Addon::addons() as $addon) {
             if (!$addon->enabled) {
                 continue;
@@ -270,36 +215,29 @@ class REST_Settings_Controller extends Base_Controller
                 );
             }
 
-            register_rest_route(
-                "{$namespace}/v{$version}",
-                "/{$addon}/jobs/workflow",
-                [
-                    'methods' => WP_REST_Server::CREATABLE,
-                    'callback' => static function ($request) use ($addon) {
-                        return self::get_jobs($addon, $request);
-                    },
-                    'permission_callback' => [
-                        self::class,
-                        'permission_callback',
+            register_rest_route('forms-bridge/v1', "/{$addon}/jobs/workflow", [
+                'methods' => WP_REST_Server::CREATABLE,
+                'callback' => static function ($request) use ($addon) {
+                    return self::get_jobs($addon, $request);
+                },
+                'permission_callback' => [self::class, 'permission_callback'],
+                'args' => [
+                    'jobs' => [
+                        'description' => __(
+                            'Array of job names',
+                            'forms-bridge'
+                        ),
+                        'type' => 'array',
+                        'items' => ['type' => 'string'],
+                        'uniqueItems' => true,
+                        'minItems' => 1,
+                        'required' => true,
                     ],
-                    'args' => [
-                        'jobs' => [
-                            'description' => __(
-                                'Array of job names',
-                                'forms-bridge'
-                            ),
-                            'type' => 'array',
-                            'items' => ['type' => 'string'],
-                            'uniqueItems' => true,
-                            'minItems' => 1,
-                            'required' => true,
-                        ],
-                    ],
-                ]
-            );
+                ],
+            ]);
 
             register_rest_route(
-                "{$namespace}/v{$version}",
+                'forms-bridge/v1',
                 "/{$addon}/jobs/(?P<name>[a-zA-Z0-9-_]+)",
                 [
                     [
@@ -324,14 +262,7 @@ class REST_Settings_Controller extends Base_Controller
                             self::class,
                             'permission_callback',
                         ],
-                        'args' => [
-                            'name' => $args['name'],
-                            'title' => $args['title'],
-                            'description' => $args['description'],
-                            'input' => $args['input'],
-                            'output' => $args['output'],
-                            'snippet' => $args['snippet'],
-                        ],
+                        'args' => $args,
                     ],
                     [
                         'methods' => WP_REST_Server::DELETABLE,
@@ -353,9 +284,6 @@ class REST_Settings_Controller extends Base_Controller
 
     private static function register_backend_routes()
     {
-        $namespace = self::namespace();
-        $version = self::version();
-
         foreach (Addon::addons() as $addon) {
             if (!$addon->enabled) {
                 continue;
@@ -363,41 +291,37 @@ class REST_Settings_Controller extends Base_Controller
 
             $addon = $addon::name;
 
-            $schema = Form_Bridge_Template::schema($addon);
-            $args = [];
+            // $schema = Form_Bridge_Template::schema($addon);
+            // $args = [];
 
-            foreach ($schema['properties'] as $name => $prop_schema) {
-                $args[$name] = $prop_schema;
-                $args[$name]['required'] = in_array(
-                    $name,
-                    $schema['required'],
-                    true
-                );
-            }
+            // foreach ($schema['properties'] as $name => $prop_schema) {
+            //     $args[$name] = $prop_schema;
+            //     $args[$name]['required'] = in_array(
+            //         $name,
+            //         $schema['required'],
+            //         true
+            //     );
+            // }
 
-            register_rest_route(
-                "{$namespace}/v{$version}",
-                "/{$addon}/backend/ping",
+            register_rest_route('forms-bridge/v1', "/{$addon}/backend/ping", [
                 [
-                    [
-                        'methods' => WP_REST_Server::CREATABLE,
-                        'callback' => static function ($request) use ($addon) {
-                            return self::ping_backend($addon, $request);
-                        },
-                        'permission_callback' => [
-                            self::class,
-                            'permission_callback',
-                        ],
-                        'args' => [
-                            'backend' => $args['backend'],
-                            'credential' => $args['credential'],
-                        ],
+                    'methods' => WP_REST_Server::CREATABLE,
+                    'callback' => static function ($request) use ($addon) {
+                        return self::ping_backend($addon, $request);
+                    },
+                    'permission_callback' => [
+                        self::class,
+                        'permission_callback',
                     ],
-                ]
-            );
+                    'args' => [
+                        'backend' => FBAPI::get_backend_schema(),
+                        'credential' => FBAPI::get_credential_schema(),
+                    ],
+                ],
+            ]);
 
             register_rest_route(
-                "{$namespace}/v{$version}",
+                'forms-bridge/v1',
                 "/{$addon}/backend/endpoint/schema",
                 [
                     [
@@ -410,7 +334,7 @@ class REST_Settings_Controller extends Base_Controller
                             'permission_callback',
                         ],
                         'args' => [
-                            'backend' => $args['backend'],
+                            'backend' => FBAPI::get_backend_schema(),
                             'endpoint' => [
                                 'description' => __(
                                     'Target endpoint name',
@@ -419,67 +343,8 @@ class REST_Settings_Controller extends Base_Controller
                                 'type' => 'string',
                                 'required' => true,
                             ],
-                            'credential' => $args['credential'],
                         ],
                     ],
-                ]
-            );
-        }
-    }
-
-    private static function register_oauth_routes()
-    {
-        $namespace = self::namespace();
-        $version = self::version();
-
-        foreach (Addon::addons() as $addon) {
-            if (!$addon->enabled) {
-                continue;
-            }
-
-            $addon = $addon::name;
-
-            $schema = FBAPI::get_credential_schema($addon);
-            $args = [];
-
-            foreach ($schema['properties'] as $name => $prop_schema) {
-                $args[$name] = $prop_schema;
-                $args[$name]['required'] = in_array(
-                    $name,
-                    $schema['required'],
-                    true
-                );
-            }
-
-            register_rest_route(
-                "{$namespace}/v{$version}",
-                "{$addon}/oauth/grant",
-                [
-                    [
-                        'methods' => WP_REST_Server::CREATABLE,
-                        'callback' => static function ($request) use ($addon) {
-                            return self::oauth_grant($addon, $request);
-                        },
-                        'permission_callback' => [
-                            self::class,
-                            'permission_callback',
-                        ],
-                        'args' => [
-                            'credential' => $schema,
-                        ],
-                    ],
-                ]
-            );
-
-            register_rest_route(
-                "{$namespace}/v{$version}",
-                "/{$addon}/oauth/redirect",
-                [
-                    'methods' => WP_REST_Server::READABLE,
-                    'callback' => static function ($request) use ($addon) {
-                        return self::oauth_redirect($addon, $request);
-                    },
-                    'permission_callback' => '__return_true',
                 ]
             );
         }
@@ -672,7 +537,7 @@ class REST_Settings_Controller extends Base_Controller
             return $handler;
         }
 
-        [$addon, $backend, $credential] = $handler;
+        [$addon, $backend] = $handler;
 
         $template = FBAPI::get_template($request['name'], $addon::name);
         if (!$template) {
@@ -707,7 +572,7 @@ class REST_Settings_Controller extends Base_Controller
                     return self::internal_server_error();
                 }
 
-                $response = $addon->fetch($endpoint, $backend, $credential);
+                $response = $addon->fetch($endpoint, $backend);
 
                 if (is_wp_error($response)) {
                     $error = self::internal_server_error();
@@ -788,8 +653,7 @@ class REST_Settings_Controller extends Base_Controller
                 return self::bad_request();
             }
 
-            $credential['enabled'] = true;
-            $credential['is_valid'] = true;
+            $backend['credential'] = $credential['name'];
         }
 
         $addon = FBAPI::get_addon($addon);
@@ -797,8 +661,8 @@ class REST_Settings_Controller extends Base_Controller
             return self::bad_request();
         }
 
-        Http_Backend::temp_registration($backend);
-        Credential::temp_registration($credential, $addon::name);
+        Backend::temp_registration($backend);
+        Credential::temp_registration($credential);
 
         return [$addon, $backend['name'], $credential['name'] ?? null];
     }
@@ -814,9 +678,9 @@ class REST_Settings_Controller extends Base_Controller
             return $handler;
         }
 
-        [$addon, $backend, $credential] = $handler;
+        [$addon, $backend] = $handler;
 
-        $result = $addon->ping($backend, $credential);
+        $result = $addon->ping($backend);
 
         if (is_wp_error($result)) {
             $error = self::bad_request();
@@ -842,13 +706,9 @@ class REST_Settings_Controller extends Base_Controller
             return $handler;
         }
 
-        [$addon, $backend, $credential] = $handler;
+        [$addon, $backend] = $handler;
 
-        $schema = $addon->get_endpoint_schema(
-            $request['endpoint'],
-            $backend,
-            $credential
-        );
+        $schema = $addon->get_endpoint_schema($request['endpoint'], $backend);
 
         if (is_wp_error($schema)) {
             $error = self::internal_server_error();
@@ -867,56 +727,13 @@ class REST_Settings_Controller extends Base_Controller
     private static function addon_schemas($name)
     {
         $bridge = FBAPI::get_bridge_schema($name);
-        $credential = FBAPI::get_credential_schema($name);
-
-        return [
-            'bridge' => $bridge,
-            'credential' => $credential,
-        ];
+        return ['bridge' => $bridge];
     }
 
-    private static function oauth_grant($addon, $request)
+    private static function http_schemas()
     {
-        $addon = Addon::addon($addon);
-
-        $response = $addon->oauth_grant($request['credential']);
-
-        if (is_wp_error($response)) {
-            $error = self::internal_server_error();
-            $error->add(
-                $response->get_error_code(),
-                $response->get_error_message(),
-                $response->get_error_data()
-            );
-
-            return $error;
-        }
-
-        if (!$response) {
-            return ['form' => null, 'redirect' => null];
-        }
-
-        return $response;
-    }
-
-    private static function oauth_redirect($addon, $request)
-    {
-        $addon = Addon::addon($addon);
-
-        $result = $addon->oauth_redirect_callback($request);
-
-        if (!$result) {
-            return self::bad_request('bad_request');
-        }
-
-        $url =
-            site_url() .
-            '/wp-admin/options-general.php?page=forms-bridge&tab=' .
-            $addon::name;
-        if (wp_redirect($url)) {
-            exit(302);
-        }
-
-        return ['success' => false];
+        $backend = FBAPI::get_backend_schema();
+        $credential = FBAPI::get_credential_schema();
+        return ['backend' => $backend, 'credential' => $credential];
     }
 }

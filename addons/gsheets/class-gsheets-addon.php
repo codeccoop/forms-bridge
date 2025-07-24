@@ -9,7 +9,6 @@ if (!defined('ABSPATH')) {
 }
 
 require_once 'class-gsheets-form-bridge.php';
-require_once 'class-gsheets-credential.php';
 require_once 'hooks.php';
 
 /**
@@ -62,16 +61,14 @@ class Google_Sheets_Addon extends Addon
      * Performs a request against the backend to check the connexion status.
      *
      * @param string $backend Backend name.
-     * @params string $credential Credential name.
      *
      * @return boolean
      */
-    public function ping($backend, $credential = null)
+    public function ping($backend)
     {
         $bridge = new Google_Sheets_Form_Bridge(
             [
                 'name' => '__gsheets-' . time(),
-                'credential' => $credential,
                 'backend' => $backend,
                 'endpoint' => '/',
                 'method' => 'GET',
@@ -80,13 +77,13 @@ class Google_Sheets_Addon extends Addon
             self::name
         );
 
-        $credential = $bridge->credential;
-        if (!$credential) {
+        $backend = $bridge->backend;
+        if (!$backend) {
             return false;
         }
 
-        $backend = $bridge->backend;
-        if (!$backend) {
+        $credential = $backend->credential;
+        if (!$credential) {
             return false;
         }
 
@@ -106,13 +103,17 @@ class Google_Sheets_Addon extends Addon
      *
      * @param string $endpoint Concatenation of spreadsheet ID and tab name.
      * @param string $backend Backend name.
-     * @param string $credential Credential name.
      *
      * @return array|WP_Error
      */
-    public function fetch($endpoint, $backend, $credential = null)
+    public function fetch($endpoint, $backend)
     {
-        $credential = FBAPI::get_credential($credential, self::name);
+        $backend = FBAPI::get_backend($backend);
+        if (!$backend) {
+            return new WP_Error('invalid_backend');
+        }
+
+        $credential = $backend->credential;
         if (!$credential) {
             return new WP_Error('invalid_credential');
         }
@@ -120,11 +121,6 @@ class Google_Sheets_Addon extends Addon
         $access_token = $credential->get_access_token();
         if (!$access_token) {
             return new WP_Error('invalid_credential');
-        }
-
-        $backend = FBAPI::get_backend($backend);
-        if (!$backend) {
-            return new WP_Error('invalid_backend');
         }
 
         $response = http_bridge_get(
@@ -149,11 +145,10 @@ class Google_Sheets_Addon extends Addon
      *
      * @param string $endpoint Concatenation of spreadsheet ID and tab name.
      * @param string $backend Backend name.
-     * @params null $credential Credential name.
      *
      * @return array List of fields and content type of the endpoint.
      */
-    public function get_endpoint_schema($endpoint, $backend, $credential = null)
+    public function get_endpoint_schema($endpoint, $backend)
     {
         $bridges = FBAPI::get_addon_bridges(self::name);
         foreach ($bridges as $candidate) {

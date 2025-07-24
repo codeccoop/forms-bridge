@@ -24,7 +24,7 @@ return [
                 'Email of the owner user of the deal',
                 'forms-bridge'
             ),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 'endpoint' => '/crm/v7/users',
                 'finger' => [
@@ -38,7 +38,7 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'Event_Title',
             'label' => __('Event title', 'forms-bridge'),
-            'type' => 'string',
+            'type' => 'text',
             'required' => true,
             'default' => __('Web Meetting', 'forms-bridge'),
         ],
@@ -50,7 +50,7 @@ return [
                 'Label to identify your website sourced leads',
                 'forms-bridge'
             ),
-            'type' => 'string',
+            'type' => 'text',
             'required' => true,
             'default' => 'WordPress',
         ],
@@ -58,7 +58,7 @@ return [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'Lead_Status',
             'label' => __('Lead status', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 [
                     'label' => __('Not Contacted', 'forms-bridge'),

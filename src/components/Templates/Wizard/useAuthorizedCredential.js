@@ -1,5 +1,5 @@
 import useTab from "../../../hooks/useTab";
-import { isset } from "../../../lib/utils";
+import { isset, restUrl } from "../../../lib/utils";
 import { useLoading } from "../../../providers/Loading";
 import { useSchemas } from "../../../providers/Schemas";
 import { useFetchSettings } from "../../../providers/Settings";
@@ -31,31 +31,40 @@ export default function useAuthorizedCredential({ data = {}, fields = [] }) {
     };
   }, []);
 
-  const { credential: config } = useTemplateConfig()[0] || {};
-  const { credential: schema } = useSchemas();
+  const { credential: template } = useTemplateConfig()[0] || {};
+  const { credential: schemas } = useSchemas();
 
   const credential = useMemo(() => {
-    if (!config) return;
+    if (!template) return;
 
-    if (validateCredential(data, fields)) {
+    if (validateCredential(data, template, fields)) {
       const credential = { ...data };
 
-      Object.keys(schema.properties).forEach((prop) => {
-        if (isset(schema.properties[prop], "default")) {
-          credential[prop] =
-            credential[prop] || schema.properties[prop].default;
-        }
+      const schema = schemas?.oneOf.find((schema) => {
+        return (
+          schema.properties.schema.const === credential.schema ||
+          schema.properties.schema.enum?.includes(credential.schema)
+        );
       });
+
+      if (schema) {
+        Object.keys(schema.properties).forEach((prop) => {
+          if (isset(schema.properties[prop], "default")) {
+            credential[prop] =
+              credential[prop] || schema.properties[prop].default;
+          }
+        });
+      }
 
       return credential;
     }
-  }, [data, config, fields]);
+  }, [schemas, data, template, fields]);
 
   useEffect(() => {
     setError(false);
   }, [credential]);
 
-  const isOauth = isset(schema?.properties || {}, "access_token");
+  const isOauth = data.schema === "Bearer";
 
   const authorized = !isOauth || !!data.access_token;
 
@@ -71,36 +80,61 @@ export default function useAuthorizedCredential({ data = {}, fields = [] }) {
   }, [focus]);
 
   const authorize = useCallback(() => {
-    if (loading || !credential) return;
+    if (!credential) return;
+
+    let oauthUrl = credential.oauth_url;
+    const matches = oauthUrl.match(/{(\w+)}/);
+    if (matches && credential[matches[1]]) {
+      oauthUrl = oauthUrl.replace(/{\w+}/, credential[matches[1]]);
+    }
+
+    credential.oauth_url = oauthUrl;
 
     setLoading(true);
 
     apiFetch({
-      path: `forms-bridge/v1/${addon}/oauth/grant`,
+      path: "http-bridge/v1/oauth/grant",
       method: "POST",
       data: { credential },
     })
-      .then(({ redirect, form: html }) => {
-        if (html) {
-          const wrapper = document.createElement("div");
-          wrapper.style.visibility = "hidden";
-          wrapper.innerHTML = html;
-          document.body.appendChild(wrapper);
+      .then(({ success }) => {
+        if (!success) throw "error";
 
-          const form = wrapper.querySelector("form");
-          form.setAttribute("target", "_blank");
+        const form = document.createElement("form");
+        form.method = "POST";
+        // form.action = data.oauth_url;
+        form.action =
+          credential.oauth_url +
+          "/auth?" +
+          new URLSearchParams({
+            client_id: credential.client_id,
+            scope: credential.scope,
+            response_type: "code",
+            redirect_uri: restUrl("http-bridge/v1/oauth/redirect"),
+            access_type: "offline",
+            state: btoa(addon),
+          }).toString();
+        form.target = "_blank";
 
-          form.submit();
-          document.body.removeChild(wrapper);
-        } else {
-          window.open(redirect);
-        }
+        // form.innerHTML = `
+        // <input name="client_id" value="${data.client_id}" />
+        // <input name="scope" value="${data.scope}" />
+        // <input name="response_type" value="code" />
+        // <input name="redirect_uri" value="${restUrl("http-bridge/v1/oauth/redirect")}" />
+        // <input name="access_type" value="offline" />
+        // <input name="state" value="${btoa(addon)}" />
+        // `;
+
+        form.style.visibility = "hidden";
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
       })
-      .catch(() => setError(true))
+      .catch(() => setError(""))
       .finally(() => setLoading(false));
   }, [loading, addon, credential]);
 
-  if (!schema) return [null, true];
+  if (!schemas) return [null, true];
 
   return {
     credential,

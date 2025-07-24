@@ -5,20 +5,6 @@ if (!defined('ABSPATH')) {
 }
 
 add_filter(
-    'forms_bridge_bridge_schema',
-    function ($schema, $addon) {
-        if ($addon !== 'listmonk') {
-            return $schema;
-        }
-
-        $schema['required'][] = 'credential';
-        return $schema;
-    },
-    10,
-    2
-);
-
-add_filter(
     'forms_bridge_template_defaults',
     function ($defaults, $addon, $schema) {
         if ($addon !== 'listmonk') {
@@ -47,7 +33,6 @@ add_filter(
                     [
                         'ref' => '#credential',
                         'name' => 'schema',
-                        'label' => __('Authentication', 'forms-bridge'),
                         'type' => 'text',
                         'value' => 'Token',
                     ],
@@ -107,7 +92,10 @@ add_filter(
                     'name' => 'Listmonk',
                 ],
                 'credential' => [
+                    'name' => '',
                     'schema' => 'Token',
+                    'client_id' => '',
+                    'client_secret' => '',
                 ],
             ],
             $defaults,
@@ -154,29 +142,6 @@ add_filter(
         }
 
         return $data;
-    },
-    10,
-    2
-);
-
-add_filter(
-    'forms_bridge_credential_schema',
-    function ($schema, $addon) {
-        if ($addon == 'listmonk') {
-            unset($schema['properties']['realm']);
-
-            $schema['properties']['schema']['value'] = 'Token';
-            $schema['properties']['client_id']['name'] = __(
-                'Username',
-                'forms-bridge'
-            );
-            $schema['properties']['client_secret']['name'] = __(
-                'Token',
-                'forms-bridge'
-            );
-        }
-
-        return $schema;
     },
     10,
     2

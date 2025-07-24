@@ -50,11 +50,10 @@ class Bigin_Addon extends Zoho_Addon
      *
      * @param string $endpoint API endpoint.
      * @param string $backend Backend name.
-     * @param string $credential Credential name.
      *
      * @return array List of fields and content type of the endpoint.
      */
-    public function get_endpoint_schema($endpoint, $backend, $credential = null)
+    public function get_endpoint_schema($endpoint, $backend)
     {
         if (
             !preg_match(
@@ -66,16 +65,18 @@ class Bigin_Addon extends Zoho_Addon
             return [];
         }
 
-        $module = $matches[1];
+        $module = $matches[2];
 
-        $bridge_class = static::bridge_class;
-        $bridge = new $bridge_class([
-            'name' => '__bigin-' . time(),
-            'backend' => $backend,
-            'credential' => $credential,
-            'endpoint' => '/bigin/v2/settings/layouts',
-            'method' => 'GET',
-        ]);
+        $bridge_class = self::bridge_class;
+        $bridge = new $bridge_class(
+            [
+                'name' => '__bigin-' . time(),
+                'backend' => $backend,
+                'endpoint' => '/bigin/v2/settings/layouts',
+                'method' => 'GET',
+            ],
+            self::name
+        );
 
         $response = $bridge->submit(['module' => $module]);
 

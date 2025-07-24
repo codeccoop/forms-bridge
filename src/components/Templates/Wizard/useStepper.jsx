@@ -31,13 +31,9 @@ export default function useStepper({ fields, integration, data }) {
   const { bridge: bridgeSchema } = useSchemas();
 
   const steps = useMemo(() => {
-    return DEFAULT_STEPS.filter((step) => {
-      if (step.name === "credential") {
-        return isset(bridgeSchema.properties, "credential");
-      }
-
-      return step;
-    }).filter((step) => (integration === "woo" ? step.name !== "form" : true));
+    return DEFAULT_STEPS.filter((step) =>
+      integration === "woo" ? step.name !== "form" : true
+    );
   }, [integration, bridgeSchema]);
 
   const [step, setStep] = useState(0);

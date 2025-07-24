@@ -46,16 +46,20 @@ class Finan_Coop_Form_Bridge extends Form_Bridge
             ];
         }
 
-        $credential = $this->credential();
-        if (!$credential) {
-            return new WP_Error('unauthorized');
-        }
-
         add_filter(
             'http_bridge_backend_headers',
-            function ($headers, $backend) use ($credential) {
+            function ($headers, $backend) {
                 if ($backend->name === $this->data['backend']) {
-                    [$database, $username, $password] = $credential->login();
+                    $credential = $backend->credential;
+                    if (!$credential) {
+                        return $headers;
+                    }
+
+                    [
+                        $database,
+                        $username,
+                        $password,
+                    ] = $credential->authorization();
                     $headers['X-Odoo-Db'] = $database;
                     $headers['X-Odoo-Username'] = $username;
                     $headers['X-Odoo-Api-Key'] = $password;

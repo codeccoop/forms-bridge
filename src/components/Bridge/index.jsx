@@ -13,9 +13,8 @@ import diff from "../../lib/diff";
 import { useLoading } from "../../providers/Loading";
 import BridgePayload from "./Payload";
 import Mutations from "../Mutations";
-import useBackends from "../../hooks/useBackends";
+import { useBackends } from "../../hooks/useHttp";
 import { useError } from "../../providers/Error";
-import { useCredentials } from "../../hooks/useAddon";
 import useTab from "../../hooks/useTab";
 
 const { Button } = wp.components;
@@ -58,13 +57,6 @@ export default function Bridge({ data, update, remove, schema, copy, names }) {
     )?.value;
     return contentType !== undefined && contentType !== "multipart/form-data";
   }, [backends, state.backend]);
-
-  const [credentials] = useCredentials();
-  const credential = useMemo(() => {
-    return credentials
-      .filter(({ is_valid }) => is_valid)
-      .find(({ name }) => name === state.credential);
-  }, [credentials, data.credential]);
 
   const validate = useCallback(
     (data) => {
@@ -157,7 +149,7 @@ export default function Bridge({ data, update, remove, schema, copy, names }) {
     if (ping) {
       setPing(false);
     }
-  }, [state.backend, state.credential]);
+  }, [state.backend]);
 
   const doPing = useCallback(() => {
     setLoading(true);
@@ -165,7 +157,7 @@ export default function Bridge({ data, update, remove, schema, copy, names }) {
     apiFetch({
       path: `forms-bridge/v1/${addon}/backend/ping`,
       method: "POST",
-      data: { backend, credential },
+      data: { backend },
     })
       .then(({ success }) => {
         if (success) setPing(true);
@@ -176,7 +168,7 @@ export default function Bridge({ data, update, remove, schema, copy, names }) {
         setError(__("Backend is unreachable", "forms-bridge"));
       })
       .finally(() => setLoading(false));
-  }, [addon, backend, credential]);
+  }, [addon, backend]);
 
   const enabled = isValid && state.enabled;
 

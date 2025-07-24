@@ -1,9 +1,8 @@
 import { isset } from "../../lib/utils";
-import { StringField, OptionsField } from "../Bridge/Fields";
+import { StringField, SelectField } from "../Bridge/Fields";
 const { useEffect, useMemo } = wp.element;
 
 export const INTERNALS = [
-  "is_valid",
   // "access_token",
   "refresh_token",
   // "expires_at",
@@ -14,9 +13,22 @@ export default function CredentialFields({
   data,
   setData,
   schema,
+  schemas,
   disabled = false,
   errors,
 }) {
+  const schemaOptions = useMemo(() => {
+    return schemas.oneOf
+      .reduce((options, schema) => {
+        if (schema.properties.schema.const) {
+          return options.concat(schema.properties.schema.const);
+        }
+
+        return options.concat(schema.properties.schema.enum || []);
+      }, [])
+      .map((opt) => ({ value: opt, label: opt }));
+  }, [schemas]);
+
   const fields = useMemo(() => {
     if (!schema) return [];
 
@@ -24,14 +36,21 @@ export default function CredentialFields({
       .filter((name) => schema.properties[name].public !== false)
       .map((name) => ({
         ...schema.properties[name],
-        label: schema.properties[name].name || name,
+        label: schema.properties[name].title || name,
         name,
+        value: schema.properties[name].const,
       }))
       .map((field) => {
-        if (field.enum) {
+        if (field.name === "schema") {
           return {
             ...field,
-            type: "options",
+            type: "select",
+            options: schemaOptions,
+          };
+        } else if (field.enum) {
+          return {
+            ...field,
+            type: "select",
             options: field.enum.map((value) => ({ label: value, value })),
           };
         }
@@ -42,11 +61,24 @@ export default function CredentialFields({
 
   useEffect(() => {
     const defaults = fields.reduce((defaults, field) => {
+      if (
+        (field.name === "realm" ||
+          field.name === "scope" ||
+          field.name === "database") &&
+        !isset(data, field.name)
+      ) {
+        defaults[field.name] = data.realm || data.scope || data.database || "";
+
+        field.name !== "realm" && delete data.realm;
+        field.name !== "scope" && delete data.scope;
+        field.name !== "database" && delete data.database;
+      }
+
       if (field.default && !isset(data, field.name)) {
         defaults[field.name] = field.default;
       } else if (field.value && field.value !== data[field.name]) {
         defaults[field.name] = field.value;
-      } else if (field.type === "options") {
+      } else if (field.type === "select") {
         if (!field.options.length && data[field.name]) {
           defaults[field.name] = "";
         } else if (!data[field.name] || field.options.length === 1) {
@@ -69,11 +101,8 @@ export default function CredentialFields({
     }
   }, [data, fields]);
 
-  const realmRequired = ["Digest", "RPC", "Bearer"].includes(data.schema);
-
   return fields
     .filter((field) => !field.value)
-    .filter((field) => (!realmRequired ? field.name !== "realm" : true))
     .sort((a, b) => (a.name === "name" ? -1 : 0))
     .map((field) => {
       switch (field.type) {
@@ -87,9 +116,9 @@ export default function CredentialFields({
               disabled={disabled}
             />
           );
-        case "options":
+        case "select":
           return (
-            <OptionsField
+            <SelectField
               label={field.label}
               value={data[field.name] || ""}
               setValue={(value) => setData({ ...data, [field.name]: value })}

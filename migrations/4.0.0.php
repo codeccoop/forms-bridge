@@ -29,6 +29,8 @@ $setting_names = [
     'zoho',
 ];
 
+$credentials = [];
+
 foreach ($setting_names as $setting_name) {
     $option = 'forms-bridge_' . $setting_name;
 
@@ -39,10 +41,6 @@ foreach ($setting_names as $setting_name) {
 
     if (!isset($data['bridges'])) {
         $data['bridges'] = [];
-    }
-
-    if (!isset($data['credentials'])) {
-        $data['credentials'] = [];
     }
 
     $backends = [];
@@ -223,3 +221,74 @@ foreach ($setting_names as $setting_name) {
 
     update_option($option, $data);
 }
+
+$addons = ['zoho', 'bigin', 'gsheets', 'listmonk', 'mailchimp', 'odoo'];
+$credentials = [];
+
+foreach ($addons as $addon) {
+    $setting = get_option('forms-bridge_' . $addon);
+
+    if (empty($setting['credentials'])) {
+        continue;
+    }
+
+    foreach ($setting['credentials'] as $credential) {
+        if ($addon === 'odoo') {
+            $credentials[] = [
+                'schema' => 'RPC',
+                'name' => $credential['name'],
+                'user' => $credential['user'],
+                'password' => $credential['password'],
+                'service' => $credential['database'],
+                'is_valid' => true,
+            ];
+        } elseif ($addon === 'listmonk') {
+            $credentials[] = [
+                'schema' => 'Token',
+                'name' => $credential['name'],
+                'client_id' => $credential['client_id'],
+                'client_secret' => $credential['client_secret'],
+                'is_valid' => true,
+            ];
+        } elseif ($addon === 'mailchimp') {
+            $credential[] = [
+                'schema' => 'Basic',
+                'name' => $credential['name'],
+                'client_id' => $credential['client_id'],
+                'client_secret' => $credential['client_secret'],
+                'is_valid' => true,
+            ];
+        } elseif ($addon === 'zoho' || $addon === 'bigin') {
+            $credentials[] = [
+                'schema' => 'Bearer',
+                'name' => $credential['name'],
+                'oauth_url' => "https://www.{$credential['region']}/v2/oauth",
+                'client_id' => $credential['client_id'],
+                'client_secret' => $credential['client_secret'],
+                'scope' => $credential['scope'],
+                'access_token' => $credential['access_token'] ?? '',
+                'expires_at' => $credential['expires_at'] ?? 0,
+                'refresh_token' => $credential['access_token'] ?? '',
+                'refresh_token_expires_at' => 0,
+            ];
+        } elseif ($addon === 'gsheets') {
+            $credentials[] = [
+                'schema' => 'Bearer',
+                'name' => $credential['name'],
+                'oauth_url' => 'https://accounts.google.com/o/oauth/v2',
+                'client_id' => $credential['client_id'],
+                'client_secret' => $credential['client_secret'],
+                'scope' => $credential['scope'],
+                'access_token' => $credential['access_token'] ?? '',
+                'expires_at' => $credential['expires_at'] ?? 0,
+                'refresh_token' => $credential['access_token'] ?? '',
+                'refresh_token_expires_at' =>
+                    $credential['refresh_token_expires_at'] ?? 0,
+            ];
+        }
+    }
+}
+
+$http = get_option('http-bridge_general');
+$http['credentials'] = $credentials;
+update_option('http-bridge_general', $http);

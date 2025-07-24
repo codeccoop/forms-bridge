@@ -78,22 +78,13 @@ class Addon extends Singleton
                     'type' => 'string',
                     'default' => '',
                 ],
-                'logo' => [
-                    'type' => 'string',
-                    'default' => '',
-                ],
                 'bridges' => [
                     'type' => 'array',
                     'items' => $bridge_schema,
                     'default' => [],
                 ],
-                'credentials' => [
-                    'type' => 'array',
-                    'items' => $credential_schema,
-                    'default' => [],
-                ],
             ],
-            'required' => ['title', 'bridges', 'credentials'],
+            'required' => ['title', 'bridges'],
         ];
     }
 
@@ -107,7 +98,6 @@ class Addon extends Singleton
         return [
             'title' => static::title,
             'bridges' => [],
-            'credentials' => [],
         ];
     }
 
@@ -272,12 +262,6 @@ class Addon extends Singleton
             return $data;
         }
 
-        if (isset($data['credentials'])) {
-            $data['credentials'] = static::sanitize_credentials(
-                $data['credentials']
-            );
-        }
-
         $data['bridges'] = static::sanitize_bridges($data['bridges'], $data);
 
         return $data;
@@ -362,112 +346,14 @@ class Addon extends Singleton
             $bridge['mutations'][$i] = $bridge['mutations'][$i] ?? [];
         }
 
-        static $credentials;
-        $check_credentials = in_array('credential', $schema['required'], true);
-        if ($check_credentials) {
-            if ($credentials === null) {
-                $credentials = FBAPI::get_credentials(static::name);
-            }
-
-            foreach ($credentials as $candidate) {
-                if ($candidate->name === $bridge['credential']) {
-                    $credential = $candidate;
-                }
-            }
-
-            if (!isset($credential)) {
-                $bridge['credential'] = '';
-            }
-        }
-
         $bridge['is_valid'] =
             $bridge['form_id'] &&
             $bridge['backend'] &&
             $bridge['method'] &&
-            $bridge['endpoint'] &&
-            (!$check_credentials || $bridge['credential']);
+            $bridge['endpoint'];
 
         $bridge['enabled'] = boolval($bridge['enabled'] ?? true);
         return $bridge;
-    }
-
-    /**
-     * Apply bridges setting data sanitization and validation.
-     *
-     * @param array $credentials Collection of credentials data.
-     *
-     * @return array
-     */
-    private static function sanitize_credentials($credentials)
-    {
-        $uniques = [];
-        $sanitized = [];
-
-        $schema = FBAPI::get_credential_schema(static::name);
-        foreach ($credentials as $credential) {
-            $credential['name'] = trim($credential['name']);
-            if (in_array($credential['name'], $uniques, true)) {
-                continue;
-            }
-
-            $credential = static::sanitize_credential($credential, $schema);
-            if ($credential) {
-                $sanitized[] = $credential;
-            }
-        }
-
-        return $sanitized;
-    }
-
-    /**
-     * Common credential validation method.
-     *
-     * @param array $credential Credential data.
-     * @param array $schema Credential schema.
-     *
-     * @return array|null
-     */
-    protected static function sanitize_credential($credential, $schema)
-    {
-        $is_valid = true;
-
-        $schema = $credential['schema'] ?? 'Basic';
-
-        if (empty($credential['client_id'])) {
-            $credential['client_id'] = '';
-            $is_valid = false;
-        }
-
-        if (empty($credential['client_secret'])) {
-            $credential['client_secret'] = '';
-            $is_valid = false;
-        }
-
-        if (
-            in_array($schema, ['RPC', 'Digest', 'Bearer'], true) &&
-            empty($credential['realm'])
-        ) {
-            $credential['realm'] = '';
-            $is_valid = false;
-        }
-
-        foreach ($credential as $prop => $val) {
-            if ($prop === 'is_valid') {
-                continue;
-            }
-
-            $required = $schema['properties'][$prop]['required'] ?? false;
-            $default = $schema['properties'][$prop]['default'] ?? null;
-
-            if (!$required && !$val && $default) {
-                $credential[$prop] = $default;
-            }
-
-            $is_valid = $is_valid && (!$required || $val || $default);
-        }
-
-        $credential['is_valid'] = $is_valid;
-        return $credential;
     }
 
     public $enabled = false;
@@ -570,36 +456,6 @@ class Addon extends Singleton
             2
         );
 
-        add_filter(
-            'forms_bridge_credentials',
-            static function ($credentials, $addon = null) {
-                if (!wp_is_numeric_array($credentials)) {
-                    $credentials = [];
-                }
-
-                if ($addon && $addon !== static::name) {
-                    return $credentials;
-                }
-
-                $setting = static::setting();
-                if (!$setting) {
-                    return $credentials;
-                }
-
-                foreach ($setting->credentials ?: [] as $credential_data) {
-                    $credential_class = static::credential_class;
-                    $credentials[] = new $credential_class(
-                        $credential_data,
-                        static::name
-                    );
-                }
-
-                return $credentials;
-            },
-            10,
-            2
-        );
-
         Settings_Store::register_setting(static function ($settings) {
             $schema = static::schema();
             $schema['name'] = static::name;
@@ -674,11 +530,10 @@ class Addon extends Singleton
      * Performs a request against the backend to check the connexion status.
      *
      * @param string $backend Target backend name.
-     * @params string|null $credential Target credential name.
      *
      * @return boolean|WP_Error
      */
-    public function ping($backend, $credential = null)
+    public function ping($backend)
     {
         return true;
     }
@@ -688,11 +543,10 @@ class Addon extends Singleton
      *
      * @param string $endpoint Target endpoint name.
      * @param string $backend Target backend name.
-     * @params string|null $credential Target credential name.
      *
      * @return array|WP_Error
      */
-    public function fetch($endpoint, $backend, $credential = null)
+    public function fetch($endpoint, $backend)
     {
         return [
             'headers' => [],
@@ -718,11 +572,10 @@ class Addon extends Singleton
      *
      * @param string $endpoint Target endpoint name.
      * @param string $backend Target backend name.
-     * @params string|null $credential Credential name to use.
      *
      * @return array|WP_Error
      */
-    public function get_endpoint_schema($endpoint, $backend, $credential = null)
+    public function get_endpoint_schema($endpoint, $backend)
     {
         return [];
     }
@@ -938,23 +791,6 @@ class Addon extends Singleton
         }
 
         return $loaded;
-    }
-
-    public function oauth_grant($credential)
-    {
-        $credential['is_valid'] = true;
-        $credential_class = static::credential_class;
-        $credential = new $credential_class($credential, static::name);
-        return $credential->oauth_grant();
-    }
-
-    public function oauth_redirect_callback($request)
-    {
-        $credential_class = static::credential_class;
-        return $credential_class::oauth_redirect_callback(
-            $request,
-            static::name
-        );
     }
 
     // public static function get_api()

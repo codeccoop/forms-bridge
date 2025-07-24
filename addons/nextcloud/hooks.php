@@ -11,7 +11,7 @@ add_filter(
             return $schema;
         }
 
-        $schema['properties']['endpoint']['name'] = __(
+        $schema['properties']['endpoint']['title'] = __(
             'Filepath',
             'forms-bridge'
         );
@@ -23,8 +23,6 @@ add_filter(
 
         $schema['properties']['method']['enum'] = ['PUT'];
         $schema['properties']['method']['default'] = 'PUT';
-
-        $schema['required'][] = 'credential';
 
         return $schema;
     },
@@ -79,7 +77,6 @@ add_filter(
                     [
                         'ref' => '#credential',
                         'name' => 'schema',
-                        'label' => __('Authentication', 'forms-bridge'),
                         'type' => 'text',
                         'value' => 'Basic',
                     ],
@@ -115,7 +112,10 @@ add_filter(
                     ],
                 ],
                 'credential' => [
+                    'name' => '',
                     'schema' => 'Basic',
+                    'client_id' => '',
+                    'client_secret' => '',
                 ],
             ],
             $defaults,
@@ -138,29 +138,6 @@ add_filter(
         }
 
         return $data;
-    },
-    10,
-    2
-);
-
-add_filter(
-    'forms_bridge_credential_schema',
-    function ($schema, $addon) {
-        if ($addon == 'nextcloud') {
-            unset($schema['properties']['realm']);
-
-            $schema['properties']['schema']['value'] = 'Basic';
-            $schema['properties']['client_id']['name'] = __(
-                'User login',
-                'forms-bridge'
-            );
-            $schema['properties']['client_secret']['name'] = __(
-                'Password',
-                'forms-bridge'
-            );
-        }
-
-        return $schema;
     },
     10,
     2

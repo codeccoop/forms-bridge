@@ -42,14 +42,12 @@ add_filter(
                     [
                         'ref' => '#credential',
                         'name' => 'schema',
-                        'label' => __('Authentication schema', 'forms-bridge'),
                         'type' => 'text',
                         'value' => 'Basic',
                     ],
                     [
                         'ref' => '#credential',
                         'name' => 'client_id',
-                        'label' => __('Client ID', 'forms-bridge'),
                         'type' => 'text',
                         'value' => 'forms-bridge',
                     ],
@@ -104,6 +102,7 @@ add_filter(
                     'base_url' => 'https://{dc}.api.mailchimp.com',
                 ],
                 'credential' => [
+                    'name' => '',
                     'schema' => 'Basic',
                     'client_id' => '',
                     'client_secret' => '',
@@ -183,26 +182,6 @@ add_filter(
         }
 
         return $data;
-    },
-    10,
-    2
-);
-
-add_filter(
-    'forms_bridge_credential_schema',
-    function ($schema, $addon) {
-        if ($addon == 'mailchimp') {
-            unset($schema['properties']['realm']);
-
-            $schema['properties']['schema']['value'] = 'Basic';
-            $schema['properties']['client_id']['value'] = 'forms-bridge';
-            $schema['properties']['client_secret']['name'] = __(
-                'API key',
-                'forms-bridge'
-            );
-        }
-
-        return $schema;
     },
     10,
     2

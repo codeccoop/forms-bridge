@@ -5,25 +5,6 @@ if (!defined('ABSPATH')) {
 }
 
 add_filter(
-    'forms_bridge_bridge_schema',
-    function ($schema, $addon) {
-        if ($addon !== 'zoho') {
-            return $schema;
-        }
-
-        $schema['properties']['credential'] = [
-            'type' => 'string',
-            'description' => __('Name of the OAuth credential', 'forms-bridge'),
-            'default' => '',
-        ];
-
-        return $schema;
-    },
-    10,
-    2
-);
-
-add_filter(
     'forms_bridge_template_defaults',
     function ($defaults, $addon, $schema) {
         if ($addon !== 'zoho') {
@@ -37,14 +18,27 @@ add_filter(
                         'ref' => '#credential',
                         'name' => 'name',
                         'label' => __('Name', 'forms-bridge'),
-                        'type' => 'string',
+                        'type' => 'text',
                         'required' => true,
+                    ],
+                    [
+                        'ref' => '#credential',
+                        'name' => 'schema',
+                        'type' => 'text',
+                        'value' => 'Bearer',
+                    ],
+                    [
+                        'ref' => '#credential',
+                        'name' => 'oauth_url',
+                        'label' => __('Authorization URL', 'forms-bridge'),
+                        'type' => 'text',
+                        'value' => 'https://accounts.{region}/oauth/v2',
                     ],
                     [
                         'ref' => '#credential',
                         'name' => 'region',
                         'label' => __('Datacenter', 'forms-bridge'),
-                        'type' => 'options',
+                        'type' => 'select',
                         'options' => [
                             [
                                 'value' => 'zoho.com',
@@ -70,6 +64,10 @@ add_filter(
                                 'value' => 'zoho.jp',
                                 'label' => 'zoho.jp',
                             ],
+                            [
+                                'label' => 'zoho.sa',
+                                'value' => 'zoho.sa',
+                            ],
                         ],
                         'required' => true,
                     ],
@@ -77,25 +75,25 @@ add_filter(
                         'ref' => '#credential',
                         'name' => 'client_id',
                         'label' => __('Client ID', 'forms-bridge'),
-                        'type' => 'string',
+                        'type' => 'text',
                         'required' => true,
                     ],
                     [
                         'ref' => '#credential',
                         'name' => 'client_secret',
                         'label' => __('Client secret', 'forms-bridge'),
-                        'type' => 'string',
+                        'type' => 'text',
                         'required' => true,
                     ],
                     [
                         'ref' => '#credential',
-                        'name' => 'realm',
+                        'name' => 'scope',
                         'label' => __('Scope', 'forms-bridge'),
                         // 'description' => __(
                         //     'See <a href="https://www.zoho.com/accounts/protocol/oauth/scope.html">the documentation</a> for more information',
                         //     'forms-bridge'
                         // ),
-                        'type' => 'string',
+                        'type' => 'text',
                         'value' =>
                             'ZohoCRM.modules.ALL,ZohoCRM.settings.layouts.READ,ZohoCRM.users.READ',
                         'required' => true,
@@ -108,7 +106,7 @@ add_filter(
                     [
                         'ref' => '#backend',
                         'name' => 'base_url',
-                        'type' => 'options',
+                        'type' => 'select',
                         'options' => [
                             [
                                 'label' => 'www.zohoapis.com',
@@ -155,14 +153,18 @@ add_filter(
                 'bridge' => [
                     'backend' => 'Zoho API',
                     'endpoint' => '',
-                    'credential' => '',
                 ],
                 'credential' => [
                     'name' => '',
+                    'schema' => 'Bearer',
+                    'oauth_url' => 'https://accounts.{region}/oauth/v2',
+                    'scope' =>
+                        'ZohoCRM.modules.ALL,ZohoCRM.settings.layouts.READ,ZohoCRM.users.READ',
                     'client_id' => '',
                     'client_secret' => '',
-                    'realm' =>
-                        'ZohoCRM.modules.ALL,ZohoCRM.settings.layouts.READ,ZohoCRM.users.READ',
+                    'access_token' => '',
+                    'expires_at' => 0,
+                    'refresh_token' => '',
                 ],
                 'backend' => [
                     'base_url' => 'https://www.zohoapis.{region}',
@@ -189,6 +191,14 @@ add_filter(
             return $data;
         }
 
+        $region = $data['credential']['region'];
+        $data['credential']['oauth_url'] = preg_replace(
+            '/{region}/',
+            $region,
+            $data['credential']['oauth_url']
+        );
+        unset($data['credential']['region']);
+
         $index = array_search(
             'Tag',
             array_column($data['bridge']['custom_fields'], 'name')
@@ -214,52 +224,6 @@ add_filter(
         }
 
         return $data;
-    },
-    10,
-    2
-);
-
-add_filter(
-    'forms_bridge_credential_schema',
-    function ($schema, $addon) {
-        if ($addon !== 'zoho') {
-            return $schema;
-        }
-
-        $schema['description'] = __(
-            'Zoho OAuth API credential',
-            'forms-bridge'
-        );
-
-        $schema['properties']['region'] = [
-            'type' => 'string',
-            'enum' => [
-                'zoho.com',
-                'zoho.eu',
-                'zoho.in',
-                'zoho.com.cn',
-                'zoho.com.au',
-                'zoho.jp',
-            ],
-            'default' => 'zoho.com',
-        ];
-
-        $schema['required'][] = 'region';
-
-        $schema['properties']['realm']['default'] =
-            'ZohoCRM.modules.ALL,ZohoCRM.settings.layouts.READ,ZohoCRM.users.READ';
-
-        $schema['properties']['type'] = [
-            'type' => 'string',
-            'enum' => ['Server-based', 'Self-Client'],
-            'default' => 'Server-based',
-        ];
-
-        $schema['required'][] = 'type';
-
-        $schema['properties']['organization_id'] = ['type' => 'string'];
-
-        return $schema;
     },
     10,
     2

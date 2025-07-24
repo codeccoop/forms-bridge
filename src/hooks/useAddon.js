@@ -40,11 +40,3 @@ export function useTemplates() {
     (templates) => setAddon({ ...addon, templates }),
   ];
 }
-
-export function useCredentials() {
-  const [addon, setAddon] = useAddon();
-  return [
-    addon.credentials || [],
-    (credentials) => setAddon({ ...addon, credentials }),
-  ];
-}

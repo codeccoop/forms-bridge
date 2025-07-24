@@ -1,11 +1,10 @@
 // source
 import Credential from "../Credential";
 import NewCredential from "../Credential/NewCredential";
-import { useCredentials } from "../../hooks/useAddon";
-import { useSchemas } from "../../providers/Schemas";
 import useTab from "../../hooks/useTab";
 import TabTitle from "../TabTitle";
 import AddIcon from "../icons/Add";
+import { useSchemas } from "../../providers/Schemas";
 
 const { useEffect, useRef, useMemo } = wp.element;
 const { PanelBody, TabPanel } = wp.components;
@@ -14,11 +13,10 @@ const { __ } = wp.i18n;
 const CSS = `.credentials-tabs-panel .components-tab-panel__tabs{overflow-x:auto;}
 .credentials-tabs-panel .components-tab-panel__tabs>button{flex-shrink:0;}`;
 
-export default function Credentials() {
+export default function Credentials({ credentials, setCredentials }) {
   const [addon] = useTab();
 
   const { credential: schema } = useSchemas();
-  const [credentials, setCredentials] = useCredentials();
 
   const names = useMemo(() => {
     return new Set(credentials.map((c) => c.name));
@@ -90,12 +88,12 @@ export default function Credentials() {
     };
   }, []);
 
-  if (!schema) return null;
+  if (!schema) return;
 
   return (
-    <PanelBody title={__("Credentials", "forms-bridge")} initialOpen={false}>
+    <PanelBody title={__("Authentication", "forms-bridge")} initialOpen={false}>
       <div style={{ width: "100%" }}>
-        <p>{schema.description || ""}</p>
+        <p>{__("HTTP authentication credentials", "forms-bridge")}</p>
         <TabPanel tabs={tabs} className="credentials-tabs-panel">
           {(tab) => {
             const credential = credentials[tab.index];

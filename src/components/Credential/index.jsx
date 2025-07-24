@@ -1,14 +1,15 @@
 // source
 import RemoveButton from "../RemoveButton";
-import { useCredentials } from "../../hooks/useAddon";
+import { useCredentials } from "../../hooks/useHttp";
 import CredentialFields, { INTERNALS } from "./Fields";
-import { downloadJson, isset } from "../../lib/utils";
+import { downloadJson, isset, restUrl } from "../../lib/utils";
 import { useLoading } from "../../providers/Loading";
 import { useError } from "../../providers/Error";
 import diff from "../../lib/diff";
 import useResponsive from "../../hooks/useResponsive";
 import CopyIcon from "../icons/Copy";
 import ArrowDownIcon from "../icons/ArrowDown";
+import { useFetchSettings } from "../../providers/Settings";
 
 const { Button } = wp.components;
 const { useState, useEffect, useMemo, useRef, useCallback } = wp.element;
@@ -20,7 +21,7 @@ export default function Credential({
   data,
   update,
   remove,
-  schema,
+  schema: schemas,
   copy,
 }) {
   const isResponsive = useResponsive(780);
@@ -28,8 +29,18 @@ export default function Credential({
   const [loading, setLoading] = useLoading();
   const [error, setError] = useError();
 
+  const fetchSettings = useFetchSettings();
+
   const name = useRef(data.name);
   const [state, setState] = useState({ ...data });
+
+  const schema = useMemo(() => {
+    return schemas.oneOf.find(
+      (schema) =>
+        schema.properties.schema.const === state.schema ||
+        schema.properties.schema.enum?.includes(state.schema)
+    );
+  }, [state.schema]);
 
   const [credentials] = useCredentials();
   const names = useMemo(() => {
@@ -44,21 +55,16 @@ export default function Credential({
 
   const validate = useCallback(
     (data) => {
-      const realmRequired = ["RPC", "Bearer", "Digest"].includes(data.schema);
-
       return !!Object.keys(schema.properties)
         .filter((prop) => !INTERNALS.includes(prop))
         .reduce((isValid, prop) => {
           if (!isValid) return isValid;
 
-          const value = data[prop];
-
-          if (
-            !schema.required.includes(prop) &&
-            !(realmRequired && prop !== "realm")
-          ) {
+          if (!schema.required.includes(prop)) {
             return isValid;
           }
+
+          const value = data[prop];
 
           if (schema.properties[prop].pattern) {
             isValid =
@@ -76,12 +82,7 @@ export default function Credential({
 
   const isValid = useMemo(() => {
     return validate(state);
-  }, [state, nameConflict]);
-
-  if (!isValid && state.is_valid) {
-    setState({ ...state, is_valid: false });
-    update({ ...state, is_valid: false });
-  }
+  }, [validate, state, nameConflict]);
 
   const frozen = useMemo(() => {
     return !!data.access_token;
@@ -95,10 +96,10 @@ export default function Credential({
       if (data.name !== state.name) {
         timeout.current = setTimeout(() => {
           name.current = state.name;
-          update({ ...state, is_valid: true });
+          update({ ...state });
         }, 1e3);
       } else if (diff(data, state)) {
-        update({ ...state, is_valid: true });
+        update({ ...state });
       }
     }
   }, [isValid, state]);
@@ -127,36 +128,66 @@ export default function Credential({
     downloadJson(credentialData, credentialData.name + " credential config");
   };
 
-  const authorize = () => {
+  const revoke = () => {
     setLoading(true);
 
-    const form = document.createElement("form");
-    form.action = wpApiSettings.root + `forms-bridge/v1/${addon}/oauth/grant`;
     apiFetch({
-      path: `forms-bridge/v1/${addon}/oauth/grant`,
+      path: "http-bridge/v1/oauth/revoke",
       method: "POST",
       data: { credential: data },
     })
-      .then(({ redirect, form: html }) => {
-        if (!html && !redirect) {
-          window.location.reload();
-        } else if (redirect) {
-          window.location = redirect;
-        } else {
-          const wrapper = document.createElement("div");
-          wrapper.style.visibility = "hidden";
-          wrapper.innerHTML = html;
-          document.body.appendChild(wrapper);
+      .then(() => fetchSettings())
+      .catch(() => setError(""))
+      .finally(() => setLoading(false));
+  };
 
-          const form = wrapper.querySelector("form");
+  const authorize = () => {
+    if (data.access_token) {
+      revoke();
+      return;
+    }
 
-          form.submit();
-          document.body.removeChild(wrapper);
-        }
+    setLoading(true);
+
+    apiFetch({
+      path: "http-bridge/v1/oauth/grant",
+      method: "POST",
+      data: { credential: data },
+    })
+      .then(({ success }) => {
+        if (!success) throw "error";
+
+        const form = document.createElement("form");
+        form.method = "POST";
+        // form.action = data.oauth_url;
+        form.action =
+          data.oauth_url +
+          "/auth?" +
+          new URLSearchParams({
+            client_id: data.client_id,
+            scope: data.scope,
+            response_type: "code",
+            redirect_uri: restUrl("http-bridge/v1/oauth/redirect"),
+            access_type: "offline",
+            state: btoa(addon),
+          }).toString();
+        form.target = "_blank";
+
+        //     form.innerHTML = `
+        // <input name="client_id" value="${data.client_id}" />
+        // <input name="scope" value="${data.scope}" />
+        // <input name="response_type" value="code" />
+        // <input name="redirect_uri" value="${restUrl("http-bridge/v1/oauth/redirect")}" />
+        // <input name="access_type" value="offline" />
+        // <input name="state" value="${btoa(addon)}" />
+        // `;
+
+        form.style.visibility = "hidden";
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
       })
-      .catch(() => {
-        setError(__("Error while authorizing credential", "forms-bridge"));
-      })
+      .catch(() => setError(""))
       .finally(() => setLoading(false));
   };
 
@@ -179,6 +210,7 @@ export default function Credential({
           data={state}
           setData={setState}
           schema={schema}
+          schemas={schemas}
           errors={{
             name: nameConflict
               ? __("This name is already in use", "forms-bridge")

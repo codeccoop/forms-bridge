@@ -24,7 +24,14 @@ return [
                 'ID of the owner user of the contact',
                 'forms-bridge'
             ),
-            'type' => 'string',
+            'type' => 'select',
+            'options' => [
+                'endpoint' => '/bigin/v2/users',
+                'finger' => [
+                    'value' => 'users[].id',
+                    'label' => 'users[].full_name',
+                ],
+            ],
         ],
         [
             'ref' => '#form',

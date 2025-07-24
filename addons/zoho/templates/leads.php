@@ -24,7 +24,7 @@ return [
                 'Email of the owner user of the deal',
                 'forms-bridge'
             ),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 'endpoint' => '/crm/v7/users',
                 'finger' => [
@@ -41,14 +41,14 @@ return [
                 'Label to identify your website sourced leads',
                 'forms-bridge'
             ),
-            'type' => 'string',
+            'type' => 'text',
             'default' => 'WordPress',
         ],
         [
             'ref' => '#bridge/custom_fields[]',
             'name' => 'Lead_Status',
             'label' => __('Lead status', 'forms-bridge'),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 [
                     'label' => __('Not Contacted', 'forms-bridge'),
@@ -93,7 +93,7 @@ return [
                 'Tag names separated by commas',
                 'forms-bridge'
             ),
-            'type' => 'string',
+            'type' => 'text',
         ],
         [
             'ref' => '#form',

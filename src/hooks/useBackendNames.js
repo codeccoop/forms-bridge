@@ -1,5 +1,5 @@
 // source
-import useBackends from "./useBackends";
+import { useBackends } from "./useHttp";
 
 const { useMemo } = wp.element;
 

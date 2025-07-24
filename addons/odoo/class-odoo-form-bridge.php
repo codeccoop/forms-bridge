@@ -130,7 +130,7 @@ class Odoo_Form_Bridge extends Form_Bridge
      * JSON RPC login request.
      *
      * @param [string, string, string] $login
-     * @param Http_Backend $backend
+     * @param Backend $backend
      *
      * @return array|WP_Error Tuple with RPC session id and user id.
      */
@@ -176,18 +176,20 @@ class Odoo_Form_Bridge extends Form_Bridge
      */
     public function submit($payload = [], $more_args = [])
     {
-        $credential = $this->credential();
         $backend = $this->backend();
 
+        if (!$backend) {
+            return new WP_Error(
+                'invalid_backend',
+                'The bridge does not have a valid backend'
+            );
+        }
+
+        $credential = $backend->credential;
         if (!$credential) {
             return new WP_Error(
                 'invalid_credential',
                 'The bridge does not have a valid credential'
-            );
-        } elseif (!$backend) {
-            return new WP_Error(
-                'invalid_backend',
-                'The bridge does not have a valid backend'
             );
         }
 
@@ -201,7 +203,7 @@ class Odoo_Form_Bridge extends Form_Bridge
             1
         );
 
-        $login = $credential->login();
+        $login = $credential->authorization();
         $session = self::rpc_login($login, $backend);
 
         if (is_wp_error($session)) {

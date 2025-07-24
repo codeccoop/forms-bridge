@@ -24,7 +24,7 @@ return [
                 'Email of the owner user of the account',
                 'forms-bridge'
             ),
-            'type' => 'options',
+            'type' => 'select',
             'options' => [
                 'endpoint' => '/crm/v7/users',
                 'finger' => [

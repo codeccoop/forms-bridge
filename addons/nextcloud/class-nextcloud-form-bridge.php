@@ -95,7 +95,7 @@ class Nextcloud_Form_Bridge extends Form_Bridge
 
         $row = [];
         foreach ($headers as $header) {
-            $row[] = $payload[$header];
+            $row[] = $payload[$header] ?? '';
         }
 
         return $this->encode_row($row);
@@ -160,20 +160,15 @@ class Nextcloud_Form_Bridge extends Form_Bridge
         }
 
         $backend = $this->backend;
-        $credential = $this->credential;
 
-        if (!$backend || !$credential) {
+        if (!$backend || !$backend->is_valid) {
             return new WP_Error('invalid_bridge');
         }
 
-        $backend = $backend->authorized(
-            $credential->schema,
-            $credential->client_id,
-            $credential->client_secret
-        );
+        $credential = $backend->credential;
 
-        if (!$backend->is_valid) {
-            return new WP_Error('invalid_bridge');
+        if (!$credential) {
+            return new WP_Error('unauthorized_backend');
         }
 
         $payload = self::flatten_payload($payload);

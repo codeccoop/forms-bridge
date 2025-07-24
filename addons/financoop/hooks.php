@@ -1,7 +1,7 @@
 <?php
 
-use FORMS_BRIDGE\Credential;
-use HTTP_BRIDGE\Http_Backend;
+use HTTP_BRIDGE\Credential;
+use HTTP_BRIDGE\Backend;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -70,7 +70,7 @@ add_filter(
                     ],
                     [
                         'ref' => '#credential',
-                        'name' => 'realm',
+                        'name' => 'database',
                         'label' => __('Database', 'forms-bridge'),
                         'type' => 'text',
                         'required' => true,
@@ -103,7 +103,11 @@ add_filter(
                     ],
                 ],
                 'credential' => [
+                    'name' => '',
                     'schema' => 'RPC',
+                    'client_id' => '',
+                    'client_secret' => '',
+                    'database' => '',
                 ],
             ],
             $defaults,
@@ -152,8 +156,10 @@ add_filter(
             array_slice(explode('/', $data['bridge']['endpoint']), 0, 4)
         );
 
-        Http_Backend::temp_registration($data['backend']);
-        Credential::temp_registration($data['credential'], 'financoop');
+        $data['backend']['credential'] = $data['credential']['name'];
+
+        Backend::temp_registration($data['backend']);
+        Credential::temp_registration($data['credential']);
 
         $addon = FBAPI::get_addon('financoop');
         $response = $addon->fetch(
@@ -218,21 +224,6 @@ add_filter(
         }
 
         return $data;
-    },
-    10,
-    2
-);
-
-add_filter(
-    'forms_bridge_credential_schema',
-    function ($schema, $addon) {
-        if ($addon !== 'financoop') {
-            return $schema;
-        }
-
-        $schema['properties']['realm']['name'] = __('Database', 'forms-bridge');
-
-        return $schema;
     },
     10,
     2

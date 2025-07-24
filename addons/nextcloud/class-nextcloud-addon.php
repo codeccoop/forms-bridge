@@ -41,28 +41,25 @@ class Nextcloud_Addon extends Addon
      * Performs a request against the backend to check the connexion status.
      *
      * @param string $backend Target backend name.
-     * @params null $credential Target credential name.
      *
      * @return boolean
      */
-    public function ping($backend, $credential = null)
+    public function ping($backend)
     {
         $backend = FBAPI::get_backend($backend);
-        $credential = FBAPI::get_credential($credential, self::name);
 
-        if (!$backend || !$credential) {
+        if (!$backend) {
             return false;
         }
 
-        $response = $backend
-            ->authorized(
-                $credential->schema,
-                $credential->client_id,
-                $credential->client_secret
-            )
-            ->get(
-                '/remote.php/dav/files/' . rawurlencode($credential->client_id)
-            );
+        $credential = $backend->credential;
+        if (!$credential) {
+            return false;
+        }
+
+        $response = $backend->get(
+            '/remote.php/dav/files/' . rawurlencode($credential->client_id)
+        );
 
         return !is_wp_error($response);
     }
@@ -72,11 +69,10 @@ class Nextcloud_Addon extends Addon
      *
      * @param string $endpoint Target model name.
      * @param string $backend Target backend name.
-     * @param null $credential Target credential name.
      *
      * @return array|WP_Error
      */
-    public function fetch($endpoint, $backend, $credential = null)
+    public function fetch($endpoint, $backend)
     {
         return [];
     }
@@ -87,11 +83,10 @@ class Nextcloud_Addon extends Addon
      *
      * @param string $filepath Filepath.
      * @param string $backend Backend name.
-     * @params null $credential Credential name.
      *
      * @return array List of fields and content type of the model.
      */
-    public function get_endpoint_schema($filepath, $backend, $credential = null)
+    public function get_endpoint_schema($filepath, $backend)
     {
         $bridge = new Nextcloud_Form_Bridge(
             [

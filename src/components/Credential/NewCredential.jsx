@@ -1,5 +1,5 @@
 // source
-import { useCredentials } from "../../hooks/useAddon";
+import { useCredentials } from "../../hooks/useHttp";
 import { isset, uploadJson } from "../../lib/utils";
 import { useError } from "../../providers/Error";
 import CredentialFields, { INTERNALS } from "./Fields";
@@ -10,12 +10,20 @@ const { Button } = wp.components;
 const { useState, useMemo, useCallback } = wp.element;
 const { __ } = wp.i18n;
 
-export default function NewCredential({ add, schema }) {
+export default function NewCredential({ add, schema: schemas }) {
   const isResponsive = useResponsive(780);
 
   const [error, setError] = useError();
 
-  const [data, setData] = useState({});
+  const [data, setData] = useState({ schema: "Basic" });
+
+  const schema = useMemo(() => {
+    return schemas.oneOf.find(
+      (schema) =>
+        schema.properties.schema.const === data.schema ||
+        schema.properties.schema.enum?.includes(data.schema)
+    );
+  }, [data.schema]);
 
   const [credentials] = useCredentials();
   const names = useMemo(() => {
@@ -43,22 +51,17 @@ export default function NewCredential({ add, schema }) {
 
   const validate = useCallback(
     (data) => {
-      const realmRequired = ["RPC", "Bearer", "Digest"].includes(data.schema);
-
       return !!Object.keys(schema.properties)
         .filter((prop) => !INTERNALS.includes(prop))
         .filter((prop) => !["access_token", "expires_at"].includes(prop))
         .reduce((isValid, prop) => {
           if (!isValid) return isValid;
 
-          const value = data[prop];
-
-          if (
-            !schema.required.includes(prop) &&
-            !(!realmRequired || prop === "realm")
-          ) {
+          if (!schema.required.includes(prop)) {
             return isValid;
           }
+
+          const value = data[prop];
 
           if (schema.properties[prop].pattern) {
             isValid =
@@ -126,6 +129,7 @@ export default function NewCredential({ add, schema }) {
           data={data}
           setData={setData}
           schema={schema}
+          schemas={schemas}
           errors={{
             name: nameConflict
               ? __("This name is already in use", "forms-bridge")

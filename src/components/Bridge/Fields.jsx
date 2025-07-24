@@ -1,7 +1,6 @@
-import useBackends from "../../hooks/useBackends";
+import { useBackends } from "../../hooks/useHttp";
 import { useForms } from "../../providers/Forms";
 import { isset, prependEmptyOption } from "../../lib/utils";
-import { useCredentials } from "../../hooks/useAddon";
 import FieldWrapper from "../FieldWrapper";
 
 const { TextControl, SelectControl } = wp.components;
@@ -15,14 +14,7 @@ export const INTERNALS = [
   "mutations",
 ];
 
-const ORDER = [
-  "name",
-  "form_id",
-  "backend",
-  "credential",
-  "endpoint",
-  "method",
-];
+const ORDER = ["name", "form_id", "backend", "endpoint", "method"];
 
 export default function BridgeFields({ data, setData, schema, errors = {} }) {
   const [backends] = useBackends();
@@ -53,22 +45,6 @@ export default function BridgeFields({ data, setData, schema, errors = {} }) {
       });
   }, [forms]);
 
-  const [credentials] = useCredentials();
-  const credentialOptions = useMemo(() => {
-    if (!credentials.length) return [{ label: "", value: "" }];
-
-    const options = credentials
-      .filter(({ is_valid }) => is_valid)
-      .map(({ name }) => ({ label: name, value: name }))
-      .sort((a, b) => (a.label > b.label ? 1 : -1));
-
-    if (!schema.required.includes("credential")) {
-      return prependEmptyOption(options);
-    }
-
-    return options;
-  }, [credentials]);
-
   const fields = useMemo(() => {
     if (!schema) return [];
 
@@ -78,37 +54,32 @@ export default function BridgeFields({ data, setData, schema, errors = {} }) {
         ...schema.properties[name],
         label: schema.properties[name].name || name,
         name,
+        value: schema.properties[name].const,
       }))
       .map((field) => {
         if (field.name === "form_id") {
           return {
             ...field,
-            type: "options",
+            type: "select",
             options: formOptions,
           };
         } else if (field.name === "backend") {
           return {
             ...field,
-            type: "options",
+            type: "select",
             options: backendOptions,
-          };
-        } else if (field.name === "credential") {
-          return {
-            ...field,
-            type: "options",
-            options: credentialOptions,
           };
         } else if (field.enum) {
           return {
             ...field,
-            type: "options",
+            type: "select",
             options: field.enum.map((value) => ({ label: value, value })),
           };
         }
 
         return field;
       });
-  }, [schema, formOptions, backendOptions, credentialOptions]);
+  }, [schema, formOptions, backendOptions]);
 
   useEffect(() => {
     const defaults = fields.reduce((defaults, field) => {
@@ -116,7 +87,7 @@ export default function BridgeFields({ data, setData, schema, errors = {} }) {
         defaults[field.name] = field.default;
       } else if (field.value && field.value !== data[field.name]) {
         defaults[field.name] = field.value;
-      } else if (field.type === "options") {
+      } else if (field.type === "select") {
         if (!field.options.length && data[field.name]) {
           defaults[field.name] = "";
         } else if (!data[field.name] || field.options.length === 1) {
@@ -137,10 +108,6 @@ export default function BridgeFields({ data, setData, schema, errors = {} }) {
 
       if (!backends.length && data.backend) {
         defaults.backend = "";
-      }
-
-      if (!credentials.length && data.credential) {
-        defaults.credential = "";
       }
 
       return defaults;
@@ -169,9 +136,9 @@ export default function BridgeFields({ data, setData, schema, errors = {} }) {
               setValue={(value) => setData({ ...data, [field.name]: value })}
             />
           );
-        case "options":
+        case "select":
           return (
-            <OptionsField
+            <SelectField
               error={errors[field.name]}
               label={field.label}
               value={data[field.name] || ""}
@@ -199,7 +166,7 @@ export function StringField({ label, value, setValue, error, disabled }) {
   );
 }
 
-export function OptionsField({
+export function SelectField({
   label,
   options,
   value,

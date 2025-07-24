@@ -106,6 +106,9 @@ export default function Bridges() {
 
   return (
     <div style={{ width: "100%" }}>
+      <h3 style={{ marginTop: 0, fontSize: "13px" }}>
+        {__("Bridges", "forms-bridge")}
+      </h3>
       <TabPanel tabs={tabs} className="bridges-tabs-panel">
         {(tab) => {
           const bridge = bridges[tab.index];

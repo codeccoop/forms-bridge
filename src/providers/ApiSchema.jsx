@@ -1,6 +1,5 @@
 import useTab from "../hooks/useTab";
-import useBackends from "../hooks/useBackends";
-import { useCredentials } from "../hooks/useAddon";
+import { useBackends } from "../hooks/useHttp";
 
 const apiFetch = wp.apiFetch;
 const { createContext, useContext, useRef, useState, useMemo, useEffect } =
@@ -11,7 +10,6 @@ const ApiSchemaContext = createContext([]);
 export default function ApiSchemaProvider({ children, bridge }) {
   const [addon] = useTab();
   const [backends] = useBackends();
-  const [credentials] = useCredentials();
 
   const [loading, setLoading] = useState(false);
   const schemas = useRef(new Map()).current;
@@ -22,19 +20,13 @@ export default function ApiSchemaProvider({ children, bridge }) {
     [backends, bridge]
   );
 
-  const credential = useMemo(
-    () => credentials.find(({ name }) => bridge?.credential === name),
-    [credentials, bridge]
-  );
-
   const key = useMemo(
     () =>
       JSON.stringify({
         endpoint: bridge?.endpoint,
         backend,
-        credential,
       }),
-    [bridge?.endpoint, backend, credential]
+    [bridge?.endpoint, backend]
   );
 
   const addSchema = (key, schema) => {
@@ -42,13 +34,13 @@ export default function ApiSchemaProvider({ children, bridge }) {
     updates((i) => i + 1);
   };
 
-  const fetch = (key, endpoint, backend, credential) => {
+  const fetch = (key, endpoint, backend) => {
     setLoading(true);
 
     apiFetch({
       path: `forms-bridge/v1/${addon}/backend/endpoint/schema`,
       method: "POST",
-      data: { endpoint, backend, credential: credential || {} },
+      data: { endpoint, backend },
     })
       .then((schema) => addSchema(key, schema))
       .catch(() => addSchema(key, []))
@@ -62,10 +54,10 @@ export default function ApiSchemaProvider({ children, bridge }) {
     if (!backend || !bridge?.endpoint || loading || schemas.get(key)) return;
 
     timeout.current = setTimeout(
-      () => fetch(key, bridge.endpoint, backend, credential),
+      () => fetch(key, bridge.endpoint, backend),
       400
     );
-  }, [key, bridge, backend, credential]);
+  }, [key, bridge, backend]);
 
   const schema = schemas.get(key);
   return (

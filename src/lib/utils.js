@@ -135,3 +135,17 @@ export function isset(obj, attr) {
 
   return Object.prototype.hasOwnProperty.call(obj, attr);
 }
+
+export function adminUrl(path = "", query = {}) {
+  const url = new URL(wpApiSettings.root.replace(/wp-json/, "wp-admin"));
+  url.pathname += path.replace(/^\/+/, "");
+  url.search = new URLSearchParams(query).toString();
+  return url.toString();
+}
+
+export function restUrl(path = "", query = {}) {
+  const url = new URL(wpApiSettings.root);
+  url.pathname += path.replace(/^\/+/, "");
+  url.search = new URLSearchParams(query).toString();
+  return url.toString();
+}

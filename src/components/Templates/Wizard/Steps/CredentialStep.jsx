@@ -2,7 +2,7 @@ import { useTemplateConfig } from "../../../../providers/Templates";
 import TemplateStep from "./Step";
 import Field from "../../Field";
 import { prependEmptyOption, sortByNamesOrder } from "../../../../lib/utils";
-import { useCredentials } from "../../../../hooks/useAddon";
+import { useCredentials } from "../../../../hooks/useHttp";
 import { validateCredential } from "../lib";
 import diff from "../../../../lib/diff";
 
@@ -14,7 +14,7 @@ const FIELDS_ORDER = ["name"];
 
 export default function CredentialStep({ fields, data, setData }) {
   const [credentials] = useCredentials();
-  const { credential: config } = useTemplateConfig();
+  const [{ credential: template }] = useTemplateConfig();
 
   const names = useMemo(
     () => new Set(credentials.map(({ name }) => name)),
@@ -29,8 +29,8 @@ export default function CredentialStep({ fields, data, setData }) {
   const [state, setState] = useState({ ...data });
 
   const defaults = useMemo(() => {
-    return fields.reduce((defaults, field) => {
-      let val = field.default || config?.[field.name] || "";
+    const defaults = fields.reduce((defaults, field) => {
+      let val = field.default || template?.[field.name] || "";
       if (!val && field.type === "select" && field.required) {
         val = field.options[0].value;
       }
@@ -38,13 +38,15 @@ export default function CredentialStep({ fields, data, setData }) {
       defaults[field.name] = val;
       return defaults;
     }, {});
-  }, [fields, config]);
+
+    return { ...template, ...defaults };
+  }, [fields, template]);
 
   const validCredentials = useMemo(() => {
     return credentials.filter((credential) =>
-      validateCredential(credential, fields)
+      validateCredential(credential, template, fields)
     );
-  }, [credentials, fields]);
+  }, [credentials, template, fields]);
 
   const credentialOptions = useMemo(() => {
     return prependEmptyOption(
@@ -68,10 +70,10 @@ export default function CredentialStep({ fields, data, setData }) {
   const credential = useMemo(() => {
     let credential = validCredentials.find((c) => c.name === reuse);
     if (credential) return credential;
-    if (validateCredential(state, fields)) {
+    if (validateCredential(state, template, fields)) {
       return state;
     }
-  }, [validCredentials, reuse, state, nameConflict]);
+  }, [validCredentials, reuse, state, template, nameConflict, fields]);
 
   useEffect(() => {
     if (!credential) {
@@ -86,16 +88,16 @@ export default function CredentialStep({ fields, data, setData }) {
     setData({ ...credential });
   }, [credential]);
 
-  const fromConfig = useRef(config);
+  const fromTemplate = useRef(template);
   useEffect(() => {
-    if (diff(config, fromConfig.current)) {
+    if (diff(template, fromTemplate.current)) {
       setReuse("");
     }
 
     return () => {
-      fromConfig.current = config;
+      fromTemplate.current = template;
     };
-  }, [config]);
+  }, [template]);
 
   useEffect(() => {
     const credential = validCredentials.find((c) => c.name === data.name);

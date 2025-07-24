@@ -36,7 +36,7 @@ class Dolibarr_Addon extends Addon
      */
     public const bridge_class = '\FORMS_BRIDGE\Dolibarr_Form_Bridge';
 
-    public function ping($backend, $credential = null)
+    public function ping($backend)
     {
         $bridge = new Dolibarr_Form_Bridge(
             [
@@ -62,11 +62,10 @@ class Dolibarr_Addon extends Addon
      *
      * @param string $endpoint API endpoint.
      * @param string $backend Backend name.
-     * @param null $credential Credential data.
      *
      * @return array|WP_Error
      */
-    public function fetch($endpoint, $backend, $credential = null)
+    public function fetch($endpoint, $backend)
     {
         $bridge = new Dolibarr_Form_Bridge(
             [
@@ -87,11 +86,10 @@ class Dolibarr_Addon extends Addon
      *
      * @param string $endpoint API endpoint.
      * @param string $backend Backend name.
-     * @param null $credential Credential name.
      *
      * @return array
      */
-    public function get_endpoint_schema($endpoint, $backend, $credential = null)
+    public function get_endpoint_schema($endpoint, $backend)
     {
         $bridge = new Dolibarr_Form_Bridge(
             [

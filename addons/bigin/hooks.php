@@ -5,19 +5,6 @@ if (!defined('ABSPATH')) {
 }
 
 add_filter(
-    'forms_bridge_bridge_schema',
-    function ($schema, $addon) {
-        if ($addon !== 'bigin') {
-            return $schema;
-        }
-
-        return apply_filters('forms_bridge_bridge_schema', $schema, 'zoho');
-    },
-    10,
-    2
-);
-
-add_filter(
     'forms_bridge_template_schema',
     function ($schema, $addon) {
         if ($addon !== 'bigin') {
@@ -32,7 +19,7 @@ add_filter(
 
 add_filter(
     'forms_bridge_template_defaults',
-    function ($defaults, $schema, $addon) {
+    function ($defaults, $addon, $schema) {
         if ($addon !== 'bigin') {
             return $defaults;
         }
@@ -40,8 +27,8 @@ add_filter(
         $defaults = apply_filters(
             'forms_bridge_template_defaults',
             $defaults,
-            $schema,
-            'zoho'
+            'zoho',
+            $schema
         );
 
         return wpct_plugin_merge_object(
@@ -49,14 +36,14 @@ add_filter(
                 'fields' => [
                     [
                         'ref' => '#credential',
-                        'name' => 'realm',
+                        'name' => 'scope',
                         'value' =>
-                            'BiginCRM.modules.ALL,BiginCRM.settings.layouts.READ,BiginCRM.users.READ',
+                            'ZohoBigin.modules.ALL,ZohoBigin.settings.layouts.READ,ZohoBigin.users.READ',
                     ],
                 ],
                 'credential' => [
-                    'realm' =>
-                        'BiginCRM.modules.ALL,BiginCRM.settings.layouts.READ,BiginCRM.users.READ',
+                    'scope' =>
+                        'ZohoBigin.modules.ALL,ZohoBigin.settings.layouts.READ,ZohoBigin.users.READ',
                 ],
             ],
             $defaults,
@@ -65,27 +52,6 @@ add_filter(
     },
     20,
     3
-);
-
-add_filter(
-    'forms_bridge_credential_schema',
-    function ($schema, $addon) {
-        if ($addon !== 'bigin') {
-            return $schema;
-        }
-
-        $schema = apply_filters(
-            'forms_bridge_credential_schema',
-            $schema,
-            'zoho'
-        );
-
-        $schema['properties']['realm']['default'] =
-            'ZohoBigin.modules.ALL,ZohoBigin.settings.layouts.READ,ZohoBigin.users.READ';
-        return $schema;
-    },
-    10,
-    2
 );
 
 add_filter(

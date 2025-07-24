@@ -8,8 +8,12 @@ export function getGroupFields(fields, group) {
   return fields.filter(({ ref }) => new RegExp("^\#" + group).test(ref));
 }
 
-export function validateCredential(credential, fields) {
+export function validateCredential(credential, template, fields) {
   if (!credential?.name) return false;
+
+  if (template?.schema && template.schema !== credential.schema) {
+    return false;
+  }
 
   return fields.reduce((isValid, { name, required }) => {
     if (!isValid || !required) return isValid;
@@ -19,7 +23,7 @@ export function validateCredential(credential, fields) {
   }, true);
 }
 
-export function validateBackend(backend, schema, fields) {
+export function validateBackend(backend, template, fields) {
   if (!backend?.name) return false;
 
   const isValid = fields.reduce((isValid, { name, ref, required }) => {
@@ -28,8 +32,6 @@ export function validateBackend(backend, schema, fields) {
     let value;
     if (ref === "#backend/headers[]") {
       value = backend.headers.find((header) => header.name === name)?.value;
-    } else if (ref.includes("#backend/authentication")) {
-      value = backend.authentication?.[name];
     } else {
       value = backend[name];
     }
@@ -39,9 +41,9 @@ export function validateBackend(backend, schema, fields) {
 
   if (!isValid) return isValid;
 
-  if (schema.base_url && backend.base_url !== schema.base_url) {
-    if (schema.base_url !== backend.base_url) {
-      const url = schema.base_url.replace(/{\w+}/g, ".+");
+  if (template.base_url && backend.base_url !== template.base_url) {
+    if (template.base_url !== backend.base_url) {
+      const url = template.base_url.replace(/{\w+}/g, ".+");
       if (new RegExp(url).test(backend.base_url) === false) {
         return false;
       }
@@ -50,7 +52,7 @@ export function validateBackend(backend, schema, fields) {
     return false;
   }
 
-  return schema.headers.reduce((isValid, { name, value }) => {
+  return template.headers.reduce((isValid, { name, value }) => {
     if (!isValid) return isValid;
 
     const header = backend.headers.find((header) => header.name === name);
@@ -60,38 +62,40 @@ export function validateBackend(backend, schema, fields) {
   }, isValid);
 }
 
-export function mockBackend(data, defaults = {}) {
+export function mockBackend(data, template = {}, fields) {
   if (!data?.name || !data?.base_url) return;
 
   const mock = {
-    name: data.name || defaults.name,
-    base_url: data.base_url || defaults.base_url,
+    name: data.name || template.name,
+    base_url: data.base_url || template.base_url,
+    credential: data.credential || "",
     headers: Object.keys(data)
-      .filter(
-        (k) => !["name", "base_url", "client_id", "client_secret"].includes(k)
-      )
+      .filter((k) => !["name", "base_url", "credential"].includes(k))
       .map((k) => ({
         name: k,
         value: data[k],
       })),
   };
 
-  if (defaults.authentication?.type || (data.client_id && data.client_secret)) {
-    mock.authentication = {
-      type: defaults.authentication?.type || "Basic",
-      client_id: data.client_id || defaults.authentication.client_id,
-      client_secret:
-        data.client_secret || defaults.authentication.client_secret,
-    };
-  }
-
-  if (Array.isArray(defaults.headers)) {
-    defaults.headers.forEach(({ name, value }) => {
+  if (Array.isArray(template.headers)) {
+    template.headers.forEach(({ name, value }) => {
       if (!mock.headers.find((h) => h.name === name)) {
         mock.headers.push({ name, value });
       }
     });
   }
+
+  fields.forEach((field) => {
+    if (!field.value) return;
+
+    if (field.ref === "#backend/headers[]") {
+      const header = mock.headers.find((h) => h.name === field.name);
+      if (header) header.value = field.value;
+      else mock.headers.push({ name: field.name, value: field.value });
+    } else {
+      mock[field.name] = field.value;
+    }
+  });
 
   return mock;
 }
