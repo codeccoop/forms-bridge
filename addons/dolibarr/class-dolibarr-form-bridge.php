@@ -9,5 +9,4 @@ if (!defined('ABSPATH')) {
 /**
  * Form bridge implamentation for the Dolibarr REST API.
  */
-class Dolibarr_Form_Bridge extends Form_Bridge
-{}
+class Dolibarr_Form_Bridge extends Form_Bridge {}

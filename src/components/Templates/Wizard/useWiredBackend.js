@@ -7,9 +7,10 @@ const { useState, useEffect, useMemo, useCallback, useRef } = wp.element;
 const apiFetch = wp.apiFetch;
 
 export default function useWiredBackend({
+  step,
   data = {},
   fields = [],
-  credential = {},
+  credential,
   authorized,
 }) {
   const [tab] = useTab();
@@ -42,7 +43,7 @@ export default function useWiredBackend({
   }, [backend]);
 
   const ping = useCallback(
-    (backend, credential) => {
+    (backend, credential = {}) => {
       apiFetch({
         path: `forms-bridge/v1/${tab}/backend/ping`,
         method: "POST",
@@ -58,10 +59,10 @@ export default function useWiredBackend({
   useEffect(() => {
     clearTimeout(timeout.current);
 
-    if (!backend || !authorized || wired !== null) return;
+    if (step !== "backend" || !backend || !authorized || wired !== null) return;
 
     timeout.current = setTimeout(() => ping(backend, credential), 500);
-  }, [template, wired, backend, credential, authorized]);
+  }, [step, template, wired, backend, credential, authorized]);
 
   return [backend, wired];
 }

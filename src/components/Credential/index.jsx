@@ -85,7 +85,7 @@ export default function Credential({
   }, [validate, state, nameConflict]);
 
   const frozen = useMemo(() => {
-    return !!data.access_token;
+    return !!data.refresh_token;
   }, [data]);
 
   const timeout = useRef();
@@ -142,7 +142,7 @@ export default function Credential({
   };
 
   const authorize = () => {
-    if (data.access_token) {
+    if (data.refresh_token) {
       revoke();
       return;
     }
@@ -191,7 +191,7 @@ export default function Credential({
       .finally(() => setLoading(false));
   };
 
-  const authorizable = !!schema.properties.access_token;
+  const authorizable = !!schema.properties.refresh_token;
 
   return (
     <div
@@ -271,11 +271,9 @@ export default function Credential({
           {(authorizable && (
             <Button
               onClick={authorize}
-              variant={
-                data.access_token || !authorizable ? "secondary" : "primary"
-              }
-              isDestructive={!!data.access_token}
-              disabled={!authorizable || loading || error}
+              variant={data.refresh_token ? "secondary" : "primary"}
+              isDestructive={!!data.refresh_token}
+              disabled={loading || error}
               style={{
                 justifyContent: "center",
                 marginLeft: "auto",
@@ -283,7 +281,7 @@ export default function Credential({
               __next40pxDefaultSize
               __nextHasNoMarginBottom
             >
-              {data.access_token
+              {data.refresh_token
                 ? __("Revoke", "forms-bridge")
                 : __("Authorize", "forms-bridge")}
             </Button>

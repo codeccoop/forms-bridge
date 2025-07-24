@@ -156,28 +156,26 @@ class Nextcloud_Form_Bridge extends Form_Bridge
     public function submit($payload = [], $attachments = [])
     {
         if (!$this->is_valid) {
-            return $this->data;
+            return new WP_Error('invalid_bridge');
         }
 
         $backend = $this->backend;
 
-        if (!$backend || !$backend->is_valid) {
+        if (!$backend) {
             return new WP_Error('invalid_bridge');
-        }
-
-        $credential = $backend->credential;
-
-        if (!$credential) {
-            return new WP_Error('unauthorized_backend');
         }
 
         $payload = self::flatten_payload($payload);
 
-        $backend_name = $this->data['backend'];
         add_filter(
             'http_bridge_backend_url',
-            function ($url, $backend) use ($backend_name, $credential) {
-                if ($backend->name === $backend_name) {
+            function ($url, $backend) {
+                if ($backend->name === $this->data['backend']) {
+                    $credential = $backend->credential;
+                    if (!$credential) {
+                        return;
+                    }
+
                     $user = $credential->client_id;
                     [$pre] = explode($this->endpoint, $url);
                     $url =

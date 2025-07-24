@@ -73,6 +73,7 @@ class Integration extends Singleton
         $integrations_dir = FORMS_BRIDGE_INTEGRATIONS_DIR;
         $integrations = array_diff(scandir($integrations_dir), ['.', '..']);
 
+        $with_deps = [];
         $registry = [];
         foreach ($integrations as $integration) {
             $integration_dir = "{$integrations_dir}/{$integration}";
@@ -80,20 +81,21 @@ class Integration extends Singleton
                 continue;
             }
 
+            $has_deps = self::check_dependencies($integration);
+            if ($has_deps) {
+                $with_deps[] = $integration;
+            }
+
             $index = "{$integration_dir}/class-{$integration}-integration.php";
 
             if (is_file($index) && is_readable($index)) {
-                $registry[$integration] = boolval(
-                    $state[$integration] ?? false
-                );
+                $registry[$integration] =
+                    boolval($state[$integration] ?? false) && $has_deps;
             }
         }
 
-        $is_single = count(array_keys($registry)) === 1;
-        if ($is_single) {
-            foreach (array_keys($registry) as $integration) {
-                $registry[$integration] = true;
-            }
+        if (count($with_deps) === 1) {
+            $registry[$with_deps[0]] = true;
         }
 
         return $registry;
@@ -175,6 +177,10 @@ class Integration extends Singleton
                 ksort($integrations);
                 $integrations = array_values($integrations);
 
+                if (count($integrations) === 1) {
+                    $integrations[0]['enabled'] = true;
+                }
+
                 $integrations = apply_filters(
                     'forms_bridge_integrations',
                     $integrations
@@ -206,6 +212,45 @@ class Integration extends Singleton
                 9
             );
         });
+
+        add_filter(
+            'forms_bridge_load_templates',
+            static function ($templates) use ($registry) {
+                $integrations = [];
+                foreach ($registry as $integration => $enabled) {
+                    if ($enabled) {
+                        $integrations[] = $integration;
+                    }
+                }
+
+                $woomode =
+                    count($integrations) === 1 && $integrations[0] === 'woo';
+
+                $filtered_templates = [];
+                foreach ($templates as $template) {
+                    if (!isset($template['integrations'])) {
+                        if ($woomode) {
+                            continue;
+                        }
+
+                        $filtered_templates[] = $template;
+                    } elseif (
+                        count(
+                            array_intersect(
+                                $integrations,
+                                $template['integrations']
+                            )
+                        )
+                    ) {
+                        $filtered_templates[] = $template;
+                    }
+                }
+
+                return $filtered_templates;
+            },
+            5,
+            1
+        );
     }
 
     public static function setup(...$args)

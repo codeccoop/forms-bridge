@@ -66,7 +66,7 @@ export default function useAuthorizedCredential({ data = {}, fields = [] }) {
 
   const isOauth = data.schema === "Bearer";
 
-  const authorized = !isOauth || !!data.access_token;
+  const authorized = !isOauth || !!data.refresh_token;
 
   const fetchSettings = useFetchSettings();
   useEffect(() => {

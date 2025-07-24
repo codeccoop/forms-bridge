@@ -111,6 +111,7 @@ export default function TemplateWizard({ integration, onSubmit }) {
   });
 
   const [backend, wired] = useWiredBackend({
+    step: group,
     data: data.backend,
     fields: groups.backend,
     credential,

@@ -11,6 +11,11 @@ add_filter(
             return $schema;
         }
 
+        $schema['properties']['endpoint']['default'] =
+            '/v4/spreadsheets/{spreadsheet_id}';
+
+        $schema['properties']['backend']['default'] = 'Sheets API';
+
         $schema['properties']['method']['enum'] = ['GET', 'POST', 'PUT'];
         $schema['properties']['method']['default'] = 'POST';
 
@@ -56,8 +61,7 @@ add_filter(
                         'name' => 'oauth_url',
                         'label' => __('Authorization URL', 'forms-bridge'),
                         'type' => 'text',
-                        'value' =>
-                            'https://accounts.google.com/o/oauth2/v2/auth',
+                        'value' => 'https://accounts.google.com/o/oauth2/v2',
                     ],
                     [
                         'ref' => '#credential',
@@ -137,14 +141,13 @@ add_filter(
                 'credential' => [
                     'name' => '',
                     'schema' => 'Bearer',
-                    'oauth_url' =>
-                        'https://accounts.google.com/o/oauth2/v2/auth',
+                    'oauth_url' => 'https://accounts.google.com/o/oauth2/v2',
                     'scope' =>
                         'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets',
                     'client_id' => '',
                     'client_secret' => '',
                     'access_token' => '',
-                    'expires_at' => '',
+                    'expires_at' => 0,
                     'refresh_token' => '',
                 ],
             ],
@@ -177,6 +180,10 @@ add_filter(
     'http_bridge_oauth_url',
     function ($url, $verb) {
         if (strpos($url, 'accounts.google.com') === false) {
+            return $url;
+        }
+
+        if ($verb === 'auth') {
             return $url;
         }
 

@@ -390,7 +390,7 @@ return [
                     'cast' => 'integer',
                 ],
                 [
-                    'from' => 'product_ids',
+                    'from' => 'product_ids[]',
                     'to' => 'order_line[][2].product_id',
                     'cast' => 'integer',
                 ],

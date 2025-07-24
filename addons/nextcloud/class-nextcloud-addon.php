@@ -37,6 +37,23 @@ class Nextcloud_Addon extends Addon
      */
     public const bridge_class = '\FORMS_BRIDGE\Nextcloud_Form_Bridge';
 
+    public function load()
+    {
+        parent::load();
+
+        add_filter(
+            'forms_bridge_prune_empties',
+            static function ($prune, $bridge) {
+                if ($bridge->addon === 'nextcloud') {
+                    return false;
+                }
+
+                return $prune;
+            },
+            5,
+            2
+        );
+    }
     /**
      * Performs a request against the backend to check the connexion status.
      *
@@ -98,7 +115,7 @@ class Nextcloud_Addon extends Addon
         );
 
         $headers = $bridge->table_headers();
-        if (is_wp_error($headers)) {
+        if (is_wp_error($headers) || !$headers) {
             return [];
         }
 

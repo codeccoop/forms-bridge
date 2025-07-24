@@ -54,7 +54,7 @@ class Google_Sheets_Form_Bridge extends Form_Bridge
         return $range;
     }
 
-    public function get_headers($backend = null, $access_token = null)
+    public function get_headers($backend = null)
     {
         if (!$this->is_valid) {
             return new WP_Error('invalid_bridge');
@@ -64,20 +64,9 @@ class Google_Sheets_Form_Bridge extends Form_Bridge
             $backend = $this->backend;
         }
 
-        if (!$access_token) {
-            $access_token = $this->credential->get_access_token();
-            if (!$access_token) {
-                return new WP_Error('unauthorized');
-            }
-        }
-
         $range = rawurlencode($this->tab) . '!1:1';
 
-        $response = $backend->get(
-            $this->endpoint . '/values/' . $range,
-            [],
-            ['Authorization' => "Bearer {$access_token}"]
-        );
+        $response = $backend->get($this->endpoint . '/values/' . $range);
 
         if (is_wp_error($response)) {
             return $response;
@@ -86,34 +75,27 @@ class Google_Sheets_Form_Bridge extends Form_Bridge
         return $response['data']['values'][0];
     }
 
-    private function add_sheet($index, $title, $backend, $access_token)
+    private function add_sheet($index, $title, $backend)
     {
-        $response = $backend->post(
-            $this->endpoint . ':batchUpdate',
-            [
-                'requests' => [
-                    [
-                        'addSheet' => [
-                            'properties' => [
-                                'sheetId' => time(),
-                                'index' => $index,
-                                'title' => $title,
-                                'sheetType' => 'GRID',
-                                'gridProperties' => [
-                                    'rowCount' => 1000,
-                                    'columnCount' => 26,
-                                ],
-                                'hidden' => false,
+        $response = $backend->post($this->endpoint . ':batchUpdate', [
+            'requests' => [
+                [
+                    'addSheet' => [
+                        'properties' => [
+                            'sheetId' => time(),
+                            'index' => $index,
+                            'title' => $title,
+                            'sheetType' => 'GRID',
+                            'gridProperties' => [
+                                'rowCount' => 1000,
+                                'columnCount' => 26,
                             ],
+                            'hidden' => false,
                         ],
                     ],
                 ],
             ],
-            [
-                'Content-Type' => 'application/json',
-                'Authorization' => "Bearer {$access_token}",
-            ]
-        );
+        ]);
 
         if (is_wp_error($response)) {
             return $response;
@@ -122,15 +104,9 @@ class Google_Sheets_Form_Bridge extends Form_Bridge
         return $response['data'];
     }
 
-    private function get_sheets($backend, $access_token)
+    private function get_sheets($backend)
     {
-        $response = $backend->get(
-            $this->endpoint,
-            [],
-            [
-                'Authorization' => "Bearer {$access_token}",
-            ]
-        );
+        $response = $backend->get($this->endpoint);
 
         if (is_wp_error($response)) {
             return $response;
@@ -157,30 +133,15 @@ class Google_Sheets_Form_Bridge extends Form_Bridge
             return new WP_Error('invalid_bridge');
         }
 
-        $credential = $this->credential();
-        if (!$credential) {
-            return new WP_Error('unauthorized');
-        }
-
-        $access_token = $credential->get_access_token();
-        if (!$access_token) {
-            return new WP_Error('unauthorized');
-        }
-
         $backend = $this->backend;
 
-        $sheets = $this->get_sheets($backend, $access_token);
+        $sheets = $this->get_sheets($backend);
         if (is_wp_error($sheets)) {
             return $sheets;
         }
 
         if (!in_array(strtolower($this->tab), $sheets, true)) {
-            $result = $this->add_sheet(
-                count($sheets),
-                $this->tab,
-                $backend,
-                $access_token
-            );
+            $result = $this->add_sheet(count($sheets), $this->tab, $backend);
             if (is_wp_error($result)) {
                 return $result;
             }
@@ -188,14 +149,15 @@ class Google_Sheets_Form_Bridge extends Form_Bridge
 
         $endpoint = $this->endpoint . '/values';
 
-        $method_fn = strtolower($this->method);
-        if ($method_fn === 'post' || $method_fn === 'put') {
+        $method = $this->method;
+
+        if ($method === 'POST' || $method === 'PUT') {
             $append_range = rawurlencode($this->tab) . '!A1:Z';
 
             $endpoint .=
                 '/' . $append_range . ':append/?valueInputOption=USER_ENTERED';
 
-            $headers = $this->get_headers($backend, $access_token);
+            $headers = $this->get_headers($backend);
             if (is_wp_error($headers)) {
                 return $headers;
             }
@@ -211,7 +173,7 @@ class Google_Sheets_Form_Bridge extends Form_Bridge
             $row = [];
             foreach ($headers as $header) {
                 if (isset($payload[$header])) {
-                    $row[] = $payload[$header];
+                    $row[] = $payload[$header] ?? '';
                 } else {
                     $row[] = '';
                 }
@@ -226,9 +188,7 @@ class Google_Sheets_Form_Bridge extends Form_Bridge
             ];
         }
 
-        return $this->backend->$method_fn($endpoint, $payload, [
-            'Authorization' => 'Bearer ' . $access_token,
-        ]);
+        return $this->backend->$method($endpoint, $payload);
     }
 
     /**

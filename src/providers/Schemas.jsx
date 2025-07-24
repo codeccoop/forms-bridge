@@ -31,7 +31,7 @@ export default function SchemasProvider({ children }) {
 
   const fetch = useCallback(
     (addon) => {
-      if (!addon || schemas[addon]) return;
+      if (!addon || schemasRef.current[addon]) return;
 
       setLoading(true);
 
@@ -56,8 +56,8 @@ export default function SchemasProvider({ children }) {
   }, [fetch, tab]);
 
   const schema = useMemo(() => {
-    const { bridge } = schemas[tab] || {};
-    const { backend, credential } = schemas.http || {};
+    const { bridge } = schemasRef.current[tab] || {};
+    const { backend, credential } = schemasRef.current.http || {};
 
     return {
       bridge,

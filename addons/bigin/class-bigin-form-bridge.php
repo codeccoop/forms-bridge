@@ -12,13 +12,6 @@ if (!defined('ABSPATH')) {
 class Bigin_Form_Bridge extends Zoho_Form_Bridge
 {
     /**
-     * Handles bridge class API name.
-     *
-     * @var string
-     */
-    public const addon = 'bigin';
-
-    /**
      * Handles the zoho oauth service name.
      *
      * @var string
