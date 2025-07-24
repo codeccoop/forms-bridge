@@ -36,8 +36,6 @@ class Finan_Coop_Addon extends Addon
      */
     public const bridge_class = '\FORMS_BRIDGE\Finan_Coop_Form_Bridge';
 
-    public const credential_class = '\FORMS_BRIDGE\RPC_Credential';
-
     /**
      * Performs a request against the backend to check the connexion status.
      *

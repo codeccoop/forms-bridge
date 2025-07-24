@@ -37,8 +37,6 @@ class Google_Sheets_Addon extends Addon
      */
     public const bridge_class = '\FORMS_BRIDGE\Google_Sheets_Form_Bridge';
 
-    public const credential_class = '\FORMS_BRIDGE\Google_Sheets_Credential';
-
     public function load()
     {
         parent::load();

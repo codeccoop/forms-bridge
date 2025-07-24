@@ -86,7 +86,7 @@ add_filter(
             array_column($data['bridge']['custom_fields'], 'name')
         );
 
-        if ($index) {
+        if ($index !== false) {
             $data['form']['fields'] = array_filter(
                 $data['form']['fields'],
                 function ($field) {

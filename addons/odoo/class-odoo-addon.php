@@ -36,8 +36,6 @@ class Odoo_Addon extends Addon
      */
     public const bridge_class = '\FORMS_BRIDGE\Odoo_Form_Bridge';
 
-    public const credential_class = '\FORMS_BRIDGE\RPC_Credential';
-
     protected static function defaults()
     {
         $defaults = parent::defaults();

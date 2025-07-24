@@ -118,6 +118,11 @@ export default function TemplateWizard({ integration, onSubmit }) {
   });
 
   useEffect(() => {
+    if (!backend || !fetchError || !wired) return;
+    setFetchError(false);
+  }, [backend, wired, fetchError]);
+
+  useEffect(() => {
     if (!wired && fetched) {
       setFetched(false);
       setFieldOptions([]);
@@ -129,7 +134,16 @@ export default function TemplateWizard({ integration, onSubmit }) {
     if (group === "backend" && wired && authorized) {
       fetchOptions(backend, data.credential);
     }
-  }, [loading, group, wired, authorized, fetched, backend, data.credential]);
+  }, [
+    loading,
+    group,
+    wired,
+    authorized,
+    fetched,
+    fetchError,
+    backend,
+    data.credential,
+  ]);
 
   const submit = useCallback(() => {
     setConfig({
@@ -258,6 +272,7 @@ export default function TemplateWizard({ integration, onSubmit }) {
         setData={patchData}
         wired={wired}
         fetched={fetched}
+        credential={credential?.name}
       />
       {authError && (
         <div style={{ marginBottom: "10px" }}>

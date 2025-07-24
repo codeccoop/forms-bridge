@@ -223,6 +223,38 @@ add_filter(
             array_splice($data['bridge']['custom_fields'], $index, 1);
         }
 
+        $index = array_search(
+            'All_day',
+            array_column($data['bridge']['custom_fields'], 'name')
+        );
+
+        if ($index !== false) {
+            $data['form']['fields'] = array_filter(
+                $data['form']['fields'],
+                function ($field) {
+                    return !in_array(
+                        $field['name'],
+                        [
+                            'hour',
+                            'minute',
+                            __('Hour', 'forms-bridge'),
+                            __('Minute', 'forms-bridge'),
+                        ],
+                        true
+                    );
+                }
+            );
+
+            $index = array_search(
+                'duration',
+                array_column($data['bridge']['custom_fields'], 'name')
+            );
+
+            if ($index !== false) {
+                array_splice($data['bridge']['custom_fields'], $index, 1);
+            }
+        }
+
         return $data;
     },
     10,

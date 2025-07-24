@@ -152,7 +152,7 @@ return [
             [
                 'name' => 'hour',
                 'label' => __('Hour', 'forms-bridge'),
-                'type' => 'options',
+                'type' => 'select',
                 'options' => [
                     [
                         'label' => __('1 AM', 'forms-bridge'),
@@ -256,7 +256,7 @@ return [
             [
                 'name' => 'minute',
                 'label' => __('Minute', 'forms-bridge'),
-                'type' => 'options',
+                'type' => 'select',
                 'options' => [
                     ['label' => '00', 'value' => '00.0'],
                     ['label' => '05', 'value' => '05'],

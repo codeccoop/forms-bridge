@@ -533,6 +533,7 @@ class REST_Settings_Controller extends Base_Controller
             $addon,
             $request
         );
+
         if (is_wp_error($handler)) {
             return $handler;
         }

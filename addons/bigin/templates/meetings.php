@@ -40,7 +40,7 @@ return [
             'label' => __('Event title', 'forms-bridge'),
             'type' => 'text',
             'required' => true,
-            'default' => __('Web Appointment', 'forms-bridge'),
+            'default' => __('Web Meeting', 'forms-bridge'),
         ],
         [
             'ref' => '#bridge/custom_fields[]',
@@ -62,7 +62,7 @@ return [
         [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('Appointments', 'forms-bridge'),
+            'default' => __('Meetings', 'forms-bridge'),
         ],
     ],
     'form' => [
@@ -232,7 +232,7 @@ return [
         'mutations' => [
             [
                 [
-                    'from' => 'All_day',
+                    'from' => '?All_day',
                     'to' => 'All_day',
                     'cast' => 'boolean',
                 ],

@@ -13,7 +13,14 @@ const { __ } = wp.i18n;
 
 const FIELDS_ORDER = ["name", "base_url", "headers"];
 
-export default function BackendStep({ fields, data, setData, wired, fetched }) {
+export default function BackendStep({
+  fields,
+  data,
+  setData,
+  wired,
+  fetched,
+  credential,
+}) {
   const [backends] = useBackends();
   const names = useBackendNames();
   const [{ backend: template }] = useTemplateConfig();
@@ -44,11 +51,14 @@ export default function BackendStep({ fields, data, setData, wired, fetched }) {
     };
   }, [fields, template]);
 
-  const validBackends = useMemo(
-    () =>
-      backends.filter((backend) => validateBackend(backend, template, fields)),
-    [backends, template, fields]
-  );
+  const validBackends = useMemo(() => {
+    return backends
+      .filter((backend) => validateBackend(backend, template, fields))
+      .filter((backend) => {
+        if (!credential) return backend;
+        return backend.credential === credential;
+      });
+  }, [backends, template, fields]);
 
   const backendOptions = useMemo(() => {
     return prependEmptyOption(

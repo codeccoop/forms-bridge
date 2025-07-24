@@ -46,6 +46,58 @@ class Bigin_Addon extends Zoho_Addon
     public const bridge_class = '\FORMS_BRIDGE\Bigin_Form_Bridge';
 
     /**
+     * Performs a request against the backend to check the connexion status.
+     *
+     * @param string $backend Backend name.
+     *
+     * @return boolean
+     */
+    public function ping($backend)
+    {
+        $bridge_class = static::bridge_class;
+        $bridge = new $bridge_class(
+            [
+                'name' => '__bigin-' . time(),
+                'backend' => $backend,
+                'endpoint' => '/bigin/v2/users',
+                'method' => 'GET',
+            ],
+            static::name
+        );
+
+        $backend = $bridge->backend;
+        if (!$backend) {
+            return false;
+        }
+
+        $credential = $backend->credential;
+        if (!$credential) {
+            return false;
+        }
+
+        $parsed = wp_parse_url($backend->base_url);
+        $host = $parsed['host'] ?? '';
+
+        if (
+            !preg_match(
+                '/www\.zohoapis\.(\w{2,3}(\.\w{2})?)$/',
+                $host,
+                $matches
+            )
+        ) {
+            return false;
+        }
+
+        $region = $matches[1];
+        if (!preg_match('/' . $region . '$/', $credential->region)) {
+            return false;
+        }
+
+        $response = $bridge->submit(['type' => 'CurrentUser']);
+        return !is_wp_error($response);
+    }
+
+    /**
      * Performs an introspection of the backend endpoint and returns API fields.
      *
      * @param string $endpoint API endpoint.

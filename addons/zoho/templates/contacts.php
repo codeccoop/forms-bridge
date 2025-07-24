@@ -17,12 +17,30 @@ return [
             'value' => '/crm/v7/Contacts/upsert',
         ],
         [
+            'ref' => '#bridge/custom_fields[]',
+            'name' => 'Owner.id',
+            'label' => __('Owner', 'forms-bridge'),
+            'description' => __(
+                'Email of the owner user of the account',
+                'forms-bridge'
+            ),
+            'type' => 'select',
+            'options' => [
+                'endpoint' => '/crm/v7/users',
+                'finger' => [
+                    'value' => 'users[].id',
+                    'label' => 'users[].full_name',
+                ],
+            ],
+        ],
+        [
             'ref' => '#form',
             'name' => 'title',
-            'default' => __('CRM Contacts', 'forms-bridge'),
+            'default' => __('Contacts', 'forms-bridge'),
         ],
     ],
     'form' => [
+        'title' => 'Contacts',
         'fields' => [
             [
                 'name' => 'First_Name',

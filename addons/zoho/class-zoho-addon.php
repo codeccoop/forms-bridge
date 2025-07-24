@@ -43,30 +43,6 @@ class Zoho_Addon extends Addon
      */
     public const bridge_class = '\FORMS_BRIDGE\Zoho_Form_Bridge';
 
-    public const credential_class = '\FORMS_BRIDGE\Zoho_Credential';
-
-    protected static function defaults()
-    {
-        $defaults = parent::defaults();
-        $defaults['credentials'] = [];
-        return $defaults;
-    }
-
-    /**
-     * Bridge data sanitization.
-     *
-     * @param array $bridge Bridge data.
-     * @param array $setting_data Addon setting data.
-     *
-     * @return array
-     */
-    protected static function sanitize_bridge($bridge, $setting_data)
-    {
-        $bridge = parent::sanitize_bridge($bridge, $setting_data);
-        $bridge['is_valid'] = $bridge['is_valid'] && !empty($bridge['scope']);
-        return $bridge;
-    }
-
     /**
      * Performs a request against the backend to check the connexion status.
      *
@@ -81,7 +57,7 @@ class Zoho_Addon extends Addon
             [
                 'name' => '__zoho-' . time(),
                 'backend' => $backend,
-                'endpoint' => '/',
+                'endpoint' => '/crm/v7/users',
                 'method' => 'GET',
             ],
             static::name
@@ -115,8 +91,8 @@ class Zoho_Addon extends Addon
             return false;
         }
 
-        $access_token = $credential->get_access_token();
-        return !!$access_token;
+        $response = $bridge->submit(['type' => 'CurrentUser']);
+        return !is_wp_error($response);
     }
 
     /**
