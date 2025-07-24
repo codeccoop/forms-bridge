@@ -16,16 +16,6 @@ class Finan_Coop_Form_Bridge extends Form_Bridge
     private static $request;
 
     /**
-     * Returns json as static bridge content type.
-     *
-     * @return string.
-     */
-    protected function content_type()
-    {
-        return 'application/json';
-    }
-
-    /**
      * Performs an http request to Odoo REST API.
      *
      * @param array $payload Payload data.

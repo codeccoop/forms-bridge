@@ -14,16 +14,6 @@ if (!defined('ABSPATH')) {
 class Listmonk_Form_Bridge extends Form_Bridge
 {
     /**
-     * Gets bridge's default body encoding schema.
-     *
-     * @return string|null
-     */
-    protected function content_type()
-    {
-        return 'application/json';
-    }
-
-    /**
      * Performs an http request to backend's REST API.
      *
      * @param array $payload Payload data.
