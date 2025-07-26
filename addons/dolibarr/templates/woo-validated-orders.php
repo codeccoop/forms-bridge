@@ -413,8 +413,8 @@ return [
                     'cast' => 'integer',
                 ],
                 [
-                    'from' => 'fk_products',
-                    'to' => 'lines[].fk_product[]',
+                    'from' => 'fk_products[]',
+                    'to' => 'lines[].fk_product',
                     'cast' => 'integer',
                 ],
             ],

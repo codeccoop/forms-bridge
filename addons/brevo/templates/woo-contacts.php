@@ -100,11 +100,6 @@ return [
                     'cast' => 'null',
                 ],
                 [
-                    'from' => 'shipping_total',
-                    'to' => 'shipping_total',
-                    'cast' => 'null',
-                ],
-                [
                     'from' => 'shipping_tax',
                     'to' => 'shipping_tax',
                     'cast' => 'null',

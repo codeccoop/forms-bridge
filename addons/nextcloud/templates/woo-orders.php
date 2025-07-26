@@ -37,7 +37,7 @@ return [
                     'cast' => 'string',
                 ],
                 [
-                    'from' => 'Name',
+                    'from' => 'Name[]',
                     'to' => 'Name[]',
                     'cast' => 'concat',
                 ],

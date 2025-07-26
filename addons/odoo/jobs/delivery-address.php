@@ -68,11 +68,28 @@ return [
 
 function forms_bridge_odoo_shipping_address($payload, $bridge)
 {
-    $address = [
-        'type' => 'delivery',
-        'parent_id' => $payload['partner_id'],
-        'name' => $payload['name'],
+    $query = [
+        ['type', '=', 'delivery'],
+        ['parent_id', '=', $payload['partner_id']],
+        ['name', '=', $payload['name']],
     ];
+
+    $response = $bridge
+        ->patch([
+            'name' => 'odoo-search-address',
+            'method' => 'search',
+            'endpoint' => 'res.partner',
+        ])
+        ->submit($query);
+
+    if (!is_wp_error($response)) {
+        return $payload;
+    }
+
+    $address = [];
+    foreach ($query as $filter) {
+        $address[$filter[0]] = $filter[2];
+    }
 
     $address_fields = [
         'email',

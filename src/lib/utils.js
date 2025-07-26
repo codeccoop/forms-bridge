@@ -124,6 +124,16 @@ export function uploadJson() {
   });
 }
 
+export function defrost(obj) {
+  if (obj === null || typeof obj !== "object") return obj;
+
+  if (Array.isArray(obj)) {
+    return [...obj];
+  }
+
+  return { ...obj };
+}
+
 export function isset(obj, attr) {
   if (!obj || typeof obj !== "object") {
     return false;

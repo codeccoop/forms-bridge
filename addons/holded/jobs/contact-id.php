@@ -30,6 +30,10 @@ return [
             'required' => true,
         ],
         [
+            'name' => 'CustomId',
+            'schema' => ['type' => 'string'],
+        ],
+        [
             'name' => 'tradeName',
             'schema' => ['type' => 'string'],
         ],

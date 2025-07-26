@@ -151,25 +151,21 @@ export function fieldsToPayload(fields) {
   return finger.data;
 }
 
-export function castValue(value, mapper) {
-  const isFrozen = Object.isFrozen(value);
+const implosions = new Set([
+  "and",
+  "or",
+  "xor",
+  "json",
+  "csv",
+  "concat",
+  "join",
+  "sum",
+  "count",
+]);
 
+export function castValue(value, mapper) {
   if (mapper.from.indexOf("[]") !== -1) {
     return castExpandedValue(value, mapper);
-  }
-
-  if (/\[\]$/.test(mapper.to)) {
-    if (!Array.isArray(value)) {
-      if (isFrozen) {
-        return Object.freeze([]);
-      }
-
-      return [];
-    }
-
-    const itemMapper = { ...mapper };
-    itemMapper.to = itemMapper.to.slice(0, -2);
-    return value.map((item) => castValue(item, itemMapper));
   }
 
   switch (mapper.cast) {
@@ -184,8 +180,6 @@ export function castValue(value, mapper) {
       return "number";
     case "copy":
     case "inherit":
-      value = JSON.parse(JSON.stringify(value));
-      if (isFrozen) Object.freeze(value);
       return value;
     case "not":
     case "and":
@@ -198,46 +192,42 @@ export function castValue(value, mapper) {
 }
 
 function castExpandedValue(values, mapper) {
+  if (!Array.isArray(values)) return [];
+
   const isFrozen = Object.isFrozen(values);
+  if (isFrozen) values = [...values];
 
-  if (!Array.isArray(values)) {
-    return [];
-  } else if (isFrozen) {
-    values = values.map((v) => v);
-  }
+  const isExpanded = mapper.from.replace(/\[\]$/, "").indexOf("[]") !== -1;
 
-  const isExpanded = /\[\]$/.test(mapper.from);
-
-  if (isExpanded) {
-    values = values.map((value) => {
+  if (!isExpanded) {
+    return values.map((value) => {
       return castValue(value, { cast: mapper.cast, from: "", to: "" });
     });
-  } else {
-    const toExpansions = mapper.to.replace(/\[\]$/, "").match(/\[\]/g) || [];
-    const fromExpansions =
-      mapper.from.replace(/\[\]$/, "").match(/\[\]/g) || [];
+  }
 
-    if ((isExpanded || !fromExpansions.length) && toExpansions > 1) {
-      return [];
-    } else if (
-      fromExpansions.length &&
-      toExpansions.length > fromExpansions.length
-    ) {
-      return [];
-    }
+  // const toExpansions = mapper.to.replace(/\[\]$/, "").match(/\[\]/g) || [];
+  // const fromExpansions = mapper.from.replace(/\[\]$/, "").match(/\[\]/g) || [];
 
-    const parts = mapper.from.split("[]").filter((p) => p);
-    const before = parts[0];
-    const after = parts.slice(1).join("[]");
+  // if (!fromExpansions.length && toExpansions > 1) {
+  //   return [];
+  // } else if (
+  //   fromExpansions.length &&
+  //   toExpansions.length > fromExpansions.length
+  // ) {
+  //   return [];
+  // }
 
-    for (let i = 0; i < values.length; i++) {
-      const pointer = `${before}[${i}]${after}`;
-      values[i] = castValue(values[i], {
-        from: pointer,
-        to: "",
-        cast: mapper.cast,
-      });
-    }
+  const parts = mapper.from.split("[]").filter((p) => p);
+  const before = parts[0];
+  const after = parts.slice(1).join("[]");
+
+  for (let i = 0; i < values.length; i++) {
+    const pointer = `${before}[${i}]${after}`;
+    values[i] = castValue(values[i], {
+      from: pointer,
+      to: "",
+      cast: mapper.cast,
+    });
   }
 
   if (isFrozen) return Object.freeze(values);

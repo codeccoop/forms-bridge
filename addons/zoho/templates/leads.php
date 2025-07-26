@@ -135,6 +135,5 @@ return [
     ],
     'bridge' => [
         'endpoint' => '/crm/v7/Leads/upsert',
-        'scope' => 'ZohoCRM.modules.ALL',
     ],
 ];

@@ -157,16 +157,6 @@ class Odoo_Form_Bridge extends Form_Bridge
     }
 
     /**
-     * Returns json as static bridge content type.
-     *
-     * @return string.
-     */
-    protected function content_type()
-    {
-        return 'application/json';
-    }
-
-    /**
      * Submits submission to the backend.
      *
      * @param array $payload Submission data.

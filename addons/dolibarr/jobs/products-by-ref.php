@@ -50,8 +50,7 @@ function forms_bridge_dolibarr_search_products_by_ref($payload, $bridge)
             'method' => 'GET',
         ])
         ->submit([
-            'sortfield' => 't.ref',
-            'ids_only' => 'true',
+            'properties' => 'id,ref',
             'sqlfilters' => implode(' or ', $sqlfilters),
         ]);
 
@@ -59,7 +58,15 @@ function forms_bridge_dolibarr_search_products_by_ref($payload, $bridge)
         return $response;
     }
 
-    $fk_products = array_map('intval', $response['data']);
+    $fk_products = [];
+    foreach ($refs as $ref) {
+        foreach ($response['data'] as $product) {
+            if ($product['ref'] === $ref) {
+                $fk_products[] = $product['id'];
+                break;
+            }
+        }
+    }
 
     if (count($fk_products) !== count($payload['product_refs'])) {
         return new WP_Error(

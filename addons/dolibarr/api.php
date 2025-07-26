@@ -37,6 +37,7 @@ function forms_bridge_dolibarr_search_contact($payload, $bridge)
             'sortfield' => 't.rowid',
             'sortorder' => 'DESC',
             'limit' => '1',
+            'properties' => 'id',
             'sqlfilters' => $sqlfilters,
         ]);
 
@@ -90,6 +91,7 @@ function forms_bridge_dolibarr_search_thirdparty($payload, $bridge)
             'sortfield' => 't.rowid',
             'sortorder' => 'DESC',
             'limit' => '1',
+            'properties' => 'id,code_client',
             'sqlfilters' => $sqlfilters,
         ]);
 
@@ -122,6 +124,7 @@ function forms_bridge_dolibarr_get_next_code_client($payload, $bridge)
         ->submit([
             'sortfield' => 't.rowid',
             'sortorder' => 'DESC',
+            'properties' => 'code_client',
             'limit' => 1,
         ]);
 
@@ -181,6 +184,7 @@ function forms_bridge_dolibarr_get_next_project_ref($payload, $bridge)
         ->submit([
             'sortfield' => 't.rowid',
             'sortorder' => 'DESC',
+            'properties' => 'ref',
             'limit' => 1,
         ]);
 
@@ -306,7 +310,7 @@ function forms_bridge_dolibarr_create_thirdparty(
         if (!is_wp_error($thirdparty) && isset($thirdparty['id'])) {
             $payload['id'] = $thirdparty['id'];
 
-            if (isset($thirdparty['code_client'])) {
+            if (!empty($thirdparty['code_client'])) {
                 $payload['code_client'] = $thirdparty['code_client'];
             }
 

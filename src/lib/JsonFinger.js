@@ -1,8 +1,8 @@
-import { isset } from "./utils";
+import { isset, defrost } from "./utils";
 
 const cache = new Map();
 
-function JsonFinger(data) {
+export default function JsonFinger(data) {
   if (typeof data !== "object" || data === null) {
     throw new Error("Input data isn't a valid object type");
   }
@@ -145,6 +145,10 @@ JsonFinger.prototype.getData = function () {
 JsonFinger.prototype.get = function (pointer, expansion = []) {
   pointer = "" + pointer;
 
+  if (!pointer) {
+    return this.data;
+  }
+
   if (isset(this.data, pointer)) {
     return this.data[pointer];
   }
@@ -178,33 +182,33 @@ JsonFinger.prototype.getExpanded = function (pointer, expansion = []) {
 
   const parts = pointer.split("[]");
   const before = parts[0];
-  let after = parts
+  const after = parts
     .slice(1)
-    .filter((p) => p)
+    .filter((p, i) => p || i !== parts.length - 2)
     .join("[]");
 
-  let value;
+  let values;
   if (!before) {
     if (!Array.isArray(this.data)) {
       return [];
     }
 
-    value = this.data;
+    values = this.data;
   } else {
-    value = this.get(before);
+    values = this.get(before);
   }
 
-  if (!after.length || !Array.isArray(value)) {
-    return value;
+  if (!after.length || !Array.isArray(values)) {
+    return values;
   }
 
-  const isFrozen = Object.isFrozen(value);
-  const items = value.map((d) => d);
+  const isFrozen = Object.isFrozen(values);
+  values = [...values];
 
-  const len = isFrozen ? 1 : items.length;
+  const len = isFrozen ? 1 : values.length;
   for (let i = 0; i < len; i++) {
     pointer = `${before}[${i}]${after}`;
-    items[i] = this.get(pointer, expansion);
+    values[i] = this.get(pointer, expansion);
   }
 
   if (flat) {
@@ -212,8 +216,8 @@ JsonFinger.prototype.getExpanded = function (pointer, expansion = []) {
     return expansion;
   }
 
-  if (isFrozen) Object.freeze(items);
-  return items;
+  if (isFrozen) Object.freeze(values);
+  return values;
 };
 
 JsonFinger.prototype.set = function (pointer, value, unset = false) {
@@ -231,10 +235,20 @@ JsonFinger.prototype.set = function (pointer, value, unset = false) {
 
   try {
     const keys = JsonFinger.parse(pointer);
+    if (keys.length === 1) {
+      if (unset) {
+        delete data[keys[0]];
+      } else {
+        data[keys[0]] = value;
+      }
+
+      this.data = data;
+      return data;
+    }
+
     let partial = data;
 
-    let i;
-    for (i = 0; i < keys.length - 1; i++) {
+    for (let i = 0; i < keys.length - 1; i++) {
       if (!partial || typeof partial !== "object") {
         return data;
       }
@@ -262,7 +276,15 @@ JsonFinger.prototype.set = function (pointer, value, unset = false) {
       partial = partial[key];
     }
 
-    let key = keys[i];
+    const { partial: parent, key: name } = breadcrumb[breadcrumb.length - 1];
+
+    const key = keys.pop();
+
+    const isFrozen = Object.isFrozen(partial);
+    if (isFrozen) {
+      partial = defrost(partial);
+    }
+
     if (unset) {
       if (Array.isArray(partial)) {
         partial.splice(key, 1);
@@ -270,24 +292,42 @@ JsonFinger.prototype.set = function (pointer, value, unset = false) {
         delete partial[key];
       }
 
+      if (isFrozen) {
+        parent[name] = Object.freeze(partial);
+      }
+
       for (let i = breadcrumb.length - 1; i >= 0; i--) {
-        const { partial, key } = breadcrumb[i];
+        const { partial: parent, key: name } = breadcrumb[i - 1] || {};
+
+        let { partial, key } = breadcrumb[i];
 
         if (Object.keys(partial[key]).length) {
           break;
         }
+
+        const isFrozen = Object.isFrozen(partial);
+        if (isFrozen) partial = defrost(partial);
 
         if (Array.isArray(partial)) {
           partial.splice(key, 1);
         } else {
           delete partial[key];
         }
+
+        if (isFrozen && parent) {
+          parent[name] = Object.freeze(partial);
+        }
       }
     } else {
       partial[key] = value;
+
+      if (isFrozen) {
+        parent[name] = Object.freeze(partial);
+      }
     }
-  } catch {
-    return data;
+  } catch (err) {
+    console.error(err);
+    return this.data;
   }
 
   this.data = data;
@@ -295,9 +335,18 @@ JsonFinger.prototype.set = function (pointer, value, unset = false) {
 };
 
 JsonFinger.prototype.setExpanded = function (pointer, values, unset) {
-  const parts = pointer.split("[]").filter((p) => p);
+  const parts = pointer.split("[]");
   const before = parts[0];
-  const after = parts.slice(1).join("[]");
+  const after = parts
+    .slice(1)
+    .filter((p, i) => p || i !== parts.length - 2)
+    .join("[]");
+
+  if (!before) {
+    if (!Array.isArray(values) || (!after && unset)) {
+      return;
+    }
+  }
 
   if (unset) {
     values = this.get(before);
@@ -318,7 +367,7 @@ JsonFinger.prototype.setExpanded = function (pointer, values, unset) {
     }
   }
 
-  if (isFrozen) {
+  if (isFrozen && !unset) {
     values = this.get(before);
     this.set(before, Object.freeze(values));
   }
@@ -358,6 +407,10 @@ JsonFinger.prototype.isset = function (pointer) {
       const parent = this.get(pointer);
 
       if (pointer.indexOf("[]") === -1) {
+        if (key === Infinity && Array.isArray(parent)) {
+          return true;
+        }
+
         return isset(parent, key);
       }
 
@@ -378,5 +431,3 @@ JsonFinger.prototype.isset = function (pointer) {
       return false;
   }
 };
-
-export default JsonFinger;

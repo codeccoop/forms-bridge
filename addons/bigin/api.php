@@ -96,7 +96,6 @@ function forms_bridge_bigin_create_account($payload, $bridge)
             'name' => 'zoho-bigin-create-account',
             'scope' => 'ZohoBigin.modules.accounts.CREATE',
             'endpoint' => '/bigin/v2/Accounts/upsert',
-            'template' => null,
         ])
         ->submit($company);
 

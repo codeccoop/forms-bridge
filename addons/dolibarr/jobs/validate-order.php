@@ -53,7 +53,7 @@ function forms_bridge_dolibarr_validate_order(
     }
 }
 
-function forms_bridge_dolibarr_enqueue_order_validation()
+function forms_bridge_dolibarr_enqueue_order_validation($payload)
 {
     add_action(
         'forms_bridge_after_submission',
@@ -61,4 +61,6 @@ function forms_bridge_dolibarr_enqueue_order_validation()
         10,
         4
     );
+
+    return $payload;
 }

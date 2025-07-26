@@ -142,8 +142,8 @@ return [
                 ],
                 [
                     'from' => 'customer_id',
-                    'to' => 'customer_id',
-                    'cast' => 'null',
+                    'to' => 'attribs.wp_customer_id',
+                    'cast' => 'string',
                 ],
                 [
                     'from' => 'order_key',

@@ -43,6 +43,7 @@ return [
     'bridge' => [
         'method' => 'POST',
         'endpoint' => '/bigin/v2/Contacts/upsert',
+        'workflow' => ['account-name'],
         'mutations' => [
             [
                 [
@@ -136,6 +137,41 @@ return [
                     'cast' => 'null',
                 ],
                 [
+                    'from' => '?Owner',
+                    'to' => 'Contact_Owner',
+                    'cast' => 'copy',
+                ],
+                [
+                    'from' => '?billing.company',
+                    'to' => 'Account_Name',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => '?billing.address_1',
+                    'to' => 'Billing_Street',
+                    'cast' => 'copy',
+                ],
+                [
+                    'from' => '?billing.city',
+                    'to' => 'Billing_City',
+                    'cast' => 'copy',
+                ],
+                [
+                    'from' => '?billing.state',
+                    'to' => 'Billing_State',
+                    'cast' => 'copy',
+                ],
+                [
+                    'from' => '?billing.country',
+                    'to' => 'Billing_Country',
+                    'cast' => 'copy',
+                ],
+                [
+                    'from' => '?billing.postcode',
+                    'to' => 'Billing_Code',
+                    'cast' => 'copy',
+                ],
+                [
                     'from' => '?billing.first_name',
                     'to' => 'First_Name',
                     'cast' => 'string',
@@ -153,6 +189,31 @@ return [
                 [
                     'from' => '?billing.phone',
                     'to' => 'Phone',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => '?billing.address_1',
+                    'to' => 'Mailing_Street',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => '?billing.city',
+                    'to' => 'Mailing_City',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => '?billing.state',
+                    'to' => 'Mailing_State',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => '?billing.country',
+                    'to' => 'Mailing_Country',
+                    'cast' => 'string',
+                ],
+                [
+                    'from' => '?billing.postcode',
+                    'to' => 'Mailing_Zip',
                     'cast' => 'string',
                 ],
                 [
@@ -274,6 +335,13 @@ return [
                     'from' => 'currency',
                     'to' => 'currency',
                     'cast' => 'null',
+                ],
+            ],
+            [
+                [
+                    'from' => 'Contact_Owner',
+                    'to' => 'Owner',
+                    'cast' => 'inherit',
                 ],
             ],
         ],

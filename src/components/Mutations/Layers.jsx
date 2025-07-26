@@ -144,19 +144,18 @@ function useInputStyle(to = "", from = "") {
     return { ...inputStyle, ...INVALID_TO_STYLE };
   }
 
-  const isExpanded = /\[\]$/.test(from);
+  // TODO: Is possible to known invalid expansions ahead of time?
+  // const isFlatted = /\[\]$/.test(from);
+  // if (isFlatted) {
+  //   return inputStyle;
+  // }
 
-  const toExpansions = to.replace(/\[\]$/, "").match(/\[\]/g) || [];
-  const fromExpansions = from.replace(/\[\]$/, "").match(/\[\]/g) || [];
+  // const toExpansions = to.replace(/\[\]$/, "").match(/\[\]/g) || [];
+  // const fromExpansions = from.replace(/\[\]$/, "").match(/\[\]/g) || [];
 
-  if ((isExpanded || !fromExpansions.length) && toExpansions > 1) {
-    return { ...inputStyle, ...INVALID_TO_STYLE };
-  } else if (
-    fromExpansions.length &&
-    toExpansions.length > fromExpansions.length
-  ) {
-    return { ...inputStyle, ...INVALID_TO_STYLE };
-  }
+  // if (toExpansions.length - 1 > fromExpansions.length) {
+  //   return { ...inputStyle, ...INVALID_TO_STYLE };
+  // }
 
   return inputStyle;
 }

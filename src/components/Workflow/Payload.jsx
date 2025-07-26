@@ -105,7 +105,8 @@ export default function StagePayload({
     }
 
     return output;
-  }, [fields, mappers, showMutations, showDiff, payloadDiff]);
+  }, [mappers, showMutations, showDiff]);
+  // }, [fields, mappers, showMutations, showDiff, payloadDiff]);
 
   return (
     <ItemGroup size="large" isSeparated>

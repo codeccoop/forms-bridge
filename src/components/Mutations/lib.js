@@ -6,7 +6,8 @@ import {
 } from "../../lib/payload";
 
 export function schemaToOptions(schema, name = "") {
-  const isExpansible = name.match(/\[\](?=[^\[])/g)?.length >= 2;
+  const isFlattable = name.match(/\[\](?=[^\[])/g)?.length >= 2;
+  // const isExpansible = /\[\](?=.+)/g.test(name);
 
   if (name !== "") {
     name = JsonFinger.pointer(JsonFinger.parse(name));
@@ -20,7 +21,7 @@ export function schemaToOptions(schema, name = "") {
       },
     ];
 
-    if (isExpansible) {
+    if (isFlattable) {
       options.push({ value: name + "[]", label: name + "[]" });
     }
 
@@ -43,6 +44,10 @@ export function schemaToOptions(schema, name = "") {
       return isTuple || item.type !== schemaItems[0]?.type;
     }, false);
 
+    if (!isTuple) {
+      options.push({ value: name + "[]", label: name + "[]" });
+    }
+
     return options
       .concat(
         schemaItems.reduce((options, item) => {
@@ -52,7 +57,7 @@ export function schemaToOptions(schema, name = "") {
 
           return options.concat(
             schemaToOptions(item, pointer).filter(
-              (opt) => isExpansible || opt.value !== pointer
+              (opt) => isFlattable || opt.value !== pointer
             )
           );
         }, [])
@@ -67,7 +72,7 @@ export function schemaToOptions(schema, name = "") {
       );
   } else {
     const options = [{ label: name, value: name }];
-    if (isExpansible) {
+    if (isFlattable) {
       options.push({ label: name + "[]", value: name + "[]" });
     }
 

@@ -7,11 +7,15 @@ if (!defined('ABSPATH')) {
 function forms_bridge_holded_search_contact($payload, $bridge)
 {
     $query = [];
-    $query_params = ['phone', 'mobile', 'customId'];
+    $query_params = ['phone', 'mobile', 'CustomId'];
 
     foreach ($query_params as $param) {
         if (isset($payload[$param])) {
-            $query[$param] = $payload[$param];
+            if ($param === 'CustomId') {
+                $query['customId'] = $payload[$param];
+            } else {
+                $query[$param] = $payload[$param];
+            }
         }
     }
 
@@ -75,6 +79,7 @@ function forms_bridge_holded_create_contact($payload, $bridge, $update = false)
         'isperson',
         'contactPersons',
         'shippingAddresses',
+        'CustomId',
     ];
 
     foreach ($contact_fields as $field) {

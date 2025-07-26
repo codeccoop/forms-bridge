@@ -8,6 +8,18 @@ if (!defined('ABSPATH')) {
 
 trait Form_Bridge_Mutations
 {
+    private const implosions = [
+        'and',
+        'or',
+        'xor',
+        'json',
+        'csv',
+        'concat',
+        'join',
+        'sum',
+        'count',
+    ];
+
     /**
      * Apply cast mappers to data.
      *
@@ -78,21 +90,8 @@ trait Form_Bridge_Mutations
      */
     private function cast($value, $mapper)
     {
-        if (strstr($mapper['from'], '[]') !== false) {
+        if (strpos($mapper['from'], '[]') !== false) {
             return $this->cast_expanded($value, $mapper);
-        }
-
-        if (preg_match('/\[\]$/', $mapper['to'])) {
-            if (!wp_is_numeric_array($value)) {
-                return [];
-            }
-
-            $item_mapper = $mapper;
-            $item_mapper['to'] = substr($item_mapper['to'], 0, -2);
-
-            return array_map(function ($item) use ($item_mapper) {
-                return $this->cast($item, $item_mapper);
-            }, $value);
         }
 
         switch ($mapper['cast']) {
@@ -135,19 +134,19 @@ trait Form_Bridge_Mutations
                     return '';
                 }
 
-                return implode(',', (array) $value);
+                return implode(',', $value);
             case 'concat':
                 if (!wp_is_numeric_array($value)) {
                     return '';
                 }
 
-                return implode(' ', (array) $value);
+                return implode(' ', $value);
             case 'join':
                 if (!wp_is_numeric_array($value)) {
                     return '';
                 }
 
-                return implode('', (array) $value);
+                return implode('', $value);
             case 'sum':
                 if (!wp_is_numeric_array($value)) {
                     return 0;
@@ -183,9 +182,11 @@ trait Form_Bridge_Mutations
             return [];
         }
 
-        $is_expanded = preg_match('/\[\]$/', $mapper['from']);
+        $is_expanded =
+            strpos(preg_replace('/\[\]$/', '', $mapper['from']), '[]') !==
+            false;
 
-        if ($is_expanded) {
+        if (!$is_expanded) {
             return array_map(function ($value) use ($mapper) {
                 return $this->cast($value, [
                     'from' => '',
@@ -206,10 +207,7 @@ trait Form_Bridge_Mutations
             $from_expansions
         );
 
-        if (
-            ($is_expanded || empty($from_expansions)) &&
-            count($to_expansions) > 1
-        ) {
+        if (empty($from_expansions) && count($to_expansions) > 1) {
             return [];
         } elseif (
             !empty($from_expansions) &&

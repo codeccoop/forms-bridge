@@ -40,15 +40,26 @@ function forms_bridge_odoo_search_products_by_ref($payload, $bridge)
         ->patch([
             'name' => 'odoo-search-products-by-ref',
             'endpoint' => 'product.product',
-            'method' => 'search',
+            'method' => 'search_read',
         ])
-        ->submit([['default_code', 'in', $payload['internal_refs']]]);
+        ->submit(
+            [['default_code', 'in', $payload['internal_refs']]],
+            ['id', 'default_code']
+        );
 
     if (is_wp_error($response)) {
         return $response;
     }
 
-    $product_ids = $response['data']['result'];
+    $product_ids = [];
+    foreach ($payload['internal_refs'] as $ref) {
+        foreach ($response['data']['result'] as $product) {
+            if ($product['default_code'] === $ref) {
+                $product_ids[] = $product['id'];
+                break;
+            }
+        }
+    }
 
     if (count($product_ids) !== count($payload['internal_refs'])) {
         return new WP_Error(

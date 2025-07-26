@@ -134,8 +134,8 @@ return [
                 ],
                 [
                     'from' => 'customer_id',
-                    'to' => 'customFields.wp_customer_id',
-                    'cast' => 'integer',
+                    'to' => 'CustomId',
+                    'cast' => 'string',
                 ],
                 [
                     'from' => 'order_key',

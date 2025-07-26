@@ -114,7 +114,6 @@ return [
     ],
     'bridge' => [
         'endpoint' => '/crm/v7/Contacts/upsert',
-        'scope' => 'ZohoCRM.modules.ALL',
         'workflow' => ['contact-account'],
     ],
 ];
