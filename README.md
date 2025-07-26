@@ -1,4 +1,4 @@
-![Forms Bridge](./assets/icon-256x256.png)
+# Forms Bridge
 
 Bridge WP form builder plugins to any backend or service over HTTP requests.
 
@@ -14,16 +14,16 @@ is divided by tabs. By default, the **General** and **REST-API** tabs will be vi
 As you activate addons, new tabs will be shown.
 
 1. General
-	* **Notification receiver**: Email address receiver of failed submission notifications.
-	* **Backends**: List of configured backend connections.
-	* **Addons**: Panel to manage addons. See the [addons](#addons) section to get know
-	which addons are available.
-	* **Debug**: Activate the logging console to see what's going on on inside WordPress.
-	This feature allow you to debug your form submissions while you are configuring your
-	hooks.
-	* **Export/Import**: Export and import Forms Bridge configurations as json files.
+   - **Notification receiver**: Email address receiver of failed submission notifications.
+   - **Backends**: List of configured backend connections.
+   - **Addons**: Panel to manage addons. See the [addons](#addons) section to get know
+     which addons are available.
+   - **Debug**: Activate the logging console to see what's going on on inside WordPress.
+     This feature allow you to debug your form submissions while you are configuring your
+     hooks.
+   - **Export/Import**: Export and import Forms Bridge configurations as json files.
 2. REST API
-	* **Bridges**: Panel with configured form bridges.
+   - **Bridges**: Panel with configured form bridges.
 
 Once configured, try to submit data with one of your hooked forms and watch the magic
 happen 🙌!
@@ -37,10 +37,10 @@ are available:
    submissions over the REST API of your backends.
 1. **Odoo**: With this addon you can bridge your forms to Odoo over the JSON-RPC API. Fill the
    gap between your CMS and your ERP and scale up your business.
-2. **Google Sheets**: With this addon you can get your form submissions synchronized with google
+1. **Google Sheets**: With this addon you can get your form submissions synchronized with google
    spreadsheets. Focus on your data, share it with your team and don't bother them with the
    wordpress admin page.
-3. **FinanCoop**: Addon to bridge forms to the FinanCoop Odoo's module. This module is intended to
+1. **FinanCoop**: Addon to bridge forms to the FinanCoop Odoo's module. This module is intended to
    manage subscription and loan requests for cooperatives and non-profit organizations.
 
 To get more details about this addons, go the the [documentation](./docs/Addons.md).
