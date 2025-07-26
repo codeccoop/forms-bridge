@@ -72,7 +72,7 @@ class Google_Sheets_Form_Bridge extends Form_Bridge
             return $response;
         }
 
-        return $response['data']['values'][0];
+        return $response['data']['values'][0] ?? [];
     }
 
     private function add_sheet($index, $title, $backend)

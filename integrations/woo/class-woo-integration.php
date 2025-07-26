@@ -422,11 +422,11 @@ class Integration extends BaseIntegration
                     add_action(
                         'forms_bridge_after_submission',
                         function () {
-                            // update_post_meta(
-                            //     self::$order_id,
-                            //     self::is_order_bridged_custom_field,
-                            //     '1'
-                            // );
+                            update_post_meta(
+                                self::$order_id,
+                                self::is_order_bridged_custom_field,
+                                '1'
+                            );
                         },
                         90
                     );
