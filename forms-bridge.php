@@ -3,7 +3,7 @@
 /*
  * Plugin Name:         Forms Bridge
  * Plugin URI:          https://formsbridge.codeccoop.org
- * Description:         Plugin to bridge WP forms submissions to any backend or service
+ * Description:         Bridge your WordPress forms without code, add custom fields, set up a workflow and make your data flow to your backend
  * Author:              codeccoop
  * Author URI:          https://www.codeccoop.org
  * License:             GPLv2 or later
