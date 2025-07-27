@@ -96,7 +96,7 @@ export default function Mutations({
       </Button>
       {open && (
         <Modal
-          title={__("Mutation layers", "forms-bridge")}
+          title={__("Field mappers", "forms-bridge")}
           onRequestClose={onClose}
           className="no-scrollable"
         >

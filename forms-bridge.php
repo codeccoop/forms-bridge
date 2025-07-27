@@ -1,9 +1,9 @@
 <?php
 
 /*
- * Plugin Name:         Forms Bridge
+ * Plugin Name:         Forms Bridge – Infinite integrations
  * Plugin URI:          https://formsbridge.codeccoop.org
- * Description:         Bridge your WordPress forms without code, add custom fields, set up a workflow and make your data flow to your backend
+ * Description:         Bridge your WordPress forms without code, add custom fields, use field mappers, set up a workflow and make your data flow seamlessly to your backend
  * Author:              codeccoop
  * Author URI:          https://www.codeccoop.org
  * License:             GPLv2 or later

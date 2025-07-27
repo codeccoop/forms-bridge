@@ -7,11 +7,11 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Stable Tag: 4.0.0
 Tested up to: 6.8
 
-Bridge your WordPress forms without code, add custom fields, set up a workflow and make your data flow to your backend.
+Bridge your WordPress forms without code, add custom fields, use field mappers, set up a workflow and make your data flow seamlessly to your backend.
 
 == Bridges ==
 
-Think of a bridge as a pipeline through which your form submissions data flows to your backend or service. In the middle, you can add custom fields to the form submissions, use mappers to rename and mutate your form responses, or use workflow jobs to process the data before it is sent over the wire. It doesn't matter if you want to connect your forms to an ERP, a CRM or a mailing marketing platform, if it has an API it can be bridged!
+Think of a bridge as a pipeline through which your form submissions data flows to your backend or service. In the middle, you can add custom fields to the form submissions, use field mappers to rename and mutate your form responses, or use workflow jobs to process the data before it is sent over the wire. With bridges you can connect your WordPress forms to any kind of backend, it doesn't matter if it is a CRM, an ERP, a booking system or an email marketing platform, the only requirement is an HTTP API. If it has an API it can be bridged!
 
 == Integrations ==
 
@@ -27,10 +27,11 @@ Forms Bridge has integrations for:
 
 == Addons ==
 
-Forms Bridge comes with free addons. Each addon adds to the plugin new bridges to work with specific APIs, new workflow jobs and new bridge templates.
+Forms Bridge comes with free addons. Each addon adds to the plugin new bridges to work with specific APIs, new workflow jobs and bridge templates.
 
 Forms Bridge has core support for generic REST API bridges and addons for:
 
+* [REST API](https://en.wikipedia.org/wiki/REST)
 * [Bigin](https://www.bigin.com/developer/docs/apis/v2/?source=developer)
 * [Brevo](https://developers.brevo.com/)
 * [Dolibarr](https://wiki.dolibarr.org/index.php/Module_Web_Services_API_REST_(developer))
@@ -60,13 +61,17 @@ Once registered, you can reuse your backend connection on your form bridges.
 
 Custom fields are data that will be added the bridge payload. Use them to store private data you don’t want to place on your public forms, like user emails, or config values, like product IDs or lead tags.
 
-== Mappers ==
+== Field Mappers ==
 
-Use mappers to rename your form fields to fit the backend API schema.
+Field mappers are mutations with which you can rename your form submission fields and transform its values. Use them to make your form submissions to fit your backend API endpoint interface.
+
+== Workflows ==
+
+Make your form submissions flow through a chain of jobs that pre-process the data before it was sent over the wire. Think of workflow as a system to set up automations to run on each form submission.
 
 == Templates ==
 
-To streamline the bridge setup process, Forms Bridge comes packed with templates. Templates are blueprints of bridges you can use to setup your form integrations in a matter of minutes.
+To streamline the bridge setup process, Forms Bridge comes packed with templates. Templates are blueprints of bridges you can use to set up your form integrations in a matter of minutes.
 
 == Docs ==
 
@@ -83,10 +88,13 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 
 1. Settings page
 2. Backends
-3. Custom fields
-4. Workflows
-5. Template wizard
-6. Debug console
+3. Bridges
+4. Custom fields
+5. Field mappers
+6. Workflows
+7. Job editor
+8. Template wizard
+9. Debug console
 
 == Changelog ==
 
