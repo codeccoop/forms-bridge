@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Plugin Name:         Forms Bridge – Infinite integrations
+ * Plugin Name:         Forms Bridge
  * Plugin URI:          https://formsbridge.codeccoop.org
  * Description:         Bridge your WordPress forms without code, add custom fields, use field mappers, set up a workflow and make your data flow seamlessly to your backend
  * Author:              codeccoop
@@ -141,6 +141,46 @@ class Forms_Bridge extends Base_Plugin
         );
 
         add_action('init', [self::class, 'load_data'], 0, 0);
+
+        add_action(
+            'in_plugin_update_message-forms-bridge/forms-bridge.php',
+            function ($plugin_data, $response) {
+                if ($response->slug !== 'forms-bridge') {
+                    return;
+                }
+
+                if (
+                    !preg_match(
+                        '/^(\d+)\.\d+\.\d+$/',
+                        $response->new_version,
+                        $matches
+                    )
+                ) {
+                    return;
+                }
+
+                $new_version = $matches[1];
+                $db_version = get_option(self::db_version, '1.0.0');
+
+                if (!preg_match('/^(\d+)\.\d+\.\d+$/', $db_version, $matches)) {
+                    return;
+                }
+
+                $from_version = $matches[1];
+
+                if ($new_version > $from_version) {
+                    echo '<br /><b>' .
+                        '&nbsp' .
+                        __(
+                            'This is a major release and while tested thoroughly you might experience conflicts or lost data. We recommend you back up your data before updating and check your configuration after updating.',
+                            'forms-bridge'
+                        ) .
+                        '</b>';
+                }
+            },
+            10,
+            2
+        );
     }
 
     /**

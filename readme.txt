@@ -1,4 +1,4 @@
-=== Forms Bridge ===
+=== Forms Bridge - Infinite integrations ===
 Contributors: codeccoop
 Tags: odoo, dolibarr, holded, forms, woocommerce
 Donate link: https://buymeacoffee.com/codeccoop
@@ -29,7 +29,7 @@ Forms Bridge has integrations for:
 
 Forms Bridge comes with free addons. Each addon adds to the plugin new bridges to work with specific APIs, new workflow jobs and bridge templates.
 
-Forms Bridge has core support for generic REST API bridges and addons for:
+Forms Bridge has the following addons:
 
 * [REST API](https://en.wikipedia.org/wiki/REST)
 * [Bigin](https://www.bigin.com/developer/docs/apis/v2/?source=developer)
@@ -107,6 +107,8 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 * feat: Wipe config button
 * feat: Settings API refactor
 * feat: Zoho and Google Oauth web based credentials
+* feat: drop support for Google service credentials
+* feat: drop support for Zoho Self Client credentials
 
 = 3.5.4 =
 * fix: use conditional mappers on stringify attachments
