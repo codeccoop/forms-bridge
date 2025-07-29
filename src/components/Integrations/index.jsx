@@ -50,14 +50,14 @@ export default function Integrations({ loading }) {
 
   return (
     <PanelBody
-      title={__("Integrations", "forms-bridge")}
+      title={__("Form builders", "forms-bridge")}
       initialOpen={isEmpty || isUnconfigured}
     >
       {(isEmpty && (
         <>
           <p>
             {__(
-              "It seems you have no available integrations. If you want to use Forms Bridge, you should install, at least one of the following plugins before you can create form bridges.",
+              "It seems you have no available form builders. If you want to use Forms Bridge, you should install, at least one of the following plugins before you can create form bridges.",
               "forms-bridge"
             )}
           </p>
@@ -110,7 +110,7 @@ export default function Integrations({ loading }) {
       )) || (
         <p>
           {__(
-            "Select which plugins you want to integrate with Forms Bridge",
+            "Select which form builder plugins you want Forms Bridge to work",
             "forms-bridge"
           )}
         </p>

@@ -13,11 +13,11 @@ Bridge your WordPress forms without code, add custom fields, use field mappers, 
 
 Think of a bridge as a pipeline through which your form submissions data flows to your backend or service. In the middle, you can add custom fields to the form submissions, use field mappers to rename and mutate your form responses, or use workflow jobs to process the data before it is sent over the wire. With bridges you can connect your WordPress forms to any kind of backend, it doesn't matter if it is a CRM, an ERP, a booking system or an email marketing platform, the only requirement is an HTTP API. If it has an API it can be bridged!
 
-== Integrations ==
+== Form builders ==
 
-Integrations are well known plugins that add forms to WordPress. We do bridges, let them do the forms and then work together to make your business work with ease.
+Form builders are well known plugins that add forms to WordPress. We do bridges, let them do the forms and then work together to make your business work with ease.
 
-Forms Bridge has integrations for:
+Forms Bridge supports the following form builders:
 
 * [Contact Form 7](https://wordpress.org/plugins/contact-form-7/)
 * [GravityForms](https://www.gravityforms.com)
@@ -100,7 +100,7 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 
 = 4.0.0 =
 * feat: Workflow jobs editor
-* feat: Nextcloud integration
+* feat: Nextcloud addon
 * fix: Edge case of mutations and fingers
 * feat: HTTP authentication
 * feat: Admin UI refactor
