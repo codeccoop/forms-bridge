@@ -619,7 +619,7 @@ class Form_Bridge_Template
 
         if (empty($data['integrations'])) {
             foreach (Integration::integrations() as $integration) {
-                if ($integration !== 'woo') {
+                if ($integration::name !== 'woo') {
                     $data['integrations'][] = $integration::name;
                 }
             }
