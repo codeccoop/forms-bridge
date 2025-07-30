@@ -674,7 +674,10 @@ class Forms_Bridge extends Base_Plugin
                 continue;
             }
 
-            if ($as_int($version) >= $as_int($from)) {
+            if (
+                $as_int($version) > $as_int($from) &&
+                $as_int($version) <= $as_int($to)
+            ) {
                 $migrations[] = $migration;
             }
         }
