@@ -50,7 +50,6 @@ class Mailchimp_Addon extends Addon
                 'endpoint' => '/3.0/lists',
                 'method' => 'GET',
                 'backend' => $backend,
-                'credential' => $credential,
             ],
             self::name
         );
