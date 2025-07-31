@@ -4,7 +4,7 @@ Tags: odoo, dolibarr, holded, forms, woocommerce
 Donate link: https://buymeacoffee.com/codeccoop
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable Tag: 4.0.1
+Stable Tag: 4.0.2
 Tested up to: 6.8
 
 Bridge your WordPress forms without code, add custom fields, use field mappers, set up a workflow and make your data flow seamlessly to your backend.
@@ -98,11 +98,15 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 
 == Changelog ==
 
+= 4.0.2 =
+* feat: mailchimp api url selector
+
 = 4.0.1 =
 * feat: rename form integrations to form builders
 * feat: oauth grant as GET requests
 * feat: dolibarr, odoo and holded sync products templates
 * feat: brevo woo orders template
+* fix: migrations enqueuement loop
 
 = 4.0.0 =
 * feat: Workflow jobs editor
