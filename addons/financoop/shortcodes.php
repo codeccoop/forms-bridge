@@ -7,8 +7,8 @@ if (!defined('ABSPATH')) {
 }
 
 add_shortcode('financoop_campaign', function ($atts) {
-    $addon_dir = dirname(__FILE__, 2);
-    require_once $addon_dir . '/financoop.php';
+    $addon_dir = dirname(__FILE__);
+    require_once $addon_dir . '/class-financoop-addon.php';
 
     if (!isset($atts['id'])) {
         return "[financoop_campaign id='null']Missing 'id' param[/financoop_campaign]";
@@ -20,14 +20,23 @@ add_shortcode('financoop_campaign', function ($atts) {
 
     $currency = $atts['currency'] ?? '€';
 
-    $campaign = Finan_Coop_Addon::fetch_campaign($atts['id'], [
-        'name' => $atts['backend'],
-    ]);
+    $bridge = new Finan_Coop_Form_Bridge(
+        [
+            'name' => '__financoop-' . time(),
+            'endpoint' => "/api/campaign/{$atts['id']}",
+            'backend' => $atts['backend'],
+            'method' => 'GET',
+        ],
+        'financoop'
+    );
 
-    if (is_wp_error($campaign)) {
+    $response = $bridge->submit();
+    if (is_wp_error($response)) {
         $message = $campaign->get_error_message();
         return "[financoop_campaign id='{$atts['id']}']Fetch campaign error message: {$message}[/financoop_campaign]";
     }
+
+    $campaign = $response['data'];
 
     ob_start();
     ?><style>.financoop-campaign-state{background:var(--wp-admin-theme-color);color:white;font-size:0.8em;padding:0 0.6em;width:fit-content;border-radius:1em}

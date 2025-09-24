@@ -397,6 +397,10 @@ class Form_Bridge
         }
 
         $backend = $this->backend();
+        if (!$backend) {
+            return new WP_Error('invalid_bridge');
+        }
+
         $method = $this->method;
 
         return $backend->$method($this->endpoint, $payload, [], $attachments);
