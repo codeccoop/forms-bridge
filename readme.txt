@@ -4,7 +4,7 @@ Tags: odoo, dolibarr, holded, forms, woocommerce
 Donate link: https://buymeacoffee.com/codeccoop
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable Tag: 4.0.3
+Stable Tag: 4.0.4
 Tested up to: 6.8
 
 Bridge your WordPress forms without code, add custom fields, use field mappers, set up a workflow and make your data flow seamlessly to your backend.
@@ -97,6 +97,12 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 9. Debug console
 
 == Changelog ==
+
+= 4.0.4 =
+* feat: add remuneration_type form field on financoop subscription request template
+* fix: minnor frontend fixes and improvements
+* fix: financoop shortcode, templates and jobs
+* fix: template config loading race conditions
 
 = 4.0.3 =
 * fix: load text domain warnings
