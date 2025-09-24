@@ -2,6 +2,9 @@
 
 namespace FORMS_BRIDGE;
 
+use Error;
+use Exception;
+
 if (!defined('ABSPATH')) {
     exit();
 }
@@ -20,23 +23,27 @@ add_shortcode('financoop_campaign', function ($atts) {
 
     $currency = $atts['currency'] ?? '€';
 
-    $bridge = new Finan_Coop_Form_Bridge(
-        [
-            'name' => '__financoop-' . time(),
-            'endpoint' => "/api/campaign/{$atts['id']}",
-            'backend' => $atts['backend'],
-            'method' => 'GET',
-        ],
-        'financoop'
-    );
+    try {
+        $bridge = new Finan_Coop_Form_Bridge(
+            [
+                'name' => '__financoop-' . time(),
+                'endpoint' => "/api/campaign/{$atts['id']}",
+                'backend' => $atts['backend'],
+                'method' => 'GET',
+            ],
+            'financoop'
+        );
 
-    $response = $bridge->submit();
-    if (is_wp_error($response)) {
-        $message = $campaign->get_error_message();
-        return "[financoop_campaign id='{$atts['id']}']Fetch campaign error message: {$message}[/financoop_campaign]";
+        $response = $bridge->submit();
+        if (is_wp_error($response)) {
+            $message = $campaign->get_error_message();
+            return "[financoop_campaign id='{$atts['id']}' backend='{$atts['backend']}']Fetch campaign error message: {$message}[/financoop_campaign]";
+        }
+
+        $campaign = $response['data'];
+    } catch (Error | Exception $e) {
+        return "[financoop_campaign id='{$atts['id']}' backend='{$atts['backend']}']Fetch campaign error message: {$e->getMessage()}[/financoop_campaign]";
     }
-
-    $campaign = $response['data'];
 
     ob_start();
     ?><style>.financoop-campaign-state{background:var(--wp-admin-theme-color);color:white;font-size:0.8em;padding:0 0.6em;width:fit-content;border-radius:1em}

@@ -140,7 +140,7 @@ class Odoo_Form_Bridge extends Form_Bridge
             return self::$session;
         }
 
-        $session_id = Forms_Bridge::slug() . '-' . time();
+        $session_id = 'forms-bridge-' . time();
 
         $payload = self::rpc_payload($session_id, 'common', 'login', $login);
 
