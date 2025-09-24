@@ -29,20 +29,6 @@ export default function WorkflowStage({
     return Array.from(diff.missing).length > 0;
   }, [diff]);
 
-  const stepRef = useRef(step);
-
-  useEffect(() => {
-    if (stepRef.current !== step) {
-      if (mode !== "payload") {
-        setMode("payload");
-      }
-    }
-
-    return () => {
-      stepRef.current = step;
-    };
-  }, [step, mode]);
-
   const jobMappers = useMemo(() => {
     return workflowJob?.mappers || [];
   }, [workflowJob]);
@@ -56,6 +42,26 @@ export default function WorkflowStage({
     () => mappers.filter((mapper) => mapper.from && mapper.to),
     [mappers]
   );
+
+  const stepRef = useRef(step);
+  useEffect(() => {
+    if (stepRef.current !== step) {
+      if (mode !== "payload") {
+        if (mode === "mappers") {
+          setJobMappers(
+            stepRef.current,
+            mappers.filter((m) => m.to && m.from)
+          );
+        }
+
+        setMode("payload");
+      }
+    }
+
+    return () => {
+      stepRef.current = step;
+    };
+  }, [step, mode]);
 
   const switchMode = useCallback(
     (target) => {
