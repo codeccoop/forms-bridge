@@ -54,13 +54,6 @@ class Addon extends Singleton
     public const bridge_class = '\FORMS_BRIDGE\Form_Bridge';
 
     /**
-     * Handles the addon's credential class name.
-     *
-     * @var string
-     */
-    public const credential_class = '\FORMS_BRIDGE\Credential';
-
-    /**
      * Addon's default config getter.
      *
      * @return array
@@ -68,7 +61,6 @@ class Addon extends Singleton
     public static function schema()
     {
         $bridge_schema = FBAPI::get_bridge_schema(static::name);
-        $credential_schema = FBAPI::get_credential_schema(static::name);
 
         return [
             'type' => 'object',
@@ -262,7 +254,7 @@ class Addon extends Singleton
             return $data;
         }
 
-        $data['bridges'] = static::sanitize_bridges($data['bridges'], $data);
+        $data['bridges'] = static::sanitize_bridges($data['bridges']);
 
         return $data;
     }
@@ -271,11 +263,10 @@ class Addon extends Singleton
      * Apply bridges setting data sanitization and validation.
      *
      * @param array $bridges Collection of bridges data.
-     * @param array $setting_data Parent setting data.
      *
      * @return array
      */
-    private static function sanitize_bridges($bridges, $setting_data)
+    private static function sanitize_bridges($bridges)
     {
         $uniques = [];
         $sanitized = [];

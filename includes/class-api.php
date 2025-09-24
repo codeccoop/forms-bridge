@@ -578,11 +578,9 @@ class FBAPI
     /**
      * Gets the credential schema for a given addon.
      *
-     * @param string $addon Addon name.
-     *
-     * @return array|null
+     * @return array
      */
-    public static function get_credential_schema($addon = null)
+    public static function get_credential_schema()
     {
         return Credential::schema();
     }

@@ -953,10 +953,6 @@ class Form_Bridge_Template
                             );
                         }
 
-                        if ($create_backend) {
-                            $this->remove_backend($data['backend']['name']);
-                        }
-
                         return new WP_Error(
                             'credential_creation_error',
                             __(
@@ -978,6 +974,10 @@ class Form_Bridge_Template
                 if (!$result) {
                     if ($create_form) {
                         $integration_instance->remove_form($data['form']['id']);
+                    }
+
+                    if ($create_credential) {
+                        $this->remove_credential($data['credential']['name']);
                     }
 
                     return new WP_Error(
