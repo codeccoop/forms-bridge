@@ -85,7 +85,7 @@ add_filter(
                     [
                         'ref' => '#credential',
                         'name' => 'client_secret',
-                        'label' => __('API Key', 'forms-bridge'),
+                        'label' => __('Password', 'forms-bridge'),
                         'type' => 'text',
                         'required' => true,
                     ],

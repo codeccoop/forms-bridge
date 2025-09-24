@@ -90,10 +90,7 @@ add_filter(
                     [
                         'ref' => '#credential',
                         'name' => 'client_secret',
-                        'description' => __(
-                            'User password or API token',
-                            'forms-bridge'
-                        ),
+                        'description' => __('User password', 'forms-bridge'),
                         'label' => __('Password', 'forms-bridge'),
                         'type' => 'text',
                         'required' => true,

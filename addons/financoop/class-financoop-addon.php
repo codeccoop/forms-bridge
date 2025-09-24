@@ -166,6 +166,10 @@ class Finan_Coop_Addon extends Addon
                             'name' => 'type',
                             'schema' => ['type' => 'string'],
                         ],
+                        [
+                            'name' => 'remuneration_type',
+                            'schema' => ['type' => 'string'],
+                        ],
                     ],
                     $common_schema
                 );

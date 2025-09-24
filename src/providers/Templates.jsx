@@ -42,7 +42,10 @@ export default function TemplatesProvider({ children }) {
       return apiFetch({
         path: `forms-bridge/v1/${addon}/templates/${template}`,
       })
-        .then(setConfig)
+        .then((config) => {
+          if (!template) return;
+          setConfig(config);
+        })
         .catch(() =>
           setError("error", __("Template config load error", "forms-bridge"))
         );

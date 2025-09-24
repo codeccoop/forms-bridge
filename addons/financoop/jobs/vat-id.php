@@ -23,7 +23,11 @@ function forms_bridge_financoop_vat_id($payload)
             $locale = 'es';
         }
 
-        $vat_prefix = strtoupper(explode('_', $locale)[0]);
+        if (strstr($locale, '_')) {
+            $locale = explode('_', $locale)[1];
+        }
+
+        $vat_prefix = strtoupper($locale);
     }
 
     if (!isset($forms_bridge_iso2_countries[$vat_prefix])) {

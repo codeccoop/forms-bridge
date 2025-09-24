@@ -19,7 +19,6 @@ const DEFAULTS = Object.freeze({
     general: {
       loading: true,
       notification_receiver: "",
-      backends: [],
       addons: [],
       integrations: null,
       debug: false,

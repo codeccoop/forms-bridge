@@ -52,7 +52,7 @@ export default function BridgeFields({ data, setData, schema, errors = {} }) {
       .filter((name) => !INTERNALS.includes(name))
       .map((name) => ({
         ...schema.properties[name],
-        label: schema.properties[name].name || name,
+        label: schema.properties[name].title || name,
         name,
         value: schema.properties[name].const,
       }))

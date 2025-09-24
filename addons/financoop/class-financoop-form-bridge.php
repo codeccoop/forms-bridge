@@ -95,9 +95,9 @@ class Finan_Coop_Form_Bridge extends Form_Bridge
 
         if (isset($response['data']['result']['error'])) {
             $error = new WP_Error(
-                'response_code_' . $response['data']['result']['error']['code'],
-                $response['data']['result']['error']['message'],
-                $response['data']['result']['error']['data']
+                'response_code_' . $response['data']['result']['status'],
+                $response['data']['result']['error'],
+                $response['data']['result']['details']
             );
 
             $error_data = ['response' => $response];

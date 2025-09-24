@@ -237,6 +237,7 @@ class Form_Bridge
             'addon' => $this->addon,
         ]);
     }
+
     /**
      * Magic method to proxy public attributes to method getters.
      *
@@ -259,8 +260,6 @@ class Form_Bridge
                 return $this->backend();
             case 'content_type':
                 return $this->content_type();
-            case 'credential':
-                return $this->credential();
             case 'workflow':
                 return $this->workflow();
             case 'is_valid':
@@ -350,24 +349,6 @@ class Form_Bridge
     }
 
     /**
-     * Bridge's credential data getter.
-     *
-     * @return Credential|Oauth_Credential|null
-     */
-    protected function credential()
-    {
-        if (!$this->is_valid) {
-            return;
-        }
-
-        if (!isset($this->data['credential'])) {
-            return;
-        }
-
-        return FBAPI::get_credential($this->data['credential'], $this->addon);
-    }
-
-    /**
      * Gets bridge's workflow instance.
      *
      * @return Workflow_Job|null;
@@ -416,6 +397,10 @@ class Form_Bridge
         }
 
         $backend = $this->backend();
+        if (!$backend) {
+            return new WP_Error('invalid_bridge');
+        }
+
         $method = $this->method;
 
         return $backend->$method($this->endpoint, $payload, [], $attachments);

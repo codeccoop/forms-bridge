@@ -74,6 +74,7 @@ export default function Templates() {
   useEffect(() => {
     if (!isOpen) {
       setTemplate(null);
+      setTemplateData({});
       setDone(false);
     }
   }, [isOpen]);
