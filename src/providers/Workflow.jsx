@@ -119,7 +119,7 @@ export default function WorkflowProvider({
   workflow = [],
 }) {
   const [addon] = useTab();
-  const [error, setError] = useError();
+  const [, setError] = useError();
 
   const [jobOnEditor] = useJobConfig();
 
@@ -127,50 +127,57 @@ export default function WorkflowProvider({
   const [step, setStep] = useState(0);
   const [jobs, setJobs] = useState([]);
 
+  const fetchSignal = useRef();
+  const fetchJobs = (workflow) => {
+    if (fetchSignal.current) {
+      fetchSignal.current.abort();
+      fetchSignal.current = null;
+    }
+
+    if (!addon || !workflow.length) return Promise.resolve([]);
+
+    fetchSignal.current = new AbortController();
+    setIsLoading(true);
+
+    return apiFetch({
+      path: `forms-bridge/v1/${addon}/jobs/workflow`,
+      method: "POST",
+      data: { jobs: workflow },
+      signal: fetchSignal.current.signal,
+    })
+      .catch((err) => {
+        if (err.name === "AbortError") {
+          fetchSignal.current = null;
+          return;
+        }
+
+        setError(__("Loading workflow job error", "forms-bridge"));
+        return [];
+      })
+      .finally(() => {
+        fetchSignal.current = null;
+        setIsLoading(false);
+      });
+  };
+
   const [forms] = useForms();
   const form = useMemo(
     () => forms.find((form) => form._id === formId),
     [forms, formId]
   );
 
-  const fetchSignal = useRef();
-  const fetchJobs = useCallback(
-    (workflow) => {
-      setIsLoading(true);
-
-      if (fetchSignal.current) {
-        fetchSignal.current.abort();
-      }
-
-      fetchSignal.current = new AbortController();
-
-      return apiFetch({
-        path: `forms-bridge/v1/${addon}/jobs/workflow`,
-        method: "POST",
-        data: { jobs: workflow },
-        signal: fetchSignal.current.signal,
-      })
-        .catch((err) => {
-          if (err.name === "AbortError") return;
-
-          setError(__("Loading workflow job error", "forms-bridge"));
-          return [];
-        })
-        .finally(() => {
-          setIsLoading(false);
-          fetchSignal.current = null;
-        });
-    },
-    [addon]
-  );
-
   useEffect(() => {
-    if (jobs.length && (!workflow.length || !addon)) {
-      setJobs([]);
-      return;
+    if (fetchSignal.current) {
+      fetchSignal.current.abort();
+      fetchSignal.current = null;
     }
 
-    if (error) {
+    setJobs([]);
+  }, [addon]);
+
+  useEffect(() => {
+    if (!workflow.length) {
+      jobs.length && setJobs([]);
       return;
     }
 
@@ -208,7 +215,7 @@ export default function WorkflowProvider({
         setJobs(newJobs);
       }
     }
-  }, [addon, jobs, workflow, fetchJobs]);
+  }, [jobs, workflow]);
 
   const workflowJobs = useMemo(() => {
     const workflowJobs = workflow
@@ -323,7 +330,7 @@ export default function WorkflowProvider({
 
       setJobs(newJobs);
     });
-  }, [jobOnEditor, jobs, workflowJobs, fetchJobs]);
+  }, [jobOnEditor, jobs, workflowJobs]);
 
   return (
     <WorkflowContext.Provider
