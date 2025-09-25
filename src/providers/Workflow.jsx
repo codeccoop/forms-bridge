@@ -14,8 +14,15 @@ import diff from "../lib/diff";
 import { isset } from "../lib/utils";
 
 const apiFetch = wp.apiFetch;
-const { createContext, useContext, useState, useEffect, useMemo, useCallback } =
-  wp.element;
+const {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+} = wp.element;
 const { __ } = wp.i18n;
 
 const WorkflowContext = createContext({
@@ -126,6 +133,37 @@ export default function WorkflowProvider({
     [forms, formId]
   );
 
+  const fetchSignal = useRef();
+  const fetchJobs = useCallback(
+    (workflow) => {
+      setIsLoading(true);
+
+      if (fetchSignal.current) {
+        fetchSignal.current.abort();
+      }
+
+      fetchSignal.current = new AbortController();
+
+      return apiFetch({
+        path: `forms-bridge/v1/${addon}/jobs/workflow`,
+        method: "POST",
+        data: { jobs: workflow },
+        signal: fetchSignal.current.signal,
+      })
+        .catch((err) => {
+          if (err.name === "AbortError") return;
+
+          setError(__("Loading workflow job error", "forms-bridge"));
+          return [];
+        })
+        .finally(() => {
+          setIsLoading(false);
+          fetchSignal.current = null;
+        });
+    },
+    [addon]
+  );
+
   useEffect(() => {
     if (jobs.length && (!workflow.length || !addon)) {
       setJobs([]);
@@ -150,6 +188,8 @@ export default function WorkflowProvider({
 
     if (newJobNames.length) {
       fetchJobs(newJobNames).then((newJobs) => {
+        if (newJobs === undefined) return;
+
         newJobs = jobs
           .filter((job) => workflow.indexOf(job.name) !== -1)
           .concat(newJobs)
@@ -168,25 +208,7 @@ export default function WorkflowProvider({
         setJobs(newJobs);
       }
     }
-  }, [addon, jobs, workflow]);
-
-  const fetchJobs = useCallback(
-    (workflow) => {
-      setIsLoading(true);
-
-      return apiFetch({
-        path: `forms-bridge/v1/${addon}/jobs/workflow`,
-        method: "POST",
-        data: { jobs: workflow },
-      })
-        .catch(() => {
-          setError(__("Loading workflow job error", "forms-bridge"));
-          return [];
-        })
-        .finally(() => setIsLoading(false));
-    },
-    [addon]
-  );
+  }, [addon, jobs, workflow, fetchJobs]);
 
   const workflowJobs = useMemo(() => {
     const workflowJobs = workflow
@@ -292,6 +314,8 @@ export default function WorkflowProvider({
     }
 
     fetchJobs([jobOnEditor.name]).then((newJobs) => {
+      if (newJobs === undefined) return;
+
       newJobs = jobs
         .slice(0, index)
         .concat(newJobs)
@@ -299,7 +323,7 @@ export default function WorkflowProvider({
 
       setJobs(newJobs);
     });
-  }, [jobOnEditor, jobs, workflowJobs]);
+  }, [jobOnEditor, jobs, workflowJobs, fetchJobs]);
 
   return (
     <WorkflowContext.Provider
