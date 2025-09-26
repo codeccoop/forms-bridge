@@ -147,15 +147,11 @@ class Google_Sheets_Form_Bridge extends Form_Bridge
             }
         }
 
-        $endpoint = $this->endpoint . '/values';
-
+        $endpoint = $this->endpoint . '/values/' . rawurlencode($this->tab);
         $method = $this->method;
 
         if ($method === 'POST' || $method === 'PUT') {
-            $append_range = rawurlencode($this->tab) . '!A1:Z';
-
-            $endpoint .=
-                '/' . $append_range . ':append/?valueInputOption=USER_ENTERED';
+            $endpoint .= '!A1:Z:append/?valueInputOption=USER_ENTERED';
 
             $headers = $this->get_headers($backend);
             if (is_wp_error($headers)) {
