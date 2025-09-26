@@ -1,6 +1,6 @@
 === Forms Bridge - Infinite integrations ===
 Contributors: codeccoop
-Tags: odoo, dolibarr, holded, forms, woocommerce
+Tags: odoo, dolibarr, listmonk, forms, woocommerce
 Donate link: https://buymeacoffee.com/codeccoop
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -80,7 +80,7 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 == Links ==
 
 * [Official website](https://formsbridge.codeccoop.org/)
-* [Gitlab](https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge/)
+* [Gitlab](https://gitlab.com/codeccoop/wp/plugins/forms-bridge/)
 * [Còdec](https://www.codeccoop.org)
 * [Other plugins](https://profiles.wordpress.org/codeccoop/#content-plugins)
 

@@ -5,14 +5,12 @@ import { useAddons } from "../../hooks/useGeneral";
 import Bridges from "../Bridges";
 import Jobs from "../Jobs";
 import useTab from "../../hooks/useTab";
-import { useSchemas } from "../../providers/Schemas";
 
 const { PanelRow, __experimentalSpacer: Spacer } = wp.components;
 const { useEffect, useMemo } = wp.element;
 
 export default function Addon() {
   const [name] = useTab();
-  const { bridge: bridgeSchema } = useSchemas() || {};
   const [addons] = useAddons();
 
   const logo = useMemo(() => {

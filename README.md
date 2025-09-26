@@ -79,9 +79,9 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 
 ## Dependencies
 
-This plugin relays on [Http Bridge](https://git.coopdevs.org/codeccoop/wp/plugins/bridges/http-bridge/)
-and [Wpct i18n](https://git.coopdevs.org/codeccoop/wp/plugins/wpct/i18n/) as depenendencies,
-as well as the [Wpct Plugin Common](https://git.coopdevs.org/codeccoop/wp/plugins/wpct-plugin-common)
+This plugin relays on [Http Bridge](https://gitlab.com/codeccoop/wp/plugins/http-bridge/)
+and [Wpct i18n](https://gitlab.coom/codeccoop/wp/plugins/wpct-i18n/) as depenendencies,
+as well as the [Wpct Plugin Common](https://gitlab.com/codeccoop/wp/plugins/wpct-plugin-common)
 snippets. The plugin comes with its dependencies bundled in its releases, so you should
 not worry about its managment. You can see this plugins documentation to know more about
 its APIs.
