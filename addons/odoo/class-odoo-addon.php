@@ -36,13 +36,6 @@ class Odoo_Addon extends Addon
      */
     public const bridge_class = '\FORMS_BRIDGE\Odoo_Form_Bridge';
 
-    protected static function defaults()
-    {
-        $defaults = parent::defaults();
-        $defaults['credentials'] = [];
-        return $defaults;
-    }
-
     /**
      * Performs a request against the backend to check the connexion status.
      *

@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Forms Bridge 3.5.4\n"
+"Project-Id-Version: Forms Bridge 4.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/forms-bridge\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr ""
 
 #. Description of the plugin
 #: forms-bridge.php
-msgid "Plugin to bridge WP forms submissions to any backend or service"
+msgid "Bridge your WordPress forms without code, add custom fields, use mappers, set up a workflow and make your data flow seamlessly to your backend"
 msgstr ""
 
 #. Author of the plugin
