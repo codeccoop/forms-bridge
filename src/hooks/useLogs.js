@@ -12,6 +12,7 @@ export default function useLogs({ debug }) {
     setLoading(true);
     return apiFetch({
       path: "forms-bridge/v1/logs?lines=1000",
+      signal: AbortSignal.timeout(3000),
     })
       .then((logs) => setLogs(logs))
       .catch(() => setError(true))

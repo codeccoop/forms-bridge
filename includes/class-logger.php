@@ -75,50 +75,39 @@ class Logger extends Singleton
             return [];
         }
 
+        $buffer = 4096;
+
         $socket = fopen($log_path, 'r');
         $cursor = -1;
         fseek($socket, $cursor, SEEK_END);
 
-        $char = fgetc($socket);
-        while ($char === "\n" || $char === "\r") {
-            fseek($socket, $cursor--, SEEK_END);
-            $char = fgetc($socket);
+        if (fread($socket, 1) != "\n") {
+            $lines--;
         }
 
-        $content = $char;
-        $line = 0;
-        while ($line < $lines) {
-            while ($char !== "\n" && $char !== "\r") {
-                if ($char === false) {
-                    break;
-                }
+        $output = '';
+        $chunk = '';
 
-                fseek($socket, $cursor--, SEEK_END);
-                $char = fgetc($socket);
+        while (ftell($socket) > 0 && $lines >= 0) {
+            $seek = min(ftell($socket), $buffer);
 
-                if ($char === "\t") {
-                    $char = '  ';
-                }
+            fseek($socket, -$seek, SEEK_CUR);
 
-                $content = $char . $content;
-            }
+            $output = ($chunk = fread($socket, $seek)) . $output;
 
-            while ($char === "\n" || $char === "\r") {
-                fseek($socket, $cursor--, SEEK_END);
-                $char = fgetc($socket);
-            }
+            fseek($socket, -mb_strlen($chunk, '8bit'), SEEK_CUR);
 
-            if ($char === false) {
-                break;
-            }
+            $lines -= substr_count($chunk, "\n");
+        }
 
-            $content = $char . $content;
-            $line++;
+        while ($lines++ < 0) {
+            $output = substr($output, strpos($output, "\n") + 1);
         }
 
         fclose($socket);
 
-        return (array) preg_split('/(\n|\r)+/', $content);
+        $output = trim($output);
+        return (array) preg_split('/(\n|\r)+/', $output);
     }
 
     /**
@@ -148,10 +137,11 @@ class Logger extends Singleton
             );
         }
 
-        $msg = sprintf("[%s] %s\n", $level, print_r($data, true));
+        $message = print_r($data, true);
+        $line = sprintf("[%s] %s\n", $level, $message);
 
         $socket = fopen(self::log_path(), 'a+');
-        fwrite($socket, $msg, strlen($msg));
+        fwrite($socket, $line, strlen($line));
         fclose($socket);
     }
 
