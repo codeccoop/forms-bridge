@@ -2,8 +2,10 @@
 
 namespace FORMS_BRIDGE;
 
+use DateTime;
 use Error;
 use Exception;
+use IntlDateFormatter;
 
 if (!defined('ABSPATH')) {
     exit();
@@ -117,7 +119,7 @@ function financoop_render_campaign_progress($campaign, $atts)
     }
 
     foreach ($atts['sources'] as $source) {
-        if ($campaign["has_{$source}_source"]) {
+        if (!empty($campaign["has_{$source}_source"])) {
             $output .= financoop_render_source_progress(
                 $campaign,
                 $source,
@@ -242,18 +244,18 @@ function financoop_render_campaign_dates($campaign)
     $days_to_start = null;
     $days_to_end = null;
 
-    $start_date = strtotime($start);
-    $end_date = null;
+    $start_time = strtotime($start);
+    $end_time = null;
 
     $now = time();
 
-    if ($start_date > $now) {
-        $days_to_start = ($start_date - $now) / (60 * 60 * 24);
+    if ($start_time > $now) {
+        $days_to_start = max(1, ($start_time - $now) / (60 * 60 * 24));
     }
 
     if ($end) {
-        $end_date = strtotime($end);
-        $days_to_end = ($end_date - $now) / (60 * 60 * 24);
+        $end_time = strtotime($end);
+        $days_to_end = max(0, ($end_time - $now) / (60 * 60 * 24));
     }
 
     if (!$start) {
@@ -273,12 +275,13 @@ function financoop_render_campaign_dates($campaign)
     }
 
     if ($end) {
+        $end_date = new DateTime($end);
         $output .= sprintf(
             '<p class="financoop-campaign-date end-date"><span class="label">%s: </span><span class="value">%s</span></p>',
             esc_html(
                 _x('End date', 'financoop campaign widget', 'forms-bridge')
             ),
-            esc_html(strftime('%d/%m/%Y', $end_date))
+            esc_html(IntlDateFormatter::formatObject($end_date, 'dd/MM/Y'))
         );
 
         if (!$days_to_start && $days_to_end > 0) {
