@@ -649,7 +649,7 @@ class Form_Bridge
                         $from = preg_replace('/\[\d*\]/', '', $mapper['from']);
                         if (
                             $from !== $name &&
-                            ($is_file && $from !== $name . '_filename')
+                            ($is_file ? $from !== $name . '_filename' : true)
                         ) {
                             continue;
                         }
