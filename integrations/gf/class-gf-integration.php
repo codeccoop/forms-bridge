@@ -691,8 +691,12 @@ class Integration extends BaseIntegration
                 $upload_path = GFFormsModel::get_upload_path($form_data['id']);
                 $upload_url = GFFormsModel::get_upload_url($form_data['id']);
 
-                $urls = $submission[$field['id']];
+                $urls = $submission[$field['id']] ?? [];
                 $urls = $field['is_multi'] ? json_decode($urls, true) : [$urls];
+
+                if (!is_array($urls)) {
+                    return $carry;
+                }
 
                 $paths = [];
                 foreach ($urls as $url) {
