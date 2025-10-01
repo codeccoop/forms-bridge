@@ -9,7 +9,7 @@ const buildPrettierCommand = (filenames) =>
     .join(" ")}`;
 
 const buildPrettierPhpCommand = (filenames) =>
-  `prettier --write --ignore-unknown --config .prettierrc-php ${filenames
+  `vendor/bin/php-cs-fixer --config=.php-cs-fixer.dist.php fix ${filenames
     .map((f) => path.relative(process.cwd(), f))
     .join(" ")}`;
 
