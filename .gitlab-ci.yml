@@ -37,6 +37,7 @@ phpunit:
   stage: test
   image: codeccoop/wp-test
   before_script:
+    - nohup docker-entrypoint.sh mariadbd &
     - composer install
     - bin/install-wp-tests.sh
   script:
