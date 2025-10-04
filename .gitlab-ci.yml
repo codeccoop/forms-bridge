@@ -35,7 +35,7 @@ phpunit:
     - vendor/bin/phpunit -c phpunit.xml.dist
   rules:
     # Only execute when a valid version tag like 1.0, 2.3-dev or similar is given
-    - if: $CI_PIPELINE_SOURCE != "push" && $CI_COMMIT_TAG =~ /^[0-9]+[.][0-9]+([.][0-9]+)?([-a-z])*$/
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG =~ /^[0-9]+[.][0-9]+([.][0-9]+)?([-a-z])*$/
     # Run always on MR pointing to master
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH
 
