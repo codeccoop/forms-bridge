@@ -374,6 +374,7 @@ class Integration extends BaseIntegration
             'children' => $children,
             'format' => strtolower($settings['date_format'] ?? ''),
             'schema' => $this->field_value_schema($settings, $children),
+            '_type' => $settings['type'],
         ];
     }
 
@@ -524,7 +525,7 @@ class Integration extends BaseIntegration
 
             $field = $submission['fields'][(int) $field_data['id']];
 
-            if ($field_data['type'] === 'repeater') {
+            if ($field_data['_type'] === 'repeater') {
                 $subfields = $field['fields'];
                 $values = $field['value'];
                 $fieldset = [];
@@ -542,7 +543,7 @@ class Integration extends BaseIntegration
                     $child_data = $field_data['children'][$field_index];
 
                     $row[$child_data['name']] = $this->format_field_value(
-                        $child_field['type'],
+                        $child_field['_type'],
                         $value['value']
                     );
 
