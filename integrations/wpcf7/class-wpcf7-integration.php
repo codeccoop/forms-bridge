@@ -230,6 +230,8 @@ class Integration extends BaseIntegration
         $type = $field->basetype;
         if ($type === 'conditional') {
             $type = $field->get_option('type')[0];
+        } elseif ($type === 'hidden') {
+            $type = 'text';
         }
 
         $options = [];
@@ -261,6 +263,7 @@ class Integration extends BaseIntegration
                     $field->basetype === 'fileconditional',
                 'format' => $format,
                 'schema' => $this->field_value_schema($field),
+                '_type' => $field->basetype,
             ],
             $field,
             'wpcf7'
@@ -373,18 +376,18 @@ class Integration extends BaseIntegration
             $i = array_search($key, array_column($form_data['fields'], 'name'));
             $field = $form_data['fields'][$i];
 
-            if ($field['type'] === 'hidden') {
+            if ($field['_type'] === 'hidden') {
                 $number_val = (float) $val;
                 if (strval($number_val) === $val) {
                     $data[$key] = $number_val;
                 } else {
                     $data[$key] = $val;
                 }
-            } elseif ($field['type'] === 'number') {
+            } elseif ($field['_type'] === 'number') {
                 $data[$key] = (float) $val;
             } elseif (is_array($val) && !$field['is_multi']) {
                 $data[$key] = $val[0];
-            } elseif ($field['type'] === 'file') {
+            } elseif ($field['_type'] === 'file') {
                 unset($data[$key]);
             }
         }

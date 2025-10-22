@@ -543,7 +543,7 @@ class Integration extends BaseIntegration
                     $child_data = $field_data['children'][$field_index];
 
                     $row[$child_data['name']] = $this->format_field_value(
-                        $child_field['_type'],
+                        $child_field['type'],
                         $value['value']
                     );
 
@@ -554,7 +554,7 @@ class Integration extends BaseIntegration
                 $data[$field_data['name']] = $fieldset;
             } else {
                 $data[$field_data['name']] = $this->format_field_value(
-                    $field_data['type'],
+                    $field_data['_type'],
                     $field['value']
                 );
 

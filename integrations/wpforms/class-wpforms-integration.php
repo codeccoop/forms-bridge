@@ -405,6 +405,7 @@ class Integration extends BaseIntegration
                 'format' => $format,
                 'children' => array_values($children),
                 'schema' => $this->field_value_schema($field, $children),
+                '_type' => $field['type'],
             ],
             $field,
             'wpforms'
@@ -568,7 +569,7 @@ class Integration extends BaseIntegration
         $repeaters = array_filter($form_data['fields'], static function (
             $field
         ) {
-            return $field['type'] === 'repeater';
+            return $field['_type'] === 'repeater';
         });
 
         $fields_in_repeaters = array_reduce(
@@ -630,11 +631,11 @@ class Integration extends BaseIntegration
 
     private function format_value($field, $field_data)
     {
-        if (strstr($field['type'], 'payment')) {
+        if (strstr($field['_type'], 'payment')) {
             $field['value'] = html_entity_decode($field['value']);
         }
 
-        if ($field_data['type'] === 'hidden') {
+        if ($field_data['_type'] === 'hidden') {
             $number_val = (float) $field['value'];
             if (strval($number_val) === $field['value']) {
                 return $number_val;
@@ -642,8 +643,8 @@ class Integration extends BaseIntegration
         }
 
         if (
-            $field_data['type'] === 'number' ||
-            $field_data['type'] === 'number-slider'
+            $field_data['_type'] === 'number' ||
+            $field_data['_type'] === 'number-slider'
         ) {
             if (isset($field['amount'])) {
                 $value = (float) $field['amount'];
@@ -658,8 +659,8 @@ class Integration extends BaseIntegration
         }
 
         if (
-            $field_data['type'] === 'select' ||
-            $field_data['type'] === 'checkbox'
+            $field_data['_type'] === 'select' ||
+            $field_data['_type'] === 'checkbox'
         ) {
             if ($field_data['is_multi']) {
                 return array_map(function ($value) {
@@ -668,7 +669,7 @@ class Integration extends BaseIntegration
             }
         }
 
-        if ($field_data['type'] === 'address') {
+        if ($field_data['_type'] === 'address') {
             $post_values = $_POST['wpforms']['fields'][$field['id']];
             $field_values = [];
             foreach (array_keys($field_data['schema']['properties']) as $prop) {
@@ -678,7 +679,7 @@ class Integration extends BaseIntegration
             return $field_values;
         }
 
-        if ($field_data['type'] === 'date-time') {
+        if ($field_data['_type'] === 'date-time') {
             if ($field_data['schema']['type'] === 'object') {
                 $post_values = $_POST['wpforms']['fields'][$field['id']];
                 return [
