@@ -10,7 +10,7 @@
  * License URI:         http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:         forms-bridge
  * Domain Path:         /languages
- * Version:             4.0.5
+ * Version:             4.0.6
  * Requires PHP:        8.0
  * Requires at least:   6.7
  */
@@ -28,7 +28,7 @@ if (!defined('ABSPATH')) {
 }
 
 define('FORMS_BRIDGE_INDEX', __FILE__);
-define('FORMS_BRIDGE_DIR', dirname(__FILE__));
+define('FORMS_BRIDGE_DIR', __DIR__);
 define('FORMS_BRIDGE_INTEGRATIONS_DIR', FORMS_BRIDGE_DIR . '/integrations');
 define('FORMS_BRIDGE_ADDONS_DIR', FORMS_BRIDGE_DIR . '/addons');
 
@@ -538,9 +538,9 @@ class Forms_Bridge extends Base_Plugin
      * Sends error notifications to the email receiver.
      *
      * @param Form_Bridge $bridge Bridge instance.
-     * @param WP_Error $error Error instance.
-     * @param array $payload Submission data.
-     * @param array $attachments Submission attachments.
+     * @param WP_Error    $error Error instance.
+     * @param array       $payload Submission data.
+     * @param array       $attachments Submission attachments.
      */
     private static function notify_error(
         $bridge,
