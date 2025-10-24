@@ -8,13 +8,13 @@ const buildPrettierCommand = (filenames) =>
     .map((f) => path.relative(process.cwd(), f))
     .join(" ")}`;
 
-const buildPhpCsFixerCommand = (filenames) =>
-  `vendor/bin/php-cs-fixer --config=.php-cs-fixer.dist.php fix ${filenames
+const buildPhpCbfCommand = (filenames) =>
+  `vendor/bin/phpcbf ${filenames
     .map((f) => path.relative(process.cwd(), f))
     .join(" ")}`;
 
 module.exports = {
   "src/**/*.{js,jsx}": [buildEslintCommand],
   "*.{json,js,jsx,html,css}": [buildPrettierCommand],
-  "*.php": [buildPhpCsFixerCommand],
+  "*.php": [buildPhpCbfCommand],
 };
