@@ -202,6 +202,31 @@ class Odoo_Form_Bridge extends Form_Bridge
             1
         );
 
+        $backend_name = $backend->name;
+
+        add_filter(
+            'http_bridge_backend_headers',
+            static function ($headers, $backend) use ($backend_name) {
+                if ($backend->name !== $backend_name) {
+                    return $headers;
+                }
+
+                $locale = get_locale();
+                if (!$locale) {
+                    return $headers;
+                }
+
+                if ('ca' === $locale) {
+                    $locale = 'ca_ES';
+                }
+
+                $headers['Accept-Language'] = $locale;
+                return $headers;
+            },
+            20,
+            2
+        );
+
         $login = $credential->authorization();
         $session = self::rpc_login($login, $backend);
 
