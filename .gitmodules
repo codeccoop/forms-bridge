@@ -1,9 +1,9 @@
 [submodule "common"]
-	path = common
+	path = forms-bridge/common
 	url = https://git.coopdevs.org/codeccoop/wp/plugins/wpct-plugin-common.git
 [submodule "deps/http"]
-	path = deps/http
+	path = forms-bridge/deps/http
 	url = https://git.coopdevs.org/codeccoop/wp/plugins/bridges/http-bridge.git
 [submodule "deps/i18n"]
-	path = deps/i18n
+	path = forms-bridge/deps/i18n
 	url = https://git.coopdevs.org/codeccoop/wp/plugins/wpct-i18n.git
