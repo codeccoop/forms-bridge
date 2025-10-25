@@ -88,4 +88,4 @@ release:
   script:
     - |
       glab release create $CI_COMMIT_TAG --name "Release $CI_COMMIT_TAG" \
-        --assets-link "[{\"name\":\"${ZIP}\",\"url\":\"${PACKAGE_REGISTRY_URL}\/${ZIP}\",\"link_type\":\"package\",\"direct_asset_path\":\"\/plugins\/bridges\/${ZIP}\"}]"
+        --asset-link "[{\"name\":\"${ZIP}\",\"url\":\"${PACKAGE_REGISTRY_URL}\/${ZIP}\",\"link_type\":\"package\",\"direct_asset_path\":\"\/plugins\/bridges\/${ZIP}\"}]"
