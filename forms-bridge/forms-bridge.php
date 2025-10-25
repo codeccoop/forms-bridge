@@ -82,7 +82,7 @@ class Forms_Bridge extends Base_Plugin {
 	 *
 	 * @var string
 	 */
-	protected const MENU_CLASS = '\FORMS_BRIDGE\Menu';
+	const MENU_CLASS = '\FORMS_BRIDGE\Menu';
 
 	/**
 	 * Handles the current bridge instance. Available only during form submissions.
@@ -193,7 +193,7 @@ class Forms_Bridge extends Base_Plugin {
 	 */
 	public static function activate() {
 		$version = get_option( self::DB_VERSION );
-		if ( $version === false ) {
+		if ( false === $version ) {
 			update_option( self::DB_VERSION, self::version(), true );
 		}
 	}
@@ -269,11 +269,11 @@ class Forms_Bridge extends Base_Plugin {
 		);
 	}
 
-		/**
-		 * Public access to the current bridge reference.
-		 *
-		 * @return Form_Bridge|null
-		 */
+	/**
+	 * Public access to the current bridge reference.
+	 *
+	 * @return Form_Bridge|null
+	 */
 	public static function current_bridge() {
 		return self::$current_bridge;
 	}
@@ -671,11 +671,11 @@ class Forms_Bridge extends Base_Plugin {
 		update_option( self::DB_VERSION, $to );
 	}
 
-		/**
-		 * Gets the path to the plugin namespaced upload directory.
-		 *
-		 * @return string
-		 */
+	/**
+	 * Gets the path to the plugin namespaced upload directory.
+	 *
+	 * @return string
+	 */
 	public static function upload_dir() {
 		$dir = wp_upload_dir()['basedir'] . '/forms-bridge';
 
