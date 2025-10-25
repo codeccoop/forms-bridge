@@ -9,7 +9,7 @@ const buildPrettierCommand = (filenames) =>
     .join(" ")}`;
 
 const buildPhpCbfCommand = (filenames) =>
-  `vendor/bin/phpcbf ${filenames
+  `vendor/bin/phpcbf -n ${filenames
     .map((f) => path.relative(process.cwd(), f))
     .join(" ")}`;
 
