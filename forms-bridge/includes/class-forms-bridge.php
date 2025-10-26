@@ -168,6 +168,7 @@ class Forms_Bridge extends Base_Plugin {
 	 */
 	public static function load_data() {
 		$data_dir = self::path() . '/data';
+
 		foreach ( array_diff( scandir( $data_dir ), array( '.', '..' ) ) as $file ) {
 			$filepath = "{$data_dir}/{$file}";
 			if ( is_file( $filepath ) && is_readable( $filepath ) ) {
@@ -581,7 +582,7 @@ class Forms_Bridge extends Base_Plugin {
 	 * Apply db migrations on plugin upgrades.
 	 */
 	private static function do_migrations() {
-		$from = get_option( self::DB_VERSION, '1.0.0' );
+		$from = get_option( self::DB_VERSION, self::version() );
 
 		if ( ! preg_match( '/^\d+\.\d+\.\d+$/', $from ) ) {
 			Logger::log( 'Invalid db plugin version', Logger::ERROR );
