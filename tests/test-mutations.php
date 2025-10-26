@@ -1,7 +1,8 @@
 <?php
-
 /**
  * Class MappersTest
+ *
+ * @package forms-bridge-tests
  */
 
 use FORMS_BRIDGE\Form_Bridge;

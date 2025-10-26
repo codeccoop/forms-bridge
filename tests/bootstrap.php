@@ -1,8 +1,12 @@
 <?php
-
 /**
  * PHPUnit bootstrap file.
+ *
+ * @package forms-bridge-tests
  */
+
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
+// phpcs:disable WordPress.Security.EscapeOutput
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 

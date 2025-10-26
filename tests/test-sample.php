@@ -1,6 +1,8 @@
 <?php
 /**
  * Class SampleTest
+ *
+ * @package forms-bridge-tests
  */
 
 /**
