@@ -1,0 +1,64 @@
+<?php
+
+return array(
+	'title'  => 'Test Checkout Form',
+	'fields' => array(
+		array(
+			'name'     => 'name',
+			'label'    => 'Name',
+			'type'     => 'text',
+			'required' => true,
+		),
+		array(
+			'name'           => 'email',
+			'label'          => 'Email',
+			'type'           => 'email',
+			'required'       => true,
+			'is_conditional' => true,
+		),
+		array(
+			'name'     => 'age',
+			'label'    => 'Age',
+			'type'     => 'integer',
+			'required' => true,
+		),
+		array(
+			'name'    => 'gender',
+			'label'   => 'Gender',
+			'type'    => 'select',
+			'options' => array(
+				array(
+					'value' => 'male',
+					'label' => 'Male',
+				),
+				array(
+					'value' => 'female',
+					'label' => 'Female',
+				),
+			),
+		),
+		array(
+			'name'  => 'subscription',
+			'label' => 'Subscription',
+			'type'  => 'acceptance',
+		),
+		array(
+			'name'        => 'street',
+			'label'       => 'Street',
+			'type'        => 'string',
+			'conditional' => true,
+		),
+		array(
+			'name'        => 'zip',
+			'label'       => 'Postal code',
+			'type'        => 'string',
+			'conditional' => true,
+		),
+		array(
+			'name'        => 'city',
+			'label'       => 'City',
+			'type'        => 'string',
+			'conditional' => true,
+		),
+	),
+);

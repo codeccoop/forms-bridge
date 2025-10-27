@@ -1,6 +1,6 @@
 <?php
 /**
- * Class MappersTest
+ * Class MutationsTest
  *
  * @package forms-bridge-tests
  */

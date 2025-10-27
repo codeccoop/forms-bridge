@@ -33,6 +33,15 @@ require_once "{$_tests_dir}/includes/functions.php";
  * Manually load the plugin being tested.
  */
 function _manually_load_plugin() {
+	add_filter(
+		'doing_it_wrong_trigger_error',
+		function ( $trigger, $function_name ) {
+			return $trigger && '_load_textdomain_just_in_time' !== $function_name;
+		},
+		90,
+		2
+	);
+
 	require dirname( __DIR__ ) . '/forms-bridge/forms-bridge.php';
 }
 
