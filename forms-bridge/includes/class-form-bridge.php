@@ -635,11 +635,11 @@ class Form_Bridge {
 			$is_conditional = $field['conditional'] ?? false;
 			$is_multi       = $field['is_multi'] ?? false;
 
-			$schema = $field['schema'] ?? array( 'type' => 'file' );
+			$schema = $field['schema'] ?? array( 'type' => '-' );
 
 			if (
-				$schema['type'] === 'array' &&
-				( $schema['additionalItems'] ?? true ) === false
+				'array' === $schema['type'] &&
+				false === ( $schema['additionalItems'] ?? true )
 			) {
 				$min_items = $field['schema']['minItems'] ?? 0;
 				$max_items = $field['schema']['maxItems'] ?? 0;
@@ -650,10 +650,12 @@ class Form_Bridge {
 			if ( $is_conditional ) {
 				$name = $field['name'];
 
-				for ( $i = 0; $i < count( $this->data['mutations'] ); $i++ ) {
+				$l = count( $this->data['mutations'] );
+				for ( $i = 0; $i < $l; $i++ ) {
 					$mutation = $this->data['mutations'][ $i ];
 
-					for ( $j = 0; $j < count( $mutation ); $j++ ) {
+					$m = count( $mutation );
+					for ( $j = 0; $j < $m; $j++ ) {
 						$mapper = $this->data['mutations'][ $i ][ $j ];
 
 						$from = preg_replace( '/\[\d*\]/', '', $mapper['from'] );

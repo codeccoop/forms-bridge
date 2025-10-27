@@ -271,12 +271,12 @@ class Form_Bridge_Template {
 							'items' => array(
 								'type'       => 'object',
 								'properties' => array(
-									'name'      => array(
+									'name'        => array(
 										'type'      => 'string',
 										'minLength' => 1,
 									),
-									'label'     => array( 'type' => 'string' ),
-									'type'      => array(
+									'label'       => array( 'type' => 'string' ),
+									'type'        => array(
 										'type' => 'string',
 										'enum' => array(
 											'text',
@@ -288,10 +288,12 @@ class Form_Bridge_Template {
 											'date',
 											'hidden',
 											'file',
+											'boolean',
+											// 'acceptance',
 										),
 									),
-									'required'  => array( 'type' => 'boolean' ),
-									'options'   => array(
+									'required'    => array( 'type' => 'boolean' ),
+									'options'     => array(
 										'type'  => 'array',
 										'items' => array(
 											'type'       => 'object',
@@ -311,7 +313,7 @@ class Form_Bridge_Template {
 											'required'   => array( 'value', 'label' ),
 										),
 									),
-									'value'     => array(
+									'value'       => array(
 										'type' => array(
 											'integer',
 											'number',
@@ -322,13 +324,14 @@ class Form_Bridge_Template {
 											// 'null',
 										),
 									),
-									'is_file'   => array( 'type' => 'boolean' ),
-									'is_multi'  => array( 'type' => 'boolean' ),
-									'filetypes' => array( 'type' => 'string' ),
-									'min'       => array( 'type' => 'number' ),
-									'max'       => array( 'type' => 'number' ),
-									'step'      => array( 'type' => 'number' ),
-									'format'    => array( 'type' => 'string' ),
+									'conditional' => array( 'type' => 'boolean' ),
+									'is_file'     => array( 'type' => 'boolean' ),
+									'is_multi'    => array( 'type' => 'boolean' ),
+									'filetypes'   => array( 'type' => 'string' ),
+									'min'         => array( 'type' => 'number' ),
+									'max'         => array( 'type' => 'number' ),
+									'step'        => array( 'type' => 'number' ),
+									'format'      => array( 'type' => 'string' ),
 								),
 								'required'   => array( 'name', 'type' ),
 							),
