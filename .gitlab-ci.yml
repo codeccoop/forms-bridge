@@ -28,13 +28,13 @@ phpunit:
   image: codeccoop/wp-test
   before_script:
     - nohup docker-entrypoint.sh mariadbd 2>&1 >/dev/null &
-    - echo -n 'Install composer dependencies: '
+    - 'echo -n "Install composer dependencies: "'
     - composer -q install
     - echo '✅'
-    - echo -n 'Wait mariadb to start for 3 seconds: '
+    - 'echo -n "Wait mariadb to start for 3 seconds: "'
     - sleep 3
     - echo '✅'
-    - echo -n 'Install wordpress test suite: '
+    - 'echo -n "Install wordpress test suite: "'
     - bin/install-wp-tests.sh
     - echo '✅'
     - echo 'Run tests! 🚀'
