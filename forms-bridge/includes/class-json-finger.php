@@ -57,21 +57,21 @@ class JSON_Finger {
 		for ( $i = 0; $i < $len; $i++ ) {
 			$char = $pointer[ $i ];
 
-			if ( $char === '.' ) {
+			if ( '.' === $char ) {
 				if ( strlen( $key ) ) {
 					$keys[] = $key;
 					$key    = '';
 				}
-			} elseif ( $char === '[' ) {
+			} elseif ( '[' === $char ) {
 				if ( strlen( $key ) ) {
 					$keys[] = $key;
 					$key    = '';
 				}
 
-				$i = $i + 1;
-				while ( $pointer[ $i ] !== ']' && $i < $len ) {
+				++$i;
+				while ( ']' !== $pointer[ $i ] && $i < $len ) {
 					$key .= $pointer[ $i ];
-					$i   += 1;
+					++$i;
 				}
 
 				if ( strlen( $key ) === 0 ) {
@@ -91,7 +91,7 @@ class JSON_Finger {
 				$key    = '';
 
 				if ( strlen( $pointer ) - 1 > $i ) {
-					if ( $pointer[ $i + 1 ] !== '.' && $pointer[ $i + 1 ] !== '[' ) {
+					if ( '.' !== $pointer[ $i + 1 ] && '[' !== $pointer[ $i + 1 ] ) {
 						self::$cache[ $pointer ] = array();
 						return array();
 					}
@@ -112,12 +112,12 @@ class JSON_Finger {
 	/**
 	 * Sanitize a key to be a valid finger key.
 	 *
-	 * @param string|int Finger key value.
+	 * @param string|int $key Finger key value.
 	 *
 	 * @return string Sanitized key value.
 	 */
 	public static function sanitize_key( $key ) {
-		if ( $key === INF ) {
+		if ( INF === $key ) {
 			$key = '[]';
 		} elseif ( intval( $key ) == $key ) {
 			$key = "[{$key}]";
@@ -156,6 +156,7 @@ class JSON_Finger {
 	 * Returns a finger pointer from an array of keys after keys validation and sanitization.
 	 *
 	 * @param array $keys Array with finger keys.
+	 * @param bool  $is_conditional Indicates if the output should be prefixed with the '?' mark.
 	 *
 	 * @return string Finger pointer result.
 	 */
@@ -167,14 +168,14 @@ class JSON_Finger {
 		$pointer = array_reduce(
 			$keys,
 			static function ( $pointer, $key ) {
-				if ( $key === INF ) {
+				if ( INF === $key ) {
 					$key = '[]';
 				} elseif ( intval( $key ) == $key ) {
 					$key = "[{$key}]";
 				} else {
 					$key = self::sanitize_key( $key );
 
-					if ( $key[0] !== '[' && strlen( $pointer ) > 0 ) {
+					if ( '[' !== $key[0] && strlen( $pointer ) > 0 ) {
 						$key = '.' . $key;
 					}
 				}
@@ -195,6 +196,8 @@ class JSON_Finger {
 	 * Binds data to the handler instance.
 	 *
 	 * @param array $data Target data.
+	 *
+	 * @throws TypeError In case $data param is not an array.
 	 */
 	public function __construct( $data ) {
 		if ( ! is_array( $data ) ) {
@@ -314,7 +317,8 @@ class JSON_Finger {
 			return $items;
 		}
 
-		for ( $i = 0; $i < count( $items ); $i++ ) {
+		$l = count( $items );
+		for ( $i = 0; $i < $l; $i++ ) {
 			$pointer     = "{$before}[$i]{$after}";
 			$items[ $i ] = $this->get( $pointer, $expansion );
 		}
@@ -336,6 +340,12 @@ class JSON_Finger {
 	 * @return array Updated data.
 	 */
 	public function set( $pointer, $value, $unset = false ) {
+		$pointer = (string) $pointer;
+
+		if ( ! $pointer ) {
+			return $this->data;
+		}
+
 		if ( $this->$pointer ) {
 			$this->$pointer = $value;
 			return $this->data;
@@ -363,7 +373,8 @@ class JSON_Finger {
 
 			$partial = &$data;
 
-			for ( $i = 0; $i < count( $keys ) - 1; $i++ ) {
+			$l = count( $keys ) - 1;
+			for ( $i = 0; $i < $l; $i++ ) {
 				if ( ! is_array( $partial ) ) {
 					return $data;
 				}
@@ -433,30 +444,37 @@ class JSON_Finger {
 	 * @return array
 	 */
 	private function set_expanded( $pointer, $values, $unset ) {
-		$parts  = array_filter( explode( '[]', $pointer ) );
+		$parts  = explode( '[]', $pointer );
 		$before = $parts[0];
+		$after  = array_slice( $parts, 1 );
 
-		$after = array_slice( $parts, 1 );
-		if ( count( $after ) && ! $after[ count( $after ) - 1 ] ) {
+		if ( empty( $after[ count( $after ) - 1 ] ) ) {
 			array_pop( $after );
 		}
+
 		$after = implode( '[]', $after );
 
-		if ( ! $before ) {
-			if ( ! is_array( $values ) || ( ! $after && $unset ) ) {
-				return;
+		$from = $this->get( $before );
+		if ( $unset ) {
+			$values = $from;
+		}
+
+		if ( ! wp_is_numeric_array( $from ) ) {
+			return $this->data;
+		}
+
+		if ( ! wp_is_numeric_array( $values ) && ! $unset ) {
+			$value  = $values;
+			$values = array();
+
+			$l = count( $from );
+			for ( $i = 0; $i < $l; $i++ ) {
+				$values[] = $value;
 			}
 		}
 
-		if ( $unset ) {
-			$values = $this->get( $before );
-		}
-
-		if ( ! wp_is_numeric_array( $values ) ) {
-			return;
-		}
-
-		for ( $i = count( $values ) - 1; $i >= 0; $i-- ) {
+		$l = count( $values ) - 1;
+		for ( $i = $l; $i >= 0; $i-- ) {
 			$pointer = "{$before}[{$i}]{$after}";
 
 			if ( $unset ) {
@@ -521,7 +539,7 @@ class JSON_Finger {
 				$parent  = $this->get( $pointer );
 
 				if ( strstr( $pointer, '[]' ) === false ) {
-					if ( $key === INF && is_array( $parent ) ) {
+					if ( INF === $key && is_array( $parent ) ) {
 						return true;
 					}
 
@@ -532,7 +550,7 @@ class JSON_Finger {
 					return false;
 				}
 
-				if ( $key === INF ) {
+				if ( INF === $key ) {
 					return true;
 				}
 
