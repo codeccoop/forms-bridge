@@ -217,4 +217,35 @@ class MutationsTest extends WP_UnitTestCase {
 		$this->assertEquals( 0, $payload['choices'][1] );
 		$this->assertEquals( 1, $payload['score'] );
 	}
+
+	public function test_matrix() {
+		$payload = $this->payload();
+
+		$payload['labels'] = array( 'A', 'B', 'C' );
+
+		$mutations = array(
+			array(
+				array(
+					'from' => 'labels[]',
+					'to'   => 'options[][0]',
+					'cast' => 'string',
+				),
+				array(
+					'from' => 'choices[]',
+					'to'   => 'options[][1]',
+					'cast' => 'boolean',
+				),
+			),
+		);
+
+		$bridge  = $this->bridge( $mutations );
+		$payload = $bridge->apply_mutation( $payload );
+
+		$this->assertSame( $payload['options'][0][0], 'A' );
+		$this->assertTrue( $payload['options'][0][1] );
+		$this->assertSame( $payload['options'][1][0], 'B' );
+		$this->assertFalse( $payload['options'][1][1] );
+		$this->assertSame( $payload['options'][2][0], 'C' );
+		$this->assertFalse( $payload['options'][2][1] );
+	}
 }
