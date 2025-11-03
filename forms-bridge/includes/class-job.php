@@ -99,7 +99,7 @@ class Job {
 					'title'       => _x( 'Description', 'Job schema', 'forms-bridge' ),
 					'description' => __(
 						'Short description of the job effects',
-						'forms-birdge'
+						'forms-bridge'
 					),
 					'type'        => 'string',
 					'default'     => '',
@@ -269,7 +269,9 @@ class Job {
 		$jobs          = FBAPI::get_addon_jobs( $addon );
 
 		$i = count( $workflow ) - 1;
-		while ( $job_name = $workflow[ $i ] ?? null ) {
+		while ( isset( $workflow[ $i ] ) ) {
+			$job_name = $workflow[ $i ];
+
 			foreach ( $jobs as $job ) {
 				if ( $job->name === $job_name ) {
 					$workflow_jobs[] = $job;
@@ -346,6 +348,7 @@ class Job {
 			$method .= 'return $payload;' . "\n";
 			$method .= "}\n}\n";
 
+			// phpcs:disable Squiz.PHP.Eval.Discouraged
 			eval( $method );
 			return $method_name;
 		} catch ( ParseError $e ) {
@@ -357,6 +360,13 @@ class Job {
 		}
 	}
 
+	/**
+	 * Gets the job config data from a post.
+	 *
+	 * @param WP_Post $post Post instance.
+	 *
+	 * @return array Job config data.
+	 */
 	private static function data_from_post( $post ) {
 		return array(
 			'name'        => $post->post_name,
@@ -375,7 +385,6 @@ class Job {
 	 * Sets the job addon and name attributes, validates the data and enqueue themself to the job public
 	 * filter getters.
 	 *
-	 * @param string $name Job name.
 	 * @param array  $data Job data.
 	 * @param string $addon Addon name.
 	 */
@@ -499,6 +508,11 @@ class Job {
 		);
 	}
 
+	/**
+	 * Gets the job's post ID from database.
+	 *
+	 * @return int|null Int if it's stored on the database, null otherwise.
+	 */
 	private function get_post_id() {
 		$ids = get_posts(
 			array(
@@ -518,6 +532,11 @@ class Job {
 		}
 	}
 
+	/**
+	 * Save the job config to the database as a custom post entry.
+	 *
+	 * @return int|WP_Error Post ID or WP_Error in case of insert errors.
+	 */
 	public function save() {
 		if ( ! $this->is_valid ) {
 			return $this->data;
@@ -549,6 +568,12 @@ class Job {
 		return $post_id;
 	}
 
+	/**
+	 * Delete the job config from the database and restore its default configuration.
+	 * If the job does not has a file-based configuration, the job will be deleted.
+	 *
+	 * @return bool
+	 */
 	public function reset() {
 		$post_id = $this->get_post_id();
 
