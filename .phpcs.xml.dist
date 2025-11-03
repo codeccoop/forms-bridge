@@ -5,7 +5,6 @@
 	<!-- What to scan -->
 	<file>./forms-bridge</file>
 	<file>./tests</file>
-	<exclude-pattern>/forms-bridge/deps/</exclude-pattern>
 
 	<!-- How to scan -->
 	<!-- Usage instructions: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Usage -->
