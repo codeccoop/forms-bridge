@@ -12,11 +12,8 @@
 	<testsuites>
 		<testsuite name="default">
 			<directory prefix="test-" suffix=".php">./tests/</directory>
-			<exclude>./tests/test-sample.php</exclude>
 			<directory prefix="test-" suffix=".php">./forms-bridge/deps/http/tests/</directory>
-			<exclude>./forms-bridge/deps/http/tests/test-sample.php</exclude>
 			<directory prefix="test-" suffix=".php">./forms-bridge/deps/plugin/tests/</directory>
-			<exclude>./forms-bridge/deps/plugins/tests/test-sample.php</exclude>
 		</testsuite>
 	</testsuites>
 </phpunit>
