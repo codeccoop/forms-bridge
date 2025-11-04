@@ -1,4 +1,9 @@
 <?php
+/**
+ * Job post type
+ *
+ * @package forms-bridge
+ */
 
 use FORMS_BRIDGE\Job;
 

@@ -537,6 +537,7 @@ class Job {
 	 * @return int|null Int if it's stored on the database, null otherwise.
 	 */
 	private function get_post_id() {
+		// phpcs:disable WordPress.DB.SlowDBQuery
 		$ids = get_posts(
 			array(
 				'post_type'              => self::TYPE,
@@ -549,6 +550,7 @@ class Job {
 				'update_menu_item_cache' => false,
 			)
 		);
+		// phpcs:enable
 
 		if ( count( $ids ) ) {
 			return $ids[0];
@@ -593,7 +595,7 @@ class Job {
 
 	/**
 	 * Delete the job config from the database and restore its default configuration.
-	 * If the job does not has a file-based configuration, the job will be deleted.
+	 * If the job does not exists a file-based configuration, the job will be deleted.
 	 *
 	 * @return bool
 	 */
@@ -690,8 +692,7 @@ class Job {
 						$requires = array_filter(
 							$output_field['requires'],
 							function ( $name ) use ( $input_fields ) {
-								return array_search( $name, $input_fields ) ===
-									false;
+								return false === array_search( $name, $input_fields, true );
 							}
 						);
 

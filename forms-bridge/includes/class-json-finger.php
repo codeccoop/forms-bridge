@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class JSON_Finger
+ *
+ * @package forms-bridge
+ */
 
 namespace FORMS_BRIDGE;
 
@@ -8,6 +13,9 @@ use Error;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
+
+// phpcs:disable Universal.Operators.StrictComparisons
+// phpcs:disable Universal.NamingConventions.NoReservedKeywordParameterNames
 
 /**
  * JSON Finger handler.

@@ -354,6 +354,11 @@ class Addon extends Singleton {
 		return $bridge;
 	}
 
+	/**
+	 * Handles the enabled state of the addon instance.
+	 *
+	 * @var bool
+	 */
 	public $enabled = false;
 
 	/**
@@ -375,6 +380,9 @@ class Addon extends Singleton {
 		self::$addons[ static::NAME ] = $this;
 	}
 
+	/**
+	 * Loads the addon.
+	 */
 	public function load() {
 		add_action(
 			'init',
@@ -602,6 +610,7 @@ class Addon extends Singleton {
 			return array();
 		}
 
+		// phpcs:disable WordPress.DB.SlowDBQuery
 		return get_posts(
 			array(
 				'post_type'      => $post_type,
@@ -610,6 +619,7 @@ class Addon extends Singleton {
 				'meta_value'     => $addon,
 			)
 		);
+		// phpcs:enable
 	}
 
 	/**

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Form Bridge Template post type
+ *
+ * @package forms-bridge
+ */
 
 use FORMS_BRIDGE\Form_Bridge_Template;
 

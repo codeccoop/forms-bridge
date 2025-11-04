@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class Form_Bridge_Template
+ *
+ * @package forms-bridge
+ */
 
 namespace FORMS_BRIDGE;
 
@@ -378,6 +383,16 @@ class Form_Bridge_Template {
 		return apply_filters( 'forms_bridge_template_schema', $schema, $addon );
 	}
 
+
+	/**
+	 * Decorates schemas of the template child objects (form, backend, credential) to scale down
+	 * schema requirements and to fit the templates schema.
+	 *
+	 * @param array  $schema Object json schema.
+	 * @param string $title Schema title.
+	 *
+	 * @return array Decorated schema.
+	 */
 	private static function child_schema_to_template( $schema, $title ) {
 		if ( isset( $schema['oneOf'] ) ) {
 			$schema['oneOf'] = array_map(
@@ -539,6 +554,13 @@ class Form_Bridge_Template {
 		);
 	}
 
+	/**
+	 * Gets the template config data from a post.
+	 *
+	 * @param WP_Post $post Post instance.
+	 *
+	 * @return array Template config data.
+	 */
 	private static function data_from_post( $post ) {
 		return array(
 			'name'        => $post->post_name,
@@ -655,7 +677,13 @@ class Form_Bridge_Template {
 		);
 	}
 
+	/**
+	 * Gets the templates's post ID from database.
+	 *
+	 * @return int|null Int if it's stored on the database, null otherwise.
+	 */
 	private function get_post_id() {
+		// phpcs:disable WordPress.DB.SlowDBQuery
 		$ids = get_posts(
 			array(
 				'post_type'              => self::TYPE,
@@ -668,12 +696,18 @@ class Form_Bridge_Template {
 				'update_menu_item_cache' => false,
 			)
 		);
+		// phpcs:enable
 
 		if ( count( $ids ) ) {
 			return $ids[0];
 		}
 	}
 
+	/**
+	 * Save the template config to the database as a custom post entry.
+	 *
+	 * @return int|WP_Error Post ID or WP_Error in case of insert errors.
+	 */
 	public function save() {
 		if ( ! $this->is_valid ) {
 			return $this->data;
@@ -709,6 +743,12 @@ class Form_Bridge_Template {
 		return $post_id;
 	}
 
+	/**
+	 * Delete the template config from the database and restore its default configuration.
+	 * If the template does not exists as file-based configuration, the template will be deleted.
+	 *
+	 * @return bool
+	 */
 	public function reset() {
 		$post_id = $this->get_post_id();
 
