@@ -27,8 +27,9 @@ while [ $i -lt $COUNT ]; do
 	URL=${URLS[$i]}
 	PLUGIN=${PLUGINS[$i]}
 
-	curl -sL --connect-time 10 "$URL" >"$TMPDIR/$PLUGIN.zip"
-	unzip -qq "$TMPDIR/$PLUGIN.zip" -d "$WORDPRESS_DIR/wp-content/mu-plugins"
+	curl -sL --connect-timeout 5 --max-time 30 "$URL" >"$TMPDIR/$PLUGIN.zip" &&
+		unzip -qq "$TMPDIR/$PLUGIN.zip" -d "$WORDPRESS_DIR/wp-content/mu-plugins" ||
+		echo "Download of $PLUGIN has failed"
 
 	i=$((i + 1))
 done

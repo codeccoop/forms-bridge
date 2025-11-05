@@ -11,33 +11,29 @@ use FORMS_BRIDGE\Integration;
  * GravityForms integration test case.
  */
 class GravityFormsTest extends WP_UnitTestCase {
-	public static function provider( $form = null ) {
-		$store = dirname( __DIR__, 1 ) . '/data/gf';
+	public static function store() {
+		$dir = dirname( __DIR__, 1 ) . '/data/gf';
 
-		foreach ( array_diff( scandir( $store ), array( '..', '.' ) ) as $filename ) {
-			$name = explode( '.', $filename )[0];
-
-			if ( $form && $form !== $name ) {
-				continue;
-			}
-
-			$filepath       = $store . '/' . $filename;
-			$forms[ $name ] = unserialize( file_get_contents( $filepath ) );
+		$store = array();
+		foreach ( array_diff( scandir( $dir ), array( '..', '.' ) ) as $filename ) {
+			$name           = explode( '.', $filename )[0];
+			$filepath       = $dir . '/' . $filename;
+			$store[ $name ] = unserialize( file_get_contents( $filepath ) );
 		}
 
-		if ( $form ) {
-			return $forms[ $form ] ?? null;
-		}
-
-		return $forms;
+		return $store;
 	}
 
 	public static function set_up_before_class() {
 		Integration::update_registry( array( 'gf' => true ) );
 
-		$forms = self::provider();
-		foreach ( $forms as $form ) {
-			$form_id = GFAPI::add_form( $form );
+		$store = self::store();
+		foreach ( $store as $name => $object ) {
+			if ( ! str_ends_with( $name, '-form' ) ) {
+				continue;
+			}
+
+			$form_id = GFAPI::add_form( $object );
 
 			if ( ! $form_id ) {
 				throw new Exception( 'Unable to create GF Form' );
@@ -65,7 +61,7 @@ class GravityFormsTest extends WP_UnitTestCase {
 			}
 		}
 
-		if ( ! $form ) {
+		if ( ! isset( $form ) ) {
 			throw new Exception( 'Subscription Request not found' );
 		}
 
@@ -162,5 +158,40 @@ class GravityFormsTest extends WP_UnitTestCase {
 	}
 
 	public function test_serialize_submission() {
+		$forms = GFAPI::get_forms();
+
+		foreach ( $forms as $candidate ) {
+			if ( 'Subscription Request' === $candidate['title'] ) {
+				$form = $candidate;
+				break;
+			}
+		}
+
+		if ( ! isset( $form ) ) {
+			throw new Exception( 'Subscription Request not found' );
+		}
+
+		$integration = Integration::integration( 'gf' );
+
+		$form_data = $integration->serialize_form( $form );
+
+		$store = self::store();
+		foreach ( $store as $name => $object ) {
+			if ( 'subscription-request-submission' === $name ) {
+				$submission = $object;
+				break;
+			}
+		}
+
+		if ( ! isset( $submission ) ) {
+			throw new Exception( 'Subscription Request submission not found' );
+		}
+
+		$payload = $integration->serialize_submission( $submission, $form_data );
+
+		$this->assertSame( 'EUSEBIO SALGADO', $payload['Nom i cognoms'] );
+		$this->assertSame( 'website', $payload['source'] );
+		$this->assertTrue( $payload['consent'] );
+		$this->assertSame( '1', $payload['add_collect_account'][0] );
 	}
 }

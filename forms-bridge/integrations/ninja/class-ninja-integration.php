@@ -201,7 +201,7 @@ class Integration extends BaseIntegration {
 	/**
 	 * Serializes a ninja form model instance as array data.
 	 *
-	 * @param NF_Abstracts_ModelFactory $form Form factory instance.
+	 * @param NF_Abstracts_ModelFactory $form_factory Form factory instance.
 	 *
 	 * @return array
 	 */
@@ -250,7 +250,8 @@ class Integration extends BaseIntegration {
 					'recaptcha',
 					'spam',
 					'submit',
-				)
+				),
+				true
 			)
 		) {
 			return;
@@ -275,7 +276,7 @@ class Integration extends BaseIntegration {
 	 * @param array $settings Field settings data.
 	 * @param array $form_settings Form settings data.
 	 *
-	 * @return array.
+	 * @return array
 	 */
 	private function _serialize_field( $id, $settings, $form_settings ) {
 		$name =
@@ -301,13 +302,11 @@ class Integration extends BaseIntegration {
 			$then = $condition['then'] ?? array();
 			$else = $condition['else'] ?? array();
 			foreach ( array_merge( $then, $else ) as $effect ) {
-				if ( $effect['type'] !== 'field' ) {
+				if ( 'field' !== $effect['type'] ) {
 					continue;
 				}
 
-				$is_conditional =
-					$effect['key'] === $settings['key'] &&
-					$effect['trigger'] === 'hide_field';
+				$is_conditional = $effect['key'] === $settings['key'] && 'hide_field' === $effect['trigger'];
 				if ( $is_conditional ) {
 					break;
 				}
@@ -371,12 +370,12 @@ class Integration extends BaseIntegration {
 			'name'        => $name,
 			'label'       => $settings['label'],
 			'required'    => isset( $settings['required'] )
-				? $settings['required'] === '1'
+				? '1' === $settings['required']
 				: false,
 			'options'     => isset( $settings['options'] )
 				? $settings['options']
 				: array(),
-			'is_file'     => $settings['type'] === 'file_upload',
+			'is_file'     => 'file_upload' === $settings['type'],
 			'is_multi'    => $this->is_multi_field( $settings ),
 			'conditional' => $is_conditional,
 			'children'    => $children,
@@ -389,7 +388,7 @@ class Integration extends BaseIntegration {
 	/**
 	 * Checks if a filed is multi value field.
 	 *
-	 * @param array Field settings data.
+	 * @param array $settings Field settings data.
 	 *
 	 * @return boolean
 	 */
@@ -405,14 +404,14 @@ class Integration extends BaseIntegration {
 		}
 
 		if (
-			$settings['type'] === 'listimage' &&
+			'listimage' === $settings['type'] &&
 			( $settings['allow_multi_select'] ?? false )
 		) {
 			return true;
 		}
 
 		if (
-			$settings['type'] === 'file_upload' &&
+			'file_upload' === $settings['type'] &&
 			$settings['upload_multi_count'] > 1
 		) {
 			return true;
@@ -455,7 +454,9 @@ class Integration extends BaseIntegration {
 			case 'listimage':
 				if ( $settings['allow_multi_select'] ?? false ) {
 					$items = array();
-					for ( $i = 0; $i < count( $settings['image_options'] ); $i++ ) {
+
+					$l = count( $settings['image_options'] );
+					for ( $i = 0; $i < $l; $i++ ) {
 						$items[] = array( 'type' => 'string' );
 					}
 
@@ -470,7 +471,9 @@ class Integration extends BaseIntegration {
 			case 'listmultiselect':
 			case 'listcheckbox':
 				$items = array();
-				for ( $i = 0; $i < count( $settings['options'] ); $i++ ) {
+
+				$l = count( $settings['options'] );
+				for ( $i = 0; $i < $l; $i++ ) {
 					$items[] = array( 'type' => 'string' );
 				}
 
@@ -530,7 +533,7 @@ class Integration extends BaseIntegration {
 
 			$field = $submission['fields'][ (int) $field_data['id'] ];
 
-			if ( $field_data['_type'] === 'repeater' ) {
+			if ( 'repeater' === $field_data['_type'] ) {
 				$subfields = $field['fields'];
 				$values    = $field['value'];
 				$fieldset  = array();
@@ -539,7 +542,7 @@ class Integration extends BaseIntegration {
 				foreach ( array_values( $values ) as $value ) {
 					$row_index = floor( $i / count( $subfields ) );
 					$row       =
-						count( $fieldset ) == $row_index
+						count( $fieldset ) === +$row_index
 							? array()
 							: $fieldset[ $row_index ];
 
@@ -564,8 +567,8 @@ class Integration extends BaseIntegration {
 				);
 
 				if (
-					$data[ $field_data['name'] ] === false &&
-					$field_data['schema']['type'] !== 'boolean' &&
+					false === $data[ $field_data['name'] ] &&
+					'boolean' !== $field_data['schema']['type'] &&
 					$field_data['conditional']
 				) {
 					$data[ $field_data['name'] ] = null;
@@ -585,16 +588,16 @@ class Integration extends BaseIntegration {
 	 * @return mixed Formated value.
 	 */
 	private function format_field_value( $type, $value ) {
-		if ( $type === 'hidden' ) {
+		if ( 'hidden' === $type ) {
 			$number_val = (float) $value;
 			if ( strval( $number_val ) === $value ) {
 				return $number_val;
 			}
 
 			return $value;
-		} elseif ( $type === 'number' || $type === 'starrating' ) {
+		} elseif ( 'number' === $type || 'starrating' === $type ) {
 			return (float) $value;
-		} elseif ( $type === 'date' ) {
+		} elseif ( 'date' === $type ) {
 			if ( is_string( $value ) ) {
 				return $value;
 			}
@@ -673,7 +676,9 @@ class Integration extends BaseIntegration {
 
 	private function decorate_form_fields( $fields ) {
 		$nf_fields = array();
-		for ( $i = 0; $i < count( $fields ); $i++ ) {
+
+		$l = count( $fields );
+		for ( $i = 0; $i < $l; $i++ ) {
 			$order = $i + 1;
 			$field = $fields[ $i ];
 
@@ -827,7 +832,9 @@ class Integration extends BaseIntegration {
 		$is_multi
 	) {
 		$_options = array();
-		for ( $i = 0; $i < count( $options ); $i++ ) {
+
+		$l = count( $options );
+		for ( $i = 0; $i < $l; $i++ ) {
 			$_options[] = array(
 				'label'        => $options[ $i ]['label'],
 				'value'        => $options[ $i ]['value'],

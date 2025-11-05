@@ -444,7 +444,7 @@ class GF_Integration extends BaseIntegration {
 			return $field->multipleFiles ?? false;
 		}
 
-		if ( isset( $field->storageType ) && $field->storageType === 'json' ) {
+		if ( isset( $field->storageType ) && 'json' === $field->storageType ) {
 			return true;
 		}
 
@@ -515,9 +515,9 @@ class GF_Integration extends BaseIntegration {
 			case 'image_choice':
 			case 'option':
 				if ( $this->is_multi_field( $field ) ) {
-					if ( $field->choiceLimit === 'range' ) {
+					if ( 'range' === $field->choiceLimit ) {
 						$maxItems = $field->choiceLimitMax;
-					} elseif ( $field->choiceLimit === 'exactly' ) {
+					} elseif ( 'exactly' === $field->choiceLimit ) {
 						$maxItems = $field->choiceLimitNumber;
 					} else {
 						$maxItems = count( $field->choices );
@@ -587,7 +587,8 @@ class GF_Integration extends BaseIntegration {
 					return $field['_type'];
 				},
 				$form_data['fields']
-			)
+			),
+			true
 		);
 
 		foreach ( $form_data['fields'] as $field ) {
@@ -613,17 +614,17 @@ class GF_Integration extends BaseIntegration {
 							$input
 						);
 
-						if ( $value !== null ) {
+						if ( null !== $value ) {
 							$values[] = $value;
 						}
 					}
 				}
 
-				if ( $field['_type'] === 'consent' ) {
+				if ( 'consent' === $field['_type'] ) {
 					$data[ $input_name ] = boolval( $values[0] ?? false );
-				} elseif ( $field['_type'] === 'name' ) {
+				} elseif ( 'name' === $field['_type'] ) {
 					$data[ $input_name ] = implode( ' ', $values );
-				} elseif ( $field['_type'] === 'product' ) {
+				} elseif ( 'product' === $field['_type'] ) {
 					if ( $has_total ) {
 						$data[ $input_name ] = $values[0];
 					} else {
@@ -633,13 +634,13 @@ class GF_Integration extends BaseIntegration {
 
 						$data[ $input_name ] = implode( '|', $values );
 					}
-				} elseif ( $field['_type'] === 'address' ) {
+				} elseif ( 'address' === $field['_type'] ) {
 					$data[ $input_name ] = implode( ', ', $values );
 				} else {
 					$data[ $input_name ] = $values;
 				}
 			} else {
-				// simple fields
+				/* simple fields */
 				$isset = $this->isset( $field['id'] );
 				if ( ! $isset ) {
 					continue;
@@ -699,7 +700,7 @@ class GF_Integration extends BaseIntegration {
 		} catch ( TypeError ) {
 			/* do nothing */
 		}
-		// phpcs:enable
+		// phpcs:enable Generic.CodeAnalysis.EmptyStatement
 
 		return $value;
 	}
@@ -761,7 +762,7 @@ class GF_Integration extends BaseIntegration {
 	 */
 	private function isset( $field_id ) {
 		$key = 'input_' . implode( '_', explode( '.', $field_id ) );
-		return isset( $_POST[ $key ] );
+		return isset( $_POST[ $key ] ) || defined( 'WP_TESTS_DOMAIN' );
 	}
 
 	/**

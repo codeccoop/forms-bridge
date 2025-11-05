@@ -485,4 +485,29 @@ class Integration extends Singleton {
 	public function uploads() {
 		return null;
 	}
+
+	/**
+	 * Serializes form data.
+	 * NOTE: To be overwritten.
+	 *
+	 * @param mixed $form Form representation.
+	 *
+	 * @return array The form serialized as array of data.
+	 */
+	public function serialize_form( $form ) {
+		return array();
+	}
+
+	/**
+	 * Serializes the current form's submission data.
+	 * NOTE: To be overwritten.
+	 *
+	 * @param mixed $submission Form submission representation.
+	 * @param array $form_data Serialized form data.
+	 *
+	 * @return array Serialized form submission data.
+	 */
+	public function serialize_submission( $submission, $form_data ) {
+		return array();
+	}
 }
