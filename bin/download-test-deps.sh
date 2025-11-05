@@ -1,24 +1,16 @@
 #!/usr/bin/env bash
 
-WORDPRESS_DIR=$1
-
-if [ -z "$WORDPRESS_DIR" ]; then
-	WORDPRESS_DIR='/tmp/wordpress'
+TMPDIR=${TMPDIR-/tmp}
+if [ ! -d "$TMPDIR" ]; then
+	mkdir -p "$TMPDIR"
 fi
 
+WORDPRESS_DIR="$TMPDIR/wordpress"
 if [ ! -d "$WORDPRESS_DIR" ]; then
 	echo 'Distination path is not a directory'
 	exit 1
 else
 	mkdir -p "$WORDPRESS_DIR/wp-content/mu-plugins"
-fi
-
-if [ -z "$TEMP_DIR" ]; then
-	TEMP_DIR='/tmp'
-
-	if [ ! -d "$TEMP_DIR" ]; then
-		mkdir -p "$TEMP_DIR"
-	fi
 fi
 
 URLS=('https://downloads.wordpress.org/plugin/contact-form-7.6.1.3.zip'
@@ -35,8 +27,8 @@ while [ $i -lt $COUNT ]; do
 	URL=${URLS[$i]}
 	PLUGIN=${PLUGINS[$i]}
 
-	curl -sL --connect-time 10 "$URL" >"$TEMP_DIR/$PLUGIN.zip"
-	unzip -qq "$TEMP_DIR/$PLUGIN.zip" -d "$WORDPRESS_DIR/wp-content/mu-plugins"
+	curl -sL --connect-time 10 "$URL" >"$TMPDIR/$PLUGIN.zip"
+	unzip -qq "$TMPDIR/$PLUGIN.zip" -d "$WORDPRESS_DIR/wp-content/mu-plugins"
 
 	i=$((i + 1))
 done
