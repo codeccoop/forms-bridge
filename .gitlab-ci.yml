@@ -30,9 +30,8 @@ phpunit:
     - nohup docker-entrypoint.sh mariadbd 2>&1 >/dev/null &
     - composer -q install
     - sleep 5
+    - chmod a+x bin/*
     - bin/install-wp-tests.sh
-    - echo $PWD
-    - ls -l bin
     - bin/download-test-deps.sh
   script:
     - vendor/bin/phpunit -c phpunit.xml.dist
