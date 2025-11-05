@@ -1,8 +1,8 @@
 <?php
 
 return array(
-	'title'  => 'Test Shipping Form',
-	'fields' => array(
+	'title'    => 'Test Shipping Form',
+	'fields'   => array(
 		array(
 			'name'     => 'name',
 			'label'    => 'Name',
@@ -59,6 +59,25 @@ return array(
 			'label'       => 'City',
 			'type'        => 'string',
 			'conditional' => true,
+		),
+	),
+	'payloads' => array(
+		array(
+			'name'         => 'John Doe',
+			'email'        => 'johndoe@email.me',
+			'age'          => '56',
+			'gender'       => 'male',
+			'subscription' => false,
+		),
+		array(
+			'name'         => 'John Doe',
+			'email'        => 'johndoe@email.me',
+			'age'          => '56',
+			'gender'       => 'male',
+			'subscription' => true,
+			'street'       => 'Elm Street',
+			'zip'          => '00000',
+			'city'         => 'Plugin Town',
 		),
 	),
 );

@@ -236,19 +236,16 @@ class GF_Integration extends BaseIntegration {
 	 */
 	public function serialize_form( $form ) {
 		$form_id = (int) $form['id'];
-		$fields  = array_reduce(
-			$form['fields'],
-			function ( $fields, $field ) {
-				$field = $this->serialize_field( $field );
-				if ( $field ) {
-					$field  = wp_is_numeric_array( $field ) ? $field : array( $field );
-					$fields = array_merge( $fields, $field );
-				}
 
-				return $fields;
-			},
-			array()
-		);
+		$fields = array();
+		foreach ( $form['fields'] as $field ) {
+			$field = $this->serialize_field( $field );
+
+			if ( $field ) {
+				$field  = wp_is_numeric_array( $field ) ? $field : array( $field );
+				$fields = array_merge( $fields, $field );
+			}
+		}
 
 		return apply_filters(
 			'forms_bridge_form_data',
@@ -297,26 +294,22 @@ class GF_Integration extends BaseIntegration {
 
 		$allowsPrepopulate = $field->allowsPrepopulate ?? false;
 
-		$options = array_map(
-			function ( $opt ) {
-				return array(
-					'value' => $opt['value'],
-					'label' => $opt['text'],
-				);
-			},
-			$field->choices ?: array()
-		);
+		$choices = $field->choices ?: array();
+		$options = array();
+		foreach ( $choices as $choice ) {
+			$options[] = array(
+				'value' => $choice['value'],
+				'label' => $choice['label'] ?? $choice['text'] ?? '',
+			);
+		}
 
 		try {
-			$inputs = array_map(
-				static function ( $input ) use (
-					$allowsPrepopulate
-				) {
-					$input['name'] = $allowsPrepopulate ? $input['name'] : '';
-					return $input;
-				},
-				$field->get_entry_inputs()
-			);
+			$inputs       = array();
+			$entry_inputs = $field->get_entry_inputs() ?: array();
+			foreach ( $entry_inputs as $input ) {
+				$input['name'] = $allowsPrepopulate ? $input['name'] : '';
+				$inputs[]      = $input;
+			}
 		} catch ( Error ) {
 			$inputs = array();
 		}
@@ -324,22 +317,18 @@ class GF_Integration extends BaseIntegration {
 		$inputs = array_values(
 			array_filter(
 				$inputs,
-				static function ( $input ) {
-					return ! isset( $input['isHidden'] ) || ! $input['isHidden'];
-				}
+				fn ( $input ) => ! isset( $input['isHidden'] ) || ! $input['isHidden']
 			)
 		);
 
 		$named_inputs = array_filter(
 			$inputs,
-			function ( $input ) {
-				return ! empty( $input['name'] );
-			}
+			fn ( $input ) => ! empty( $input['name'] )
 		);
 
 		$subfields = array();
 		if ( count( $named_inputs ) ) {
-			$count = count( $input );
+			$count = count( $inputs );
 			for ( $i = 1; $i <= $count; $i++ ) {
 				$input = $inputs[ $i - 1 ];
 
@@ -387,7 +376,7 @@ class GF_Integration extends BaseIntegration {
 				$type = 'number';
 				break;
 			case 'consent':
-				$type = 'boolean';
+				$type = 'switch';
 				break;
 			case 'fileupload':
 				$type = 'file';
@@ -434,16 +423,10 @@ class GF_Integration extends BaseIntegration {
 			'gf'
 		);
 
-		if (
-			! empty( $subfields ) &&
-			( $allowsPrepopulate || 'list' === $field['type'] )
-		) {
-			return array_map(
-				function ( $subfield ) use ( $field ) {
-					return array_merge( $subfield, array( 'parent' => $field ) );
-				},
-				$subfields
-			);
+		if ( ! empty( $subfields ) && ( $allowsPrepopulate || 'list' === $field['type'] ) ) {
+			foreach ( $subfields as &$sf ) {
+				$sf['parent'] = $field;
+			}
 		}
 
 		return $field;
