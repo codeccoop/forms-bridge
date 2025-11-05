@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo 'Hello'
+
 TMPDIR=${TMPDIR-/tmp}
 if [ ! -d "$TMPDIR" ]; then
 	echo "Make tmp dir on $TMPDIR"

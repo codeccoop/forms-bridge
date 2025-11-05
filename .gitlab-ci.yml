@@ -31,6 +31,8 @@ phpunit:
     - composer -q install
     - sleep 5
     - bin/install-wp-tests.sh
+    - echo $PWD
+    - ls -l bin
     - bin/download-test-deps.sh
   script:
     - vendor/bin/phpunit -c phpunit.xml.dist
