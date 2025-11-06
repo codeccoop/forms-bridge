@@ -19,6 +19,8 @@ class GravityFormsTest extends WP_UnitTestCase {
 				return $form;
 			}
 		}
+
+		throw new Exception( "Form {$title} not found" );
 	}
 
 	private function assertField( $field, $type, $args = array() ) {
@@ -105,10 +107,6 @@ class GravityFormsTest extends WP_UnitTestCase {
 	public function test_signup_form_serialization() {
 		$form = self::get_form( 'Onboarding el Prat de Llobregat' );
 
-		if ( ! $form ) {
-			throw new Exception( 'Signup form not found' );
-		}
-
 		$integration = Integration::integration( 'gf' );
 		$form_data   = $integration->serialize_form( $form );
 
@@ -159,12 +157,37 @@ class GravityFormsTest extends WP_UnitTestCase {
 		);
 	}
 
+	public function test_serialize_signup_submission() {
+		$form = self::get_form( 'Onboarding el Prat de Llobregat' );
+
+		$integration = Integration::integration( 'gf' );
+
+		$form_data = $integration->serialize_form( $form );
+
+		$store = self::store();
+		foreach ( $store as $name => $object ) {
+			if ( 'signup-submission' === $name ) {
+				$submission = $object;
+				break;
+			}
+		}
+
+		if ( ! isset( $submission ) ) {
+			throw new Exception( 'Signup submission not found' );
+		}
+
+		$payload = $integration->serialize_submission( $submission, $form_data );
+
+		$this->assertSame( '0', $payload['Ets soci o usuari de Som Mobilitat?'] );
+		$this->assertSame( 'female', $payload['gender'] );
+		$this->assertSame( '1990-01-01', $payload['birthdate'] );
+		$this->assertSame( '2026-12-10', $payload['driving_license_date'] );
+		$this->assertTrue( $payload['newsletter'] );
+		$this->assertTrue( $payload['no_member_consent'] );
+	}
+
 	public function test_subscription_form_serialization() {
 		$form = self::get_form( 'Subscription Request' );
-
-		if ( ! $form ) {
-			throw new Exception( 'Subscription Request not found' );
-		}
 
 		$integration = Integration::integration( 'gf' );
 
@@ -233,19 +256,8 @@ class GravityFormsTest extends WP_UnitTestCase {
 		);
 	}
 
-	public function test_serialize_submission() {
-		$forms = GFAPI::get_forms();
-
-		foreach ( $forms as $candidate ) {
-			if ( 'Subscription Request' === $candidate['title'] ) {
-				$form = $candidate;
-				break;
-			}
-		}
-
-		if ( ! isset( $form ) ) {
-			throw new Exception( 'Subscription Request not found' );
-		}
+	public function test_serialize_sr_submission() {
+		$form = self::get_form( 'Subscription Request' );
 
 		$integration = Integration::integration( 'gf' );
 
