@@ -1,7 +1,6 @@
 # Forms Bridge
 
 [![Plugin version](https://img.shields.io/wordpress/plugin/v/forms-bridge)](https://wordpress.org/plugins/forms-bridge/)
-
 ![GitHub Actions Tests Workflow Status](https://img.shields.io/github/actions/workflow/status/codeccoop/forms-bridge/tests.yml?label=tests)
 
 Bridge your WordPress forms without code, add custom fields, use field mappers, set up a workflow and make your data flow seamlessly to your backend.
