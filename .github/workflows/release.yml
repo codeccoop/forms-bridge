@@ -80,7 +80,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: plugin-archive
-          path: ${{ ZIP }}
+          path: ${{ env.ZIP }}
 
   release:
     name: Release pushed tag
@@ -93,7 +93,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: plugin-archive
-          path: "$ZIP"
+          path: ${{ env.ZIP }}
 
       - name: Create release
         env:
