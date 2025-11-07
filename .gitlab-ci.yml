@@ -46,7 +46,7 @@ build:
   stage: build
   image: node:latest
   script:
-    - find forms-bridge/src -exec sed -i "s/http-bridge/forms-bridge/g" {} \;
+    - find src -exec sed -i "s/http-bridge/forms-bridge/g" {} \;
     - npm install && npm run build
     - rm -rf node_modules
   artifacts:

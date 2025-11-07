@@ -26,14 +26,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Debug
-        run: |
-          echo $PWD
-          ls -la
-          ls -la forms-bridge
-
       - name: Replace textdomains
-        run: find forms-bridge/src -exec sed -i "s/http-bridge/forms-bridge/g" {} \;
+        run: find src -exec sed -i "s/http-bridge/forms-bridge/g" {} \;
 
       - name: Build
         run: npm run build
