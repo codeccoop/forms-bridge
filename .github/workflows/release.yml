@@ -23,6 +23,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Debug
+        run: |
+          echo $PWD
+          ls -la
+
       - name: Install dependencies
         run: npm ci
 
@@ -31,9 +36,6 @@ jobs:
 
       - name: Build
         run: npm run build
-
-      - name: Cleanup
-        run: rm -rf node_modules
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
