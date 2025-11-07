@@ -90,9 +90,82 @@ class ContactForm7Test extends BaseIntegrationTest {
 		$this->assertTrue( $payload['acceptance'] );
 	}
 
-	// public function test_feedback_form_serialization() {
-	// }
-	//
-	// public function test_feedback_form_submission_serialization() {
-	// }
+	public function test_contact_form_serialization() {
+		$form = self::get_form( 'Contact Form' );
+
+		$form_data = $this->serialize_form( $form );
+
+		$fields = $form_data['fields'];
+		$this->assertEquals( 13, count( $fields ) );
+
+		$field = $fields[0];
+		$this->assertField( $field, 'text' );
+
+		$field = $fields[2];
+		$this->assertField( $field, 'tel' );
+
+		$field = $fields[3];
+		$this->assertField( $field, 'url', array( 'required' => false ) );
+
+		$field = $fields[9];
+		$this->assertEqualSets(
+			array(
+				'value' => 'm',
+				'label' => 'Male',
+			),
+			$field['options'][0]
+		);
+		$this->assertField(
+			$field,
+			'select',
+			array(
+				'_type'    => 'radio',
+				'required' => false,
+			)
+		);
+
+		$field = $fields[12];
+		$this->assertEqualSets(
+			array(
+				'value' => 'DevOps',
+				'label' => 'DevOps',
+			),
+			$field['options'][2]
+		);
+		$this->assertField(
+			$field,
+			'select',
+			array(
+				'schema'   => 'array',
+				'_type'    => 'checkbox',
+				'required' => false,
+				'is_multi' => true,
+			)
+		);
+	}
+
+	public function test_contact_form_submission_serialization() {
+		$form = self::get_form( 'Contact Form' );
+
+		$form_data = $this->serialize_form( $form );
+
+		$store = self::store();
+		foreach ( $store as $name => $object ) {
+			if ( 'contact-submission' === $name ) {
+				$submission = $object;
+				break;
+			}
+		}
+
+		if ( ! isset( $submission ) ) {
+			throw new Exception( 'Contact submission not found' );
+		}
+
+		$payload = $this->serialize_submission( $submission, $form_data );
+
+		$this->assertSame( 'VICENTA SERRA', $payload['your-name'] );
+		$this->assertSame( 'https://www.codeccoop.org', $payload['website'] );
+		$this->assertSame( 'm', $payload['gender'] );
+		$this->assertEqualSets( array( 'Web development', 'Sys admin' ), $payload['skills'] );
+	}
 }

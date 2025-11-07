@@ -1,6 +1,6 @@
 <?php
 /**
- * GravityForms integration
+ * Class GF_Integration
  *
  * @package forms-bridge
  */

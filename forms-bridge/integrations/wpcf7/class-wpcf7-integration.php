@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class WPCF7_Integration
+ *
+ * @package forms-bridge
+ */
 
 namespace FORMS_BRIDGE\WPCF7;
 
@@ -15,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * ContactForm7 integration.
  */
-class Integration extends BaseIntegration {
+class WPCF7_Integration extends BaseIntegration {
 
 	const NAME = 'wpcf7';
 
@@ -134,6 +139,11 @@ class Integration extends BaseIntegration {
 		return (bool) $result;
 	}
 
+	/**
+	 * Retrives the current submission ID.
+	 *
+	 * @return string|null
+	 */
 	public function submission_id() {
 		$submission = $this->submission( true );
 		if ( $submission ) {
@@ -211,21 +221,22 @@ class Integration extends BaseIntegration {
 	 * Serializes a form tags as array data.
 	 *
 	 * @param WPCF7_FormTag $field Form tag instance.
-	 * @param array         $form_data Form data.
 	 *
 	 * @return array.
 	 */
 	private function serialize_field( $field ) {
-		if ( in_array( $field->basetype, array( 'response', 'submit', 'quiz' ) ) ) {
+		if ( in_array( $field->basetype, array( 'response', 'submit', 'quiz' ), true ) ) {
 			return;
 		}
 
-		$type = $field->basetype;
-		if ( $type === 'conditional' ) {
+		$basetype = $field->basetype;
+		$type     = $basetype;
+
+		if ( 'conditional' === $basetype ) {
 			$type = $field->get_option( 'type' )[0];
 		}
 
-		switch ( $type ) {
+		switch ( $basetype ) {
 			case 'radio':
 			case 'checkbox':
 				$type = 'select';
@@ -249,7 +260,7 @@ class Integration extends BaseIntegration {
 			}
 		}
 
-		$format = $type === 'date' ? 'yyyy-mm-dd' : '';
+		$format = 'date' === $type ? 'yyyy-mm-dd' : '';
 
 		return apply_filters(
 			'forms_bridge_form_field_data',
@@ -260,14 +271,12 @@ class Integration extends BaseIntegration {
 				'label'       => $field->name,
 				'required'    => $field->is_required(),
 				'options'     => $options,
-				'is_file'     => $type === 'file',
+				'is_file'     => 'file' === $type,
 				'is_multi'    => $this->is_multi_field( $field ),
-				'conditional' =>
-					$field->basetype === 'conditional' ||
-					$field->basetype === 'fileconditional',
+				'conditional' => in_array( $field->basetype, array( 'conditional', 'fileconditional' ), true ),
 				'format'      => $format,
 				'schema'      => $this->field_value_schema( $field ),
-				'_type'       => $field->basetype,
+				'_type'       => $basetype,
 			),
 			$field,
 			'wpcf7'
@@ -277,18 +286,18 @@ class Integration extends BaseIntegration {
 	/**
 	 * Checks if a filed is multi value field.
 	 *
-	 * @param WPCF7_FormTag Target tag instance.
+	 * @param WPCF7_FormTag $tag Target tag instance.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	private function is_multi_field( $tag ) {
 		$type = str_replace( '*', '', $tag->type );
 
-		if ( $type === 'checkbox' ) {
+		if ( 'checkbox' === $type ) {
 			return ! $tag->has_option( 'exclusive' );
 		}
 
-		if ( $type === 'select' ) {
+		if ( 'select' === $type ) {
 			return $tag->has_option( 'multiple' );
 		}
 
@@ -319,7 +328,9 @@ class Integration extends BaseIntegration {
 			case 'select':
 				if ( $tag->has_option( 'multiple' ) ) {
 					$items = array();
-					for ( $i = 0; $i < count( $tag->values ); $i++ ) {
+
+					$l = count( $tag->values );
+					for ( $i = 0; $i < $l; $i++ ) {
 						$items[] = array( 'type' => 'string' );
 					}
 
@@ -339,7 +350,9 @@ class Integration extends BaseIntegration {
 				}
 
 				$items = array();
-				for ( $i = 0; $i < count( $tag->values ); $i++ ) {
+
+				$l = count( $tag->values );
+				for ( $i = 0; $i < $l; $i++ ) {
 					$items[] = array( 'type' => 'string' );
 				}
 
@@ -549,4 +562,4 @@ class Integration extends BaseIntegration {
 	}
 }
 
-Integration::setup();
+WPCF7_Integration::setup();
