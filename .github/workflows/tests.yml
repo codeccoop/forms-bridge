@@ -13,6 +13,9 @@ jobs:
     container:
       image: codeccoop/wp-test
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Start MariaDB
         run: nohup docker-entrypoint.sh mariadbd 2>&1 >/dev/null &
 
