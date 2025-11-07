@@ -13,11 +13,13 @@ jobs:
     container:
       image: codeccoop/wp-test
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Start MariaDB
         run: nohup docker-entrypoint.sh mariadbd 2>&1 >/dev/null &
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Composer install
         run: composer -q install
