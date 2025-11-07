@@ -13,13 +13,23 @@ jobs:
     container:
       image: codeccoop/wp-test
     steps:
-      - name: Install WP Test Suite
-        run: |
-          nohup docker-entrypoint.sh mariadb 2>&1 >/dev/null &
-          composer -q install
-          sleep 10
-          chmod a+x bin/*
-          bin/install-wp-tests.sh
-          bin/download-test-deps.sh
+      - name: Start MariaDB
+        run: nohup docker-entrypoint.sh mariadb 2>&1 >/dev/null &
+
+      - name: Composer install
+        run: composer -q install
+
+      - name: Wait for MariaDB
+        run: sleep 5
+
+      - name: Executable mode
+        run: chmod a+x bin/*
+
+      - name: Install tests suite
+        run: bin/install-wp-tests.sh
+
+      - name: Download deps
+        run: bin/download-test-deps.sh
+
       - name: Unit testing
         run: vendor/bin/phpunit -c phpunit.xml.dist
