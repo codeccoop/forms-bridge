@@ -14,7 +14,7 @@ jobs:
       image: codeccoop/wp-test
     steps:
       - name: Start MariaDB
-        run: nohup docker-entrypoint.sh mariadb 2>&1 >/dev/null &
+        run: nohup docker-entrypoint.sh mariadbd 2>&1 >/dev/null &
 
       - name: Composer install
         run: composer -q install
