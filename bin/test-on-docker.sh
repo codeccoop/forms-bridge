@@ -2,6 +2,7 @@
 
 docker run --rm \
 	-v .:/forms-bridge \
+	-v /tmp:/tmp \
 	-w /forms-bridge \
 	--add-host=host.docker.internal:host-gateway \
 	--name forms-bridge-tests \
