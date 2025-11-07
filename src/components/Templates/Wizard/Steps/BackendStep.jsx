@@ -170,6 +170,7 @@ export default function BackendStep({
       {!reuse &&
         sortedFields.map((field) => (
           <Field
+            key={field.name}
             data={{
               ...field,
               value: state[field.name] || "",

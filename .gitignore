@@ -1,6 +1,8 @@
 .DS_Store
 phpcs.xml
 phpunit.xml
+.phpunit.result.cache
+.php-cs-fixer.cache
 Thumbs.db
 wp-cli.local.yml
 node_modules/

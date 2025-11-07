@@ -1,9 +1,6 @@
 // vendor
 import { EditorView, basicSetup } from "codemirror";
-import { EditorState, Prec } from "@codemirror/state";
-import { keymap } from "@codemirror/view";
-import { syntaxTree } from "@codemirror/language";
-import { linter } from "@codemirror/lint";
+import { EditorState } from "@codemirror/state";
 import { php } from "@codemirror/lang-php";
 
 const { useEffect, useRef } = wp.element;

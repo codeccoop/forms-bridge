@@ -18,7 +18,7 @@ export function validateUrl(url, base = false) {
     return false;
   }
 
-  if (/[^-a-zA-Z0-9\._\+]+/.test(url.hostname)) {
+  if (/[^-a-zA-Z0-9._+]+/.test(url.hostname)) {
     return false;
   }
 
@@ -147,6 +147,7 @@ export function isset(obj, attr) {
 }
 
 export function adminUrl(path = "", query = {}) {
+  /* global wpApiSettings */
   const url = new URL(wpApiSettings.root.replace(/wp-json/, "wp-admin"));
   url.pathname += path.replace(/^\/+/, "");
   url.search = new URLSearchParams(query).toString();

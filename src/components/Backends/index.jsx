@@ -6,7 +6,7 @@ import TabTitle from "../TabTitle";
 import AddIcon from "../icons/Add";
 
 const { useRef, useEffect } = wp.element;
-const { PanelBody, TabPanel, __experimentalSpacer: Spacer } = wp.components;
+const { TabPanel } = wp.components;
 const { __ } = wp.i18n;
 
 const CSS = `.backends-tabs-panel .components-tab-panel__tabs{overflow-x:auto;}

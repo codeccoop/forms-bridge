@@ -178,8 +178,10 @@ function SelectField({
         multiple={!!multiple}
         {...constraints}
       >
-        {options.map(({ label, value }) => (
-          <option value={value}>{label}</option>
+        {options.map(({ label, value }, i) => (
+          <option key={i} value={value}>
+            {label}
+          </option>
         ))}
       </select>
     </>
@@ -189,7 +191,7 @@ function SelectField({
 export default function TemplateField({ data, error }) {
   const isRequired = !!data.required;
   return (
-    <label style={{ margin: "0.5rem 0" }} for={data.name}>
+    <label style={{ margin: "0.5rem 0" }} htmlFor={data.name}>
       {data.label}
       {isRequired && <span style={{ marginLeft: "3px", color: "red" }}>*</span>}
       {(data.description && (

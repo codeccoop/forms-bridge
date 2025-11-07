@@ -124,6 +124,7 @@ export default function CredentialStep({ fields, data, setData }) {
       {!reuse &&
         sortedFields.map((field) => (
           <Field
+            key={field.name}
             data={{
               ...field,
               value: state[field.name] || "",

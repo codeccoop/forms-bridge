@@ -8,13 +8,13 @@ const buildPrettierCommand = (filenames) =>
     .map((f) => path.relative(process.cwd(), f))
     .join(" ")}`;
 
-const buildPrettierPhpCommand = (filenames) =>
-  `prettier --write --ignore-unknown --config .prettierrc-php ${filenames
+const buildPhpCbfCommand = (filenames) =>
+  `vendor/bin/phpcbf -n ${filenames
     .map((f) => path.relative(process.cwd(), f))
     .join(" ")}`;
 
 module.exports = {
-  // "src/**/*.{js,jsx,ts,tsx}": [buildEslintCommand],
-  "*.{json,js,ts,jsx,tsx,html,css}": [buildPrettierCommand],
-  "*.php": [buildPrettierPhpCommand],
+  "src/**/*.{js,jsx}": [buildEslintCommand],
+  "*.{json,js,jsx,html,css}": [buildPrettierCommand],
+  "*.php": [buildPhpCbfCommand],
 };

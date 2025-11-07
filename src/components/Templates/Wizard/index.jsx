@@ -80,7 +80,7 @@ export default function TemplateWizard({ integration, onSubmit }) {
       if (field.default || field.value) {
         const value = field.value || field.default;
         const group = refToGroup(field.ref);
-        defaults[group] = defaults[group];
+        defaults[group] = defaults[group] || {};
         defaults[group][field.name] = value;
       } else if (field.type === "select" && field.required) {
         const group = refToGroup(field.ref);

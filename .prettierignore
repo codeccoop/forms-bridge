@@ -1,6 +1,11 @@
+# js
 node_modules
 package.json
 package-lock.json
+
+# php
+composer.json
+composer.lock
 
 # config
 *.config.js

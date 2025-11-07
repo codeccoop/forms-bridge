@@ -77,11 +77,41 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 - [Còdec](https://www.codeccoop.org)
 - [Other plugins](https://profiles.wordpress.org/codeccoop/#content-plugins)
 
-## Dependencies
+## Development
 
-This plugin relays on [Http Bridge](https://gitlab.com/codeccoop/wp/plugins/http-bridge/)
-and [Wpct i18n](https://gitlab.coom/codeccoop/wp/plugins/wpct-i18n/) as depenendencies,
-as well as the [Wpct Plugin Common](https://gitlab.com/codeccoop/wp/plugins/wpct-plugin-common)
-snippets. The plugin comes with its dependencies bundled in its releases, so you should
-not worry about its managment. You can see this plugins documentation to know more about
-its APIs.
+### API
+
+The plugin offers some hooks to expose its internal API. Go to [documentation](https://formsb
+ridge.codeccoop.org/documentation/#api) to see more details about the hooks.
+
+### Dependencies
+
+The repository handles dependencies as [git submodules](https://www.atlassian.com/git/tutoria
+ls/git-submodule).
+In order to work local, you have to clone this repository and initialize its submodules
+with this command:
+
+```
+git submodule sync
+git submodule update --init
+```
+
+Once done, install JS dependenices with `npm install` and PHP dependencies with `composer install`.
+
+### Build
+
+Frontend builds are made with [esbuild](https://esbuild.github.io/). Once you
+have your JS dependencies installed you can run `npm run dev` to perform
+a live build, or `npm run build` to get a production build.
+
+### Lint and format
+
+For JavaScript the project uses [prettier](https://prettier.io/) as a formatter [eslint](https://eslint.org/) as the linter.
+
+For PHP the project uses [phpcs](https://github.com/squizlabs/PHP_CodeSniffer) as the linter and [php-cs-fixed](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/) as the formatter.
+
+Lint and format will be applied to staged files before each commit. In addition, merge requests performs a lint test in order to be accepted.
+
+### Tests
+
+To run the projects test you have to execute the script `bin/install-wp-tests.sh` in order to get the WordPress test suit installed in your local machine. Once done, run `composer run test` to run project's unit tests.
