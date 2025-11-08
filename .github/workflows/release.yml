@@ -73,15 +73,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build
-          path: forms-bridge/assets/plugin.bundle.js
+          path: forms-bridge/assets
+
+      - name: Debug
+        run: ls -l forms-bridge/assets
 
       - name: Install dist archive
         run: wp package install wp-cli/dist-archive-command:@stable
-
-      - name: Debug
-        run: |
-          which wp
-          wp help
 
       - name: Replace textdomains
         run: |
@@ -114,7 +112,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: plugin-archive
-          path: ${{ env.ZIP }}
+
+      - name: Debug
+        run: ls -l
 
       - name: Create release
         env:
