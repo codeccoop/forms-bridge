@@ -55,16 +55,13 @@ jobs:
 
       - name: Replace textdomains
         run: |
-          find forms-bridge/plugin -name '*.php' -exec sed -i "s/wpct-plugin/forms-bridge/g" {} \;
+          find forms-bridge/deps/plugin -name '*.php' -exec sed -i "s/wpct-plugin/forms-bridge/g" {} \;
           find forms-bridge -name '*.php' -exec sed -i "s/wpct_plugin_/forms_bridge_plugin_/g" {} \;
           find forms-bridge -name "*.php" -exec sed -i 's/WPCT_PLUGIN/FORMS_BRIDGE\\Common/g' {} \;
           find forms-bridge/deps/http -name '*.php' -exec sed -i "s/http-bridge/forms-bridge/g" {} \;
           find forms-bridge -name '*.php' -exec sed -i "s/http_bridge_/forms_bridge_http_/g" {} \;
           find forms-bridge -name "*.php" -exec sed -i 's/HTTP_BRIDGE_/FORMS_BRIDGE_HTTP_/g' {} \;
           find forms-bridge -name '*.php' -exec sed -i 's/HTTP_BRIDGE/FORMS_BRIDGE\\Http/g' {} \;
-          find forms-bridge/deps/i18n -name '*.php' -exec sed -i "s/wpct-i18n/forms-bridge/g" {} \;
-          find forms-bridge -name '*.php' -exec sed -i "s/wpct_i18n_/forms_bridge_i18n_/g" {} \;
-          find forms-bridge -name '*.php' -exec sed -i 's/WPCT_I18N/FORMS_BRIDGE\\I18n/g' {} \;
 
       - name: Archive
         run: wp dist-archive forms-bridge ./$ZIP
