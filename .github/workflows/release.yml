@@ -76,7 +76,10 @@ jobs:
           path: forms-bridge/assets/plugin.bundle.js
 
       - name: Debug
-        run: wp help
+        run: |
+          which wp
+          wp help
+          /usr/bin/wp help
 
       - name: Replace textdomains
         run: |
@@ -89,7 +92,7 @@ jobs:
           find forms-bridge -name '*.php' -exec sed -i 's/HTTP_BRIDGE/FORMS_BRIDGE\\Http/g' {} \;
 
       - name: Archive
-        run: wp dist-archive forms-bridge ./$ZIP
+        run: /usr/bin/wp dist-archive forms-bridge ./$ZIP
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
