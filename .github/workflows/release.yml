@@ -57,6 +57,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build
+          path: forms-bridge
 
       - name: Replace textdomains
         run: |
