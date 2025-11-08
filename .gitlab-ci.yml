@@ -26,6 +26,13 @@ variables:
 phpunit:
   stage: test
   image: codeccoop/wp-test
+  cache:
+    - key:
+        files:
+          - bin/download-test-deps.sh
+      paths:
+        - /tmp/*.zip
+
   before_script:
     - nohup docker-entrypoint.sh mariadbd 2>&1 >/dev/null &
     - composer -q install
@@ -45,6 +52,12 @@ build:
   extends: .release_job
   stage: build
   image: node:latest
+  cache:
+    - key:
+        files:
+          - package-lock.json
+      paths:
+        - node_modules
   script:
     - find src -exec sed -i "s/http-bridge/forms-bridge/g" {} \;
     - npm install && npm run build
@@ -57,6 +70,7 @@ package:
   extends: .release_job
   image: codeccoop/wp-cli:latest
   stage: package
+  dependencies: [build]
   script:
     - find forms-bridge/deps/plugin -name '*.php' -exec sed -i "s/wpct-plugin/forms-bridge/g" {} \;
     - find forms-bridge -name '*.php' -exec sed -i "s/wpct_plugin_/forms_bridge_plugin_/g" {} \;
@@ -74,6 +88,7 @@ upload:
   extends: .release_job
   stage: upload
   image: curlimages/curl:latest
+  dependencies: [package]
   script:
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
@@ -86,6 +101,7 @@ release:
   extends: .release_job
   stage: release
   image: gitlab/glab:latest
+  dependencies: [package]
   variables:
     GITLAB_HOST: "$CI_SERVER_URL"
   script:
