@@ -29,6 +29,7 @@ while [ $i -lt $COUNT ]; do
 
 	ZIP="$TMPDIR/$PLUGIN.zip"
 	if [ ! -f "$ZIP" ]; then
+		echo "Download $URL to $ZIP"
 		curl -sL --connect-timeout 5 --max-time 30 "$URL" >"$ZIP"
 
 		if [ $? -gt 0 ]; then
