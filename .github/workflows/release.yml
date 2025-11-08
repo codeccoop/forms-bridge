@@ -75,11 +75,13 @@ jobs:
           name: build
           path: forms-bridge/assets/plugin.bundle.js
 
+      # - name: Install dist archive
+      #   run: wp package install wp-cli/dist-archive-command:@stable
+
       - name: Debug
         run: |
           which wp
           wp help
-          /usr/bin/wp help
 
       - name: Replace textdomains
         run: |
