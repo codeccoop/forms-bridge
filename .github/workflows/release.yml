@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: client-build
-          path: forms-bridge/assets
+          path: forms-bridge/assets/plugin.bundle.js
 
   package:
     name: Prepare package
@@ -51,7 +51,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: client-build
-          path: forms-bridge/assets
+          path: forms-bridge/assets/plugin.bundle.js
 
       - name: Replace textdomains
         run: |
