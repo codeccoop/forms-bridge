@@ -3,15 +3,23 @@
 [![Plugin version](https://img.shields.io/wordpress/plugin/v/forms-bridge)](https://wordpress.org/plugins/forms-bridge/)
 ![GitHub Actions Tests Workflow Status](https://img.shields.io/github/actions/workflow/status/codeccoop/forms-bridge/tests.yml?label=tests)
 
-Bridge your WordPress forms without code, add custom fields, use field mappers, set up a workflow and make your data flow seamlessly to your backend.
+Bridge your WordPress forms without code, add custom fields, use field mappers,
+set up a workflow and make your data flow seamlessly to your backend.
 
 ## Bridges
 
-Think of a bridge as a pipeline through which your form submissions data flows to your backend or service. In the middle, you can add custom fields to the form submissions, use field mappers to rename and mutate your form responses, or use workflow jobs to process the data before it is sent over the wire. With bridges you can connect your WordPress forms to any kind of backend, it doesn't matter if it is a CRM, an ERP, a booking system or an email marketing platform, the only requirement is an HTTP API. If it has an API it can be bridged!
+Think of a bridge as a pipeline through which your form submissions data flows
+to your backend or service. In the middle, you can add custom fields to the form
+submissions, use field mappers to rename and mutate your form responses, or use
+workflow jobs to process the data before it is sent over the wire. With bridges you
+can connect your WordPress forms to any kind of backend, it doesn't matter if it
+is a CRM, an ERP, a booking system or an email marketing platform, the only requirement
+is an HTTP API. If it has an API it can be bridged!
 
 ## Form builders
 
-Form builders are well known plugins that add forms to WordPress. We do bridges, let them do the forms and then work together to make your business work with ease.
+Form builders are well known plugins that add forms to WordPress. We do bridges,
+let them do the forms and then work together to make your business work with ease.
 
 Forms Bridge supports the following form builders:
 
@@ -23,7 +31,8 @@ Forms Bridge supports the following form builders:
 
 ## Addons
 
-Forms Bridge comes with free addons. Each addon adds to the plugin new bridges to work with specific APIs, new workflow jobs and bridge templates.
+Forms Bridge comes with free addons. Each addon adds to the plugin new bridges
+to work with specific APIs, new workflow jobs and bridge templates.
 
 Forms Bridge has the following addons:
 
@@ -42,7 +51,9 @@ Forms Bridge has the following addons:
 
 ## Backends
 
-In Forms Bridge, a backend is a set of configurations that handles the information required to get your form submissions bridged over HTTP requests to remote systems.
+In Forms Bridge, a backend is a set of configurations that handles the
+information required to get your form submissions bridged over HTTP requests
+to remote systems.
 
 To register a new backend you only have to set 3 fields:
 
@@ -55,15 +66,21 @@ Once registered, you can reuse your backend connection on your form bridges.
 
 ## Custom fields
 
-Custom fields are data that will be added the bridge payload. Use them to store private data you don’t want to place on your public forms, like user emails, or config values, like product IDs or lead tags.
+Custom fields are data that will be added the bridge payload. Use them to store
+private data you don’t want to place on your public forms, like user emails, or
+config values, like product IDs or lead tags.
 
 ## Field mappers
 
-Field mappers are mutations with which you can rename your form submission fields and transform its values. Use them to make your form submissions to fit your backend API endpoint interface.
+Field mappers are mutations with which you can rename your form submission
+fields and transform its values. Use them to make your form submissions to
+fit your backend API endpoint interface.
 
 ## Workflows
 
-Make your form submissions flow through a chain of jobs that pre-process the data before it was sent over the wire. Think of workflow as a system to set up automations to run on each form submission.
+Make your form submissions flow through a chain of jobs that pre-process the
+data before it was sent over the wire. Think of workflow as a system to set up
+automations to run on each form submission.
 
 ## Templates
 
@@ -76,7 +93,7 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 ## Links
 
 - [Official website](https://formsbridge.codeccoop.org/)
-- [Gitlab](https://git.coopdevs.org/codeccoop/wp/plugins/bridges/forms-bridge/)
+- [GitHub](https://github.com/codeccoop/forms-bridge/)
 - [Còdec](https://www.codeccoop.org)
 - [Other plugins](https://profiles.wordpress.org/codeccoop/#content-plugins)
 
@@ -84,13 +101,13 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 
 ### API
 
-The plugin offers some hooks to expose its internal API. Go to [documentation](<https://formsb>
-ridge.codeccoop.org/documentation/#api) to see more details about the hooks.
+The plugin offers some hooks to expose its internal API. Go to
+[documentation](https://formsbridge.codeccoop.org/documentation/#api) to see
+more details about the hooks.
 
 ### Dependencies
 
-The repository handles dependencies as [git submodules](<https://www.atlassian.com/git/tutoria>
-ls/git-submodule).
+The repository handles dependencies as [git submodules](https://www.atlassian.com/git/tutorials/git-submodule).
 In order to work local, you have to clone this repository and initialize its submodules
 with this command:
 
@@ -99,7 +116,8 @@ git submodule sync
 git submodule update --init
 ```
 
-Once done, install JS dependenices with `npm install` and PHP dependencies with `composer install`.
+Once done, install JS dependenices with `npm install` and PHP dependencies with
+`composer install`.
 
 ### Build
 
@@ -109,12 +127,20 @@ a live build, or `npm run build` to get a production build.
 
 ### Lint and format
 
-For JavaScript the project uses [prettier](https://prettier.io/) as a formatter [eslint](https://eslint.org/) as the linter.
+For JavaScript the project uses [prettier](https://prettier.io/) as a formatter
+[eslint](https://eslint.org/) as the linter.
 
-For PHP the project uses [phpcs](https://github.com/squizlabs/PHP_CodeSniffer) as the linter and [php-cs-fixed](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/) as the formatter.
+For PHP the project uses [phpcs](https://github.com/squizlabs/PHP_CodeSniffer)
+as the linter and formatter.
 
-Lint and format will be applied to staged files before each commit. In addition, merge requests performs a lint test in order to be accepted.
+Lint and format will be applied to staged files before each commit. In addition,
+merge requests performs a lint test in order to be accepted.
 
 ### Tests
 
-To run the projects test you have to execute the script `bin/install-wp-tests.sh` in order to get the WordPress test suit installed in your local machine. Once done, run `composer run test` to run project's unit tests.
+To run the projects test you have to execute the script `bin/install-wp-tests.sh`
+in order to get the WordPress test suit installed in your local machine. Once done,
+run `composer run test` to run project's unit tests.
+
+If you have docker on your local machine, you can run tests in an ephemeral environment
+with the script `bin/test-on-docker.sh`.
