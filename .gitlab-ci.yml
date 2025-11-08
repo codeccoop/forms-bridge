@@ -61,7 +61,6 @@ build:
   script:
     - find src -exec sed -i "s/http-bridge/forms-bridge/g" {} \;
     - npm install && npm run build
-    - rm -rf node_modules
   artifacts:
     paths:
       - forms-bridge/assets/plugin.bundle.js
