@@ -33,6 +33,12 @@ phpunit:
       paths:
         - /tmp/*.zip
 
+    - key:
+        files:
+          - composer.lock
+        paths:
+          - vendor
+
   before_script:
     - nohup docker-entrypoint.sh mariadbd 2>&1 >/dev/null &
     - composer -q install

@@ -21,6 +21,18 @@ jobs:
         with:
           submodules: true
 
+      - name: Cache composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('composer.lock') }}
+
+      - name: Cache plugins
+        uses: actions/cache@v4
+        with:
+          path: /tmp/*.zip
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('bin/download-test-deps.sh') }}
+
       - name: Composer install
         run: composer -q install
 
