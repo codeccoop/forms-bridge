@@ -49,6 +49,9 @@ function _manually_load_plugin() {
 	require ABSPATH . 'wp-content/mu-plugins/gravityforms/gravityforms.php';
 	require ABSPATH . 'wp-content/mu-plugins/ninja-forms/ninja-forms.php';
 	require ABSPATH . 'wp-content/mu-plugins/wpforms/wpforms.php';
+
+	/* Plugin tests */
+	require dirname( __DIR__ ) . '/forms-bridge/deps/plugin/tests/bootstrap.php';
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
