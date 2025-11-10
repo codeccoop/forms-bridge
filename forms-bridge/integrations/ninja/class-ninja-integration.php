@@ -229,16 +229,14 @@ class Ninja_Integration extends BaseIntegration {
 	 * @return array
 	 */
 	public function serialize_form( $form_factory ) {
-		$form    = $form_factory->get();
-		$form_id = (int) $form->get_id();
-		$fields  = array_filter(
-			array_map(
-				function ( $field ) use ( $form ) {
-					return $this->serialize_field( $field, $form->get_settings() );
-				},
-				$form_factory->get_fields()
-			)
-		);
+		$form          = $form_factory->get();
+		$form_id       = (int) $form->get_id();
+		$form_settings = $form->get_settings();
+
+		$fields = array();
+		foreach ( $form_factory->get_fields() as $field ) {
+			$fields[] = $this->serialize_field( $field, $form_settings );
+		}
 
 		return apply_filters(
 			'forms_bridge_form_data',
@@ -301,7 +299,7 @@ class Ninja_Integration extends BaseIntegration {
 	 *
 	 * @return array
 	 */
-	private function serialize_field_settings( $id, $settings, $form_settings ) {
+	public function serialize_field_settings( $id, $settings, $form_settings ) {
 		$name =
 			$settings['key'] ??
 			( $settings['admin_label'] ?? $settings['label'] );
@@ -348,7 +346,7 @@ class Ninja_Integration extends BaseIntegration {
 				$type = 'tel';
 				break;
 			case 'checkbox':
-				$type = 'boolean';
+				$type = 'checkbox';
 				break;
 			case 'date':
 				$type = 'date';

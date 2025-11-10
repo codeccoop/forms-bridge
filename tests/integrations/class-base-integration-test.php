@@ -51,8 +51,12 @@ abstract class BaseIntegrationTest extends WP_UnitTestCase {
 		$forms = static::get_forms();
 
 		foreach ( $forms as $form ) {
-			if ( is_array( $form ) && isset( $form['title'] ) && $form['title'] === $title ) {
-				return $form;
+			if ( is_array( $form ) ) {
+				if ( isset( $form['title'] ) && $form['title'] === $title ) {
+					return $form;
+				} elseif ( isset( $form['settings']['title'] ) && $form['settings']['title'] === $title ) {
+					return $form;
+				}
 			} elseif ( is_object( $form ) && property_exists( $form, 'title' ) ) {
 				if ( is_callable( array( $form, 'title' ) ) && $form->title() === $title ) {
 					return $form;
