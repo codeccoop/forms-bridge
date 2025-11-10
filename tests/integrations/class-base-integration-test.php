@@ -59,6 +59,8 @@ abstract class BaseIntegrationTest extends WP_UnitTestCase {
 				} elseif ( ! is_callable( array( $form, 'title' ) ) && $form->title === $title ) {
 					return $form;
 				}
+			} elseif ( is_object( $form ) && property_exists( $form, 'post_title' ) && $form->post_title === $title ) {
+				return $form;
 			}
 		}
 
@@ -69,7 +71,7 @@ abstract class BaseIntegrationTest extends WP_UnitTestCase {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'type'        => $type,
+				'basetype'    => $type,
 				'schema'      => ( $args['is_file'] ?? false ) ? null : 'string',
 				'required'    => true,
 				'is_file'     => false,
@@ -78,13 +80,8 @@ abstract class BaseIntegrationTest extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertSame( $args['type'], $field['type'] );
-
-		if ( isset( $args['_type'] ) ) {
-			$this->assertSame( $args['_type'], $field['_type'] );
-		} else {
-			$this->assertSame( $field['type'], $field['_type'] );
-		}
+		$this->assertSame( $type, $field['type'] );
+		$this->assertSame( $args['basetype'], $field['basetype'] );
 
 		if ( $args['schema'] && ! $args['is_file'] ) {
 			$this->assertSame( $args['schema'], $field['schema']['type'] );
@@ -104,6 +101,24 @@ abstract class BaseIntegrationTest extends WP_UnitTestCase {
 		if ( isset( $args['format'] ) ) {
 			$this->assertSame( $args['format'], $field['format'] );
 		}
+
+		if ( isset( $args['options'] ) ) {
+			if ( is_int( $args['options'] ) ) {
+				$this->assertEquals( $args['options'], count( $field['options'] ) );
+			} else {
+				$l = count( $args['options'] );
+				for ( $i = 0; $i < $l; ++$i ) {
+					$this->assertSame( $args['options'][ $i ]['label'], $field['options'][ $i ]['label'] );
+					$this->assertSame( $args['options'][ $i ]['value'], $field['options'][ $i ]['value'] );
+				}
+			}
+		}
+
+		if ( isset( $args['label'] ) ) {
+			$this->assertSame( $args['label'], $field['label'] );
+		} else {
+			$this->assertTrue( ! empty( $field['label'] ) );
+		}
 	}
 
 	/**
@@ -121,9 +136,17 @@ abstract class BaseIntegrationTest extends WP_UnitTestCase {
 		}
 
 		foreach ( array_diff( scandir( $dir ), array( '..', '.' ) ) as $filename ) {
-			$name           = explode( '.', $filename )[0];
-			$filepath       = $dir . '/' . $filename;
-			$store[ $name ] = unserialize( file_get_contents( $filepath ) );
+			$name     = explode( '.', $filename )[0];
+			$filepath = $dir . '/' . $filename;
+			$content  = file_get_contents( $filepath );
+
+			if ( str_ends_with( $filepath, '.json' ) ) {
+				$store[ $name ] = json_decode( $content, true );
+			} elseif ( str_ends_with( $filepath, '.php.txt' ) ) {
+				$store[ $name ] = unserialize( $content );
+			} elseif ( str_ends_with( $filepath, '.php' ) ) {
+				$store[ $name ] = include $filepath;
+			}
 		}
 
 		return $store;
@@ -141,7 +164,7 @@ abstract class BaseIntegrationTest extends WP_UnitTestCase {
 			$form_id = static::add_form( $object );
 
 			if ( ! $form_id ) {
-				throw new Exception( 'Unable to create GF Form' );
+				throw new Exception( 'Unable to create Form' );
 			}
 		}
 	}
