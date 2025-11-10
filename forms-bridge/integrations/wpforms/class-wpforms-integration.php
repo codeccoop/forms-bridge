@@ -336,6 +336,16 @@ class WPForms_Integration extends BaseIntegration {
 				)[ $format ] ?? '';
 		}
 
+		$options = array();
+		if ( ! empty( $field['choices'] ) ) {
+			foreach ( $field['choices'] as $choice ) {
+				$options[] = array(
+					'label' => $choice['label'],
+					'value' => $choice['value'] ?: $choice['label'],
+				);
+			}
+		}
+
 		switch ( $field['type'] ) {
 			case 'url':
 				$type = 'url';
@@ -389,7 +399,7 @@ class WPForms_Integration extends BaseIntegration {
 				'name'        => trim( $field['label'] ?? '' ),
 				'label'       => trim( $field['label'] ?? '' ),
 				'required'    => '1' === ( $field['required'] ?? '' ),
-				'options'     => isset( $field['choices'] ) ? array_values( $field['choices'] ) : array(),
+				'options'     => $options,
 				'is_file'     => 'file-upload' === $field['type'],
 				'is_multi'    => $this->is_multi_field( $field ),
 				'conditional' => false,
@@ -964,7 +974,7 @@ class WPForms_Integration extends BaseIntegration {
 			function ( $opt ) {
 				return array(
 					'label'      => esc_html( $opt['label'] ),
-					'value'      => sanitize_text_field( $opt['value'] ),
+					'value'      => sanitize_text_field( $opt['value'] ?: $opt['label'] ),
 					'image'      => '',
 					'icon'       => '',
 					'icon_style' => 'regular',
