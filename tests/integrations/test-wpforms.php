@@ -120,25 +120,46 @@ class WPFormsTest extends BaseIntegrationTest {
 		$this->assertField( $field, 'textarea', array( 'required' => false ) );
 	}
 
-	// public function test_address_book_submission_serialization() {
-	// $form = self::get_form( 'Address Book Form' );
-	//
-	// $form_data = $this->serialize_form( $form );
-	//
-	// $store = self::store();
-	// foreach ( $store as $name => $object ) {
-	// if ( 'address-book-submission' === $name ) {
-	// $submission = $object;
-	// break;
-	// }
-	// }
-	//
-	// if ( ! isset( $submission ) ) {
-	// throw new Exception( 'Address book submission not found' );
-	// }
-	// }
+	public function test_address_book_submission_serialization() {
+		$form = self::get_form( 'Address Book Form' );
 
-	public function test_donation_form() {
+		$form_data = $this->serialize_form( $form );
+
+		$store = self::store();
+		foreach ( $store as $name => $object ) {
+			if ( 'address-book-submission' === $name ) {
+				$submission = $object;
+				break;
+			}
+		}
+
+		if ( ! isset( $submission ) ) {
+			throw new Exception( 'Address book submission not found' );
+		}
+
+		$_POST['wpforms'] = $submission;
+
+		$payload = $this->serialize_submission( $submission, $form_data );
+
+		$this->assertSame( 'John Doe', $payload['Name'] );
+
+		$this->assertEqualSets(
+			array(
+				'address1' => 'Carrer de les Camèlies',
+				'address2' => '',
+				'city'     => 'Barcelona',
+				'state'    => 'Barcelona',
+				'postal'   => '08001',
+				'country'  => 'ES',
+			),
+			$payload['Address']
+		);
+
+		$this->assertSame( '+34600000000', $payload['Home Phone'] );
+		$this->assertSame( '1/1/2001', $payload['Birthday'] );
+	}
+
+	public function test_donation_form_serialization() {
 		$form = self::get_form( 'Donation Form' );
 
 		$form_data = $this->serialize_form( $form );
@@ -157,7 +178,32 @@ class WPFormsTest extends BaseIntegrationTest {
 		);
 	}
 
-	public function test_meeting_room_registration_form() {
+	public function test_donation_submission_serialization() {
+		$form = self::get_form( 'Donation Form' );
+
+		$form_data = $this->serialize_form( $form );
+
+		$store = self::store();
+		foreach ( $store as $name => $object ) {
+			if ( 'donation-submission' === $name ) {
+				$submission = $object;
+				break;
+			}
+		}
+
+		if ( ! isset( $submission ) ) {
+			throw new Exception( 'Donation submission not found' );
+		}
+
+		$_POST['wpforms'] = $submission;
+
+		$payload = $this->serialize_submission( $submission, $form_data );
+
+		$this->assertSame( 'John Doe', $payload['Name'] );
+		$this->assertSame( '$1,000.00', $payload['Donation Amount'] );
+	}
+
+	public function test_meeting_room_registration_form_serialization() {
 		$form = self::get_form( 'Meeting Room Registration Form' );
 
 		$form_data = $this->serialize_form( $form );
@@ -198,6 +244,35 @@ class WPFormsTest extends BaseIntegrationTest {
 				'is_multi' => true,
 				'basetype' => 'checkbox',
 			),
+		);
+	}
+
+	public function test_meeting_room_registration_submission_serialization() {
+		$form = self::get_form( 'Meeting Room Registration Form' );
+
+		$form_data = $this->serialize_form( $form );
+
+		$store = self::store();
+		foreach ( $store as $name => $object ) {
+			if ( 'meeting-room-registration-submission' === $name ) {
+				$submission = $object;
+				break;
+			}
+		}
+
+		if ( ! isset( $submission ) ) {
+			throw new Exception( 'Meeting room reservation submission not found' );
+		}
+
+		$_POST['wpforms'] = $submission;
+
+		$payload = $this->serialize_submission( $submission, $form_data );
+
+		$this->assertSame( 'John Doe', $payload['Name'] );
+		$this->assertSame( 'Room A', $payload['Which room would you like to reserve?'] );
+		$this->assertEqualSets(
+			array( '8:00 - 9:00am', '9:00 - 10:00am', '3:00 - 4:00pm' ),
+			$payload['Which time blocks would you like to reserve?']
 		);
 	}
 }

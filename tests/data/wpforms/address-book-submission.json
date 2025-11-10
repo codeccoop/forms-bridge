@@ -1,0 +1,90 @@
+{
+  "fields": {
+    "1": {
+      "name": "Name",
+      "value": "John Doe",
+      "id": 1,
+      "type": "name",
+      "first": "John",
+      "middle": "",
+      "last": "Doe"
+    },
+    "2": {
+      "name": "Photo",
+      "value": "https:\/\/example.coop\/wp-content\/uploads\/wpforms\/216-97955d517a724370794c63f7ee4a0b56\/iconoclasta-a699c0c735188fb82db45e222be7d7f7.jpg",
+      "value_raw": [
+        {
+          "name": "iconoclasta.jpg",
+          "value": "https:\/\/example.coop\/wp-content\/uploads\/wpforms\/216-97955d517a724370794c63f7ee4a0b56\/iconoclasta-a699c0c735188fb82db45e222be7d7f7.jpg",
+          "file": "iconoclasta-a699c0c735188fb82db45e222be7d7f7.jpg",
+          "file_original": "iconoclasta.jpg",
+          "file_user_name": "iconoclasta.jpg",
+          "ext": "jpg",
+          "attachment_id": 0,
+          "id": 2,
+          "type": "image\/jpeg"
+        }
+      ],
+      "id": 2,
+      "type": "file-upload",
+      "style": "modern"
+    },
+    "3": {
+      "name": "Address",
+      "value": "Carrer de les Cam\u00e8lies\nBarcelona, Barcelona\n08001\nES",
+      "id": 3,
+      "type": "address",
+      "address1": "Carrer de les Cam\u00e8lies",
+      "address2": "",
+      "city": "Barcelona",
+      "state": "Barcelona",
+      "postal": "08001",
+      "country": "ES"
+    },
+    "4": {
+      "name": "Website \/ URL",
+      "value": "https:\/\/www.codeccoop.org",
+      "id": 4,
+      "type": "url"
+    },
+    "5": {
+      "name": "Email",
+      "value": "hola@codeccoop.org",
+      "id": 5,
+      "type": "email"
+    },
+    "6": {
+      "name": "Home Phone",
+      "value": "+34600000000",
+      "id": 6,
+      "type": "phone"
+    },
+    "7": {
+      "name": "Cell Phone",
+      "value": "+34600000000",
+      "id": 7,
+      "type": "phone"
+    },
+    "8": {
+      "name": "Birthday",
+      "value": "1\/1\/2001",
+      "id": 8,
+      "type": "date-time",
+      "date": "1\/1\/2001",
+      "time": "",
+      "unix": 978307200
+    },
+    "9": {
+      "name": "Notes",
+      "value": "Lorem ipsum dolor sit amer",
+      "id": 9,
+      "type": "textarea"
+    }
+  },
+  "id": "216",
+  "nonce": "51562ac3f6",
+  "post_id": "216",
+  "submit": "wpforms-submit",
+  "token": "1830c20a16fbab14910351acbea6a193",
+  "entry_id": 2
+}
