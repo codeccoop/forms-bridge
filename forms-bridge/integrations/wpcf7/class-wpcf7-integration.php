@@ -21,9 +21,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  * ContactForm7 integration.
  */
 class WPCF7_Integration extends BaseIntegration {
-
+	/**
+	 * Handles integration name.
+	 *
+	 * @var string
+	 */
 	const NAME = 'wpcf7';
 
+	/**
+	 * Handles integration title.
+	 *
+	 * @var string
+	 */
 	const TITLE = 'Contact Form 7';
 
 	/**
@@ -252,7 +261,9 @@ class WPCF7_Integration extends BaseIntegration {
 		$options = array();
 		if ( is_array( $field->values ) ) {
 			$values = $field->pipes->collect_afters();
-			for ( $i = 0; $i < sizeof( $field->raw_values ); $i++ ) {
+
+			$l = count( $field->raw_values );
+			for ( $i = 0; $i < $l; $i++ ) {
 				$options[] = array(
 					'value' => $values[ $i ],
 					'label' => $field->labels[ $i ],
@@ -276,7 +287,7 @@ class WPCF7_Integration extends BaseIntegration {
 				'conditional' => in_array( $field->basetype, array( 'conditional', 'fileconditional' ), true ),
 				'format'      => $format,
 				'schema'      => $this->field_value_schema( $field ),
-				'_type'       => $basetype,
+				'basetype'    => $basetype,
 			),
 			$field,
 			'wpcf7'
@@ -322,8 +333,6 @@ class WPCF7_Integration extends BaseIntegration {
 			case 'url':
 			case 'quiz':
 			case 'radio':
-			case 'iban':
-			case 'vat':
 				return array( 'type' => 'string' );
 			case 'select':
 				if ( $tag->has_option( 'multiple' ) ) {
@@ -387,26 +396,26 @@ class WPCF7_Integration extends BaseIntegration {
 		$data = $submission->get_posted_data();
 
 		foreach ( $data as $key => $val ) {
-			$i     = array_search( $key, array_column( $form_data['fields'], 'name' ) );
-			$field = $form_data['fields'][ $i ];
+			$index = array_search( $key, array_column( $form_data['fields'], 'name' ), true );
+			$field = $form_data['fields'][ $index ];
 
 			if ( is_array( $val ) && ! $field['is_multi'] ) {
 				$data[ $key ] = $val[0];
 				$val          = $data[ $key ];
 			}
 
-			if ( 'hidden' === $field['_type'] ) {
+			if ( 'hidden' === $field['basetype'] ) {
 				$number_val = (float) $val;
 				if ( strval( $number_val ) === $val ) {
 					$data[ $key ] = $number_val;
 				} else {
 					$data[ $key ] = $val;
 				}
-			} elseif ( 'number' === $field['_type'] ) {
+			} elseif ( 'number' === $field['basetype'] ) {
 				$data[ $key ] = (float) $val;
-			} elseif ( 'file' === $field['_type'] ) {
+			} elseif ( 'file' === $field['basetype'] ) {
 				unset( $data[ $key ] );
-			} elseif ( 'acceptance' === $field['_type'] ) {
+			} elseif ( 'acceptance' === $field['basetype'] ) {
 				$data[ $key ] = (bool) $val;
 			}
 		}
@@ -426,7 +435,8 @@ class WPCF7_Integration extends BaseIntegration {
 		$uploads = $submission->uploaded_files();
 		foreach ( $uploads as $file_name => $paths ) {
 			if ( ! empty( $paths ) ) {
-				$is_multi              = sizeof( $paths ) > 1;
+				$is_multi = count( $paths ) > 1;
+
 				$uploads[ $file_name ] = array(
 					'path'     => $is_multi ? $paths : $paths[0],
 					'is_multi' => $is_multi,
@@ -440,14 +450,14 @@ class WPCF7_Integration extends BaseIntegration {
 	/**
 	 * Gets form fields from a template and return a contact form content string.
 	 *
-	 * @param array $fields.
+	 * @param array $fields Form data fields array.
 	 *
 	 * @return string Form content.
 	 */
 	private function fields_to_form( $fields ) {
 		$form = '';
 		foreach ( $fields as $field ) {
-			if ( $field['type'] == 'hidden' ) {
+			if ( 'hidden' === $field['type'] ) {
 				if ( isset( $field['value'] ) ) {
 					if ( is_bool( $field['value'] ) ) {
 						$field['value'] = $field['value'] ? '1' : '0';
@@ -468,7 +478,7 @@ class WPCF7_Integration extends BaseIntegration {
 	/**
 	 * Gets a field template data and returns a form tag string.
 	 *
-	 * @param array $field.
+	 * @param array $field Field data.
 	 *
 	 * @return string.
 	 */
@@ -478,7 +488,22 @@ class WPCF7_Integration extends BaseIntegration {
 		} else {
 			$type = sanitize_text_field( $field['type'] );
 
-			if ( ( $field['required'] ?? false ) && $type !== 'hidden' ) {
+			switch ( $type ) {
+				case 'tel':
+					$type = 'text';
+					break;
+				case 'checkbox':
+					$type = 'acceptance';
+					break;
+				case 'select':
+					if ( $field['is_multi'] ) {
+						$type = 'checkbox';
+					}
+
+					break;
+			}
+
+			if ( ( $field['required'] ?? false ) && 'hidden' !== $type ) {
 				$type .= '*';
 			}
 		}
@@ -487,9 +512,7 @@ class WPCF7_Integration extends BaseIntegration {
 		$tag  = "[{$type} {$name} ";
 
 		foreach ( $field as $key => $val ) {
-			if (
-				! in_array( $key, array( 'name', 'type', 'value', 'required', 'label' ) )
-			) {
+			if ( ! in_array( $key, array( 'name', 'type', 'value', 'required', 'label' ), true ) ) {
 				$key  = sanitize_text_field( $key );
 				$val  = sanitize_text_field( $val );
 				$tag .= "{$key}:{$val} ";
@@ -498,7 +521,7 @@ class WPCF7_Integration extends BaseIntegration {
 
 		$value = null;
 
-		if ( $type === 'select' || $type === 'select*' ) {
+		if ( strstr( $type, 'select' ) !== false || strstr( $type, 'checkbox' ) !== false ) {
 			$options = array_map(
 				function ( $opt ) {
 					return $opt['label'] . '|' . $opt['value'];
@@ -518,11 +541,17 @@ class WPCF7_Integration extends BaseIntegration {
 		return $tag . ']';
 	}
 
+	/**
+	 * Serialize the email data of a contact form.
+	 *
+	 * @param string $title Form title.
+	 * @param array  $fields Form fields.
+	 */
 	private function form_email( $title, $fields ) {
 		$site_url = get_option( 'siteurl' );
 		$host     = wp_parse_url( $site_url )['host'] ?? 'example.coop';
 
-		$email_index = array_search( 'email', array_column( $fields, 'type' ) );
+		$email_index = array_search( 'email', array_column( $fields, 'type' ), true );
 		if ( $email_index ) {
 			$replay_to = 'Replay-To: [' . $fields[ $email_index ]['name'] . ']';
 		} else {

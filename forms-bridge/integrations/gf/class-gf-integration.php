@@ -28,8 +28,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class GF_Integration extends BaseIntegration {
 
+	/**
+	 * Handles integration name.
+	 *
+	 * @var string
+	 */
 	const NAME = 'gf';
 
+	/**
+	 * Handles integration title.
+	 *
+	 * @var string
+	 */
 	const TITLE = 'Gravity Forms';
 
 	/**
@@ -182,7 +192,7 @@ class GF_Integration extends BaseIntegration {
 	 *
 	 * @param boolean $raw Control if the submission is serialized before exit.
 	 *
-	 * @return array
+	 * @return array|null
 	 */
 	public function submission( $raw = false ) {
 		$form_data = $this->form();
@@ -207,7 +217,7 @@ class GF_Integration extends BaseIntegration {
 	/**
 	 * Retrives the current submission uploaded files.
 	 *
-	 * @return array Collection of uploaded files.
+	 * @return array|null Collection of uploaded files.
 	 */
 	public function uploads() {
 		$form_data = $this->form();
@@ -266,7 +276,7 @@ class GF_Integration extends BaseIntegration {
 	 *
 	 * @param GFField $field Field object instance.
 	 *
-	 * @return array
+	 * @return array|null
 	 */
 	private function serialize_field( $field ) {
 		if (
@@ -282,11 +292,11 @@ class GF_Integration extends BaseIntegration {
 				true
 			)
 		) {
-			return;
+			return null;
 		}
 
 		if ( strstr( $field->type, 'post_' ) ) {
-			return;
+			return null;
 		}
 
 		$label = $field->adminLabel ?: $field->label;
@@ -380,6 +390,9 @@ class GF_Integration extends BaseIntegration {
 				break;
 			case 'fileupload':
 				$type = 'file';
+				break;
+			case 'phone':
+				$type = 'tel';
 				break;
 			case 'email':
 				$type = 'email';
@@ -574,7 +587,7 @@ class GF_Integration extends BaseIntegration {
 			'total',
 			array_map(
 				static function ( $field ) {
-					return $field['_type'];
+					return $field['basetype'];
 				},
 				$form_data['fields']
 			)
@@ -584,7 +597,7 @@ class GF_Integration extends BaseIntegration {
 			'quantity',
 			array_map(
 				static function ( $field ) {
-					return $field['_type'];
+					return $field['basetype'];
 				},
 				$form_data['fields']
 			),
@@ -610,7 +623,7 @@ class GF_Integration extends BaseIntegration {
 					if ( $input_name && $value ) {
 						$value = $this->format_value(
 							$value,
-							$field['_type'],
+							$field['basetype'],
 							$input
 						);
 
@@ -620,11 +633,11 @@ class GF_Integration extends BaseIntegration {
 					}
 				}
 
-				if ( 'consent' === $field['_type'] ) {
+				if ( 'consent' === $field['basetype'] ) {
 					$data[ $input_name ] = boolval( $values[0] ?? false );
-				} elseif ( 'name' === $field['_type'] ) {
+				} elseif ( 'name' === $field['basetype'] ) {
 					$data[ $input_name ] = implode( ' ', $values );
-				} elseif ( 'product' === $field['_type'] ) {
+				} elseif ( 'product' === $field['basetype'] ) {
 					if ( $has_total ) {
 						$data[ $input_name ] = $values[0];
 					} else {
@@ -634,7 +647,7 @@ class GF_Integration extends BaseIntegration {
 
 						$data[ $input_name ] = implode( '|', $values );
 					}
-				} elseif ( 'address' === $field['_type'] ) {
+				} elseif ( 'address' === $field['basetype'] ) {
 					$data[ $input_name ] = implode( ', ', $values );
 				} else {
 					$data[ $input_name ] = $values;
@@ -650,7 +663,7 @@ class GF_Integration extends BaseIntegration {
 					$raw_value           = rgar( $submission, (string) $field['id'] );
 					$data[ $input_name ] = $this->format_value(
 						$raw_value,
-						$field['_type']
+						$field['basetype']
 					);
 				}
 			}
@@ -811,10 +824,16 @@ class GF_Integration extends BaseIntegration {
 				case 'email':
 					$gf_fields[] = $this->email_field( ...$args );
 					break;
+				case 'tel':
+					$gf_fields[] = $this->tel_field( ...$args );
+					break;
 				case 'select':
 					$args[]      = $field['options'] ?? array();
 					$args[]      = $field['is_multi'] ?? false;
 					$gf_fields[] = $this->select_field( ...$args );
+					break;
+				case 'checkbox':
+					$gf_fields[] = $this->checkbox_field( ...$args );
 					break;
 				case 'textarea':
 					$gf_fields[] = $this->textarea_field( ...$args );
@@ -916,6 +935,23 @@ class GF_Integration extends BaseIntegration {
 				),
 				'enableAutocomplete' => true,
 			)
+		);
+	}
+
+	/**
+	 * Returns a valid tel field data.
+	 *
+	 * @param int     $id Field id.
+	 * @param string  $name Input name.
+	 * @param string  $label Field label.
+	 * @param boolean $required Is field required.
+	 *
+	 * @return array
+	 */
+	private function tel_field( $id, $name, $label, $required ) {
+		return array_merge(
+			$this->field_template( 'phone', $id, $name, $label, $required ),
+			array(),
 		);
 	}
 

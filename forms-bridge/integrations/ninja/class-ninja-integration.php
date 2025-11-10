@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class Ninja_Integration
+ *
+ * @package forms-bridge
+ */
 
 namespace FORMS_BRIDGE\NINJA;
 
@@ -13,12 +18,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Ninja Forms integration
+ * Ninja Forms integration.
  */
-class Integration extends BaseIntegration {
-
+class Ninja_Integration extends BaseIntegration {
+	/**
+	 * Handles integration name.
+	 *
+	 * @var string
+	 */
 	const NAME = 'ninja';
 
+	/**
+	 * Handles integration title.
+	 *
+	 * @var string
+	 */
 	const TITLE = 'Ninja Forms';
 
 	/**
@@ -64,10 +78,18 @@ class Integration extends BaseIntegration {
 	/**
 	 * Retrives a form model's data by ID.
 	 *
-	 * @return array.
+	 * @param integer $form_id Form ID.
+	 *
+	 * @return array|null Form data.
 	 */
 	public function get_form_by_id( $form_id ) {
-		return $this->serialize_form( Ninja_Forms()->form( $form_id ) );
+		$form = Ninja_Forms()->form( $form_id );
+
+		if ( ! $form ) {
+			return null;
+		}
+
+		return $this->serialize_form( $form );
 	}
 
 	/**
@@ -148,6 +170,11 @@ class Integration extends BaseIntegration {
 		return false;
 	}
 
+	/**
+	 * Retrives the current submission ID.
+	 *
+	 * @return string|null
+	 */
 	public function submission_id() {
 		$submission = $this->submission( true );
 		if ( $submission ) {
@@ -255,7 +282,7 @@ class Integration extends BaseIntegration {
 
 		return apply_filters(
 			'forms_bridge_form_field_data',
-			$this->_serialize_field(
+			$this->serialize_field_settings(
 				$field->get_id(),
 				$field->get_settings(),
 				$form_settings
@@ -274,7 +301,7 @@ class Integration extends BaseIntegration {
 	 *
 	 * @return array
 	 */
-	private function _serialize_field( $id, $settings, $form_settings ) {
+	private function serialize_field_settings( $id, $settings, $form_settings ) {
 		$name =
 			$settings['key'] ??
 			( $settings['admin_label'] ?? $settings['label'] );
@@ -282,7 +309,7 @@ class Integration extends BaseIntegration {
 		$children = isset( $settings['fields'] )
 			? array_map(
 				function ( $setting ) use ( $form_settings ) {
-					return $this->_serialize_field(
+					return $this->serialize_field_settings(
 						$setting['id'],
 						$setting,
 						$form_settings
@@ -316,6 +343,9 @@ class Integration extends BaseIntegration {
 		switch ( $settings['type'] ) {
 			case 'email':
 				$type = 'email';
+				break;
+			case 'phone':
+				$type = 'tel';
 				break;
 			case 'checkbox':
 				$type = 'boolean';
@@ -354,7 +384,6 @@ class Integration extends BaseIntegration {
 			case 'zip':
 			case 'city':
 			case 'spam':
-			case 'phone':
 			default:
 				$type = 'text';
 				break;
@@ -377,7 +406,7 @@ class Integration extends BaseIntegration {
 			'children'    => $children,
 			'format'      => strtolower( $settings['date_format'] ?? '' ),
 			'schema'      => $this->field_value_schema( $settings, $children ),
-			'_type'       => $settings['type'],
+			'basetype'    => $settings['type'],
 		);
 	}
 
@@ -529,7 +558,7 @@ class Integration extends BaseIntegration {
 
 			$field = $submission['fields'][ (int) $field_data['id'] ];
 
-			if ( 'repeater' === $field_data['_type'] ) {
+			if ( 'repeater' === $field_data['basetype'] ) {
 				$subfields = $field['fields'];
 				$values    = $field['value'];
 				$fieldset  = array();
@@ -558,7 +587,7 @@ class Integration extends BaseIntegration {
 				$data[ $field_data['name'] ] = $fieldset;
 			} else {
 				$data[ $field_data['name'] ] = $this->format_field_value(
-					$field_data['_type'],
+					$field_data['basetype'],
 					$field['value']
 				);
 
@@ -670,6 +699,13 @@ class Integration extends BaseIntegration {
 		return $uploads;
 	}
 
+	/**
+	 * Prepares form data fields to be created as a new form.
+	 *
+	 * @param array $fields Form data fields.
+	 *
+	 * @return array Decorated fields.
+	 */
 	private function decorate_form_fields( $fields ) {
 		$nf_fields = array();
 
@@ -708,6 +744,9 @@ class Integration extends BaseIntegration {
 					break;
 				case 'textarea':
 					$nf_fields[] = $this->textarea_field( ...$args );
+					break;
+				case 'tel':
+					$nf_fields[] = $this->phone_field( ...$args );
 					break;
 				case 'email':
 					$nf_fields[] = $this->email_field( ...$args );
@@ -764,6 +803,17 @@ class Integration extends BaseIntegration {
 		);
 	}
 
+	/**
+	 * Ninja form field array representation template to be used by field generators.
+	 *
+	 * @param string  $type Field type.
+	 * @param integer $order Field order.
+	 * @param string  $name Field name.
+	 * @param string  $label Field label.
+	 * @param boolean $required Field required.
+	 *
+	 * @return array Ninja form field data.
+	 */
 	private function field_template( $type, $order, $name, $label, $required ) {
 		return array(
 			'objectType'      => 'Field',
@@ -783,6 +833,18 @@ class Integration extends BaseIntegration {
 		);
 	}
 
+	/**
+	 * Upload field config generator.
+	 *
+	 * @param integer $order Field order.
+	 * @param string  $name Field name.
+	 * @param string  $label Field label.
+	 * @param boolean $required Is field required.
+	 * @param boolean $is_multi Supports multiple files.
+	 * @param string  $filetypes File types constraints.
+	 *
+	 * @return array Ninja form upload field data.
+	 */
 	private function upload_field(
 		$order,
 		$name,
@@ -808,6 +870,17 @@ class Integration extends BaseIntegration {
 		);
 	}
 
+	/**
+	 * Hidden field config generator.
+	 *
+	 * @param integer $order Field order.
+	 * @param string  $name Field name.
+	 * @param string  $label Field label.
+	 * @param boolean $required Field required.
+	 * @param string  $value Field value.
+	 *
+	 * @return array Ninja form hidden field data.
+	 */
 	private function hidden_field( $order, $name, $label, $required, $value ) {
 		return array_merge(
 			$this->field_template( 'hidden', $order, $name, $label, $required ),
@@ -819,6 +892,18 @@ class Integration extends BaseIntegration {
 		);
 	}
 
+	/**
+	 * Select field config generator.
+	 *
+	 * @param integer $order Field order.
+	 * @param string  $name Field name.
+	 * @param string  $label Field label.
+	 * @param boolean $required Field required.
+	 * @param array   $options Response options.
+	 * @param boolean $is_multi Field supports multiple responses.
+	 *
+	 * @return array Ninja form select field data.
+	 */
 	private function select_field(
 		$order,
 		$name,
@@ -905,6 +990,16 @@ class Integration extends BaseIntegration {
 		);
 	}
 
+	/**
+	 * Text field config generator.
+	 *
+	 * @param integer $order Field order.
+	 * @param string  $name Field name.
+	 * @param string  $label Field label.
+	 * @param boolean $required Field required.
+	 *
+	 * @return array Ninja form text field data.
+	 */
 	private function text_field( $order, $name, $label, $required ) {
 		return array_merge(
 			$this->field_template( 'textbox', $order, $name, $label, $required ),
@@ -917,6 +1012,17 @@ class Integration extends BaseIntegration {
 		);
 	}
 
+	/**
+	 * Number field config generator.
+	 *
+	 * @param integer $order Field order.
+	 * @param string  $name Field name.
+	 * @param string  $label Field label.
+	 * @param boolean $required Field required.
+	 * @param array   $constraints Field constraints.
+	 *
+	 * @return array Ninja form number field data.
+	 */
 	private function number_field(
 		$order,
 		$name,
@@ -930,6 +1036,16 @@ class Integration extends BaseIntegration {
 		);
 	}
 
+	/**
+	 * Textarea field config generator.
+	 *
+	 * @param integer $order Field order.
+	 * @param string  $name Field name.
+	 * @param string  $label Field label.
+	 * @param boolean $required Field required.
+	 *
+	 * @return array Ninja form textarea field data.
+	 */
 	private function textarea_field( $order, $name, $label, $required ) {
 		return array_merge(
 			$this->field_template( 'textarea', $order, $name, $label, $required ),
@@ -942,6 +1058,16 @@ class Integration extends BaseIntegration {
 		);
 	}
 
+	/**
+	 * Email field config generator.
+	 *
+	 * @param integer $order Field order.
+	 * @param string  $name Field name.
+	 * @param string  $label Field label.
+	 * @param boolean $required Field required.
+	 *
+	 * @return array Ninja form email field data.
+	 */
 	private function email_field( $order, $name, $label, $required ) {
 		return array_merge(
 			$this->field_template( 'email', $order, $name, $label, $required ),
@@ -949,6 +1075,33 @@ class Integration extends BaseIntegration {
 		);
 	}
 
+	/**
+	 * Phone field config generator.
+	 *
+	 * @param integer $order Field order.
+	 * @param string  $name Field name.
+	 * @param string  $label Field label.
+	 * @param boolean $required Field required.
+	 *
+	 * @return array Ninja form phone field data.
+	 */
+	private function phone_field( $order, $name, $label, $required ) {
+		return array_merge(
+			$this->field_template( 'phone', $order, $name, $label, $required ),
+			array()
+		);
+	}
+
+	/**
+	 * Date field config generator.
+	 *
+	 * @param integer $order Field order.
+	 * @param string  $name Field name.
+	 * @param string  $label Field label.
+	 * @param boolean $required Field required.
+	 *
+	 * @return array Ninja form date field data.
+	 */
 	private function date_field( $order, $name, $label, $required ) {
 		return array_merge(
 			$this->field_template( 'date', $order, $name, $label, $required ),
@@ -964,6 +1117,13 @@ class Integration extends BaseIntegration {
 		);
 	}
 
+	/**
+	 * Ninja form settings data template.
+	 *
+	 * @param string $title Form title.
+	 *
+	 * @return array Form settings.
+	 */
 	private function form_template( $title ) {
 		return array(
 			'id'       => 'tmp-1',
@@ -1111,4 +1271,4 @@ class Integration extends BaseIntegration {
 	}
 }
 
-Integration::setup();
+Ninja_Integration::setup();
