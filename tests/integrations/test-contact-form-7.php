@@ -57,7 +57,7 @@ class ContactForm7Test extends BaseIntegrationTest {
 			$field,
 			'checkbox',
 			array(
-				'_type'    => 'acceptance',
+				'basetype' => 'acceptance',
 				'schema'   => 'boolean',
 				'required' => false,
 			)
@@ -119,7 +119,7 @@ class ContactForm7Test extends BaseIntegrationTest {
 			$field,
 			'select',
 			array(
-				'_type'    => 'radio',
+				'basetype' => 'radio',
 				'required' => false,
 			)
 		);
@@ -137,7 +137,7 @@ class ContactForm7Test extends BaseIntegrationTest {
 			'select',
 			array(
 				'schema'   => 'array',
-				'_type'    => 'checkbox',
+				'basetype' => 'checkbox',
 				'required' => false,
 				'is_multi' => true,
 			)

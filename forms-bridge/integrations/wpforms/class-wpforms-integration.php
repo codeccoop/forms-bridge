@@ -389,7 +389,7 @@ class WPForms_Integration extends BaseIntegration {
 				'name'        => $field['label'] ?? '',
 				'label'       => $field['label'] ?? '',
 				'required'    => '1' === ( $field['required'] ?? '' ),
-				'options'     => isset( $field['choices'] ) ? $field['choices'] : array(),
+				'options'     => isset( $field['choices'] ) ? array_values( $field['choices'] ) : array(),
 				'is_file'     => 'file-upload' === $field['type'],
 				'is_multi'    => $this->is_multi_field( $field ),
 				'conditional' => false,

@@ -430,7 +430,7 @@ class GF_Integration extends BaseIntegration {
 				'conditional' => $field->conditionalLogic['enabled'] ?? false,
 				'format'      => 'date' === $field->type ? 'yyyy-mm-dd' : '',
 				'schema'      => $this->field_value_schema( $field ),
-				'_type'       => $field->type,
+				'basetype'       => $field->type,
 			),
 			$field,
 			'gf'

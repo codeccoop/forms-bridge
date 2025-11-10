@@ -53,8 +53,14 @@ class GravityFormsTest extends BaseIntegrationTest {
 		$this->assertEquals( 18, count( $fields ) );
 
 		$field = $fields[0];
-		$this->assertEquals( 2, count( $field['options'] ) );
-		$this->assertField( $field, 'select', array( '_type' => 'radio' ) );
+		$this->assertField(
+			$field,
+			'select',
+			array(
+				'options'  => 2,
+				'basetype' => 'radio',
+			)
+		);
 
 		$field = $fields[4];
 		$this->assertField( $field, 'text', array( 'conditional' => true ) );
@@ -70,27 +76,27 @@ class GravityFormsTest extends BaseIntegrationTest {
 		);
 
 		$field = $fields[15];
-		$this->assertEquals( 1, count( $field['options'] ) );
 		$this->assertEquals( 1, count( $field['inputs'] ) );
 		$this->assertField(
 			$field,
 			'checkbox',
 			array(
+				'options'  => 1,
 				'required' => false,
 				'schema'   => 'boolean',
-				'_type'    => 'consent',
+				'basetype' => 'consent',
 			)
 		);
 
 		$field = $fields[16];
-		$this->assertEquals( 1, count( $field['options'] ) );
 		$this->assertEquals( 1, count( $field['inputs'] ) );
 		$this->assertField(
 			$field,
 			'checkbox',
 			array(
+				'options'     => 1,
 				'schema'      => 'boolean',
-				'_type'       => 'consent',
+				'basetype'    => 'consent',
 				'conditional' => true,
 			)
 		);
@@ -136,17 +142,17 @@ class GravityFormsTest extends BaseIntegrationTest {
 			$field,
 			'text',
 			array(
-				'_type'    => 'hidden',
+				'basetype' => 'hidden',
 				'required' => false,
 			)
 		);
 
 		$field = $fields[2];
 		$this->assertEquals( 2, count( $field['inputs'] ) );
-		$this->assertField( $field, 'text', array( '_type' => 'name' ) );
+		$this->assertField( $field, 'text', array( 'basetype' => 'name' ) );
 
 		$field = $fields[4];
-		$this->assertField( $field, 'text', array( '_type' => 'phone' ) );
+		$this->assertField( $field, 'tel', array( 'basetype' => 'phone' ) );
 
 		$field = $fields[5];
 		$this->assertField( $field, 'email' );
@@ -156,8 +162,8 @@ class GravityFormsTest extends BaseIntegrationTest {
 			$field,
 			'number',
 			array(
-				'_type'  => 'quantity',
-				'schema' => 'number',
+				'basetype' => 'quantity',
+				'schema'   => 'number',
 			)
 		);
 
@@ -169,7 +175,7 @@ class GravityFormsTest extends BaseIntegrationTest {
 			$field,
 			'file',
 			array(
-				'_type'       => 'fileupload',
+				'basetype'    => 'fileupload',
 				'is_file'     => true,
 				'conditional' => true,
 			)
@@ -184,8 +190,8 @@ class GravityFormsTest extends BaseIntegrationTest {
 			$field,
 			'checkbox',
 			array(
-				'_type'  => 'consent',
-				'schema' => 'boolean',
+				'basetype' => 'consent',
+				'schema'   => 'boolean',
 			)
 		);
 	}
