@@ -19,7 +19,7 @@ return array(
 		array(
 			'name'     => 'age',
 			'label'    => 'Age',
-			'type'     => 'integer',
+			'type'     => 'number',
 			'required' => true,
 		),
 		array(
@@ -40,24 +40,24 @@ return array(
 		array(
 			'name'  => 'subscription',
 			'label' => 'Subscription',
-			'type'  => 'acceptance',
+			'type'  => 'checkbox',
 		),
 		array(
 			'name'        => 'street',
 			'label'       => 'Street',
-			'type'        => 'string',
+			'type'        => 'text',
 			'conditional' => true,
 		),
 		array(
 			'name'        => 'zip',
 			'label'       => 'Postal code',
-			'type'        => 'string',
+			'type'        => 'text',
 			'conditional' => true,
 		),
 		array(
 			'name'        => 'city',
 			'label'       => 'City',
-			'type'        => 'string',
+			'type'        => 'text',
 			'conditional' => true,
 		),
 	),

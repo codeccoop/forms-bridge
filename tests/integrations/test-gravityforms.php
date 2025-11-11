@@ -351,4 +351,8 @@ class GravityFormsTest extends BaseIntegrationTest {
 		);
 		$this->assertTrue( $payload['Terms and Conditions'] );
 	}
+
+	public function test_form_templates() {
+		$this->run_test_form_templates();
+	}
 }

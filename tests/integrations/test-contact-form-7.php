@@ -5,6 +5,8 @@
  * @package formsbridge-tests
  */
 
+use FORMS_BRIDGE\Integration;
+
 require_once 'class-base-integration-test.php';
 
 /**
@@ -166,5 +168,9 @@ class ContactForm7Test extends BaseIntegrationTest {
 		$this->assertSame( 'https://www.codeccoop.org', $payload['website'] );
 		$this->assertSame( 'm', $payload['gender'] );
 		$this->assertEqualSets( array( 'Web development', 'Sys admin' ), $payload['skills'] );
+	}
+
+	public function test_form_templates() {
+		$this->run_test_form_templates();
 	}
 }

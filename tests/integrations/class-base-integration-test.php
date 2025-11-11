@@ -5,6 +5,7 @@
  * @package formsbridge-tests
  */
 
+use FORMS_BRIDGE\Form_Bridge_Template;
 use FORMS_BRIDGE\Integration;
 
 /**
@@ -129,6 +130,28 @@ abstract class BaseIntegrationTest extends WP_UnitTestCase {
 		}
 	}
 
+	public static function templates() {
+		$dir = dirname( __DIR__, 1 ) . '/data/templates';
+
+		$templates = array();
+
+		if ( ! is_dir( $dir ) ) {
+			return $templates;
+		}
+
+		$form_schema = FBAPI::get_template_schema( 'rest' )['properties']['form'];
+
+		foreach ( array_diff( scandir( $dir ), array( '..', '.' ) ) as $filename ) {
+			$name     = explode( '.', $filename )[0];
+			$filepath = $dir . '/' . $filename;
+
+			$template           = include $filepath;
+			$template           = wpct_plugin_sanitize_with_schema( $template, $form_schema );
+			$templates[ $name ] = $template;
+		}
+
+		return $templates;
+	}
 	/**
 	 * Return a map of unserialized objects from the integration tests store.
 	 *
@@ -210,5 +233,32 @@ abstract class BaseIntegrationTest extends WP_UnitTestCase {
 	public function serialize_submission( $submission, $form_data ) {
 		$integration = Integration::integration( static::NAME );
 		return $integration->serialize_submission( $submission, $form_data );
+	}
+
+	public function run_test_form_templates() {
+		$templates = self::templates();
+
+		$integration = Integration::integration( static::NAME );
+
+		if ( static::NAME === 'woo' ) {
+			$this->assertEquals( 1, $integration->create_form( null ) );
+			return;
+		}
+
+		foreach ( $templates as $name => $data ) {
+			$form_id = $integration->create_form( $data );
+
+			$this->assertFalse( empty( $form_id ) );
+
+			$form_data = $integration->get_form_by_id( $form_id );
+
+			$l = count( $data['fields'] );
+			for ( $i = 0; $i < $l; $i++ ) {
+				$template_field = $data['fields'][ $i ];
+				$form_field     = $form_data['fields'][ $i ];
+
+				$this->assertSame( $template_field['type'], $form_field['type'] );
+			}
+		}
 	}
 }
