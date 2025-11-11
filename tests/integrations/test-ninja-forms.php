@@ -150,6 +150,39 @@ class NinjaFormsTest extends BaseIntegrationTest {
 		);
 	}
 
+	function test_enquiry_submission_serialization() {
+		$form      = self::get_form( 'Enquiry' );
+		$form_data = $this->serialize_form( $form );
+
+		$store = self::store();
+		foreach ( $store as $name => $object ) {
+			if ( 'enquiry-submission' === $name ) {
+				$submission = $object;
+				break;
+			}
+		}
+
+		if ( ! isset( $submission ) ) {
+			throw new Exception( 'Enquiry submission not found' );
+		}
+
+		$l = count( $form_data['fields'] );
+		for ( $i = 0; $i < $l; ++$i ) {
+			$form_data['fields'][ $i ]['id'] = array_keys( $submission['fields'] )[ $i ];
+		}
+
+		$payload = $this->serialize_submission( $submission, $form_data );
+
+		$this->assertSame( 'John', $payload['firstname_1523908368154'] );
+		$this->assertSame( 'Doe', $payload['lastname_1523908369534'] );
+		$this->assertSame( '600000000', $payload['phone_1523908588264'] );
+		$this->assertSame( 'choice1', $payload['occupation_1523908435932'] );
+		$this->assertSame( 'choice2', $payload['enquiry_type_1523908495090'] );
+		$this->assertSame( 'Lorem ipsum dolor sit amer', $payload['details_1523908537286'] );
+		$this->assertSame( 1, $payload['may_we_contact_you_1523908579864'] );
+		$this->assertSame( 'afternoon', $payload['best_time_to_call_1523908689926'] );
+	}
+
 	public function test_quote_request_form_serialization() {
 		$form      = self::get_form( 'Quote Request Form' );
 		$form_data = $this->serialize_form( $form );
@@ -208,6 +241,55 @@ class NinjaFormsTest extends BaseIntegrationTest {
 		);
 	}
 
+	public function test_quote_request_submission_serialization() {
+		$form      = self::get_form( 'Quote Request Form' );
+		$form_data = $this->serialize_form( $form );
+
+		$store = self::store();
+		foreach ( $store as $name => $object ) {
+			if ( 'quote-request-submission' === $name ) {
+				$submission = $object;
+				break;
+			}
+		}
+
+		if ( ! isset( $submission ) ) {
+			throw new Exception( 'Quote request submission not found' );
+		}
+
+		$i = 0;
+		$j = 0;
+		$l = count( $form_data['fields'] );
+		$k = count( $submission['fields'] );
+		while ( $i < $l && $j < $k ) {
+			$field_id         = array_keys( $submission['fields'] )[ $j ];
+			$submission_field = $submission['fields'][ $field_id ];
+
+			if (
+				in_array(
+					$submission_field['type'],
+					array( 'html', 'confirm', 'hr', 'recaptcha', 'spam', 'submit' ),
+					true,
+				)
+			) {
+				++$j;
+				continue;
+			}
+
+			$form_data['fields'][ $i ]['id'] = $field_id;
+			++$i;
+			++$j;
+		}
+
+		$payload = $this->serialize_submission( $submission, $form_data );
+
+		$this->assertSame( '13/11/2025', $payload['due_date'] );
+		$this->assertSame( 'Carrer de les Camèlies', $payload['address'] );
+		$this->assertSame( 'Barcelona', $payload['city'] );
+		$this->assertSame( 'CA', $payload['liststate'] );
+		$this->assertSame( '08001', $payload['zip'] );
+	}
+
 	public function test_questionnaire_form_serialization() {
 		$form      = self::get_form( 'Questionnaire' );
 		$form_data = $this->serialize_form( $form );
@@ -251,5 +333,59 @@ class NinjaFormsTest extends BaseIntegrationTest {
 				'schema'   => 'number',
 			),
 		);
+	}
+
+	public function test_questionnaire_submission_serialization() {
+		$form      = self::get_form( 'Questionnaire' );
+		$form_data = $this->serialize_form( $form );
+
+		$store = self::store();
+		foreach ( $store as $name => $object ) {
+			if ( 'questionnaire-submission' === $name ) {
+				$submission = $object;
+				break;
+			}
+		}
+
+		if ( ! isset( $submission ) ) {
+			throw new Exception( 'Questionnaire submission not found' );
+		}
+
+		$i = 0;
+		$j = 0;
+		$l = count( $form_data['fields'] );
+		$k = count( $submission['fields'] );
+		while ( $i < $l && $j < $k ) {
+			$field_id         = array_keys( $submission['fields'] )[ $j ];
+			$submission_field = $submission['fields'][ $field_id ];
+
+			if (
+				in_array(
+					$submission_field['type'],
+					array( 'html', 'confirm', 'hr', 'recaptcha', 'spam', 'submit' ),
+					true,
+				)
+			) {
+				++$j;
+				continue;
+			}
+
+			$form_data['fields'][ $i ]['id'] = $field_id;
+			++$i;
+			++$j;
+		}
+
+		$payload = $this->serialize_submission( $submission, $form_data );
+
+		$this->assertSame( '18-30', $payload['age_1523910843594'] );
+		$this->assertEqualSets(
+			array( 'one', 'two' ),
+			$payload['question_2_1762818391757']
+		);
+		$this->assertEqualSets(
+			array( 'one', 'three' ),
+			$payload['question_3_1762818351190'],
+		);
+		$this->assertEquals( 3, $payload['starrating_1762818417160'] );
 	}
 }

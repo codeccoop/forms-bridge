@@ -554,7 +554,10 @@ class Ninja_Integration extends BaseIntegration {
 				continue;
 			}
 
-			$field = $submission['fields'][ (int) $field_data['id'] ];
+			$field = $submission['fields'][ (int) $field_data['id'] ] ?? null;
+			if ( ! $field ) {
+				continue;
+			}
 
 			if ( 'repeater' === $field_data['basetype'] ) {
 				$subfields = $field['fields'];

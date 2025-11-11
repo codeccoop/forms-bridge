@@ -248,8 +248,7 @@ class WPFormsTest extends BaseIntegrationTest {
 	}
 
 	public function test_meeting_room_registration_submission_serialization() {
-		$form = self::get_form( 'Meeting Room Registration Form' );
-
+		$form      = self::get_form( 'Meeting Room Registration Form' );
 		$form_data = $this->serialize_form( $form );
 
 		$store = self::store();
