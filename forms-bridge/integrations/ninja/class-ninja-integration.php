@@ -776,6 +776,9 @@ class Ninja_Integration extends BaseIntegration {
 					$args[]      = $field['is_multi'] ?? false;
 					$nf_fields[] = $this->select_field( ...$args );
 					break;
+				case 'checkbox':
+					$nf_fields[] = $this->checkbox_field( ...$args );
+					break;
 				default:
 					$args        = array_merge( array( $field['type'] ), $args );
 					$nf_fields[] = $this->field_template( ...$args );
@@ -1034,6 +1037,32 @@ class Ninja_Integration extends BaseIntegration {
 		return array_merge(
 			$this->field_template( 'number', $order, $name, $label, $required ),
 			$constraints
+		);
+	}
+
+	/**
+	 * Checkbox field config generator.
+	 *
+	 * @param integer $order Field order.
+	 * @param string  $name Field name.
+	 * @param string  $label Field label.
+	 * @param boolean $required Field required.
+	 *
+	 * @return array Ninja form checkbox field data.
+	 */
+	private function checkbox_field(
+		$order,
+		$name,
+		$label,
+		$required
+	) {
+		return array_merge(
+			$this->field_template( 'checkbox', $order, $name, $label, $required ),
+			array(
+				'default_value'   => 'unchecked',
+				'checked_value'   => 'Checked',
+				'unchecked_value' => 'Unchecked',
+			),
 		);
 	}
 
