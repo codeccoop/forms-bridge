@@ -23,7 +23,7 @@ variables:
     # Only execute when a valid version tag like 1.0, 2.3-dev or similar is given
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG =~ /^[0-9]+[.][0-9]+([.][0-9]+)?([-a-z])*$/
 
-test_job:
+.test_job:
   stage: test
   image: codeccoop/wp-test
   cache:
