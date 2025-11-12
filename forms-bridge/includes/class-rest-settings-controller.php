@@ -624,7 +624,7 @@ class REST_Settings_Controller extends Base_Controller {
 
 		[$addon, $backend] = $handler;
 
-		$template = FBAPI::get_template( $request['name'], $addon::name );
+		$template = FBAPI::get_template( $request['name'], $addon::NAME );
 		if ( ! $template ) {
 			return self::not_found();
 		}
