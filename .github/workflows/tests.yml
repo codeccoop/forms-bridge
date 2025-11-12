@@ -10,12 +10,13 @@ jobs:
   lint:
     name: WordPress Coding Standards
     runs-on: ubuntu-latest
+    container:
+      image: codeccoop/wp-test
     steps:
       - uses: actions/checkout@v5
-      - uses: php-actions/composer@v6
 
       - name: Composer install
-        run: composer install
+        run: composer -q install
 
       - name: Lint and format
         run: vendor/bin/phpcbf
