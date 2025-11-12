@@ -45,14 +45,14 @@ variables:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH
 
 lint:
-  extends: .release_job
+  extends: .test_job
   before_script:
     - composer -q install
   script:
     - vendor/bin/phpcbf
 
 phpunit:
-  extends: .release_job
+  extends: .test_job
   before_script:
     - nohup docker-entrypoint.sh mariadbd 2>&1 >/dev/null &
     - composer -q install
