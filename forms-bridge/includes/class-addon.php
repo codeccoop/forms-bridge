@@ -779,10 +779,8 @@ class Addon extends Singleton {
 			'forms_bridge_job_directories',
 			array(
 				$dir,
-				Forms_Bridge::path() . 'includes/jobs',
-				get_stylesheet_directory() .
-				'/forms-bridge/jobs/' .
-				static::NAME,
+				Forms_Bridge::path() . '/includes/jobs',
+				get_stylesheet_directory() . '/jobs/' . static::NAME,
 			),
 			static::NAME
 		);
