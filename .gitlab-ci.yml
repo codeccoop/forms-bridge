@@ -42,7 +42,7 @@ phpunit:
   before_script:
     - nohup docker-entrypoint.sh mariadbd 2>&1 >/dev/null &
     - composer -q install
-    - sleep 5
+    - sleep 10
     - chmod a+x bin/*
     - bin/install-wp-tests.sh
     - bin/download-test-deps.sh

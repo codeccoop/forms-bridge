@@ -37,7 +37,7 @@ jobs:
         run: composer -q install
 
       - name: Wait for MariaDB
-        run: sleep 5
+        run: sleep 10
 
       - name: Executable mode
         run: chmod a+x bin/*
