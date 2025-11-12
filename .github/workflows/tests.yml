@@ -7,7 +7,7 @@ on:
   workflow_call:
 
 jobs:
-  code sniffer:
+  lint:
     name: WordPress Coding Standards
     runs-on: ubuntu-latest
     steps:
