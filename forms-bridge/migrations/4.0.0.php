@@ -1,4 +1,11 @@
 <?php
+/**
+ * Database migration to version 4.0.0
+ *
+ * @package formsbridge
+ */
+
+// phpcs:disable WordPress.Files.FileName
 
 use FORMS_BRIDGE\Addon;
 
@@ -6,6 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
+/**
+ * Migration 4.0.0
+ */
 function forms_bridge_migration_400() {
 	$setting_names = array(
 		'bigin',
@@ -245,7 +255,7 @@ function forms_bridge_migration_400() {
 	}
 
 	$registry = get_option( 'forms_bridge_addons' );
-	if ( $registry && is_array( $registry ) ) {
+	if ( isset( $registry['rest-api'] ) ) {
 		$registry['rest'] = $registry['rest-api'];
 		unset( $registry['rest-api'] );
 		update_option( 'forms_bridge_addons', $registry );
