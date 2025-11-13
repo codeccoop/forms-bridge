@@ -93,6 +93,7 @@ package:
     - find forms-bridge -name '*.php' -exec sed -i "s/http_bridge_/forms_bridge_http_/g" {} \;
     - find forms-bridge -name "*.php" -exec sed -i 's/HTTP_BRIDGE_/FORMS_BRIDGE_HTTP_/g' {} \;
     - find forms-bridge -name '*.php' -exec sed -i 's/HTTP_BRIDGE/FORMS_BRIDGE\\Http/g' {} \;
+    - cp .distignore forms-bridge
     - wp dist-archive forms-bridge ./$ZIP
   artifacts:
     paths:

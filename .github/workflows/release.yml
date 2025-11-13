@@ -87,6 +87,9 @@ jobs:
           find forms-bridge -name "*.php" -exec sed -i 's/HTTP_BRIDGE_/FORMS_BRIDGE_HTTP_/g' {} \;
           find forms-bridge -name '*.php' -exec sed -i 's/HTTP_BRIDGE/FORMS_BRIDGE\\Http/g' {} \;
 
+      - name: Distignore
+        run: cp .distignore forms-bridge
+
       - name: Archive
         run: wp dist-archive forms-bridge ./"$ZIP"
 
