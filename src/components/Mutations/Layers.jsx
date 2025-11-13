@@ -129,7 +129,7 @@ const INVALID_TO_STYLE = {
     "var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9))",
 };
 
-function useInputStyle(to = "", from = "") {
+function useInputStyle(to = "") {
   const inputStyle = {
     height: "40px",
     paddingLeft: "12px",

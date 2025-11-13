@@ -1,6 +1,8 @@
 const { useMemo } = wp.element;
 
 export default function JobSnippet({ id, snippet }) {
+  /* global hljs */
+
   const highlighted = useMemo(() => {
     const code = `function forms_bridge_job_${id.replace(/-/g, "_")}($payload, $bridge)
 {

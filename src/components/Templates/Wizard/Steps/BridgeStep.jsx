@@ -45,6 +45,7 @@ export default function BridgeStep({ fields, data, setData }) {
       />
       {sortedFields.slice(1).map((field) => (
         <Field
+          key={field.name}
           data={{
             ...field,
             value: data[field.name] || "",

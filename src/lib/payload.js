@@ -308,5 +308,5 @@ export function checkType(from, to, strict = true) {
     }
   }
 
-  return true;
+  return result;
 }

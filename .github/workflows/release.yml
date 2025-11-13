@@ -1,0 +1,121 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: "write"
+
+jobs:
+  tests:
+    name: Release tests
+    uses: ./.github/workflows/tests.yml
+
+  build:
+    name: Build client
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - name: Setup node
+        uses: actions/setup-node@v6
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Replace textdomains
+        run: find src -exec sed -i "s/http-bridge/forms-bridge/g" {} \;
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: forms-bridge/assets/plugin.bundle.js
+
+  package:
+    name: Prepare package
+    runs-on: ubuntu-latest
+    container:
+      image: codeccoop/wp-cli
+    env:
+      ZIP: "${{ github.ref_name }}.zip"
+    needs: build
+    steps:
+      - name: Setup node
+        uses: actions/setup-node@v6
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: forms-bridge/assets
+
+      - name: Install dist archive
+        run: wp package install wp-cli/dist-archive-command:@stable
+
+      - name: Replace textdomains
+        run: |
+          find forms-bridge/deps/plugin -name '*.php' -exec sed -i "s/wpct-plugin/forms-bridge/g" {} \;
+          find forms-bridge -name '*.php' -exec sed -i "s/wpct_plugin_/forms_bridge_plugin_/g" {} \;
+          find forms-bridge -name "*.php" -exec sed -i 's/WPCT_PLUGIN/FORMS_BRIDGE\\Plugin/g' {} \;
+          find forms-bridge/deps/http -name '*.php' -exec sed -i "s/http-bridge/forms-bridge/g" {} \;
+          find forms-bridge -name '*.php' -exec sed -i "s/http_bridge_/forms_bridge_http_/g" {} \;
+          find forms-bridge -name "*.php" -exec sed -i 's/HTTP_BRIDGE_/FORMS_BRIDGE_HTTP_/g' {} \;
+          find forms-bridge -name '*.php' -exec sed -i 's/HTTP_BRIDGE/FORMS_BRIDGE\\Http/g' {} \;
+
+      - name: Archive
+        run: wp dist-archive forms-bridge ./"$ZIP"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-archive
+          path: ${{ env.ZIP }}
+
+  release:
+    name: Release pushed tag
+    runs-on: ubuntu-latest
+    needs: package
+    env:
+      ZIP: "${{ github.ref_name }}.zip"
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: plugin-archive
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          mv $ZIP forms-bridge.zip
+          gh release create "$TAG" \
+            --repo="$GITHUB_REPOSITORY" \
+            --title="$TAG" \
+            --generate-notes \
+            "forms-bridge.zip"

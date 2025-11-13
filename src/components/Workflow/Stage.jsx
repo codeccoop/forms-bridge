@@ -18,7 +18,7 @@ export default function WorkflowStage({
   setEdit,
   setMappers: setJobMappers,
 }) {
-  const [step, _, outputStep] = useWorkflowStepper();
+  const [step, , outputStep] = useWorkflowStepper();
   const workflowJob = useWorkflowJob();
   const [fields = [], diff] = useWorkflowStage();
 

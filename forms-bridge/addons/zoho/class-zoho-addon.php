@@ -1,0 +1,173 @@
+<?php
+
+namespace FORMS_BRIDGE;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
+
+require_once 'class-zoho-form-bridge.php';
+require_once 'hooks.php';
+require_once 'api.php';
+
+/**
+ * Zoho Addon class.
+ */
+class Zoho_Addon extends Addon {
+
+	/**
+	 * Handles the addon's title.
+	 *
+	 * @var string
+	 */
+	const TITLE = 'Zoho';
+
+	/**
+	 * Handles the addon's name.
+	 *
+	 * @var string
+	 */
+	const NAME = 'zoho';
+
+	/**
+	 * Handles the addon's custom bridge class.
+	 *
+	 * @var string
+	 */
+	const BRIDGE = '\FORMS_BRIDGE\Zoho_Form_Bridge';
+
+	/**
+	 * Performs a request against the backend to check the connexion status.
+	 *
+	 * @param string $backend Backend name.
+	 *
+	 * @return boolean
+	 */
+	public function ping( $backend ) {
+		$bridge_class = static::BRIDGE;
+		$bridge       = new $bridge_class(
+			array(
+				'name'     => '__zoho-' . time(),
+				'backend'  => $backend,
+				'endpoint' => '/crm/v7/users',
+				'method'   => 'GET',
+			)
+		);
+
+		$backend = $bridge->backend;
+		if ( ! $backend ) {
+			return false;
+		}
+
+		$credential = $backend->credential;
+		if ( ! $credential ) {
+			return false;
+		}
+
+		$parsed = wp_parse_url( $backend->base_url );
+		$host   = $parsed['host'] ?? '';
+
+		if (
+			! preg_match(
+				'/www\.zohoapis\.(\w{2,3}(\.\w{2})?)$/',
+				$host,
+				$matches
+			)
+		) {
+			return false;
+		}
+
+		// $region = $matches[1];
+		// if (!preg_match('/' . $region . '$/', $credential->region)) {
+		// return false;
+		// }
+
+		$response = $bridge->submit( array( 'type' => 'CurrentUser' ) );
+		return ! is_wp_error( $response );
+	}
+
+	/**
+	 * Performs a GET request against the backend endpoint and retrive the response data.
+	 *
+	 * @param string $endpoint API endpoint.
+	 * @param string $backend Backend name.
+	 *
+	 * @return array|WP_Error
+	 */
+	public function fetch( $endpoint, $backend ) {
+		$bridge_class = static::BRIDGE;
+		$bridge       = new $bridge_class(
+			array(
+				'name'     => '__zoho-' . time(),
+				'backend'  => $backend,
+				'endpoint' => $endpoint,
+				'method'   => 'GET',
+			)
+		);
+
+		return $bridge->submit();
+	}
+
+	/**
+	 * Performs an introspection of the backend endpoint and returns API fields.
+	 *
+	 * @param string $endpoint API endpoint.
+	 * @param string $backend Backend name.
+	 *
+	 * @return array List of fields and content type of the endpoint.
+	 */
+	public function get_endpoint_schema( $endpoint, $backend ) {
+		if (
+			! preg_match(
+				'/\/(([A-Z][a-z]+(_[A-Z][a-z])?)(?:\/upsert)?$)/',
+				$endpoint,
+				$matches
+			)
+		) {
+			return array();
+		}
+
+		$module = $matches[2];
+
+		$bridge_class = static::BRIDGE;
+		$bridge       = new $bridge_class(
+			array(
+				'name'     => '__zoho-' . time(),
+				'backend'  => $backend,
+				'endpoint' => '/crm/v7/settings/layouts',
+				'method'   => 'GET',
+			)
+		);
+
+		$response = $bridge->submit( array( 'module' => $module ) );
+
+		if ( is_wp_error( $response ) ) {
+			return array();
+		}
+
+		$fields = array();
+		foreach ( $response['data']['layouts'] as $layout ) {
+			foreach ( $layout['sections'] as $section ) {
+				foreach ( $section['fields'] as $field ) {
+					$type = $field['json_type'];
+					if ( $type === 'jsonobject' ) {
+						$type = 'object';
+					} elseif ( $type === 'jsonarray' ) {
+						$type = 'array';
+					} elseif ( $type === 'double' ) {
+						$type = 'number';
+					}
+
+					$fields[] = array(
+						'name'   => $field['api_name'],
+						'schema' => array( 'type' => $type ),
+					);
+				}
+			}
+		}
+
+		return $fields;
+	}
+}
+
+Zoho_Addon::setup();

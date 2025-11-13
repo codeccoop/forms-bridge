@@ -214,7 +214,7 @@ function InterfaceFieldEditor({ field, update, remove, add, from }) {
           <SelectControl
             value={field.schema.type}
             onChange={(type) => {
-              schema = mutateSchema(type, field.schema);
+              const schema = mutateSchema(type, field.schema);
               update({ ...field, schema });
             }}
             options={TYPE_OPTIONS}

@@ -1,0 +1,281 @@
+{
+  "fields": {
+    "1": {
+      "id": "1",
+      "type": "name",
+      "label": "Name",
+      "format": "first-last",
+      "description": "",
+      "required": "1",
+      "size": "medium",
+      "simple_placeholder": "",
+      "simple_default": "",
+      "first_placeholder": "",
+      "first_default": "",
+      "middle_placeholder": "",
+      "middle_default": "",
+      "last_placeholder": "",
+      "last_default": "",
+      "css": ""
+    },
+    "2": {
+      "id": "2",
+      "type": "email",
+      "label": "Email",
+      "description": "",
+      "required": "1",
+      "size": "medium",
+      "placeholder": "",
+      "confirmation_placeholder": "",
+      "default_value": false,
+      "filter_type": "",
+      "allowlist": "",
+      "denylist": "",
+      "css": ""
+    },
+    "3": {
+      "id": "3",
+      "type": "text",
+      "label": "Department",
+      "description": "",
+      "size": "medium",
+      "placeholder": "",
+      "limit_count": "1",
+      "limit_mode": "characters",
+      "default_value": "",
+      "input_mask": "",
+      "css": "",
+      "map_position": "above"
+    },
+    "4": {
+      "id": "4",
+      "type": "radio",
+      "label": "Which room would you like to reserve? ",
+      "choices": {
+        "1": {
+          "label": "Room A",
+          "value": "",
+          "image": "",
+          "icon": "face-smile",
+          "icon_style": "regular"
+        },
+        "2": {
+          "label": "Room B",
+          "value": "",
+          "image": "",
+          "icon": "face-smile",
+          "icon_style": "regular"
+        },
+        "3": {
+          "label": "Room C",
+          "value": "",
+          "image": "",
+          "icon": "face-smile",
+          "icon_style": "regular"
+        }
+      },
+      "choices_images_style": "modern",
+      "choices_icons_color": "#066aab",
+      "choices_icons_size": "large",
+      "choices_icons_style": "default",
+      "description": "",
+      "required": "1",
+      "input_columns": "",
+      "dynamic_choices": "",
+      "css": ""
+    },
+    "5": {
+      "id": "5",
+      "type": "checkbox",
+      "label": "Which time blocks would you like to reserve? ",
+      "choices": {
+        "1": {
+          "label": "8:00 - 9:00am",
+          "value": "",
+          "image": "",
+          "icon": "face-smile",
+          "icon_style": "regular"
+        },
+        "2": {
+          "label": "9:00 - 10:00am",
+          "value": "",
+          "image": "",
+          "icon": "face-smile",
+          "icon_style": "regular"
+        },
+        "3": {
+          "label": "10:00 - 11:00am",
+          "value": "",
+          "image": "",
+          "icon": "face-smile",
+          "icon_style": "regular"
+        },
+        "7": {
+          "label": "11:00 - 12:00pm",
+          "value": "",
+          "image": "",
+          "icon": "face-smile",
+          "icon_style": "regular"
+        },
+        "6": {
+          "label": "12:00 - 1:00pm",
+          "value": "",
+          "image": "",
+          "icon": "face-smile",
+          "icon_style": "regular"
+        },
+        "5": {
+          "label": "1:00 - 2:00pm",
+          "value": "",
+          "image": "",
+          "icon": "face-smile",
+          "icon_style": "regular"
+        },
+        "4": {
+          "label": "2:00 - 3:00pm",
+          "value": "",
+          "image": "",
+          "icon": "face-smile",
+          "icon_style": "regular"
+        },
+        "8": {
+          "label": "3:00 - 4:00pm",
+          "value": "",
+          "image": "",
+          "icon": "face-smile",
+          "icon_style": "regular"
+        },
+        "9": {
+          "label": "4:00 - 5:00pm",
+          "value": "",
+          "image": "",
+          "icon": "face-smile",
+          "icon_style": "regular"
+        }
+      },
+      "choices_images_style": "modern",
+      "choices_icons_color": "#066aab",
+      "choices_icons_size": "large",
+      "choices_icons_style": "default",
+      "description": "",
+      "required": "1",
+      "input_columns": "",
+      "choice_limit": "",
+      "dynamic_choices": "",
+      "css": ""
+    },
+    "6": {
+      "id": "6",
+      "type": "textarea",
+      "label": "Questions or Comments",
+      "description": "",
+      "size": "medium",
+      "placeholder": "",
+      "limit_count": "1",
+      "limit_mode": "characters",
+      "default_value": "",
+      "css": ""
+    }
+  },
+  "id": "218",
+  "field_id": 7,
+  "settings": {
+    "form_title": "Meeting Room Registration Form",
+    "form_desc": "",
+    "submit_text": "Submit",
+    "submit_text_processing": "Sending...",
+    "form_class": "",
+    "submit_class": "",
+    "ajax_submit": "1",
+    "notification_enable": "1",
+    "notifications": {
+      "1": {
+        "notification_name": "Default Notification",
+        "email": "{admin_email}",
+        "subject": "New Entry: Meeting Room Registration Form",
+        "sender_name": "Example",
+        "sender_address": "{admin_email}",
+        "replyto": "{field_id=\"2\"}",
+        "message": "{all_fields}",
+        "enable": "1",
+        "template": "",
+        "file_upload_attachment_fields": [],
+        "entry_csv_attachment_entry_information": [],
+        "entry_csv_attachment_file_name": "entry-details"
+      }
+    },
+    "confirmations": {
+      "1": {
+        "name": "Default Confirmation",
+        "type": "message",
+        "message": "<p>Thanks for booking a room! You'll see a confirmation from us soon.<\/p>",
+        "message_scroll": "1",
+        "page": "2",
+        "redirect": "",
+        "message_entry_preview_style": "basic"
+      }
+    },
+    "antispam_v3": "1",
+    "store_spam_entries": "1",
+    "anti_spam": {
+      "time_limit": { "enable": "1", "duration": "2" },
+      "filtering_store_spam": "1",
+      "country_filter": {
+        "action": "allow",
+        "country_codes": [],
+        "message": "Sorry, this form does not accept submissions from your country."
+      },
+      "keyword_filter": {
+        "message": "Sorry, your message can't be submitted because it contains prohibited words."
+      }
+    },
+    "form_tags": [],
+    "conversational_forms_description": "",
+    "conversational_forms_page_slug": "meeting-room-registration-form-template",
+    "conversational_forms_custom_logo": "",
+    "conversational_forms_color_scheme": "#448ccb",
+    "conversational_forms_progress_bar": "percentage",
+    "form_abandonment_fields": "",
+    "form_locker_password": "",
+    "form_locker_password_message": "",
+    "form_locker_schedule_start_date": "",
+    "form_locker_schedule_start_time": "",
+    "form_locker_schedule_end_date": "",
+    "form_locker_schedule_end_time": "",
+    "form_locker_schedule_message": "",
+    "form_locker_entry_limit": "",
+    "form_locker_entry_limit_message": "",
+    "form_locker_user_message": "",
+    "form_pages_description": "",
+    "form_pages_page_slug": "meeting-room-registration-form-template",
+    "form_pages_custom_logo": "",
+    "form_pages_footer": "This content is neither created nor endorsed by WPForms.",
+    "form_pages_color_scheme": "#448ccb",
+    "form_pages_style": "modern",
+    "post_submissions": "",
+    "post_submissions_title": "",
+    "post_submissions_content": "",
+    "post_submissions_excerpt": "",
+    "post_submissions_featured": "",
+    "post_submissions_type": "post",
+    "post_submissions_status": "pending",
+    "post_submissions_author": ""
+  },
+  "search_terms": "",
+  "providers": { "constant-contact-v3": [] },
+  "meta": {
+    "template": "7f2bea9f51193a6fc8768acb565bf8b6",
+    "category": "all",
+    "subcategory": "all"
+  },
+  "payments": {
+    "paypal_standard": {
+      "email": "",
+      "mode": "production",
+      "transaction": "product",
+      "cancel_url": "",
+      "shipping": "0",
+      "note": "1"
+    }
+  }
+}

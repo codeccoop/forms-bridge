@@ -6,7 +6,7 @@ import {
 } from "../../lib/payload";
 
 export function schemaToOptions(schema, name = "") {
-  const isFlattable = name.match(/\[\](?=[^\[])/g)?.length >= 2;
+  const isFlattable = name.match(/\[\](?=[^[])/g)?.length >= 2;
   // const isExpansible = /\[\](?=.+)/g.test(name);
 
   if (name !== "") {

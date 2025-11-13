@@ -1,0 +1,145 @@
+<?php
+/**
+ * Class Nextcloud_Addon
+ *
+ * @package formsbridge
+ */
+
+namespace FORMS_BRIDGE;
+
+use FBAPI;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
+
+require_once 'class-nextcloud-form-bridge.php';
+require_once 'hooks.php';
+
+/**
+ * Nextcloud Addon class.
+ */
+class Nextcloud_Addon extends Addon {
+
+	/**
+	 * Handles the addon's title.
+	 *
+	 * @var string
+	 */
+	const TITLE = 'Nextcloud';
+
+	/**
+	 * Handles the addon's name.
+	 *
+	 * @var string
+	 */
+	const NAME = 'nextcloud';
+
+	/**
+	 * Handles the addom's custom bridge class.
+	 *
+	 * @var string
+	 */
+	const BRIDGE = '\FORMS_BRIDGE\Nextcloud_Form_Bridge';
+
+	/**
+	 * Addon loader. Set up hooks to skip payload prunes if it comes from a nextcloud bridge.
+	 */
+	public function load() {
+		parent::load();
+
+		add_filter(
+			'forms_bridge_prune_empties',
+			static function ( $prune, $bridge ) {
+				if ( 'nextcloud' === $bridge->addon ) {
+					return false;
+				}
+
+				return $prune;
+			},
+			5,
+			2
+		);
+	}
+	/**
+	 * Performs a request against the backend to check the connexion status.
+	 *
+	 * @param string $backend Target backend name.
+	 *
+	 * @return boolean
+	 */
+	public function ping( $backend ) {
+		$backend = FBAPI::get_backend( $backend );
+
+		if ( ! $backend ) {
+			return false;
+		}
+
+		$credential = $backend->credential;
+		if ( ! $credential ) {
+			return false;
+		}
+
+		$response = $backend->get(
+			'/remote.php/dav/files/' . rawurlencode( $credential->client_id )
+		);
+
+		return ! is_wp_error( $response );
+	}
+
+	/**
+	 * Performs a GET request against the backend model and retrive the response data.
+	 *
+	 * @param string $endpoint Target model name.
+	 * @param string $backend Target backend name.
+	 *
+	 * @return array|WP_Error
+	 */
+	public function fetch( $endpoint, $backend ) {
+		return array();
+	}
+
+	/**
+	 * Performs an introspection of the backend model and returns API fields
+	 * and accepted content type.
+	 *
+	 * @param string $filepath Filepath.
+	 * @param string $backend Backend name.
+	 *
+	 * @return array List of fields and content type of the model.
+	 */
+	public function get_endpoint_schema( $filepath, $backend ) {
+		$bridge = new Nextcloud_Form_Bridge(
+			array(
+				'name'     => '__nextcloud-' . time(),
+				'endpoint' => $filepath,
+				'backend'  => $backend,
+			)
+		);
+
+		$headers = $bridge->table_headers();
+		if ( is_wp_error( $headers ) || ! $headers ) {
+			return array();
+		}
+
+		$fields = array();
+		foreach ( $headers as $header ) {
+			$fields[] = array(
+				'name'   => $header,
+				'schema' => array( 'type' => 'string' ),
+			);
+		}
+
+		return $fields;
+	}
+}
+
+Nextcloud_Addon::setup();
+
+add_filter(
+	'http_request_args',
+	function ( $args ) {
+		$args['timeout'] = 30;
+		return $args;
+	}
+);

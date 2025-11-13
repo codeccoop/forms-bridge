@@ -5,7 +5,7 @@ export function refToGroup(ref) {
 }
 
 export function getGroupFields(fields, group) {
-  return fields.filter(({ ref }) => new RegExp("^\#" + group).test(ref));
+  return fields.filter(({ ref }) => new RegExp("^#" + group).test(ref));
 }
 
 export function validateCredential(credential, template, fields) {

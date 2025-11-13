@@ -1,0 +1,46 @@
+{
+  "fields": {
+    "1": {
+      "name": "Name",
+      "value": "John Doe",
+      "id": 1,
+      "type": "name",
+      "first": "John",
+      "middle": "",
+      "last": "Doe"
+    },
+    "2": {
+      "name": "Email",
+      "value": "johndoe@example.coop",
+      "id": 2,
+      "type": "email"
+    },
+    "3": { "name": "Department", "value": "Unkown", "id": 3, "type": "text" },
+    "4": {
+      "name": "Which room would you like to reserve?",
+      "value": "Room A",
+      "value_raw": "Room A",
+      "id": 4,
+      "type": "radio"
+    },
+    "5": {
+      "name": "Which time blocks would you like to reserve?",
+      "value": "8:00 - 9:00am\n9:00 - 10:00am\n3:00 - 4:00pm",
+      "value_raw": "8:00 - 9:00am\n9:00 - 10:00am\n3:00 - 4:00pm",
+      "id": 5,
+      "type": "checkbox"
+    },
+    "6": {
+      "name": "Questions or Comments",
+      "value": "Lorem ipsum dolor sit amer",
+      "id": 6,
+      "type": "textarea"
+    }
+  },
+  "id": "218",
+  "nonce": "00b5d883ee",
+  "post_id": "218",
+  "submit": "wpforms-submit",
+  "token": "936e5ec8f7319b1c5d5de8e4793b4e2f",
+  "entry_id": 3
+}

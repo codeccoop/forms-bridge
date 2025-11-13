@@ -96,8 +96,10 @@ export default function FormStep({ fields, data, setData, integration }) {
       switch (schema.type) {
         case "object":
           data[schema.name] = [];
+          break;
         case "boolean":
           data[schema.name] = false;
+          break;
         default:
           data[schema.name] = "";
       }
@@ -132,6 +134,7 @@ export default function FormStep({ fields, data, setData, integration }) {
       )}
       {filteredFields.map((field) => (
         <Field
+          key={field.name}
           data={{
             ...field,
             value: data[field.name] || "",

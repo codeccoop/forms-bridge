@@ -1,0 +1,296 @@
+<?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
+
+return array(
+	'title'        => __( 'Opt-in Subscriptions', 'forms-bridge' ),
+	'description'  => __(
+		'Subscription form template. The resulting bridge will subscribe woocommerce customers to a given email list with a double opt in check.',
+		'forms-bridge'
+	),
+	'integrations' => array( 'woo' ),
+	'fields'       => array(
+		array(
+			'ref'   => '#form',
+			'name'  => 'title',
+			'value' => __( 'Woo Checkout', 'forms-bridge' ),
+		),
+		array(
+			'ref'   => '#bridge',
+			'name'  => 'endpoint',
+			'value' => '/api/subscribers',
+		),
+		array(
+			'ref'   => '#bridge',
+			'name'  => 'method',
+			'value' => 'POST',
+		),
+		array(
+			'ref'      => '#bridge/custom_fields[]',
+			'name'     => 'status',
+			'label'    => __( 'Subscription status', 'forms-bridge' ),
+			'type'     => 'select',
+			'options'  => array(
+				array(
+					'label' => __( 'Enabled', 'forms-bridge' ),
+					'value' => 'enabled',
+				),
+				array(
+					'label' => __( 'Disabled', 'forms-bridge' ),
+					'value' => 'blocklisted',
+				),
+			),
+			'required' => true,
+		),
+	),
+	'bridge'       => array(
+		'method'        => 'POST',
+		'endpoint'      => '/api/subscribers',
+		'custom_fields' => array(
+			array(
+				'name'  => 'attribs.locale',
+				'value' => '$locale',
+			),
+			array(
+				'name'  => 'preconfirm_subscriptions',
+				'value' => '0',
+			),
+		),
+		'mutations'     => array(
+			array(
+				array(
+					'from' => 'preconfirm_subscriptions',
+					'to'   => 'preconfirm_subscriptions',
+					'cast' => 'boolean',
+				),
+				array(
+					'from' => 'id',
+					'to'   => 'id',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'parent_id',
+					'to'   => 'parent_id',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'version',
+					'to'   => 'version',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'prices_include_tax',
+					'to'   => 'prices_include_tax',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'date_created',
+					'to'   => 'date_created',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'date_modified',
+					'to'   => 'date_modified',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'discount_total',
+					'to'   => 'discount_total',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'discount_tax',
+					'to'   => 'discount_tax',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'shipping_total',
+					'to'   => 'shipping_total',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'shipping_total',
+					'to'   => 'shipping_total',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'shipping_tax',
+					'to'   => 'shipping_tax',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'cart_total',
+					'to'   => 'cart_total',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'cart_tax',
+					'to'   => 'cart_tax',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'total',
+					'to'   => 'total',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'total_tax',
+					'to'   => 'total_tax',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'customer_id',
+					'to'   => 'attribs.wp_customer_id',
+					'cast' => 'string',
+				),
+				array(
+					'from' => 'order_key',
+					'to'   => 'order_key',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'billing.first_name',
+					'to'   => 'name[0]',
+					'cast' => 'string',
+				),
+				array(
+					'from' => '?billing.last_name',
+					'to'   => 'name[1]',
+					'cast' => 'string',
+				),
+				array(
+					'from' => 'name',
+					'to'   => 'name',
+					'cast' => 'concat',
+				),
+				array(
+					'from' => 'billing.email',
+					'to'   => 'email',
+					'cast' => 'string',
+				),
+				array(
+					'from' => 'billing',
+					'to'   => 'billing',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'shipping',
+					'to'   => 'shipping',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'payment_method',
+					'to'   => 'payment_method',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'payment_method_title',
+					'to'   => 'payment_method_title',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'transaction_id',
+					'to'   => 'transaction_id',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'customer_ip_address',
+					'to'   => 'ip_signup',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'customer_user_agent',
+					'to'   => 'customer_user_agent',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'created_via',
+					'to'   => 'created_via',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'customer_note',
+					'to'   => 'notes',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'date_completed',
+					'to'   => 'date_completed',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'date_paid',
+					'to'   => 'date_paid',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'cart_hash',
+					'to'   => 'cart_hash',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'order_stock_reduced',
+					'to'   => 'order_stock_reduced',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'download_permissions_granted',
+					'to'   => 'download_permissions_granted',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'new_order_email_sent',
+					'to'   => 'new_order_email_sent',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'recorded_sales',
+					'to'   => 'recorded_sales',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'recorded_coupon_usage_counts',
+					'to'   => 'recorded_coupon_usage_counts',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'number',
+					'to'   => 'number',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'tax_lines',
+					'to'   => 'tax_lines',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'shipping_lines',
+					'to'   => 'shipping_lines',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'fee_lines',
+					'to'   => 'fee_lines',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'coupon_lines',
+					'to'   => 'coupon_lines',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'line_items',
+					'to'   => 'line_items',
+					'cast' => 'null',
+				),
+				array(
+					'from' => 'currency',
+					'to'   => 'currency',
+					'cast' => 'null',
+				),
+			),
+		),
+	),
+);

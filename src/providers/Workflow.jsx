@@ -14,15 +14,8 @@ import diff from "../lib/diff";
 import { isset } from "../lib/utils";
 
 const apiFetch = wp.apiFetch;
-const {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useMemo,
-  useCallback,
-  useRef,
-} = wp.element;
+const { createContext, useContext, useState, useEffect, useMemo, useRef } =
+  wp.element;
 const { __ } = wp.i18n;
 
 const WorkflowContext = createContext({

@@ -4,7 +4,6 @@ import BridgeStep from "./Steps/BridgeStep";
 import CredentialStep from "./Steps/CredentialStep";
 import { getGroupFields } from "./lib";
 import { useSchemas } from "../../../providers/Schemas";
-import { isset } from "../../../lib/utils";
 
 const { useState, useEffect, useMemo } = wp.element;
 

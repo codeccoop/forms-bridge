@@ -339,25 +339,31 @@ JsonFinger.prototype.setExpanded = function (pointer, values, unset) {
   const before = parts[0];
   const after = parts
     .slice(1)
-    .filter((p, i) => p || i !== parts.length - 2)
+    .filter((p, i) => p || i < parts.length - 1)
     .join("[]");
 
-  if (!before) {
-    if (!Array.isArray(values) || (!after && unset)) {
-      return;
+  const from = this.get(before);
+  if (unset) {
+    values = from;
+  }
+
+  if (!Array.isArray(from)) {
+    return this.data;
+  }
+
+  if (!Array.isArray(values) && !unset) {
+    const value = values;
+    values = [];
+
+    const l = from.length;
+    for (let i = 0; i < l; i++) {
+      values.push(JSON.parse(JSON.stringify(value)));
     }
   }
 
-  if (unset) {
-    values = this.get(before);
-  }
-
-  if (!Array.isArray(values)) {
-    return;
-  }
-
   const isFrozen = Object.isFrozen(values);
-  for (let i = values.length - 1; i >= 0; i--) {
+  const l = values.length - 1;
+  for (let i = l; i >= 0; i--) {
     pointer = `${before}[${i}]${after}`;
 
     if (unset) {

@@ -1,4 +1,4 @@
-const { __ } = wp.i18n;
+const { __ } = window.wp.i18n;
 
 function pruneEmptySchemas(schema) {
   if (schema.type === "object") {
