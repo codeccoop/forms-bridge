@@ -1,9 +1,19 @@
 <?php
+/**
+ * Database migration to version 3.0.0
+ *
+ * @package formsbridge
+ */
+
+// phpcs:disable WordPress.Files.FileName
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
+/**
+ * Migration 3.0.0
+ */
 function forms_bridge_migration_300() {
 	$setting_names = array( 'rest-api', 'odoo', 'financoop', 'google-sheets' );
 

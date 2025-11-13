@@ -587,6 +587,11 @@ class Forms_Bridge extends Base_Plugin {
 	 * Apply db migrations on plugin upgrades.
 	 */
 	private static function do_migrations() {
+		$action = sanitize_text_field( wp_unslash( $_POST['action'] ?? '' ) );
+		if ( 'heartbeat' === $action && wp_doing_ajax() ) {
+			return;
+		}
+
 		$from = get_option( self::DB_VERSION, self::version() );
 
 		if ( ! preg_match( '/^\d+\.\d+\.\d+$/', $from ) ) {
