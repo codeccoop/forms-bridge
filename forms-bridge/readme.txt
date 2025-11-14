@@ -98,6 +98,14 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 
 == Changelog ==
 
+= 4.1.2 =
+* feat: increase logs coverage
+* feat: debug console follow logs
+* feat: template wizard wired invalidation on credential updates
+* feat: lazy loading of tag values
+* fix: credential authorization for non bearer credentials
+* fix: bigin bridge constructor inheritance
+
 = 4.1.1 =
 * feat: bearer credential authorization based on access tokens + expiration date
 * fix: gravityforms subfields serialization
