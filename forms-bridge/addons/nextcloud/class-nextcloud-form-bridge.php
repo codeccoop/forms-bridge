@@ -238,7 +238,7 @@ class Nextcloud_Form_Bridge extends Form_Bridge {
 						return;
 					}
 
-					$user  = $credential->client_id;
+					$user  = rawurlencode( $credential->client_id );
 					[$pre] = explode( $this->endpoint, $url );
 					$url   =
 						preg_replace( '/\/+$/', '', $pre ) .
