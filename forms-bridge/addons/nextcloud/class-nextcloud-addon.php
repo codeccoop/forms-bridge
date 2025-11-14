@@ -43,7 +43,8 @@ class Nextcloud_Addon extends Addon {
 	const BRIDGE = '\FORMS_BRIDGE\Nextcloud_Form_Bridge';
 
 	/**
-	 * Addon loader. Set up hooks to skip payload prunes if it comes from a nextcloud bridge.
+	 * Addon loader. Set up hooks to skip payload prunes if it comes from a
+	 * nextcloud bridge.
 	 */
 	public function load() {
 		parent::load();

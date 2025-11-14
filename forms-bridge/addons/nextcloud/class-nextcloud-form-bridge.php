@@ -209,7 +209,7 @@ class Nextcloud_Form_Bridge extends Form_Bridge {
 	}
 
 	/**
-	 * Submits submission to the backend.
+	 * Sends the payload to the backend.
 	 *
 	 * @param array $payload Submission data.
 	 * @param array $attachments Submission attachments.

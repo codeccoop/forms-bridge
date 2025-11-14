@@ -86,15 +86,11 @@ add_filter(
 						'value' => 'Basic',
 					),
 					array(
-						'ref'         => '#credential',
-						'name'        => 'client_id',
-						'label'       => __( 'User login', 'forms-bridge' ),
-						'description' => __(
-							'Either, a user name or email',
-							'forms-bridge'
-						),
-						'type'        => 'text',
-						'required'    => true,
+						'ref'      => '#credential',
+						'name'     => 'client_id',
+						'label'    => __( 'User login', 'forms-bridge' ),
+						'type'     => 'text',
+						'required' => true,
 					),
 					array(
 						'ref'      => '#credential',
