@@ -1,4 +1,9 @@
 <?php
+/**
+ * Dolibarr addon hooks
+ *
+ * @package formsbridge
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -7,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_filter(
 	'forms_bridge_bridge_schema',
 	function ( $schema, $addon ) {
-		if ( $addon !== 'dolibarr' ) {
+		if ( 'dolibarr' !== $addon ) {
 			return $schema;
 		}
 
@@ -21,7 +26,7 @@ add_filter(
 add_filter(
 	'forms_bridge_template_defaults',
 	function ( $defaults, $addon, $schema ) {
-		if ( $addon !== 'dolibarr' ) {
+		if ( 'dolibarr' !== $addon ) {
 			return $defaults;
 		}
 
@@ -73,20 +78,22 @@ add_filter(
 
 		$index = array_search(
 			'no_email',
-			array_column( $data['bridge']['custom_fields'], 'name' )
+			array_column( $data['bridge']['custom_fields'], 'name' ),
+			true
 		);
 
-		if ( $index !== false ) {
+		if ( false !== $index ) {
 			$field          = &$data['bridge']['custom_fields'][ $index ];
 			$field['value'] = $field['value'] ? '0' : '1';
 		}
 
 		$index = array_search(
 			'fulldayevent',
-			array_column( $data['bridge']['custom_fields'], 'name' )
+			array_column( $data['bridge']['custom_fields'], 'name' ),
+			true
 		);
 
-		if ( $index !== false ) {
+		if ( false !== $index ) {
 			$data['form']['fields'] = array_filter(
 				$data['form']['fields'],
 				function ( $field ) {
@@ -105,10 +112,11 @@ add_filter(
 
 			$index = array_search(
 				'duration',
-				array_column( $data['bridge']['custom_fields'], 'name' )
+				array_column( $data['bridge']['custom_fields'], 'name' ),
+				true
 			);
 
-			if ( $index !== false ) {
+			if ( false !== $index ) {
 				array_splice( $data['bridge']['custom_fields'], $index, 1 );
 			}
 		}

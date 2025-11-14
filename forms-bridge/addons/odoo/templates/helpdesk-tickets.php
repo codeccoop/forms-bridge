@@ -54,7 +54,7 @@ return array(
 			'label'   => __( 'Owner user', 'forms-bridge' ),
 			'type'    => 'select',
 			'options' => array(
-				'endpoint' => 'res.user',
+				'endpoint' => 'res.users',
 				'finger'   => array(
 					'value' => 'result.[].id',
 					'label' => 'result.[].name',

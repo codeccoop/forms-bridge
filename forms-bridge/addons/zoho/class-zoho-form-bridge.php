@@ -64,7 +64,7 @@ class Zoho_Form_Bridge extends Form_Bridge {
 
 		if ( is_wp_error( $response ) ) {
 			$data = json_decode(
-				$response->get_error_data()['response']['body'],
+				$response->get_error_data()['response']['body'] ?? '{}',
 				true
 			);
 

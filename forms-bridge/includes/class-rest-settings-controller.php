@@ -612,6 +612,15 @@ class REST_Settings_Controller extends Base_Controller {
 		return array( 'success' => true === $result );
 	}
 
+	/**
+	 * Callback to the fetch template options endpoint. It searches for template
+	 * fields with dynamic options and fetch its values from the backend.
+	 *
+	 * @param Addon           $addon Addon instance.
+	 * @param WP_REST_Request $request Request object.
+	 *
+	 * @return array|WP_Error
+	 */
 	private static function get_template_options( $addon, $request ) {
 		$handler = self::prepare_addon_backend_request_handler(
 			$addon,
@@ -626,10 +635,12 @@ class REST_Settings_Controller extends Base_Controller {
 
 		$template = FBAPI::get_template( $request['name'], $addon::NAME );
 		if ( ! $template ) {
+			Logger::log( 'Template not found', Logger::ERROR );
 			return self::not_found();
 		}
 
 		if ( ! $template->is_valid ) {
+			Logger::log( 'Invalid template', Logger::ERROR );
 			return self::bad_request();
 		}
 
@@ -649,12 +660,14 @@ class REST_Settings_Controller extends Base_Controller {
 				$value_pointer = $finger['value'];
 
 				if ( ! JSON_Finger::validate( $value_pointer ) ) {
+					Logger::log( 'Fetch template options error: Invalid value json pointer', Logger::ERROR );
 					return self::internal_server_error();
 				}
 
 				$label_pointer = $finger['label'] ?? $finger['value'];
 
 				if ( ! JSON_Finger::validate( $label_pointer ) ) {
+					Logger::log( 'Fetch template options error: Invalid label json pointer', Logger::ERROR );
 					return self::internal_server_error();
 				}
 
@@ -668,6 +681,9 @@ class REST_Settings_Controller extends Base_Controller {
 						$response->get_error_data()
 					);
 
+					Logger::log( 'Fetch template options error response', Logger::ERROR );
+					Logger::log( $error, Logger::ERROR );
+
 					return $error;
 				}
 
@@ -679,7 +695,9 @@ class REST_Settings_Controller extends Base_Controller {
 				$values = $json_finger->get( $value_pointer );
 
 				if ( ! wp_is_numeric_array( $values ) ) {
-					return self::internal_server_error();
+					Logger::log( 'Not found template options error response', Logger::ERROR );
+					Logger::log( $response, Logger::ERROR );
+					return self::not_found();
 				}
 
 				foreach ( $values as $value ) {

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class Odoo_Form_Bridge
+ *
+ * @package formsbridge
+ */
 
 namespace FORMS_BRIDGE;
 
@@ -19,7 +24,7 @@ class Odoo_Form_Bridge extends Form_Bridge {
 	 *
 	 * @var string
 	 */
-	private const endpoint = '/jsonrpc';
+	private const ENDPOINT = '/jsonrpc';
 
 	/**
 	 * Handles active RPC session data.
@@ -28,6 +33,11 @@ class Odoo_Form_Bridge extends Form_Bridge {
 	 */
 	private static $session;
 
+	/**
+	 * Handles the addon's current request data.
+	 *
+	 * @var array|null
+	 */
 	private static $request;
 
 	/**
@@ -67,8 +77,7 @@ class Odoo_Form_Bridge extends Form_Bridge {
 	/**
 	 * Handle RPC responses and catch errors on the application layer.
 	 *
-	 * @param array   $response Request response.
-	 * @param boolean $is_single Should the result be an entity or an array.
+	 * @param array $res Request response.
 	 *
 	 * @return mixed|WP_Error Request result.
 	 */
@@ -83,9 +92,9 @@ class Odoo_Form_Bridge extends Form_Bridge {
 
 			return new WP_Error(
 				'unkown_content_type',
-				/* translators: %s: Content-Type header value */
 				sprintf(
-					__( 'Unkown HTTP response content type %s', 'forms-bridge' ),
+					/* translators: %s: Content-Type header value */
+					esc_html( __( 'Unkown HTTP response content type %s', 'forms-bridge' ) ),
 					sanitize_text_field( $content_type )
 				),
 				$res
@@ -128,8 +137,8 @@ class Odoo_Form_Bridge extends Form_Bridge {
 	/**
 	 * JSON RPC login request.
 	 *
-	 * @param [string, string, string] $login
-	 * @param Backend                  $backend
+	 * @param array{0: string, 1: string, 2: string} $login RPC login credentials.
+	 * @param Backend                                $backend Bridge backend object.
 	 *
 	 * @return array|WP_Error Tuple with RPC session id and user id.
 	 */
@@ -142,7 +151,7 @@ class Odoo_Form_Bridge extends Form_Bridge {
 
 		$payload = self::rpc_payload( $session_id, 'common', 'login', $login );
 
-		$response = $backend->post( self::endpoint, $payload );
+		$response = $backend->post( self::ENDPOINT, $payload );
 
 		$user_id = self::rpc_response( $response );
 
@@ -154,7 +163,12 @@ class Odoo_Form_Bridge extends Form_Bridge {
 		return self::$session;
 	}
 
-	public function __construct( $data, $addon = null ) {
+	/**
+	 * Bridge constructor with addon name provisioning.
+	 *
+	 * @param array $data Bridge data.
+	 */
+	public function __construct( $data ) {
 		parent::__construct( $data, 'odoo' );
 	}
 
@@ -241,7 +255,7 @@ class Odoo_Form_Bridge extends Form_Bridge {
 			$more_args
 		);
 
-		$response = $backend->post( self::endpoint, $payload );
+		$response = $backend->post( self::ENDPOINT, $payload );
 
 		$result = self::rpc_response( $response );
 		if ( is_wp_error( $result ) ) {

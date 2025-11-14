@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class Dolibarr_Addon
+ *
+ * @package formsbridge
+ */
 
 namespace FORMS_BRIDGE;
 
@@ -36,6 +41,13 @@ class Dolibarr_Addon extends Addon {
 	 */
 	const BRIDGE = '\FORMS_BRIDGE\Dolibarr_Form_Bridge';
 
+	/**
+	 * Performs a request against the backend to check the connexion status.
+	 *
+	 * @param string $backend Target backend name.
+	 *
+	 * @return boolean|WP_Error
+	 */
 	public function ping( $backend ) {
 		$bridge = new Dolibarr_Form_Bridge(
 			array(
@@ -48,11 +60,20 @@ class Dolibarr_Addon extends Addon {
 
 		$response = $bridge->submit();
 		if ( is_wp_error( $response ) ) {
+			Logger::log( 'Dolibarr backend ping error response', Logger::ERROR );
+			Logger::log( $response, Logger::ERROR );
 			return false;
 		}
 
 		$code = $response['data']['success']['code'] ?? null;
-		return 200 === $code;
+
+		if ( 200 !== $code ) {
+			Logger::log( 'Dolibarr backend ping error response', Logger::ERROR );
+			Logger::log( $response, Logger::ERROR );
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

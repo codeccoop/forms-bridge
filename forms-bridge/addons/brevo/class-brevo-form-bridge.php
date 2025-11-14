@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class Brevo_Form_Bridge
+ *
+ * @package formsbridge
+ */
 
 namespace FORMS_BRIDGE;
 
@@ -11,6 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Brevo_Form_Bridge extends Form_Bridge {
 
+	/**
+	 * Bridge constructor with addon name provisioning.
+	 *
+	 * @param array $data Bridge data.
+	 */
 	public function __construct( $data ) {
 		parent::__construct( $data, 'brevo' );
 	}
@@ -27,16 +37,17 @@ class Brevo_Form_Bridge extends Form_Bridge {
 		$response = parent::submit( $payload, $attachments );
 
 		if ( is_wp_error( $response ) ) {
-			$error_response = $response->get_error_data()['response'];
+			$error_response = $response->get_error_data()['response'] ?? null;
 			if (
-				$error_response['response']['code'] !== 425 &&
-				$error_response['response']['code'] !== 400
+				! $error_response ||
+				( 425 !== $error_response['response']['code'] &&
+				400 !== $error_response['response']['code'] )
 			) {
 				return $response;
 			}
 
 			$data = json_decode( $error_response['body'], true );
-			if ( $data['code'] !== 'duplicate_parameter' ) {
+			if ( 'duplicate_parameter' !== $data['code'] ) {
 				return $response;
 			}
 

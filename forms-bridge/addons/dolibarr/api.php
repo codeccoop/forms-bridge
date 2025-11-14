@@ -1,4 +1,9 @@
 <?php
+/**
+ * Dolibarr addon php API
+ *
+ * @package formsbridge
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -48,7 +53,7 @@ function forms_bridge_dolibarr_search_contact( $payload, $bridge ) {
 		$error_data    = $response->get_error_data();
 		$response_code = $error_data['response']['response']['code'];
 
-		if ( $response_code !== 404 ) {
+		if ( 404 !== $response_code ) {
 			return $response;
 		}
 	}
@@ -105,7 +110,7 @@ function forms_bridge_dolibarr_search_thirdparty( $payload, $bridge ) {
 		$error_data    = $response->get_error_data();
 		$response_code = $error_data['response']['response']['code'] ?? null;
 
-		if ( $response_code !== 404 ) {
+		if ( 404 !== $response_code ) {
 			return $response;
 		}
 	}

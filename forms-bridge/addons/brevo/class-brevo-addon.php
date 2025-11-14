@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class Brevo_Addon
+ *
+ * @package formsbridge
+ */
 
 namespace FORMS_BRIDGE;
 
@@ -231,7 +236,7 @@ class Brevo_Addon extends Addon {
 				return array();
 			}
 
-			if ( $module === 'companies' ) {
+			if ( 'companies' === $module ) {
 				$fields = array(
 					array(
 						'name'     => 'name',
@@ -264,7 +269,7 @@ class Brevo_Addon extends Addon {
 						),
 					),
 				);
-			} elseif ( $module === 'deals' ) {
+			} elseif ( 'deals' === $module ) {
 				$fields = array(
 					array(
 						'name'     => 'name',

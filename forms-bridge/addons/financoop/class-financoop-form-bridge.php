@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class Finan_Coop_Form_Bridge
+ *
+ * @package formsbridge
+ */
 
 namespace FORMS_BRIDGE;
 

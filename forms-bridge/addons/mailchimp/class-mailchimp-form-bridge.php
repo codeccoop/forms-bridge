@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class Mailchimp_Form_Bridge
+ *
+ * @package formsbridge
+ */
 
 namespace FORMS_BRIDGE;
 
@@ -13,6 +18,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Mailchimp_Form_Bridge extends Form_Bridge {
 
+	/**
+	 * Bridge constructor with addon name provisioning.
+	 *
+	 * @param array $data Bridge data.
+	 */
 	public function __construct( $data ) {
 		parent::__construct( $data, 'mailchimp' );
 	}
@@ -32,7 +42,7 @@ class Mailchimp_Form_Bridge extends Form_Bridge {
 			$error_response = $response->get_error_data()['response'] ?? null;
 
 			$code = $error_response['response']['code'] ?? null;
-			if ( $code !== 400 ) {
+			if ( 400 !== $code ) {
 				return $response;
 			}
 
@@ -43,7 +53,7 @@ class Mailchimp_Form_Bridge extends Form_Bridge {
 				return $response;
 			}
 
-			if ( $title === 'Member Exists' ) {
+			if ( 'Member Exists' === $title ) {
 				if (
 					! preg_match(
 						'/(?<=lists\/).+(?=\/members)/',

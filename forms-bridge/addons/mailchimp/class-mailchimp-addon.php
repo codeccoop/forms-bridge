@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class Mailchimp_Addon
+ *
+ * @package formsbridge
+ */
 
 namespace FORMS_BRIDGE;
 

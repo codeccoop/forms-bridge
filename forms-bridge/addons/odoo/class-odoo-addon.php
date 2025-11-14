@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class Odoo_Addon
+ *
+ * @package formsbridge
+ */
 
 namespace FORMS_BRIDGE;
 

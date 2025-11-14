@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class Holded_Addon
+ *
+ * @package formsbridge
+ */
 
 namespace FORMS_BRIDGE;
 
