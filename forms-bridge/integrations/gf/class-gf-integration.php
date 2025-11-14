@@ -316,19 +316,16 @@ class GF_Integration extends BaseIntegration {
 			$inputs       = array();
 			$entry_inputs = $field->get_entry_inputs() ?: array();
 			foreach ( $entry_inputs as $input ) {
+				if ( $input['isHidden'] ?? false ) {
+					continue;
+				}
+
 				$input['name'] = $allowsPrepopulate ? $input['name'] : '';
 				$inputs[]      = $input;
 			}
 		} catch ( Error ) {
 			$inputs = array();
 		}
-
-		$inputs = array_values(
-			array_filter(
-				$inputs,
-				fn ( $input ) => ! isset( $input['isHidden'] ) || ! $input['isHidden']
-			)
-		);
 
 		$named_inputs = array_filter(
 			$inputs,
@@ -439,6 +436,8 @@ class GF_Integration extends BaseIntegration {
 			foreach ( $subfields as &$sf ) {
 				$sf['parent'] = $field;
 			}
+
+			return $subfields;
 		}
 
 		return $field;
