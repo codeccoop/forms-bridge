@@ -9,7 +9,7 @@
  * License URI:         http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:         forms-bridge
  * Domain Path:         /languages
- * Version:             4.1.0
+ * Version:             4.1.1
  * Requires PHP:        8.0
  * Requires at least:   6.7
  *
