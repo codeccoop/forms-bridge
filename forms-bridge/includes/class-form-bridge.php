@@ -18,6 +18,38 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Form bridge object.
  */
 class Form_Bridge {
+	/**
+	 * Handles the list of available magic tags.
+	 *
+	 * @var array
+	 */
+	public const TAGS = array(
+		'site_title',
+		'site_description',
+		'blog_url',
+		'site_url',
+		'admin_email',
+		'wp_version',
+		'ip_address',
+		'referer',
+		'user_agent',
+		'browser_locale',
+		'locale',
+		'language',
+		'datetime',
+		'gmt_datetime',
+		'timestamp',
+		'iso_date',
+		'gmt_iso_date',
+		'utc_date',
+		'user_id',
+		'user_login',
+		'user_name',
+		'user_email',
+		'submission_id',
+		'form_title',
+		'form_id',
+	);
 
 	/**
 	 * Bridge data common schema.
@@ -238,6 +270,11 @@ class Form_Bridge {
 		}
 	}
 
+	/**
+	 * Bridge data getter.
+	 *
+	 * @return arra|null
+	 */
 	public function data() {
 		if ( ! $this->is_valid ) {
 			return;
@@ -336,7 +373,7 @@ class Form_Bridge {
 			return;
 		}
 
-		[$integration] = explode( ':', $form_id );
+		list($integration) = explode( ':', $form_id );
 		return $integration;
 	}
 
@@ -573,6 +610,14 @@ class Form_Bridge {
 		}
 	}
 
+	/**
+	 * Recursivly apply cast mutations to arrays of values.
+	 *
+	 * @param array $values Array of values.
+	 * @param array $mapper Source mapper.
+	 *
+	 * @return array
+	 */
 	private function cast_expanded( $values, $mapper ) {
 		if ( ! wp_is_numeric_array( $values ) ) {
 			return array();
@@ -638,8 +683,14 @@ class Form_Bridge {
 		return $values;
 	}
 
-	final public function prepare_mappers( $form ) {
-		foreach ( $form['fields'] as $field ) {
+	/**
+	 * Apply modifications to the bridge mutations layers to handle conditional
+	 * and multi response form fields.
+	 *
+	 * @param array $form_data Form data.
+	 */
+	final public function prepare_mappers( $form_data ) {
+		foreach ( $form_data['fields'] as $field ) {
 			$is_file        = $field['is_file'] ?? false;
 			$is_conditional = $field['conditional'] ?? false;
 			$is_multi       = $field['is_multi'] ?? false;
@@ -720,116 +771,97 @@ class Form_Bridge {
 		}
 	}
 
-	private static function get_tags() {
-		return array(
-			'site_title'       => static function () {
+	/**
+	 * Returns an array with bridge tag values.
+	 *
+	 * @param string $tag Tag name.
+	 *
+	 * @return array
+	 */
+	private static function get_tag_value( $tag ) {
+		switch ( $tag ) {
+			case 'site_title':
 				return get_bloginfo( 'name' );
-			},
-			'site_description' => static function () {
+			case 'site_description':
 				return get_bloginfo( 'description' );
-			},
-			'blog_url'         => static function () {
+			case 'blog_url':
 				return get_bloginfo( 'wpurl' );
-			},
-			'site_url'         => static function () {
+			case 'site_url':
 				return get_bloginfo( 'url' );
-			},
-			'admin_email'      => static function () {
+			case 'admin_email':
 				return get_bloginfo( 'admin_email' );
-			},
-			'wp_version'       => static function () {
+			case 'wp_version':
 				return get_bloginfo( 'version' );
-			},
-			'ip_address'       => static function () {
+			case 'ip_address':
 				if ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
 					return sanitize_text_field(
-						$_SERVER['HTTP_X_FORWARDED_FOR']
+						wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] )
 					);
 				} elseif ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
-					return sanitize_text_field( $_SERVER['REMOTE_ADDR'] );
+					return sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
 				}
-			},
-			'referer'          => static function () {
+				break;
+			case 'referer':
 				if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
-					return sanitize_text_field( $_SERVER['HTTP_REFERER'] );
+					return sanitize_text_field( wp_unslash( $_SERVER['HTTP_REFERER'] ) );
 				}
-			},
-			'user_agent'       => static function () {
+				break;
+			case 'user_agent':
 				if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
-					return sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] );
+					return sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
 				}
-			},
-			'browser_locale'   => static function () {
+				break;
+			case 'browser_locale':
 				if ( isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
-					return sanitize_text_field(
-						$_SERVER['HTTP_ACCEPT_LANGUAGE']
-					);
+					return sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) );
 				}
-			},
-			'locale'           => static function () {
-				return apply_filters(
-					'wpct_i18n_current_language',
-					get_locale(),
-					'locale'
-				);
-			},
-			'language'         => static function () {
-				include_once ABSPATH .
-					'wp-admin/includes/translation-install.php';
+				break;
+			case 'locale':
+				return get_locale();
+			case 'language':
+				include_once ABSPATH . 'wp-admin/includes/translation-install.php';
 				$translations = wp_get_available_translations();
 				$locale       = get_locale();
-
 				return $translations[ $locale ]['native_name'] ?? $locale;
-			},
-			'datetime'         => static function () {
+			case 'datetime':
 				return date( 'Y-m-d H:i:s', time() );
-			},
-			'gmt_datetime'     => static function () {
+			case 'gmt_datetime':
 				return gmdate( 'Y-m-d H:i:s', time() );
-			},
-			'timestamp'        => static function () {
+			case 'timestamp':
 				return time();
-			},
-			'iso_date'         => static function () {
+			case 'iso_date':
 				return date( 'c', time() );
-			},
-			'gmt_iso_date'     => static function () {
+			case 'gmt_iso_date':
 				return gmdate( 'c', time() );
-			},
-			'utc_date'         => static function () {
+			case 'utc_date':
 				$date = gmdate( 'c', time() );
 				return preg_replace( '/\+\d+\:\d+$/', 'Z', $date );
-			},
-			'user_id'          => static function () {
-				$user = wp_get_current_user();
-				return $user->ID;
-			},
-			'user_login'       => static function () {
-				$user = wp_get_current_user();
-				return $user->user_login;
-			},
-			'user_name'        => static function () {
-				$user = wp_get_current_user();
-				return $user->display_name;
-			},
-			'user_email'       => static function () {
-				$user = wp_get_current_user();
-				return $user->user_email;
-			},
-			'submission_id'    => static function () {
+			case 'user_id':
+				return wp_get_current_user()->ID;
+			case 'user_login':
+				return wp_get_current_user()->user_login;
+			case 'user_name':
+				return wp_get_current_user()->display_name;
+			case 'user_email':
+				return wp_get_current_user()->user_email;
+			case 'submission_id':
 				return FBAPI::get_submission_id();
-			},
-			'form_title'       => static function () {
+			case 'form_title':
 				$form = FBAPI::get_current_form();
 				return $form['title'] ?? null;
-			},
-			'form_id'          => static function () {
+			case 'form_id':
 				$form = FBAPI::get_current_form();
 				return $form['id'] ?? null;
-			},
-		);
+		}
 	}
 
+	/**
+	 * Adds bridge's custom fields to a payload.
+	 *
+	 * @param array $payload Bridge payload.
+	 *
+	 * @return array
+	 */
 	final public function add_custom_fields( $payload = array() ) {
 		if ( ! is_array( $payload ) ) {
 			return $payload;
@@ -852,11 +884,17 @@ class Form_Bridge {
 		return $finger->data();
 	}
 
+	/**
+	 * Replace magic tags from the value.
+	 *
+	 * @param string $value Target value.
+	 *
+	 * @return string
+	 */
 	private function replace_field_tags( $value ) {
-		$tags = self::get_tags();
-		foreach ( $tags as $tag => $getter ) {
-			if ( strstr( $value, '$' . $tag ) !== false ) {
-				$value = str_replace( '$' . $tag, $getter(), $value );
+		foreach ( self::TAGS as $tag ) {
+			if ( false !== strstr( $value, '$' . $tag ) ) {
+				$value = str_replace( '$' . $tag, $this->get_tag_value( $tag ), $value );
 			}
 		}
 
@@ -880,6 +918,11 @@ class Form_Bridge {
 		return new static( $data, $this->addon );
 	}
 
+	/**
+	 * Save the bridge data in the database.
+	 *
+	 * @return boolean
+	 */
 	public function save() {
 		if ( ! $this->is_valid ) {
 			return false;
@@ -905,6 +948,11 @@ class Form_Bridge {
 		return true;
 	}
 
+	/**
+	 * Removes the bridge from the database.
+	 *
+	 * @return boolean
+	 */
 	public function delete() {
 		if ( ! $this->is_valid ) {
 			return false;
