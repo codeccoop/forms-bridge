@@ -228,7 +228,11 @@ class Nextcloud_Form_Bridge extends Form_Bridge {
 		$backend = $this->backend;
 
 		if ( ! $backend ) {
-			return new WP_Error( 'invalid_bridge' );
+			return new WP_Error(
+				'invalid_bridge',
+				'Bridge has no valid backend',
+				(array) $this->data,
+			);
 		}
 
 		$payload = self::flatten_payload( $payload );

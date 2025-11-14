@@ -58,7 +58,7 @@ function forms_bridge_dolibarr_search_contact( $payload, $bridge ) {
 		}
 	}
 
-	if ( is_wp_error( $response ) ) {
+	if ( is_wp_error( $response ) || empty( $response['data'] ) ) {
 		return;
 	}
 
@@ -115,7 +115,7 @@ function forms_bridge_dolibarr_search_thirdparty( $payload, $bridge ) {
 		}
 	}
 
-	if ( is_wp_error( $response ) ) {
+	if ( is_wp_error( $response ) || empty( $response['data'][0] ) ) {
 		return;
 	}
 
