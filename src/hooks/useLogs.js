@@ -14,7 +14,10 @@ export default function useLogs({ debug }) {
       path: "forms-bridge/v1/logs?lines=1000",
       signal: AbortSignal.timeout(3000),
     })
-      .then((logs) => setLogs(logs))
+      .then((logs) => {
+        if (error) setError(false);
+        setLogs(logs);
+      })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
   };

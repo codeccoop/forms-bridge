@@ -24,7 +24,8 @@ export default function Logger() {
     const onScroll = (ev) => {
       const consoleViewbox =
         ev.target.children[0].offsetHeight - ev.target.clientHeight;
-      follow.current = ev.target.scrollTop === consoleViewbox;
+
+      follow.current = ev.target.scrollTop === Math.max(0, consoleViewbox);
     };
 
     const el = consoleRef.current;
@@ -87,7 +88,11 @@ export default function Logger() {
 
 function LogLines({ loading, error, logs }) {
   if (error) {
-    return <p style={{ textAlign: "center" }}>{error}</p>;
+    return (
+      <p style={{ textAlign: "center" }}>
+        {__("Log lines loading error 🤕", "forms-bridge")}
+      </p>
+    );
   }
 
   if (loading && !logs.length) {
