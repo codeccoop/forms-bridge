@@ -5,7 +5,9 @@ export default function (to, from, throwError = true) {
     const changes = diff(to, from, throwError);
     return count(changes) > 0;
   } catch (err) {
-    console.warn(err);
+    if (!throwError || err !== "change") {
+      console.warn(err);
+    }
     // If error, there are something wrong with the state, isn't? Better to reload.
     return true;
   }

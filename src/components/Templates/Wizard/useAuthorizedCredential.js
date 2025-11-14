@@ -67,11 +67,8 @@ export default function useAuthorizedCredential({ data = {}, fields = [] }) {
   const isOauth = data.schema === "Bearer";
 
   const authorized = useMemo(() => {
-    if (!(isOauth && data.access_token && data.expires_at)) return false;
-
-    if (data.refresh_token) {
-      return true;
-    }
+    if (!isOauth || !!data.refresh_token) return true;
+    else if (!(data.access_token && data.expires_at)) return false;
 
     let expirationDate = new Date(data.expires_at);
     if (expirationDate.getFullYear() === 1970) {

@@ -15,11 +15,8 @@ export default function AuthorizeButton({ addon, data }) {
   const fetchSettings = useFetchSettings();
 
   const authorized = useMemo(() => {
-    if (!(data.access_token && data.expires_at)) return false;
-
-    if (data.refresh_token) {
-      return true;
-    }
+    if (!!data.refresh_token) return true;
+    else if (!(data.access_token && data.expires_at)) return false;
 
     let expirationDate = new Date(data.expires_at);
     if (expirationDate.getFullYear() === 1970) {
