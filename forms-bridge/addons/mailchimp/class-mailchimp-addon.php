@@ -121,7 +121,7 @@ class Mailchimp_Addon extends Addon {
 		$path   = preg_replace( '/^\/\d+(\.\d+)?/', '', $endpoint );
 		$params = $oa_explorer->params( $path, $method );
 
-		return $params;
+		return $params ?: array();
 	}
 }
 

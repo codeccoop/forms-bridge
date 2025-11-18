@@ -120,7 +120,7 @@ class Brevo_Addon extends Addon {
 		$path   = preg_replace( '/^\/v\d+/', '', $endpoint );
 		$params = $oa_explorer->params( $path, $method );
 
-		return $params;
+		return $params ?: array();
 	}
 }
 

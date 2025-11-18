@@ -23,25 +23,45 @@ require_once 'api.php';
 class Holded_Addon extends Addon {
 
 	/**
-	 * Handles the addon's title.
+	 * Holds the addon's title.
 	 *
 	 * @var string
 	 */
-	const TITLE = 'Holded';
+	public const TITLE = 'Holded';
 
 	/**
-	 * Handles the addon's name.
+	 * Holds the addon's name.
 	 *
 	 * @var string
 	 */
-	const NAME = 'holded';
+	public const NAME = 'holded';
 
 	/**
-	 * Handles the addom's custom bridge class.
+	 * Holds the addom's custom bridge class.
 	 *
 	 * @var string
 	 */
-	const BRIDGE = '\FORMS_BRIDGE\Holded_Form_Bridge';
+	public const BRIDGE = '\FORMS_BRIDGE\Holded_Form_Bridge';
+
+	/**
+	 * Holds the OAS endpoints base URL.
+	 *
+	 * @var string
+	 */
+	public const OAS_BASE_URL = 'https://developers.holded.com/holded/api-next';
+
+	/**
+	 * Holds the addon OAS URLs map.
+	 *
+	 * @var array
+	 */
+	public const OAS_URLS = array(
+		'invoicing'  => '/v2/branches/1.0/reference/list-contacts-1',
+		'crm'        => '/v2/branches/1.0/reference/list-leads-1',
+		'projects'   => '/v2/branches/1.0/reference/list-projects',
+		'team'       => '/v2/branches/1.0/reference/listemployees',
+		'accounting' => '/v2/branches/1.0/reference/listdailyledger',
+	);
 
 	/**
 	 * Performs a request against the backend to check the connexion status.
@@ -114,75 +134,25 @@ class Holded_Addon extends Addon {
 
 		[, $module, $version, $resource] = $chunks;
 
-		if (
-			! in_array(
-				$module,
-				array(
-					'invoicing',
-					'crm',
-					'projects',
-					'team',
-					'accounting',
-				),
-				true
-			) ||
-			'v1' !== $version
-		) {
+		$oas_url = self::OAS_URLS[ $module ] ?? null;
+		if ( ! $oas_url ) {
 			return array();
 		}
 
-		$path = plugin_dir_path( __FILE__ ) . "/data/swagger/{$module}.json";
-		if ( ! is_file( $path ) ) {
+		$oas_url  = self::OAS_BASE_URL . $oas_url . '?dereference=false&reduce=false';
+		$response = wp_remote_get( $oas_url );
+		if ( is_wp_error( $response ) ) {
 			return array();
 		}
 
-		$file_content = file_get_contents( $path );
-		try {
-			$paths = json_decode( $file_content, true );
-		} catch ( TypeError ) {
-			return array();
-		}
+		$data        = json_decode( $response['body'], true );
+		$oa_explorer = new OpenAPI( $data['data']['api']['schema'] );
 
-		$path = '/' . $resource;
-		if ( 'documents' === $resource ) {
-			$path .= '/{docType}';
-		}
+		$method = strtolower( $method ?? 'post' );
+		$path   = preg_replace( '/\/api\/' . $module . '\/v\d+/', '', $endpoint );
+		$params = $oa_explorer->params( $path, $method );
 
-		if ( ! isset( $paths[ $path ] ) ) {
-			return array();
-		}
-
-		$schema = $paths[ $path ];
-		if ( ! isset( $schema['post'] ) ) {
-			return array();
-		}
-
-		$schema = $schema['post'];
-
-		$fields = array();
-		if ( isset( $schema['parameters'] ) ) {
-			foreach ( $schema['parameters'] as $param ) {
-				$fields[] = array(
-					'name'   => $param['name'],
-					'schema' => $param['schema'],
-				);
-			}
-		} elseif (
-			isset(
-				$schema['requestBody']['content']['application/json']['schema']['properties']
-			)
-		) {
-			$properties =
-				$schema['requestBody']['content']['application/json']['schema']['properties'];
-			foreach ( $properties as $name => $schema ) {
-				$fields[] = array(
-					'name'   => $name,
-					'schema' => $schema,
-				);
-			}
-		}
-
-		return $fields;
+		return $params ?: array();
 	}
 }
 
