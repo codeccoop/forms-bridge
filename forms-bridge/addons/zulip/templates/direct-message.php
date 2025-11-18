@@ -1,6 +1,6 @@
 <?php
 /**
- * Zulip addon support stream bridge template
+ * Zulip addon direct message bridge template
  *
  * @package formsbridge
  */
@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 return array(
-	'title'       => __( 'Support Stream', 'forms-bridge' ),
+	'title'       => __( 'Direct Messages', 'forms-bridge' ),
 	'description' => __(
-		'Support form template. The resulting bridge will notify form submissions in a Zulip stream',
+		'Contact form template. The resulting bridge will send form submissions as direct messages on Zulip',
 		'forms-bridge'
 	),
 	'fields'      => array(
@@ -22,30 +22,26 @@ return array(
 			'value' => '/api/v1/messages',
 		),
 		array(
-			'ref'         => '#bridge/custom_fields[]',
-			'name'        => 'to[0]',
-			'label'       => __( 'Stream', 'forms-bridge' ),
-			'description' => __(
-				'Name of the stream (channel) where notifications will be sent',
-				'forms-bridge'
-			),
-			'type'        => 'select',
-			'options'     => array(
-				'endpoint' => '/api/v1/streams',
+			'ref'     => '#bridge/custom_fields[]',
+			'name'    => 'to[0]',
+			'label'   => __( 'User', 'forms-bridge' ),
+			'type'    => 'select',
+			'options' => array(
+				'endpoint' => '/api/v1/users',
 				'finger'   => array(
-					'value' => 'streams[].stream_id',
-					'label' => 'streams[].name',
+					'value' => 'members[].user_id',
+					'label' => 'members[].delivery_email',
 				),
 			),
 		),
 		array(
 			'ref'     => '#form',
 			'name'    => 'title',
-			'default' => __( 'Support', 'forms-bridge' ),
+			'default' => __( 'Direct Messages', 'forms-bridge' ),
 		),
 	),
 	'form'        => array(
-		'title'  => __( 'Support', 'forms-bridge' ),
+		'title'  => __( 'Direct Messages', 'forms-bridge' ),
 		'fields' => array(
 			array(
 				'name'     => 'your-name',
@@ -60,22 +56,6 @@ return array(
 				'required' => true,
 			),
 			array(
-				'name'     => 'topic',
-				'label'    => __( 'Topic', 'forms-bridge' ),
-				'type'     => 'select',
-				'options'  => array(
-					array(
-						'value' => 'A',
-						'label' => 'Option 1',
-					),
-					array(
-						'value' => 'B',
-						'label' => 'Option 2',
-					),
-				),
-				'required' => true,
-			),
-			array(
 				'name'  => 'comments',
 				'label' => __( 'Comments', 'forms-bridge' ),
 				'type'  => 'textarea',
@@ -87,7 +67,7 @@ return array(
 		'custom_fields' => array(
 			array(
 				'name'  => 'type',
-				'value' => 'stream',
+				'value' => 'direct',
 			),
 		),
 		'mutations'     => array(

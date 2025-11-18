@@ -1,6 +1,6 @@
 <?php
 /**
- * Zulip addon support stream bridge template
+ * Zulip addon contact stream bridge template
  *
  * @package formsbridge
  */
@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 return array(
-	'title'       => __( 'Support Stream', 'forms-bridge' ),
+	'title'       => __( 'Contacts', 'forms-bridge' ),
 	'description' => __(
-		'Support form template. The resulting bridge will notify form submissions in a Zulip stream',
+		'Contact form template. The resulting bridge will notify form submissions in a Zulip stream',
 		'forms-bridge'
 	),
 	'fields'      => array(
@@ -39,13 +39,22 @@ return array(
 			),
 		),
 		array(
+			'ref'         => '#bridge/custom_fields[]',
+			'name'        => 'topic',
+			'label'       => __( 'Topic', 'forms-bridge' ),
+			'description' => __( 'Topic under which the messages will be notified', 'forms-bridge' ),
+			'type'        => 'text',
+			'default'     => 'WordPress',
+			'required'    => true,
+		),
+		array(
 			'ref'     => '#form',
 			'name'    => 'title',
-			'default' => __( 'Support', 'forms-bridge' ),
+			'default' => __( 'Contacts', 'forms-bridge' ),
 		),
 	),
 	'form'        => array(
-		'title'  => __( 'Support', 'forms-bridge' ),
+		'title'  => __( 'Contacts', 'forms-bridge' ),
 		'fields' => array(
 			array(
 				'name'     => 'your-name',
@@ -57,22 +66,6 @@ return array(
 				'name'     => 'your-email',
 				'label'    => __( 'Your email', 'forms-bridge' ),
 				'type'     => 'email',
-				'required' => true,
-			),
-			array(
-				'name'     => 'topic',
-				'label'    => __( 'Topic', 'forms-bridge' ),
-				'type'     => 'select',
-				'options'  => array(
-					array(
-						'value' => 'A',
-						'label' => 'Option 1',
-					),
-					array(
-						'value' => 'B',
-						'label' => 'Option 2',
-					),
-				),
 				'required' => true,
 			),
 			array(
