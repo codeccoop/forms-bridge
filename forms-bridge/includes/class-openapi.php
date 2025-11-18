@@ -178,17 +178,23 @@ class OpenAPI {
 		$c = count( $parameters );
 		for ( $i = 0; $i < $c; $i++ ) {
 			$param = &$parameters[ $i ];
-			if ( 'body' === $param['in'] && isset( $param['schema'] ) && 'object' === $param['schema']['type'] ) {
-				array_splice( $parameters, $i, 1 );
+			if ( 'body' === $param['in'] && isset( $param['schema'] ) ) {
+				if ( isset( $param['schema']['$ref'] ) ) {
+					$param['schema'] = $this->get_ref( $param['schema']['$ref'] );
+				}
 
-				foreach ( $param['schema']['properties'] as $prop => $prop_schema ) {
-					$parameters[] = array_merge(
-						$prop_schema,
-						array(
-							'name' => $prop,
-							'in'   => 'body',
-						),
-					);
+				if ( isset( $param['schema']['properties'] ) && is_array( $param['schema']['properties'] ) ) {
+					array_splice( $parameters, $i, 1 );
+
+					foreach ( $param['schema']['properties'] as $prop => $prop_schema ) {
+						$parameters[] = array_merge(
+							$prop_schema,
+							array(
+								'name' => $prop,
+								'in'   => 'body',
+							),
+						);
+					}
 				}
 			}
 		}

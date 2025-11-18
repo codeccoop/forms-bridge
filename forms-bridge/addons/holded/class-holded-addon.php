@@ -141,17 +141,34 @@ class Holded_Addon extends Addon {
 		}
 
 		$oas_url  = self::OAS_BASE_URL . $oas_url . '?dereference=false&reduce=false';
-		$response = wp_remote_get( $oas_url );
+		$response = wp_remote_get(
+			$oas_url,
+			array(
+				'headers' => array(
+					'Accept'     => 'application/json',
+					'Host'       => 'developers.holded.com',
+					'Alt-Used'   => 'developers.holded.com',
+					'Referer'    => 'https://developers.holded.com/reference/list-contacts-1',
+					'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0',
+				),
+			),
+		);
+
 		if ( is_wp_error( $response ) ) {
 			return array();
 		}
 
-		$data        = json_decode( $response['body'], true );
+		$data = json_decode( $response['body'], true );
+		if ( ! $data ) {
+			return array();
+		}
+
 		$oa_explorer = new OpenAPI( $data['data']['api']['schema'] );
 
 		$method = strtolower( $method ?? 'post' );
 		$path   = preg_replace( '/\/api\/' . $module . '\/v\d+/', '', $endpoint );
-		$params = $oa_explorer->params( $path, $method );
+		$source = in_array( $method, array( 'post', 'put', 'patch' ), true ) ? 'body' : 'query';
+		$params = $oa_explorer->params( $path, $method, $source );
 
 		return $params ?: array();
 	}

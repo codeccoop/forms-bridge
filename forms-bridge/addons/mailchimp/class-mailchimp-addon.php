@@ -108,7 +108,17 @@ class Mailchimp_Addon extends Addon {
 	 * @return array
 	 */
 	public function get_endpoint_schema( $endpoint, $backend, $method = null ) {
-		$response = wp_remote_get( self::SWAGGER_URL );
+		$response = wp_remote_get(
+			self::SWAGGER_URL,
+			array(
+				'headers' => array(
+					'Accept'     => 'application/json',
+					'Host'       => 'mailchimp.com',
+					'Referer'    => 'https://mailchimp.com/developer/marketing/api/',
+					'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0',
+				),
+			),
+		);
 
 		if ( is_wp_error( $response ) ) {
 			return array();
@@ -119,7 +129,8 @@ class Mailchimp_Addon extends Addon {
 
 		$method = strtolower( $method ?? 'post' );
 		$path   = preg_replace( '/^\/\d+(\.\d+)?/', '', $endpoint );
-		$params = $oa_explorer->params( $path, $method );
+		$source = in_array( $method, array( 'post', 'put', 'patch' ), true ) ? 'body' : 'query';
+		$params = $oa_explorer->params( $path, $method, $source );
 
 		return $params ?: array();
 	}

@@ -46,7 +46,7 @@ class Brevo_Addon extends Addon {
 	 *
 	 * @var string
 	 */
-	public const OAS_URL = 'https://developers.brevo.com/reference/getaccount?json=on';
+	public const OAS_URL = 'https://developers.brevo.com/reference/get_companies?json=on';
 
 	/**
 	 * Performs a request against the backend to check the connexion status.
@@ -107,7 +107,18 @@ class Brevo_Addon extends Addon {
 	 * @todo Implementar el endpoint de consulta de endpoints disponibles.
 	 */
 	public function get_endpoints( $backend ) {
-		$response = wp_remote_get( self::OAS_URL );
+		$response = wp_remote_get(
+			self::OAS_URL,
+			array(
+				'headers' => array(
+					'Accept'     => 'application/json',
+					'Host'       => 'developers.brevo.com',
+					'Referer'    => 'https://developers.brevo.com/reference/get_companies',
+					'Alt-Used'   => 'developers.brevo.com',
+					'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0',
+				),
+			)
+		);
 
 		if ( is_wp_error( $response ) ) {
 			return array();
@@ -136,18 +147,34 @@ class Brevo_Addon extends Addon {
 	 * @return array
 	 */
 	public function get_endpoint_schema( $endpoint, $backend ) {
-		$response = wp_remote_get( self::OAS_URL );
+		$response = wp_remote_get(
+			self::OAS_URL,
+			array(
+				'headers' => array(
+					'Accept'     => 'application/json',
+					'Host'       => 'developers.brevo.com',
+					'Referer'    => 'https://developers.brevo.com/reference/get_companies',
+					'Alt-Used'   => 'developers.brevo.com',
+					'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0',
+				),
+			)
+		);
 
 		if ( is_wp_error( $response ) ) {
 			return array();
 		}
 
-		$data        = json_decode( $response['body'], true );
+		$data = json_decode( $response['body'], true );
+		if ( ! $data ) {
+			return array();
+		}
+
 		$oa_explorer = new OpenAPI( $data['oasDefinition'] );
 
 		$method = strtolower( $method ?? 'post' );
 		$path   = preg_replace( '/^\/v\d+/', '', $endpoint );
-		$params = $oa_explorer->params( $path, $method );
+		$source = in_array( $method, array( 'post', 'put', 'patch' ), true ) ? 'body' : 'query';
+		$params = $oa_explorer->params( $path, $method, $source );
 
 		return $params ?: array();
 	}

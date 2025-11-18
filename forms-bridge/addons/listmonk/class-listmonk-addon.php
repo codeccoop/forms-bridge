@@ -150,7 +150,8 @@ class Listmonk_Addon extends Addon {
 
 				$method = strtolower( $method ?? 'post' );
 				$path   = preg_replace( '/^\/api/', '', $endpoint );
-				$params = $oa_explorer->params( $path, $method );
+				$source = in_array( $method, array( 'post', 'put', 'patch' ), true ) ? 'body' : 'query';
+				$params = $oa_explorer->params( $path, $method, $source );
 
 				return $params ?: array();
 			}
