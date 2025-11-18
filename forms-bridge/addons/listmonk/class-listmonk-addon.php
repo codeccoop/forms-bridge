@@ -159,43 +159,43 @@ class Listmonk_Addon extends Addon {
 			}
 		}
 
-		if ( '/api/subscribers' === $endpoint ) {
-			return array(
-				array(
-					'name'     => 'email',
-					'schema'   => array( 'type' => 'string' ),
-					'required' => true,
-				),
-				array(
-					'name'   => 'name',
-					'schema' => array( 'type' => 'string' ),
-				),
-				array(
-					'name'   => 'status',
-					'schema' => array( 'type' => 'string' ),
-				),
-				array(
-					'name'   => 'lists',
-					'schema' => array(
-						'type'  => 'array',
-						'items' => array( 'type' => 'number' ),
-					),
-				),
-				array(
-					'name'   => 'preconfirm_subscriptions',
-					'schema' => array( 'type' => 'boolean' ),
-				),
-				array(
-					'name'   => 'attribs',
-					'schema' => array(
-						'type'       => 'object',
-						'properties' => array(),
-					),
-				),
-			);
+		if ( '/api/subscribers' !== $endpoint ) {
+			return array();
 		}
 
-		return array();
+		return array(
+			array(
+				'name'     => 'email',
+				'schema'   => array( 'type' => 'string' ),
+				'required' => true,
+			),
+			array(
+				'name'   => 'name',
+				'schema' => array( 'type' => 'string' ),
+			),
+			array(
+				'name'   => 'status',
+				'schema' => array( 'type' => 'string' ),
+			),
+			array(
+				'name'   => 'lists',
+				'schema' => array(
+					'type'  => 'array',
+					'items' => array( 'type' => 'number' ),
+				),
+			),
+			array(
+				'name'   => 'preconfirm_subscriptions',
+				'schema' => array( 'type' => 'boolean' ),
+			),
+			array(
+				'name'   => 'attribs',
+				'schema' => array(
+					'type'       => 'object',
+					'properties' => array(),
+				),
+			),
+		);
 	}
 }
 

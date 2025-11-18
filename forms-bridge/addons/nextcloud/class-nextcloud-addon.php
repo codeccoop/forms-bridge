@@ -62,6 +62,7 @@ class Nextcloud_Addon extends Addon {
 			2
 		);
 	}
+
 	/**
 	 * Performs a request against the backend to check the connexion status.
 	 *

@@ -43,6 +43,10 @@ const castOptions = [
     label: "JSON",
   },
   {
+    value: "pretty_json",
+    label: "Pretty JSON",
+  },
+  {
     value: "csv",
     label: "CSV",
   },

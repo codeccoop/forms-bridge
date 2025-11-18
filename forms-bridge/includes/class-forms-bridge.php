@@ -312,12 +312,11 @@ class Forms_Bridge extends Base_Plugin {
 							true
 						)
 					) {
-						$attachments = self::stringify_attachments(
-							$attachments
-						);
+						$attachments = self::stringify_attachments( $attachments );
 						foreach ( $attachments as $name => $value ) {
 							$submission[ $name ] = $value;
 						}
+
 						$attachments = array();
 						Logger::log( 'Submission after attachments stringify' );
 						Logger::log( $submission );
@@ -467,7 +466,7 @@ class Forms_Bridge extends Base_Plugin {
 	 *
 	 * @return array Map of uploaded files.
 	 */
-	private static function attachments( $uploads ) {
+	public static function attachments( $uploads ) {
 		$attachments = array();
 
 		foreach ( $uploads as $name => $upload ) {

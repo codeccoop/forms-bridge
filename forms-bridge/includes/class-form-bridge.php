@@ -163,6 +163,7 @@ class Form_Bridge {
 										'or',
 										'xor',
 										'json',
+										'pretty_json',
 										'csv',
 										'concat',
 										'join',
@@ -558,11 +559,17 @@ class Form_Bridge {
 					false
 				);
 			case 'json':
-				if ( ! is_array( $value ) ) {
-					return '';
+				if ( is_array( $value ) || is_object( $value ) ) {
+					return wp_json_encode( (array) $value, JSON_UNESCAPED_UNICODE );
 				}
 
-				return wp_json_encode( $value, JSON_UNESCAPED_UNICODE );
+				return $value;
+			case 'pretty_json':
+				if ( is_array( $value ) || is_object( $value ) ) {
+					return wp_json_encode( (array) $value, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT );
+				}
+
+				return $value;
 			case 'csv':
 				if ( ! wp_is_numeric_array( $value ) ) {
 					return '';
