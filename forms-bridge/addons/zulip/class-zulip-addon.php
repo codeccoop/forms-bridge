@@ -7,6 +7,8 @@
 
 namespace FORMS_BRIDGE;
 
+use Exception;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
@@ -20,25 +22,32 @@ require_once 'hooks.php';
 class Zulip_Addon extends Addon {
 
 	/**
-	 * Handles the addon's title.
+	 * Holds the addon's title.
 	 *
 	 * @var string
 	 */
 	public const TITLE = 'Zulip';
 
 	/**
-	 * Handles the addon's name.
+	 * Holds the addon's name.
 	 *
 	 * @var string
 	 */
 	public const NAME = 'zulip';
 
 	/**
-	 * Handles the addon's custom bridge class.
+	 * Holds the addon's custom bridge class.
 	 *
 	 * @var string
 	 */
 	public const BRIDGE = '\FORMS_BRIDGE\Zulip_Form_Bridge';
+
+	/**
+	 * Holds the Zulip OAS public URL.
+	 *
+	 * @var string
+	 */
+	public const OAS_URL = 'https://raw.githubusercontent.com/zulip/zulip/refs/heads/main/zerver/openapi/zulip.yaml';
 
 	/**
 	 * Performs a request against the backend to check the connexion status.
@@ -51,7 +60,7 @@ class Zulip_Addon extends Addon {
 		$bridge = new Zulip_Form_Bridge(
 			array(
 				'name'     => '__zulip-' . time(),
-				'endpoint' => '/api/v1/users',
+				'endpoint' => '/api/v1/streams',
 				'method'   => 'GET',
 				'backend'  => $backend,
 			),
@@ -59,7 +68,14 @@ class Zulip_Addon extends Addon {
 		);
 
 		$response = $bridge->submit();
-		return ! is_wp_error( $response );
+
+		if ( is_wp_error( $response ) ) {
+			Logger::log( 'Zulip backend ping error response', Logger::ERROR );
+			Logger::log( $response, Logger::ERROR );
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -87,15 +103,84 @@ class Zulip_Addon extends Addon {
 	/**
 	 * Performs an introspection of the backend endpoint and returns API fields.
 	 *
-	 * @param string $endpoint API endpoint.
-	 * @param string $backend Backend name.
+	 * @param string      $endpoint API endpoint.
+	 * @param string      $backend Backend name.
+	 * @param string|null $method HTTP method.
 	 *
 	 * @return array List of fields and content type of the endpoint.
 	 */
-	public function get_endpoint_schema( $endpoint, $backend ) {
-		$path    = plugin_dir_path( __FILE__ ) . 'data/openapi.json';
-		$openapi = OpenAPI::from( $path );
-		return $openapi->params( $endpoint ) ?: array();
+	public function get_endpoint_schema( $endpoint, $backend, $method = null ) {
+		if ( function_exists( 'yaml_parse' ) ) {
+			$response = wp_remote_get( self::OAS_URL );
+
+			if ( ! is_wp_error( $response ) ) {
+				$data = yaml_parse( $response['body'] );
+
+				if ( $data ) {
+					try {
+						$oa_explorer = new OpenAPI( $data );
+
+						$method = strtolower( $method ?? 'post' );
+						$path   = preg_replace( '', '', $endpoint );
+						$source = in_array( $method, array( 'post', 'put', 'patch' ), true ) ? 'body' : 'query';
+						$params = $oa_explorer->params( $path, $method, $source );
+
+						return $params ?: array();
+					} catch ( Exception ) {
+						// do nothing.
+					}
+				}
+			}
+		}
+
+		if ( '/api/v1/messages' !== $endpoint ) {
+			return array();
+		}
+
+		return array(
+			array(
+				'name'     => 'type',
+				'schema'   => array(
+					'type' => 'string',
+					'enum' => array( 'direct', 'stream' ),
+				),
+				'required' => true,
+			),
+			array(
+				'name'     => 'to',
+				'schema'   => array(
+					'type'  => 'array',
+					'items' => array(
+						'type' => array( 'string', 'integer' ),
+					),
+				),
+				'required' => true,
+			),
+			array(
+				'name'     => 'content',
+				'schema'   => array( 'type' => 'string' ),
+				'required' => true,
+			),
+			array(
+				'name'   => 'topic',
+				'schema' => array(
+					'type'    => 'string',
+					'default' => '(no topic)',
+				),
+			),
+			array(
+				'name'   => 'queue_id',
+				'schema' => array( 'type' => 'string' ),
+			),
+			array(
+				'name'   => 'local_id',
+				'schema' => array( 'type' => 'string' ),
+			),
+			array(
+				'name'   => 'read_by_sender',
+				'schema' => array( 'type' => 'boolean' ),
+			),
+		);
 	}
 }
 
