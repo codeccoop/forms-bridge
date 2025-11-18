@@ -97,7 +97,7 @@ class Listmonk_Addon extends Addon {
 	}
 
 	/**
-	 * Fetch available models from the backend
+	 * Fetch available models from the OAS spec.
 	 *
 	 * @param Backend $backend HTTP backend object.
 	 *

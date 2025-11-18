@@ -98,6 +98,35 @@ class Brevo_Addon extends Addon {
 	}
 
 	/**
+	 * Fetch available models from the OAS spec.
+	 *
+	 * @param Backend $backend HTTP backend object.
+	 *
+	 * @return array
+	 *
+	 * @todo Implementar el endpoint de consulta de endpoints disponibles.
+	 */
+	public function get_endpoints( $backend ) {
+		$response = wp_remote_get( self::OAS_URL );
+
+		if ( is_wp_error( $response ) ) {
+			return array();
+		}
+
+		$data        = json_decode( $response['body'], true );
+		$oa_explorer = new OpenAPI( $data['oasDefinition'] );
+
+		$paths = $oa_explorer->paths();
+
+		return array_map(
+			function ( $path ) {
+				return '/v3' . $path;
+			},
+			$paths,
+		);
+	}
+
+	/**
 	 * Performs an introspection of the backend endpoint and returns API fields
 	 * and accepted content type.
 	 *
