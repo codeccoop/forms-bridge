@@ -141,21 +141,35 @@ class Brevo_Addon extends Addon {
 	 * Performs an introspection of the backend endpoint and returns API fields
 	 * and accepted content type.
 	 *
-	 * @param string $endpoint API endpoint.
-	 * @param string $backend Backend name.
+	 * @param string      $endpoint API endpoint.
+	 * @param string      $backend Backend name.
+	 * @param string|null $method HTTP method.
 	 *
 	 * @return array
 	 */
-	public function get_endpoint_schema( $endpoint, $backend ) {
+	public function get_endpoint_schema( $endpoint, $backend, $method = null ) {
+		$bytes    = random_bytes( 16 );
+		$bytes[6] = chr( ord( $bytes[6] ) & 0x0f | 0x40 ); // set version to 0100
+		$bytes[8] = chr( ord( $bytes[8] ) & 0x3f | 0x80 ); // set bits 6-7 to 10
+		$uuid     = vsprintf( '%s%s-%s-%s-%s-%s%s%s', str_split( bin2hex( $bytes ), 4 ) );
+
 		$response = wp_remote_get(
 			self::OAS_URL,
 			array(
 				'headers' => array(
-					'Accept'     => 'application/json',
-					'Host'       => 'developers.brevo.com',
-					'Referer'    => 'https://developers.brevo.com/reference/get_companies',
-					'Alt-Used'   => 'developers.brevo.com',
-					'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0',
+					'Accept'           => 'application/json',
+					'Host'             => 'developers.brevo.com',
+					'Referer'          => 'https://developers.brevo.com/reference/get_companies',
+					'Alt-Used'         => 'developers.brevo.com',
+					'User-Agent'       => 'Mozilla/5.0 (X11; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0',
+					'X-Requested-With' => 'XMLHttpRequest',
+				),
+				'cookies' => array(
+					'anonymous_id'    => $uuid,
+					'first_referrer'  => 'https://app.brevo.com/',
+					'pscd'            => 'get.brevo.com',
+					'readme_language' => 'shell',
+					'readme_library'  => '{%22shell%22:%22curl%22}',
 				),
 			)
 		);
