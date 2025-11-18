@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 return array(
-	'title'       => __( 'Contacts', 'forms-bridge' ),
+	'title'       => __( 'Contacts Stream', 'forms-bridge' ),
 	'description' => __(
 		'Contact form template. The resulting bridge will notify form submissions in a Zulip stream',
 		'forms-bridge'
@@ -44,7 +44,7 @@ return array(
 			'label'       => __( 'Topic', 'forms-bridge' ),
 			'description' => __( 'Topic under which the messages will be notified', 'forms-bridge' ),
 			'type'        => 'text',
-			'default'     => 'WordPress',
+			'default'     => 'WordPress Contacts',
 			'required'    => true,
 		),
 		array(

@@ -8,7 +8,6 @@
 namespace FORMS_BRIDGE;
 
 use FBAPI;
-use HTTP_BRIDGE\Backend;
 use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
