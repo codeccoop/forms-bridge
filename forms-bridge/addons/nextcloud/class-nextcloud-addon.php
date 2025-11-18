@@ -110,12 +110,17 @@ class Nextcloud_Addon extends Addon {
 	 * Performs an introspection of the backend model and returns API fields
 	 * and accepted content type.
 	 *
-	 * @param string $filepath Filepath.
-	 * @param string $backend Backend name.
+	 * @param string      $filepath Filepath.
+	 * @param string      $backend Backend name.
+	 * @param string|null $method HTTP method.
 	 *
 	 * @return array List of fields and content type of the model.
 	 */
-	public function get_endpoint_schema( $filepath, $backend ) {
+	public function get_endpoint_schema( $filepath, $backend, $method = null ) {
+		if ( 'PUT' !== $method ) {
+			return array();
+		}
+
 		$bridge = new Nextcloud_Form_Bridge(
 			array(
 				'name'     => '__nextcloud-' . time(),

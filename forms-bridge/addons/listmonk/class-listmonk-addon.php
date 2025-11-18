@@ -146,14 +146,16 @@ class Listmonk_Addon extends Addon {
 			if ( ! is_wp_error( $response ) ) {
 				$data = yaml_parse( $response['body'] );
 
-				$oa_explorer = new OpenAPI( $data );
+				if ( $data ) {
+					$oa_explorer = new OpenAPI( $data );
 
-				$method = strtolower( $method ?? 'post' );
-				$path   = preg_replace( '/^\/api/', '', $endpoint );
-				$source = in_array( $method, array( 'post', 'put', 'patch' ), true ) ? 'body' : 'query';
-				$params = $oa_explorer->params( $path, $method, $source );
+					$method = strtolower( $method ?? 'post' );
+					$path   = preg_replace( '/^\/api/', '', $endpoint );
+					$source = in_array( $method, array( 'post', 'put', 'patch' ), true ) ? 'body' : 'query';
+					$params = $oa_explorer->params( $path, $method, $source );
 
-				return $params ?: array();
+					return $params ?: array();
+				}
 			}
 		}
 

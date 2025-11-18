@@ -124,7 +124,11 @@ class Mailchimp_Addon extends Addon {
 			return array();
 		}
 
-		$data        = json_decode( $response['body'], true );
+		$data = json_decode( $response['body'], true );
+		if ( ! $data ) {
+			return array();
+		}
+
 		$oa_explorer = new OpenAPI( $data );
 
 		$method = strtolower( $method ?? 'post' );

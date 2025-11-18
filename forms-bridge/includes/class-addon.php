@@ -589,12 +589,13 @@ class Addon extends Singleton {
 	 * Performs an introspection of the backend endpoint and returns API fields
 	 * and accepted content type.
 	 *
-	 * @param string $endpoint Target endpoint name.
-	 * @param string $backend Target backend name.
+	 * @param string      $endpoint Target endpoint name.
+	 * @param string      $backend Target backend name.
+	 * @param string|null $method HTTP method.
 	 *
 	 * @return array|WP_Error
 	 */
-	public function get_endpoint_schema( $endpoint, $backend ) {
+	public function get_endpoint_schema( $endpoint, $backend, $method = null ) {
 		return array();
 	}
 

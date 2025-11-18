@@ -127,12 +127,17 @@ class Odoo_Addon extends Addon {
 	 * Performs an introspection of the backend model and returns API fields
 	 * and accepted content type.
 	 *
-	 * @param string $model Target model name.
-	 * @param string $backend Target backend name.
+	 * @param string      $model Target model name.
+	 * @param string      $backend Target backend name.
+	 * @param string|null $method HTTP method.
 	 *
 	 * @return array List of fields and content type of the model.
 	 */
-	public function get_endpoint_schema( $model, $backend ) {
+	public function get_endpoint_schema( $model, $backend, $method = null ) {
+		if ( ! in_array( $method, array( 'write', 'create' ), true ) ) {
+			return array();
+		}
+
 		$bridge = new Odoo_Form_Bridge(
 			array(
 				'name'     => '__odoo-' . time(),

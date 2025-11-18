@@ -94,12 +94,17 @@ class Finan_Coop_Addon extends Addon {
 	 * Performs an introspection of the backend endpoint and returns API fields
 	 * and accepted content type.
 	 *
-	 * @param string $endpoint API endpoint.
-	 * @param string $backend Backend name.
+	 * @param string      $endpoint API endpoint.
+	 * @param string      $backend Backend name.
+	 * @param string|null $method HTTP method.
 	 *
 	 * @return array
 	 */
-	public function get_endpoint_schema( $endpoint, $backend ) {
+	public function get_endpoint_schema( $endpoint, $backend, $method = null ) {
+		if ( 'POST' !== $method ) {
+			return array();
+		}
+
 		$bridge = new Finan_Coop_Form_Bridge(
 			array(
 				'name'     => '__financoop-' . time(),

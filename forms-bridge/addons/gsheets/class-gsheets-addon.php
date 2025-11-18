@@ -156,12 +156,17 @@ class Google_Sheets_Addon extends Addon {
 	 * Performs an introspection of the backend endpoint and returns API fields
 	 * and accepted content type.
 	 *
-	 * @param string $endpoint Concatenation of spreadsheet ID and tab name.
-	 * @param string $backend Backend name.
+	 * @param string      $endpoint Concatenation of spreadsheet ID and tab name.
+	 * @param string      $backend Backend name.
+	 * @param string|null $method HTTP method.
 	 *
 	 * @return array List of fields and content type of the endpoint.
 	 */
-	public function get_endpoint_schema( $endpoint, $backend ) {
+	public function get_endpoint_schema( $endpoint, $backend, $method = null ) {
+		if ( 'POST' !== $method ) {
+			return array();
+		}
+
 		$bridges = FBAPI::get_addon_bridges( self::NAME );
 		foreach ( $bridges as $candidate ) {
 			$data = $candidate->data();

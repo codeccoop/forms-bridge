@@ -101,12 +101,17 @@ class Bigin_Addon extends Zoho_Addon {
 	/**
 	 * Performs an introspection of the backend endpoint and returns API fields.
 	 *
-	 * @param string $endpoint API endpoint.
-	 * @param string $backend Backend name.
+	 * @param string      $endpoint API endpoint.
+	 * @param string      $backend Backend name.
+	 * @param string|null $method HTTP method.
 	 *
 	 * @return array List of fields and content type of the endpoint.
 	 */
-	public function get_endpoint_schema( $endpoint, $backend ) {
+	public function get_endpoint_schema( $endpoint, $backend, $method = null ) {
+		if ( in_array( $method, array( 'POST', 'PUT' ), true ) ) {
+			return array();
+		}
+
 		if (
 			! preg_match(
 				'/\/(([A-Z][a-z]+(_[A-Z][a-z])?)(?:\/upsert)?$)/',
