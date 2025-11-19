@@ -107,6 +107,8 @@ class Zulip_Addon extends Addon {
 	 * @param string|null $method HTTP method.
 	 *
 	 * @return array List of fields and content type of the endpoint.
+	 *
+	 * @todo fix not found oas url.
 	 */
 	public function get_endpoint_schema( $endpoint, $backend, $method = null ) {
 		if ( function_exists( 'yaml_parse' ) ) {
