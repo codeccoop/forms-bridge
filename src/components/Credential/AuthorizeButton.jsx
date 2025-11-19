@@ -47,11 +47,11 @@ export default function AuthorizeButton({ addon, data }) {
       method: "POST",
       data: { credential: data },
     })
-      .then(({ success }) => {
+      .then(({ success, redirect_url }) => {
         if (!success) throw "error";
 
         const form = document.createElement("form");
-        form.action = data.oauth_url + "/auth";
+        form.action = redirect_url;
         form.method = "GET";
         form.target = "_blank";
 

@@ -18,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Form bridge implamentation for the Zulip API.
  */
 class Zulip_Form_Bridge extends Form_Bridge {
-
 	/**
 	 * Submits payload and attachments to the bridge's backend.
 	 *

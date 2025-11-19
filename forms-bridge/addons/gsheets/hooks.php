@@ -87,8 +87,7 @@ add_filter(
 						'name'     => 'scope',
 						'label'    => __( 'Scope', 'forms-bridge' ),
 						'type'     => 'text',
-						'value'    =>
-							'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets',
+						'value'    => 'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets',
 						'required' => true,
 					),
 					array(
@@ -147,8 +146,7 @@ add_filter(
 					'name'          => '',
 					'schema'        => 'Bearer',
 					'oauth_url'     => 'https://accounts.google.com/o/oauth2/v2',
-					'scope'         =>
-						'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets',
+					'scope'         => 'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets',
 					'client_id'     => '',
 					'client_secret' => '',
 					'access_token'  => '',
@@ -173,8 +171,7 @@ add_filter(
 			return $data;
 		}
 
-		$data['bridge']['endpoint'] =
-			'/v4/spreadsheets/' . $data['bridge']['endpoint'];
+		$data['bridge']['endpoint'] = '/v4/spreadsheets/' . $data['bridge']['endpoint'];
 		return $data;
 	},
 	10,
@@ -184,7 +181,7 @@ add_filter(
 add_filter(
 	'http_bridge_oauth_url',
 	function ( $url, $verb ) {
-		if ( strpos( $url, 'accounts.google.com' ) === false ) {
+		if ( false === strpos( $url, 'accounts.google.com' ) ) {
 			return $url;
 		}
 

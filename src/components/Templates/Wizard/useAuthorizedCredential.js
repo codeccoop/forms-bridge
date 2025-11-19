@@ -107,12 +107,12 @@ export default function useAuthorizedCredential({ data = {}, fields = [] }) {
       method: "POST",
       data: { credential },
     })
-      .then(({ success }) => {
+      .then(({ success, redirect_url }) => {
         if (!success) throw "error";
 
         const form = document.createElement("form");
         form.method = "GET";
-        form.action = credential.oauth_url + "/auth";
+        form.action = redirect_url;
         form.target = "_blank";
 
         let innerHTML = `

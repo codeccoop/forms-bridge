@@ -20,7 +20,6 @@ require_once 'hooks.php';
  * Zulip addon class
  */
 class Zulip_Addon extends Addon {
-
 	/**
 	 * Holds the addon's title.
 	 *
