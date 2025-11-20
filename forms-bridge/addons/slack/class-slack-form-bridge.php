@@ -103,15 +103,17 @@ class Slack_Form_Bridge extends Form_Bridge {
 				return new WP_Error( 'slack_upload', __( 'Can not upload a file to Slack', 'forms-bridge' ), $response['data'] );
 			}
 
-			$annex = "\n\n----\n" . esc_html( __( 'Attachments', 'forms-bridge' ) ) . ":\n";
-
 			if ( isset( $payload['markdown_text'] ) ) {
+				$annex = "\n\n**" . esc_html( __( 'Attachments', 'forms-bridge' ) ) . "**:\n";
+
 				foreach ( $response['data']['files'] as $upload ) {
 					$annex .= "* [{$upload['name']}]({$upload['permalink']})\n";
 				}
 
 				$payload['markdown_text'] .= $annex;
 			} else {
+				$annex = "\n\n" . esc_html( __( 'Attachments', 'forms-bridge' ) ) . ":\n";
+
 				foreach ( $response['data']['files'] as $upload ) {
 					$annex .= "* {$upload['name']}: {$upload['permalink']}\n";
 				}
