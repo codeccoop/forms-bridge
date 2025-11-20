@@ -1,4 +1,9 @@
 <?php
+/**
+ * Bigin company contacts bridge template
+ *
+ * @package formsbridge
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -28,7 +33,7 @@ return array(
 			'options'     => array(
 				'endpoint' => '/bigin/v2/users',
 				'finger'   => array(
-					'value' => 'users[].id',
+					'value' => 'users[].zuid',
 					'label' => 'users[].full_name',
 				),
 			),
@@ -109,7 +114,16 @@ return array(
 		),
 	),
 	'bridge'      => array(
-		'endpoint' => '/bigin/v2/Contacts/upsert',
-		'workflow' => array( 'account-name' ),
+		'endpoint'  => '/bigin/v2/Contacts/upsert',
+		'workflow'  => array( 'account-name' ),
+		'mutations' => array(
+			array(
+				array(
+					'from' => '?Owner.id',
+					'to'   => 'Owner.id',
+					'cast' => 'string',
+				),
+			),
+		),
 	),
 );

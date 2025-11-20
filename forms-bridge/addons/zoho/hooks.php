@@ -206,12 +206,14 @@ add_filter(
 			return $data;
 		}
 
-		$region                          = $data['credential']['region'];
+		$region = $data['credential']['region'];
+
 		$data['credential']['oauth_url'] = preg_replace(
 			'/{region}/',
 			$region,
 			$data['credential']['oauth_url']
 		);
+
 		unset( $data['credential']['region'] );
 
 		$index = array_search(

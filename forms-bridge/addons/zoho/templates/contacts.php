@@ -1,4 +1,9 @@
 <?php
+/**
+ * Zoho CRM contacts bridge template
+ *
+ * @package formsbridge
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -28,7 +33,7 @@ return array(
 			'options'     => array(
 				'endpoint' => '/crm/v7/users',
 				'finger'   => array(
-					'value' => 'users[].id',
+					'value' => 'users[].zuid',
 					'label' => 'users[].full_name',
 				),
 			),
@@ -73,6 +78,15 @@ return array(
 		),
 	),
 	'bridge'      => array(
-		'endpoint' => '/crm/v7/Contacts/upsert',
+		'endpoint'  => '/crm/v7/Contacts/upsert',
+		'mutations' => array(
+			array(
+				array(
+					'from' => '?Owner.id',
+					'to'   => 'Owner.id',
+					'cast' => 'string',
+				),
+			),
+		),
 	),
 );
