@@ -41,7 +41,7 @@ add_filter(
 						'name'        => 'client_id',
 						'label'       => __( 'API user', 'forms-bridge' ),
 						'description' => __(
-							'You have to generate an API user on your listmonk instance. See the <a href="https://listmonk.app/docs/roles-and-permissions/#api-users">documentation</a> for more information',
+							'You have to generate an API user on your listmonk instance. See the <a target="_blank" href="https://listmonk.app/docs/roles-and-permissions/#api-users">documentation</a> for more information',
 							'forms-bridge'
 						),
 						'type'        => 'text',

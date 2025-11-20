@@ -44,7 +44,7 @@ add_filter(
 						'name'        => 'region',
 						'label'       => __( 'Datacenter', 'forms-bridge' ),
 						'description' => __(
-							'Pick up your Zoho account datacenter. See the <a href="https://www.zoho.com/crm/developer/docs/api/v8/multi-dc.html">documentation</a> for more information',
+							'Pick up your Zoho account datacenter. See the <a target="_blank" href="https://www.zoho.com/crm/developer/docs/api/v8/multi-dc.html">documentation</a> for more information',
 							'forms-bridge'
 						),
 						'type'        => 'select',
@@ -85,7 +85,7 @@ add_filter(
 						'name'        => 'client_id',
 						'label'       => __( 'Client ID', 'forms-bridge' ),
 						'description' => __(
-							'Register your OAuth client on the <a href="https://accounts.zoho.com">Zoho API Console</a> and get its Client ID',
+							'Register your OAuth client on the <a target="_blank" href="https://accounts.zoho.com">Zoho API Console</a> and get its Client ID',
 							'forms-bridge'
 						),
 						'type'        => 'text',
@@ -96,7 +96,7 @@ add_filter(
 						'name'        => 'client_secret',
 						'label'       => __( 'Client secret', 'forms-bridge' ),
 						'description' => __(
-							'Register your OAuth client on the <a href="https://accounts.zoho.com">Zoho API Console</a> and get its Client secret',
+							'Register your OAuth client on the <a target="_blank" href="https://accounts.zoho.com">Zoho API Console</a> and get its Client secret',
 							'forms-bridge'
 						),
 						'type'        => 'text',
@@ -119,7 +119,7 @@ add_filter(
 						'ref'         => '#backend',
 						'name'        => 'base_url',
 						'description' => __(
-							'Pick up your Zoho account datacenter. See the <a href="https://www.zoho.com/crm/developer/docs/api/v8/multi-dc.html">documentation</a> for more information',
+							'Pick up your Zoho account datacenter. See the <a target="_blank" href="https://www.zoho.com/crm/developer/docs/api/v8/multi-dc.html">documentation</a> for more information',
 							'forms-bridge'
 						),
 						'type'        => 'select',

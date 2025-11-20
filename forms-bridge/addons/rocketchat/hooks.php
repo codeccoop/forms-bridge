@@ -33,7 +33,7 @@ add_filter(
 						'name'        => 'X-Auth-Token',
 						'label'       => __( 'Personal Access Token', 'forms-bridge' ),
 						'description' => __(
-							'Use <a href="https://docs.rocket.chat/docs/manage-personal-access-tokens">Personal Access Tokens</a> to interact securely with the Rocket.Chat API',
+							'Use <a target="_blank" href="https://docs.rocket.chat/docs/manage-personal-access-tokens">Personal Access Tokens</a> to interact securely with the Rocket.Chat API',
 							'forms-bridge',
 						),
 						'type'        => 'text',
