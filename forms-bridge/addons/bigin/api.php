@@ -1,9 +1,22 @@
 <?php
+/**
+ * Bigin API methods
+ *
+ * @package formsbridge
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
+/**
+ * Creates a contact on Bigin picking from the payload all known contact fields.
+ *
+ * @param array             $payload Bridge payload.
+ * @param Bigin_Form_Bridge $bridge Bridge object.
+ *
+ * @return array|WP_Error New contact data or response error.
+ */
 function forms_bridge_bigin_create_contact( $payload, $bridge ) {
 	$contact = array(
 		'Last_Name' => $payload['Last_Name'],
@@ -61,13 +74,21 @@ function forms_bridge_bigin_create_contact( $payload, $bridge ) {
 	}
 
 	$code = $response['data']['data'][0]['code'] ?? null;
-	if ( $code === 'DUPLICATE_DATA' ) {
+	if ( 'DUPLICATE_DATA' === $code ) {
 		return $response['data']['data'][0]['details']['duplicate_record'];
 	} else {
 		return $response['data']['data'][0]['details'];
 	}
 }
 
+/**
+ * Creates an account on Bigin picking from the payload all known contact fields.
+ *
+ * @param array             $payload Bridge payload.
+ * @param Bigin_Form_Bridge $bridge Bridge object.
+ *
+ * @return array|WP_Error New account data or response error.
+ */
 function forms_bridge_bigin_create_account( $payload, $bridge ) {
 	$company = array(
 		'Account_Name' => $payload['Account_Name'],
@@ -106,7 +127,7 @@ function forms_bridge_bigin_create_account( $payload, $bridge ) {
 	}
 
 	$code = $response['data']['data'][0]['code'] ?? null;
-	if ( $code === 'DUPLICATE_DATA' ) {
+	if ( 'DUPLICATE_DATA' === $code ) {
 		return $response['data']['data'][0]['details']['duplicate_record'];
 	} else {
 		return $response['data']['data'][0]['details'];

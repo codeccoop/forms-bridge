@@ -1,4 +1,9 @@
 <?php
+/**
+ * Bigin addon hooks
+ *
+ * @package formsbridge
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -7,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_filter(
 	'forms_bridge_template_schema',
 	function ( $schema, $addon ) {
-		if ( $addon !== 'bigin' ) {
+		if ( 'bigin' !== $addon ) {
 			return $schema;
 		}
 
@@ -20,7 +25,7 @@ add_filter(
 add_filter(
 	'forms_bridge_template_defaults',
 	function ( $defaults, $addon, $schema ) {
-		if ( $addon !== 'bigin' ) {
+		if ( 'bigin' !== $addon ) {
 			return $defaults;
 		}
 
@@ -57,7 +62,7 @@ add_filter(
 add_filter(
 	'forms_bridge_template_data',
 	function ( $data, $template_id ) {
-		if ( strpos( $template_id, 'bigin-' ) !== 0 ) {
+		if ( 0 !== strpos( $template_id, 'bigin-' ) ) {
 			return $data;
 		}
 

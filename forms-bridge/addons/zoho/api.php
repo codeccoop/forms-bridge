@@ -1,9 +1,24 @@
 <?php
+/**
+ * Zoho API functions
+ *
+ * @package formsbridge
+ */
+
+use FORMS_BRIDGE\Zoho_Form_Bridge;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
+/**
+ * Creates a lead in Zoho picking from the payload all the knonw lead fields.
+ *
+ * @param array            $payload Bridge payload.
+ * @param Zoho_Form_Bridge $bridge Bridge object.
+ *
+ * @return array|WP_Error New lead data or error response.
+ */
 function forms_bridge_zoho_crm_create_lead( $payload, $bridge ) {
 	$lead = array(
 		'Last_Name' => $payload['Last_Name'],
@@ -55,13 +70,21 @@ function forms_bridge_zoho_crm_create_lead( $payload, $bridge ) {
 	}
 
 	$code = $response['data']['data'][0]['code'] ?? null;
-	if ( $code === 'DUPLICATE_DATA' ) {
+	if ( 'DUPLICATE_DATA' === $code ) {
 		return $response['data']['data'][0]['details']['duplicate_record'];
 	} else {
 		return $response['data']['data'][0]['details'];
 	}
 }
 
+/**
+ * Creates a lead in Zoho picking from the payload all the knonw lead fields.
+ *
+ * @param array            $payload Bridge payload.
+ * @param Zoho_Form_Bridge $bridge Bridge object.
+ *
+ * @return array|WP_Error New lead data or error response.
+ */
 function forms_bridge_zoho_crm_create_contact( $payload, $bridge ) {
 	$contact = array(
 		'Last_Name' => $payload['Last_Name'],
@@ -123,13 +146,21 @@ function forms_bridge_zoho_crm_create_contact( $payload, $bridge ) {
 	}
 
 	$code = $response['data']['data'][0]['code'];
-	if ( $code === 'DUPLICATE_DATA' ) {
+	if ( 'DUPLICATE_DATA' === $code ) {
 		return $response['data']['data'][0]['details']['duplicate_record'];
 	} else {
 		return $response['data']['data'][0]['details'];
 	}
 }
 
+/**
+ * Creates a lead in Zoho picking from the payload all the knonw lead fields.
+ *
+ * @param array            $payload Bridge payload.
+ * @param Zoho_Form_Bridge $bridge Bridge object.
+ *
+ * @return array|WP_Error New lead data or error response.
+ */
 function forms_bridge_zoho_crm_create_account( $payload, $bridge ) {
 	$company = array(
 		'Account_Name' => $payload['Account_Name'],
@@ -175,7 +206,7 @@ function forms_bridge_zoho_crm_create_account( $payload, $bridge ) {
 	}
 
 	$code = $response['data']['data'][0]['code'] ?? null;
-	if ( $code === 'DUPLICATE_DATA' ) {
+	if ( 'DUPLICATE_DATA' === $code ) {
 		return $response['data']['data'][0]['details']['duplicate_record'];
 	} else {
 		return $response['data']['data'][0]['details'];

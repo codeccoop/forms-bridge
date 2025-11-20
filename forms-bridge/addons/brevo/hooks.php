@@ -1,4 +1,9 @@
 <?php
+/**
+ * Brevo addon hooks
+ *
+ * @package formsbridge
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -81,20 +86,17 @@ add_filter(
 			return $data;
 		}
 
-		$get_index = fn( $name ) => array_search(
-			$name,
-			array_column( $data['bridge']['custom_fields'], 'name' )
-		);
-
 		$index = array_search(
 			'listIds',
-			array_column( $data['bridge']['custom_fields'], 'name' )
+			array_column( $data['bridge']['custom_fields'], 'name' ),
+			true
 		);
 
-		if ( $index !== false ) {
+		if ( false !== $index ) {
 			$field = $data['bridge']['custom_fields'][ $index ];
 
-			for ( $i = 0; $i < count( $field['value'] ); $i++ ) {
+			$l = count( $field['value'] );
+			for ( $i = 0; $i < $l; $i++ ) {
 				$data['bridge']['custom_fields'][] = array(
 					'name'  => "listIds[{$i}]",
 					'value' => $field['value'][ $i ],
@@ -112,13 +114,15 @@ add_filter(
 
 		$index = array_search(
 			'includeListIds',
-			array_column( $data['bridge']['custom_fields'], 'name' )
+			array_column( $data['bridge']['custom_fields'], 'name' ),
+			true
 		);
 
-		if ( $index !== false ) {
+		if ( false !== $index ) {
 			$field = $data['bridge']['custom_fields'][ $index ];
 
-			for ( $i = 0; $i < count( $field['value'] ); $i++ ) {
+			$l = count( $field['value'] );
+			for ( $i = 0; $i < $l; $i++ ) {
 				$data['bridge']['custom_fields'][] = array(
 					'name'  => "includeListIds[{$i}]",
 					'value' => $field['value'][ $i ],
@@ -136,10 +140,11 @@ add_filter(
 
 		$index = array_search(
 			'redirectionUrl',
-			array_column( $data['bridge']['custom_fields'], 'name' )
+			array_column( $data['bridge']['custom_fields'], 'name' ),
+			true
 		);
 
-		if ( $index !== false ) {
+		if ( false !== $index ) {
 			$field = &$data['bridge']['custom_fields'][ $index ];
 
 			$field['value'] = (string) filter_var(
@@ -147,7 +152,7 @@ add_filter(
 				FILTER_SANITIZE_URL
 			);
 
-			$parsed = parse_url( $field['value'] );
+			$parsed = wp_parse_url( $field['value'] );
 
 			if ( ! isset( $parsed['host'] ) ) {
 				$site_url = get_site_url();

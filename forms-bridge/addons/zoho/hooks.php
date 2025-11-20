@@ -1,4 +1,9 @@
 <?php
+/**
+ * Zoho addon hooks
+ *
+ * @package formsbridge
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -35,11 +40,15 @@ add_filter(
 						'value' => 'https://accounts.{region}/oauth/v2',
 					),
 					array(
-						'ref'      => '#credential',
-						'name'     => 'region',
-						'label'    => __( 'Datacenter', 'forms-bridge' ),
-						'type'     => 'select',
-						'options'  => array(
+						'ref'         => '#credential',
+						'name'        => 'region',
+						'label'       => __( 'Datacenter', 'forms-bridge' ),
+						'description' => __(
+							'Pick up your Zoho account datacenter. See the <a href="https://www.zoho.com/crm/developer/docs/api/v8/multi-dc.html">documentation</a> for more information',
+							'forms-bridge'
+						),
+						'type'        => 'select',
+						'options'     => array(
 							array(
 								'value' => 'zoho.com',
 								'label' => 'zoho.com',
@@ -69,33 +78,36 @@ add_filter(
 								'value' => 'zoho.sa',
 							),
 						),
-						'required' => true,
+						'required'    => true,
 					),
 					array(
-						'ref'      => '#credential',
-						'name'     => 'client_id',
-						'label'    => __( 'Client ID', 'forms-bridge' ),
-						'type'     => 'text',
-						'required' => true,
+						'ref'         => '#credential',
+						'name'        => 'client_id',
+						'label'       => __( 'Client ID', 'forms-bridge' ),
+						'description' => __(
+							'Register your OAuth client on the <a href="https://accounts.zoho.com">Zoho API Console</a> and get its Client ID',
+							'forms-bridge'
+						),
+						'type'        => 'text',
+						'required'    => true,
 					),
 					array(
-						'ref'      => '#credential',
-						'name'     => 'client_secret',
-						'label'    => __( 'Client secret', 'forms-bridge' ),
-						'type'     => 'text',
-						'required' => true,
+						'ref'         => '#credential',
+						'name'        => 'client_secret',
+						'label'       => __( 'Client secret', 'forms-bridge' ),
+						'description' => __(
+							'Register your OAuth client on the <a href="https://accounts.zoho.com">Zoho API Console</a> and get its Client secret',
+							'forms-bridge'
+						),
+						'type'        => 'text',
+						'required'    => true,
 					),
 					array(
 						'ref'      => '#credential',
 						'name'     => 'scope',
 						'label'    => __( 'Scope', 'forms-bridge' ),
-						// 'description' => __(
-						// 'See <a href="https://www.zoho.com/accounts/protocol/oauth/scope.html">the documentation</a> for more information',
-						// 'forms-bridge'
-						// ),
 						'type'     => 'text',
-						'value'    =>
-							'ZohoCRM.modules.ALL,ZohoCRM.settings.layouts.READ,ZohoCRM.users.READ',
+						'value'    => 'ZohoCRM.modules.ALL,ZohoCRM.settings.layouts.READ,ZohoCRM.users.READ',
 						'required' => true,
 					),
 					array(
@@ -104,10 +116,14 @@ add_filter(
 						'default' => 'Zoho API',
 					),
 					array(
-						'ref'      => '#backend',
-						'name'     => 'base_url',
-						'type'     => 'select',
-						'options'  => array(
+						'ref'         => '#backend',
+						'name'        => 'base_url',
+						'description' => __(
+							'Pick up your Zoho account datacenter. See the <a href="https://www.zoho.com/crm/developer/docs/api/v8/multi-dc.html">documentation</a> for more information',
+							'forms-bridge'
+						),
+						'type'        => 'select',
+						'options'     => array(
 							array(
 								'label' => 'www.zohoapis.com',
 								'value' => 'https://www.zohoapis.com',
@@ -141,8 +157,8 @@ add_filter(
 								'value' => 'https://www.zohoapis.ca',
 							),
 						),
-						'default'  => 'https://www.zohoapis.com',
-						'required' => true,
+						'default'     => 'https://www.zohoapis.com',
+						'required'    => true,
 					),
 					array(
 						'ref'   => '#bridge',
@@ -158,8 +174,7 @@ add_filter(
 					'name'          => '',
 					'schema'        => 'Bearer',
 					'oauth_url'     => 'https://accounts.{region}/oauth/v2',
-					'scope'         =>
-						'ZohoCRM.modules.ALL,ZohoCRM.settings.layouts.READ,ZohoCRM.users.READ',
+					'scope'         => 'ZohoCRM.modules.ALL,ZohoCRM.settings.layouts.READ,ZohoCRM.users.READ',
 					'client_id'     => '',
 					'client_secret' => '',
 					'access_token'  => '',
@@ -187,7 +202,7 @@ add_filter(
 add_filter(
 	'forms_bridge_template_data',
 	function ( $data, $template_id ) {
-		if ( strpos( $template_id, 'zoho-' ) !== 0 ) {
+		if ( 0 !== strpos( $template_id, 'zoho-' ) ) {
 			return $data;
 		}
 

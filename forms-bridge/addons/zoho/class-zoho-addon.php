@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class Zoho_Addon
+ *
+ * @package formsbridge
+ */
 
 namespace FORMS_BRIDGE;
 
@@ -144,11 +149,11 @@ class Zoho_Addon extends Addon {
 			foreach ( $layout['sections'] as $section ) {
 				foreach ( $section['fields'] as $field ) {
 					$type = $field['json_type'];
-					if ( $type === 'jsonobject' ) {
+					if ( 'jsonobject' === $type ) {
 						$type = 'object';
-					} elseif ( $type === 'jsonarray' ) {
+					} elseif ( 'jsonarray' === $type ) {
 						$type = 'array';
-					} elseif ( $type === 'double' ) {
+					} elseif ( 'double' === $type ) {
 						$type = 'number';
 					}
 
