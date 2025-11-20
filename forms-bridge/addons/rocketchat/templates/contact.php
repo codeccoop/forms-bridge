@@ -23,7 +23,7 @@ return array(
 		),
 		array(
 			'ref'         => '#bridge/custom_fields[]',
-			'name'        => 'channel',
+			'name'        => 'roomId',
 			'label'       => __( 'Channel', 'forms-bridge' ),
 			'description' => __(
 				'Name of the channel where messages will be sent',
