@@ -1,4 +1,9 @@
 <?php
+/**
+ * Dolibarr company leads bridge template
+ *
+ * @package formsbridge
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -28,7 +33,7 @@ return array(
 				'endpoint' => '/api/index.php/users',
 				'finger'   => array(
 					'value' => '[].id',
-					'label' => '[].email',
+					'label' => '[].login',
 				),
 			),
 		),
