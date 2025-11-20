@@ -85,19 +85,14 @@ class Slack_Form_Bridge extends Form_Bridge {
 			foreach ( $attachments as $name => $file_id ) {
 				$files[] = array(
 					'id'    => $file_id,
-					'title' => $name,
+					'title' => $filename,
 				);
 			}
 
 			$response = $backend->post(
 				'/api/files.completeUploadExternal',
-				array(
-					'files'      => wp_json_encode( $files ),
-					'channel_id' => $payload['channel'] ?? $payload['channel_id'] ?? null,
-				),
-				array(
-					'Content-Type' => 'application/x-www-form-urlencoded',
-				),
+				array( 'files' => wp_json_encode( $files ) ),
+				array( 'Content-Type' => 'application/x-www-form-urlencoded' ),
 			);
 
 			if ( is_wp_error( $response ) ) {
@@ -110,13 +105,17 @@ class Slack_Form_Bridge extends Form_Bridge {
 
 			$annex = "\n\n----\n" . esc_html( __( 'Attachments', 'forms-bridge' ) ) . ":\n";
 
-			foreach ( $response['data']['files'] as $upload ) {
-				$annex .= "* [{$upload['name']}]({$upload['permalink']})\n";
-			}
-
 			if ( isset( $payload['markdown_text'] ) ) {
+				foreach ( $response['data']['files'] as $upload ) {
+					$annex .= "* [{$upload['name']}]({$upload['permalink']})\n";
+				}
+
 				$payload['markdown_text'] .= $annex;
 			} else {
+				foreach ( $response['data']['files'] as $upload ) {
+					$annex .= "* {$upload['name']}: {$upload['permalink']}\n";
+				}
+
 				$payload['text'] .= $annex;
 			}
 		}

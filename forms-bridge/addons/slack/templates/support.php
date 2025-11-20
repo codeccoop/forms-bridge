@@ -43,6 +43,22 @@ return array(
 				'required' => true,
 			),
 			array(
+				'name'     => 'subject',
+				'label'    => __( 'Subject', 'forms-bridge' ),
+				'type'     => 'select',
+				'options'  => array(
+					array(
+						'value' => 'Option 1',
+						'label' => 'Option 1',
+					),
+					array(
+						'value' => 'Option 2',
+						'label' => 'Option 2',
+					),
+				),
+				'required' => true,
+			),
+			array(
 				'name'  => 'comments',
 				'label' => __( 'Comments', 'forms-bridge' ),
 				'type'  => 'textarea',
@@ -61,6 +77,11 @@ return array(
 				array(
 					'from' => 'your-email',
 					'to'   => 'text.email',
+					'cast' => 'string',
+				),
+				array(
+					'from' => 'subject',
+					'to'   => 'text.subject',
 					'cast' => 'string',
 				),
 				array(

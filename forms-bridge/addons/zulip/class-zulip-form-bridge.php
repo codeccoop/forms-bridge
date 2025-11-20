@@ -46,6 +46,9 @@ class Zulip_Form_Bridge extends Form_Bridge {
 			$attachments = Forms_Bridge::attachments( $uploads );
 
 			foreach ( $attachments as $name => $path ) {
+				$info     = pathinfo( $path );
+				$filename = $info['basename'];
+
 				$response = $backend->post( '/api/v1/user_uploads', array(), array(), array( $name => $path ) );
 
 				if ( is_wp_error( $response ) ) {
@@ -57,7 +60,7 @@ class Zulip_Form_Bridge extends Form_Bridge {
 				unset( $payload[ $name ] );
 				unset( $payload[ $name . '_filename' ] );
 
-				$annex .= "* [{$name}]({$response['data']['url']})\n";
+				$annex .= "* [{$filename}]({$response['data']['url']})\n";
 			}
 
 			$payload['content'] .= $annex;
