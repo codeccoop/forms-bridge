@@ -100,7 +100,7 @@ class Zulip_Addon extends Addon {
 						$oa_explorer = new OpenAPI( $data );
 
 						$method = strtolower( $method ?? 'post' );
-						$path   = preg_replace( '', '', $endpoint );
+						$path   = preg_replace( '/^\/api\/v1/', '', $endpoint );
 						$source = in_array( $method, array( 'post', 'put', 'patch' ), true ) ? 'body' : 'query';
 						$params = $oa_explorer->params( $path, $method, $source );
 
