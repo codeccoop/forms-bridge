@@ -48,9 +48,21 @@ function forms_bridge_zulip_payload_summary_md( $payload ) {
  * @return string
  */
 function forms_bridge_zulip_content_md( $data, $leading = '' ) {
-	$content = "---\n**" . __( 'Fields', 'forms-bridge' ) . "**:\n";
-	foreach ( $data as $name => $value ) {
-		$content .= forms_bridge_zulip_field_md( $name, $value, $leading );
+	$content = '';
+
+	if ( ! strlen( $leading ) ) {
+		$content .= "---\n**" . __( 'Fields', 'forms-bridge' ) . "**:\n";
+	}
+
+	if ( wp_is_numeric_array( $data ) ) {
+		$l = count( $data );
+		for ( $i = 1; $i <= $l; $i++ ) {
+			$content .= forms_bridge_zulip_field_md( $i, $data[ $i - 1 ], $leading );
+		}
+	} else {
+		foreach ( $data as $name => $value ) {
+			$content .= forms_bridge_zulip_field_md( $name, $value, $leading );
+		}
 	}
 
 	return $content;
@@ -69,8 +81,8 @@ function forms_bridge_zulip_field_md( $name, $value, $leading = '' ) {
 	if ( is_array( $value ) || is_object( $value ) ) {
 		$value = "\n" . forms_bridge_zulip_content_md( (array) $value, $leading . '  ' );
 	} elseif ( is_string( $value ) ) {
-		$value = preg_replace( '/\n+/', "\n{$leading}  ", $value );
+		$value = preg_replace( '/\n+/', "\n{$leading}  ", $value ) . "\n";
 	}
 
-	return "{$leading}- **{$name}**: {$value}\n";
+	return "{$leading}* **{$name}**: {$value}";
 }
