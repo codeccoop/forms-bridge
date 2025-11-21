@@ -60,7 +60,7 @@ add_filter(
 						'name'     => 'scope',
 						'label'    => __( 'Scope', 'forms-bridge' ),
 						'type'     => 'text',
-						'value'    => 'chat:write,channels:read,users:read,files:write',
+						'value'    => 'chat:write,chat:write.public,channels:read,users:read,files:write',
 						'required' => true,
 					),
 					array(
@@ -306,6 +306,20 @@ add_filter(
 	},
 	10,
 	3
+);
+
+add_filter(
+	'forms_bridge_bridge_schema',
+	function ( $schema, $addon ) {
+		if ( 'slack' !== $addon ) {
+			return $schema;
+		}
+
+		$schema['properties']['method']['const'] = 'POST';
+		return $schema;
+	},
+	10,
+	2,
 );
 
 add_filter(
