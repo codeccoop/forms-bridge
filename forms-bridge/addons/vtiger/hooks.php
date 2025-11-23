@@ -1,0 +1,163 @@
+<?php
+/**
+ * Vtiger addon hooks and filters.
+ *
+ * @package formsbridge
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
+
+/**
+ * Customize the bridge schema for Vtiger.
+ */
+add_filter(
+	'forms_bridge_bridge_schema',
+	function ( $schema, $addon ) {
+		if ( 'vtiger' !== $addon ) {
+			return $schema;
+		}
+
+		$schema['properties']['endpoint']['title']       = __(
+			'Module',
+			'forms-bridge'
+		);
+		$schema['properties']['endpoint']['description'] = __(
+			'Name of the target Vtiger module (e.g., Contacts, Leads, Accounts, Potentials)',
+			'forms-bridge'
+		);
+		$schema['properties']['endpoint']['default']     = 'Contacts';
+
+		$schema['properties']['method']['description'] = __(
+			'Vtiger webservice operation',
+			'forms-bridge'
+		);
+		$schema['properties']['method']['enum']        = array(
+			'create',
+			'retrieve',
+			'update',
+			'delete',
+			'query',
+			'describe',
+			'listtypes',
+			'sync',
+		);
+		$schema['properties']['method']['default']     = 'create';
+
+		return $schema;
+	},
+	10,
+	2
+);
+
+/**
+ * Set default template fields and configuration for Vtiger.
+ */
+add_filter(
+	'forms_bridge_template_defaults',
+	function ( $defaults, $addon, $schema ) {
+		if ( 'vtiger' !== $addon ) {
+			return $defaults;
+		}
+
+		return wpct_plugin_merge_object(
+			array(
+				'fields'     => array(
+					array(
+						'ref'      => '#credential',
+						'name'     => 'name',
+						'label'    => __( 'Name', 'forms-bridge' ),
+						'type'     => 'text',
+						'required' => true,
+					),
+					array(
+						'ref'   => '#credential',
+						'name'  => 'schema',
+						'type'  => 'text',
+						'value' => 'Basic',
+					),
+					array(
+						'ref'         => '#credential',
+						'name'        => 'client_id',
+						'label'       => __( 'Username', 'forms-bridge' ),
+						'description' => __(
+							'Vtiger user name',
+							'forms-bridge'
+						),
+						'type'        => 'text',
+						'required'    => true,
+					),
+					array(
+						'ref'         => '#credential',
+						'name'        => 'client_secret',
+						'description' => __(
+							'Access Key from My Preferences in Vtiger',
+							'forms-bridge'
+						),
+						'label'       => __( 'Access Key', 'forms-bridge' ),
+						'type'        => 'text',
+						'required'    => true,
+					),
+					array(
+						'ref'         => '#backend',
+						'name'        => 'base_url',
+						'label'       => __( 'Vtiger URL', 'forms-bridge' ),
+						'description' => __(
+							'Base URL of your Vtiger installation (e.g., https://crm.example.com)',
+							'forms-bridge'
+						),
+						'type'        => 'url',
+						'required'    => true,
+					),
+					array(
+						'ref'     => '#backend',
+						'name'    => 'name',
+						'default' => 'Vtiger',
+					),
+					array(
+						'ref'      => '#bridge',
+						'name'     => 'endpoint',
+						'label'    => __( 'Module', 'forms-bridge' ),
+						'type'     => 'text',
+						'required' => true,
+					),
+					array(
+						'ref'      => '#bridge',
+						'name'     => 'method',
+						'label'    => __( 'Operation', 'forms-bridge' ),
+						'type'     => 'text',
+						'value'    => 'create',
+						'required' => true,
+					),
+				),
+				'bridge'     => array(
+					'name'     => '',
+					'form_id'  => '',
+					'backend'  => '',
+					'endpoint' => '',
+					'method'   => 'create',
+				),
+				'backend'    => array(
+					'name'    => 'Vtiger',
+					'headers' => array(
+						array(
+							'name'  => 'Accept',
+							'value' => 'application/json',
+						),
+					),
+				),
+				'credential' => array(
+					'name'          => '',
+					'schema'        => 'Basic',
+					'client_id'     => '',
+					'client_secret' => '',
+				),
+			),
+			$defaults,
+			$schema
+		);
+	},
+	10,
+	3
+);
