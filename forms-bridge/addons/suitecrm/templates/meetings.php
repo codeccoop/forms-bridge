@@ -19,7 +19,7 @@ return array(
 		array(
 			'ref'     => '#form',
 			'name'    => 'title',
-			'default' => __( 'Accounts', 'forms-bridge' ),
+			'default' => __( 'Meetings', 'forms-bridge' ),
 		),
 		array(
 			'ref'   => '#bridge',
@@ -28,15 +28,41 @@ return array(
 		),
 		array(
 			'ref'      => '#bridge/custom_fields[]',
-			'name'     => 'duration',
+			'name'     => 'duration_hours',
 			'label'    => __( 'Duration (Hours)', 'forms-bridge' ),
 			'type'     => 'number',
 			'default'  => 1,
 			'required' => true,
 		),
 		array(
+			'ref'      => '#bridge/custom_fields[]',
+			'name'     => 'duration_minutes',
+			'label'    => __( 'Duration (Minutes)', 'forms-bridge' ),
+			'type'     => 'select',
+			'options'  => array(
+				array(
+					'value' => '0',
+					'label' => '.00',
+				),
+				array(
+					'value' => '15',
+					'label' => '.15',
+				),
+				array(
+					'value' => '30',
+					'label' => '.30',
+				),
+				array(
+					'value' => '45',
+					'label' => '.45',
+				),
+			),
+			'default'  => '00',
+			'required' => true,
+		),
+		array(
 			'ref'         => '#bridge/custom_fields[]',
-			'name'        => 'assigned_user_id',
+			'name'        => 'meeting_assigned_user_id',
 			'label'       => __( 'Assigned User', 'forms-bridge' ),
 			'description' => __(
 				'User to assign the account to',
@@ -50,6 +76,7 @@ return array(
 					'label' => 'entry_list[].name_value_list.user_name.value',
 				),
 			),
+			'required'    => true,
 		),
 		array(
 			'ref'     => '#bridge/custom_fields[]',
@@ -86,9 +113,90 @@ return array(
 		),
 	),
 	'bridge'      => array(
-		'endpoint' => 'Meetings',
-		'method'   => 'set_entry',
-		'workflow' => array( 'contact' ),
+		'endpoint'      => 'Meetings',
+		'method'        => 'set_entry',
+		'custom_fields' => array(
+			array(
+				'name'  => 'meeting_status',
+				'value' => 'Planned',
+			),
+			array(
+				'name'  => 'meeting_type',
+				'value' => 'Sugar',
+			),
+			array(
+				'name'  => 'parent_type',
+				'value' => 'Contacts',
+			),
+		),
+		'workflow'      => array( 'date-fields-to-date', 'contact', 'meeting-invitees' ),
+		'mutations'     => array(
+			array(),
+			array(
+				array(
+					'from' => 'first_name',
+					'to'   => 'meeting_name[0]',
+					'cast' => 'copy',
+				),
+				array(
+					'from' => 'last_name',
+					'to'   => 'meeting_name[1]',
+					'cast' => 'copy',
+				),
+				array(
+					'from' => 'meeting_name',
+					'to'   => 'meeting_name',
+					'cast' => 'concat',
+				),
+			),
+			array(
+				array(
+					'from' => 'contact_id',
+					'to'   => 'parent_id',
+					'cast' => 'copy',
+				),
+				array(
+					'from' => 'meeting_assigned_user_id',
+					'to'   => 'assigned_user_id',
+					'cast' => 'string',
+				),
+				array(
+					'from' => 'meeting_type',
+					'to'   => 'type',
+					'cast' => 'string',
+				),
+				array(
+					'from' => 'meeting_status',
+					'to'   => 'status',
+					'cast' => 'string',
+				),
+				array(
+					'from' => 'meeting_name',
+					'to'   => 'name',
+					'cast' => 'string',
+				),
+				array(
+					'from' => 'meeting_description',
+					'to'   => 'description',
+					'cast' => 'string',
+				),
+				array(
+					'from' => 'datetime',
+					'to'   => 'date_start',
+					'cast' => 'string',
+				),
+				array(
+					'from' => 'duration_hours',
+					'to'   => 'duration_hours',
+					'cast' => 'integer',
+				),
+				array(
+					'from' => 'duration_minutes',
+					'to'   => 'duration_minutes',
+					'cast' => 'integer',
+				),
+			),
+		),
 	),
 	'form'        => array(
 		'title'  => __( 'Meetings', 'forms-bridge' ),
@@ -120,6 +228,12 @@ return array(
 				'label' => __( 'Mobile', 'forms-bridge' ),
 				'name'  => 'phone_mobile',
 				'type'  => 'tel',
+			),
+			array(
+				'name'     => 'date',
+				'label'    => __( 'Date', 'forms-bridge' ),
+				'type'     => 'date',
+				'required' => true,
 			),
 			array(
 				'name'     => 'hour',
@@ -280,6 +394,11 @@ return array(
 						'value' => '55',
 					),
 				),
+			),
+			array(
+				'name'  => 'meeting_description',
+				'type'  => 'textarea',
+				'label' => __( 'Comments', 'forms-bridge' ),
 			),
 		),
 	),

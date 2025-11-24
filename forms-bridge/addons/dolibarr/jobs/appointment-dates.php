@@ -1,4 +1,9 @@
 <?php
+/**
+ * Dolibarr appointment dates job
+ *
+ * @package formsbridge
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -6,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 function forms_bridge_dolibarr_appointment_dates( $payload ) {
 	$datetime = DateTime::createFromFormat( 'Y-m-d H:i:s', $payload['date'] );
-	if ( $datetime === false ) {
+	if ( false === $datetime ) {
 		return new WP_Error(
 			'invalid-date',
 			__( 'Invalid date time value', 'forms-bridge' )

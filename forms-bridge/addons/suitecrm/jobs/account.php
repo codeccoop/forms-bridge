@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 return array(
 	'title'       => __( 'Account', 'forms-bridge' ),
-	'description' => __( 'Creates an account on SuiteCRM', 'forms-bridge' ),
+	'description' => __( 'Creates an account in SuiteCRM', 'forms-bridge' ),
 	'method'      => 'forms_bridge_suitecrm_create_account',
 	'input'       => array(
 		array(
@@ -116,7 +116,7 @@ return array(
 			'schema' => array( 'type' => 'string' ),
 		),
 		array(
-			'name'   => 'shipping__address_city',
+			'name'   => 'shipping_address_city',
 			'schema' => array( 'type' => 'string' ),
 		),
 		array(
@@ -199,7 +199,7 @@ function forms_bridge_suitecrm_create_account( $payload, $bridge ) {
 		'shipping_address_street_3',
 		'shipping_address_street_4',
 		'shipping_address_postalcode',
-		'shipping__address_city',
+		'shipping_address_city',
 		'shipping_address_state',
 		'shipping_address_country',
 		'sic_code',

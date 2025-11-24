@@ -276,10 +276,12 @@ class SuiteCRM_Form_Bridge extends Form_Bridge {
 
 			case 'get_entry':
 				return array(
-					'session'       => $session_id,
-					'module_name'   => $module,
-					'id'            => $payload['id'] ?? '',
-					'select_fields' => $more_args['select_fields'] ?? array(),
+					'session'                   => $session_id,
+					'module_name'               => $module,
+					'id'                        => $payload['id'] ?? '',
+					'select_fields'             => $more_args['select_fields'] ?? array(),
+					'link_name_to_fields_array' => array(),
+					'track_view'                => false,
 				);
 
 			case 'set_entry':
