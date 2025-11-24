@@ -123,6 +123,7 @@ class CustomHooksTest extends WP_UnitTestCase {
 	}
 
 	public function set_up() {
+		parent::set_up();
 		add_filter( 'pre_http_request', array( $this, 'pre_http_request' ), 10, 3 );
 	}
 
@@ -135,6 +136,7 @@ class CustomHooksTest extends WP_UnitTestCase {
 
 	public function tear_down() {
 		remove_filter( 'pre_http_request', array( $this, 'pre_http_request' ), 10, 3 );
+		parent::tear_down();
 	}
 
 	public function test_backends() {
