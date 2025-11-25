@@ -36,21 +36,22 @@ to work with specific APIs, new workflow jobs and bridge templates.
 
 Forms Bridge has the following addons:
 
-- [REST API](https://en.wikipedia.org/wiki/REST)
-- [Bigin](https://www.bigin.com/developer/docs/apis/v2/?source=developer)
-- [Brevo](https://developers.brevo.com/)
-- [Dolibarr](<https://wiki.dolibarr.org/index.php/Module_Web_Services_API_REST_(developer)>)
-- [FinanCoop](https://somit.coop/financoop/)
-- [Google Sheets](https://workspace.google.com/products/sheets/)
-- [Holded](https://developers.holded.com/reference/api-key)
-- [Listmonk](https://listmonk.app/docs/apis/apis/)
-- [Nextcloud](https://docs.nextcloud.com/server/20/user_manual/en/files/access_webdav.html)
-- [Mailchimp](https://mailchimp.com/developer/)
-- [Odoo](https://www.odoo.com/)
-- [Rocket.Chat](https://developer.rocket.chat/apidocs)
-- [Slack](https://docs.slack.dev/reference/)
-- [Zoho CRM](https://www.zoho.com/developer/rest-api.html)
-- [Zulip](https://zulip.com/api/rest)
+- [REST API](https://formsbridge.codeccoop.org/documentation/#backends)
+- [Bigin](https://formsbridge.codeccoop.org/documentation/bigin/)
+- [Brevo](https://formsbridge.codeccoop.org/documentation/brevo/)
+- [Dolibarr](https://formsbridge.codeccoop.org/documentation/dolibarr/)
+- [FinanCoop](https://formsbridge.codeccoop.org/documentation/financoop/)
+- [Google Sheets](https://formsbridge.codeccoop.org/documentation/google-sheets/)
+- [Holded](https://formsbridge.codeccoop.org/documentation/holded/)
+- [Listmonk](https://formsbridge.codeccoop.org/documentation/listmonk/)
+- [Nextcloud](https://formsbridge.codeccoop.org/documentation/nextcloud/)
+- [Mailchimp](https://formsbridge.codeccoop.org/documentation/mailchimp/)
+- [Odoo](https://formsbridge.codeccoop.org/documentation/odoo/)
+- [Rocket.Chat](https://formsbridge.codeccoop.org/documentation/rocket-chat/)
+- [Slack](https://formsbridge.codeccoop.org/documentation/slack/)
+- [SuiteCRM](https://formsbridge.codeccoop.org/documentation/suitecrm/)
+- [Zoho CRM](https://formsbridge.codeccoop.org/documentation/zoho-crm/)
+- [Zulip](https://formsbridge.codeccoop.org/documentation/zulip/)
 
 ## Backends
 
