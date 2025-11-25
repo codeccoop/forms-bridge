@@ -60,16 +60,9 @@ class Vtiger_Form_Bridge extends Form_Bridge {
 		}
 
 		if ( empty( $res['data'] ) ) {
-			$content_type =
-				Http_Client::get_content_type( $res['headers'] ) ?? 'undefined';
-
 			return new WP_Error(
-				'unknown_content_type',
-				sprintf(
-					/* translators: %s: Content-Type header value */
-					esc_html( __( 'Unknown HTTP response content type %s', 'forms-bridge' ) ),
-					sanitize_text_field( $content_type )
-				),
+				'bad_request',
+				'Vtiger null response body',
 				$res
 			);
 		}
@@ -136,18 +129,18 @@ class Vtiger_Form_Bridge extends Form_Bridge {
 	/**
 	 * Login to Vtiger and get session name.
 	 *
-	 * @param array   $credentials Credentials array with client_id (username) and client_secret (access key).
-	 * @param Backend $backend Bridge backend object.
+	 * @param Credential $credential Bridge credential object.
+	 * @param Backend    $backend Bridge backend object.
 	 *
 	 * @return string|WP_Error Session name on success.
 	 */
-	private static function rest_login( $credentials, $backend ) {
+	private static function rest_login( $credential, $backend ) {
 		if ( self::$session_name ) {
 			return self::$session_name;
 		}
 
-		$username   = $credentials[0] ?? '';
-		$access_key = $credentials[1] ?? '';
+		$username   = $credential->client_id ?? '';
+		$access_key = $credential->client_secret ?? '';
 
 		// Step 1: Get challenge token.
 		$token = self::get_challenge( $username, $backend );
@@ -165,7 +158,7 @@ class Vtiger_Form_Bridge extends Form_Bridge {
 			'accessKey' => $access_key_hash,
 		);
 
-		$response = $backend->post( self::ENDPOINT, $payload, 'application/x-www-form-urlencoded' );
+		$response = $backend->post( self::ENDPOINT, $payload );
 		$result   = self::rest_response( $response );
 
 		if ( is_wp_error( $result ) ) {
@@ -232,6 +225,7 @@ class Vtiger_Form_Bridge extends Form_Bridge {
 		add_filter(
 			'http_bridge_request',
 			static function ( $request ) {
+				unset( $request['args']['headers']['authentication'] );
 				self::$request = $request;
 				return $request;
 			},
@@ -239,11 +233,8 @@ class Vtiger_Form_Bridge extends Form_Bridge {
 			1
 		);
 
-		// Get credentials for login.
-		$login_credentials = $credential->authorization();
-
 		// Login to get session.
-		$session_name = self::rest_login( $login_credentials, $backend );
+		$session_name = self::rest_login( $credential, $backend );
 
 		if ( is_wp_error( $session_name ) ) {
 			return $session_name;
@@ -325,7 +316,7 @@ class Vtiger_Form_Bridge extends Form_Bridge {
 					'element'     => wp_json_encode( $element ),
 				);
 
-				$response = $backend->post( self::ENDPOINT, $post_data, 'application/x-www-form-urlencoded' );
+				$response = $backend->post( self::ENDPOINT, $post_data );
 				break;
 
 			case 'update':
@@ -335,7 +326,7 @@ class Vtiger_Form_Bridge extends Form_Bridge {
 					'element'     => wp_json_encode( $payload ),
 				);
 
-				$response = $backend->post( self::ENDPOINT, $post_data, 'application/x-www-form-urlencoded' );
+				$response = $backend->post( self::ENDPOINT, $post_data );
 				break;
 
 			case 'delete':
@@ -345,7 +336,7 @@ class Vtiger_Form_Bridge extends Form_Bridge {
 					'id'          => $payload['id'] ?? '',
 				);
 
-				$response = $backend->post( self::ENDPOINT, $post_data, 'application/x-www-form-urlencoded' );
+				$response = $backend->post( self::ENDPOINT, $post_data );
 				break;
 
 			case 'sync':
