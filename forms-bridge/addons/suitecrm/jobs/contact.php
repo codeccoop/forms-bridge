@@ -15,14 +15,13 @@ return array(
 	'method'      => 'forms_bridge_suitecrm_create_contact',
 	'input'       => array(
 		array(
-			'name'     => 'first_name',
+			'name'     => 'last_name',
 			'schema'   => array( 'type' => 'string' ),
 			'required' => true,
 		),
 		array(
-			'name'     => 'last_name',
-			'schema'   => array( 'type' => 'string' ),
-			'required' => true,
+			'name'   => 'first_name',
+			'schema' => array( 'type' => 'string' ),
 		),
 		array(
 			'name'   => 'assigned_user_id',
@@ -210,12 +209,12 @@ return array(
  * @return array
  */
 function forms_bridge_suitecrm_create_contact( $payload, $bridge ) {
-	$account = array(
-		'first_name' => $payload['first_name'],
-		'last_name'  => $payload['last_name'],
+	$contact = array(
+		'last_name' => $payload['last_name'],
 	);
 
-	$account_fields = array(
+	$contact_fields = array(
+		'first_name',
 		'assigned_user_id',
 		'assigned_user_name',
 		'salutation',
@@ -230,8 +229,8 @@ function forms_bridge_suitecrm_create_contact( $payload, $bridge ) {
 		'phone_mobile',
 		'phone_fax',
 		'phone_other',
-		'email',
 		'email1',
+		'email',
 		'email2',
 		'email_address_non_primary',
 		'email_and_name1',
@@ -259,18 +258,54 @@ function forms_bridge_suitecrm_create_contact( $payload, $bridge ) {
 		'event_accept_status',
 	);
 
-	foreach ( $account_fields as $field ) {
+	foreach ( $contact_fields as $field ) {
 		if ( isset( $payload[ $field ] ) ) {
-			$account[ $field ] = $payload[ $field ];
+			$contact[ $field ] = $payload[ $field ];
 		}
+	}
+
+	$query = "contacts.last_name = '{$contact['last_name']}'";
+
+	if ( isset( $contact['last_name'] ) ) {
+		$query .= " AND contacts.first_name = '{$contact['first_name']}'";
 	}
 
 	$response = $bridge->patch(
 		array(
+			'method'   => 'get_entry_list',
+			'endpoint' => 'Contacts',
+		)
+	)->submit( array( 'query' => $query ) );
+
+	if ( is_wp_error( $response ) ) {
+		return $response;
+	}
+
+	$contact_id = $response['data']['entry_list'][0]['id'] ?? null;
+	if ( ! empty( $contact_id ) ) {
+		$response = $bridge->patch(
+			array(
+				'name'     => '__suitecrm-' . time(),
+				'method'   => 'set_entry',
+				'endpoint' => 'Contacts',
+			)
+		)->submit( array_merge( array( 'id' => $contact_id ), $contact ) );
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$payload['contact_id'] = $contact_id;
+		return $payload;
+	}
+
+	$response = $bridge->patch(
+		array(
+			'name'     => '__suitecrm-' . time(),
 			'method'   => 'set_entry',
 			'endpoint' => 'Contacts',
 		)
-	)->submit( $account );
+	)->submit( $contact );
 
 	if ( is_wp_error( $response ) ) {
 		return $response;

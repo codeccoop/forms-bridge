@@ -216,6 +216,36 @@ function forms_bridge_suitecrm_create_account( $payload, $bridge ) {
 		}
 	}
 
+	$query = "accounts.name = '{$account['name']}'";
+
+	$response = $bridge->patch(
+		array(
+			'method'   => 'get_entry_list',
+			'endpoint' => 'Accounts',
+		)
+	)->submit( array( 'query' => $query ) );
+
+	if ( is_wp_error( $response ) ) {
+		return $response;
+	}
+
+	$account_id = $response['data']['entry_list'][0]['id'];
+	if ( ! empty( $account_id ) ) {
+		$response = $bridge->patch(
+			array(
+				'method'   => 'set_entry',
+				'endpoint' => 'Accounts',
+			)
+		)->submit( array_merge( array( 'id' => $account_id ), $account ) );
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$payload['account_id'] = $account_id;
+		return $payload;
+	}
+
 	$response = $bridge->patch(
 		array(
 			'method'   => 'set_entry',

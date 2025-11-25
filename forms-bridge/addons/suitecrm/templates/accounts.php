@@ -39,7 +39,7 @@ return array(
 				'endpoint' => 'Users',
 				'finger'   => array(
 					'value' => 'entry_list[].id',
-					'label' => 'entry_list[].name_value_list.user_name.value',
+					'label' => 'entry_list[].name_value_list.name.value',
 				),
 			),
 		),
@@ -229,7 +229,7 @@ return array(
 	'bridge'      => array(
 		'endpoint' => 'Contacts',
 		'method'   => 'set_entry',
-		'workflow' => array( 'account' ),
+		'workflow' => array( 'account', 'skip-contact' ),
 	),
 	'form'        => array(
 		'fields' => array(

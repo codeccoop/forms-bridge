@@ -35,7 +35,7 @@ return array(
 				'endpoint' => 'Users',
 				'finger'   => array(
 					'value' => 'entry_list[].id',
-					'label' => 'entry_list[].name_value_list.user_name.value',
+					'label' => 'entry_list[].name_value_list.name.value',
 				),
 			),
 		),
