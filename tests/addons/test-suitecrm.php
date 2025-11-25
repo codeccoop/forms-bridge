@@ -398,10 +398,7 @@ class SuiteCRMTest extends WP_UnitTestCase {
 			)
 		);
 
-		$response = $bridge->submit(
-			array(),
-			array( 'max_results' => 10 )
-		);
+		$response = $bridge->submit( array( 'max_results' => 10 ) );
 
 		$this->assertFalse( is_wp_error( $response ) );
 
@@ -450,7 +447,6 @@ class SuiteCRMTest extends WP_UnitTestCase {
 		);
 
 		$response = $bridge->submit(
-			array(),
 			array(
 				'select_fields' => array( 'id', 'first_name', 'last_name' ),
 				'max_results'   => 20,

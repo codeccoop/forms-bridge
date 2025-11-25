@@ -7,7 +7,6 @@
 
 namespace FORMS_BRIDGE;
 
-use HTTP_BRIDGE\Http_Client;
 use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -70,15 +69,9 @@ class SuiteCRM_Form_Bridge extends Form_Bridge {
 		}
 
 		if ( empty( $res['data'] ) ) {
-			$content_type = Http_Client::get_content_type( $res['headers'] ) ?? 'undefined';
-
 			return new WP_Error(
-				'unknown_content_type',
-				sprintf(
-					/* translators: %s: Content-Type header value */
-					esc_html( __( 'Unknown HTTP response content type %s', 'forms-bridge' ) ),
-					sanitize_text_field( $content_type )
-				),
+				'bad_request',
+				'SuiteCRM null response body',
 				$res
 			);
 		}
@@ -172,11 +165,11 @@ class SuiteCRM_Form_Bridge extends Form_Bridge {
 	 * Submits submission to the backend.
 	 *
 	 * @param array $payload Submission data.
-	 * @param array $more_args Additional arguments (e.g., select_fields for get_entry_list).
+	 * @param array $attachments Submission attachment files.
 	 *
 	 * @return array|WP_Error HTTP response.
 	 */
-	public function submit( $payload = array(), $more_args = array() ) {
+	public function submit( $payload = array(), $attachments = array() ) {
 		if ( ! $this->is_valid ) {
 			return new WP_Error(
 				'invalid_bridge',
@@ -219,7 +212,7 @@ class SuiteCRM_Form_Bridge extends Form_Bridge {
 		}
 
 		// Build the API request based on method.
-		$rest_args = $this->build_rest_args( $session_id, $payload, $more_args );
+		$rest_args = $this->build_rest_args( $session_id, $payload );
 
 		$api_payload = self::rest_payload( $this->method, $rest_args );
 
@@ -233,7 +226,6 @@ class SuiteCRM_Form_Bridge extends Form_Bridge {
 
 		// Normalize response.
 		$response['data'] = $result;
-
 		return $response;
 	}
 
@@ -242,11 +234,10 @@ class SuiteCRM_Form_Bridge extends Form_Bridge {
 	 *
 	 * @param string $session_id Session ID.
 	 * @param array  $payload Form submission payload.
-	 * @param array  $more_args Additional arguments.
 	 *
 	 * @return array REST API arguments.
 	 */
-	private function build_rest_args( $session_id, $payload, $more_args ) {
+	private function build_rest_args( $session_id, $payload ) {
 		$module = $this->endpoint;
 
 		switch ( $this->method ) {
@@ -265,12 +256,12 @@ class SuiteCRM_Form_Bridge extends Form_Bridge {
 				$args = array(
 					'session'       => $session_id,
 					'module_name'   => $module,
-					'query'         => $more_args['query'] ?? '',
-					'order_by'      => $more_args['order_by'] ?? '',
-					'offset'        => $more_args['offset'] ?? 0,
-					'select_fields' => $more_args['select_fields'] ?? array(),
-					'max_results'   => $more_args['max_results'] ?? 20,
-					'deleted'       => $more_args['deleted'] ?? 0,
+					'query'         => $payload['query'] ?? '',
+					'order_by'      => $payload['order_by'] ?? '',
+					'offset'        => $payload['offset'] ?? 0,
+					'select_fields' => $payload['select_fields'] ?? array(),
+					'max_results'   => $payload['max_results'] ?? 20,
+					'deleted'       => $payload['deleted'] ?? 0,
 				);
 				return $args;
 
@@ -279,7 +270,7 @@ class SuiteCRM_Form_Bridge extends Form_Bridge {
 					'session'                   => $session_id,
 					'module_name'               => $module,
 					'id'                        => $payload['id'] ?? '',
-					'select_fields'             => $more_args['select_fields'] ?? array(),
+					'select_fields'             => $payload['select_fields'] ?? array(),
 					'link_name_to_fields_array' => array(),
 					'track_view'                => false,
 				);
@@ -317,8 +308,8 @@ class SuiteCRM_Form_Bridge extends Form_Bridge {
 					'module_name'          => $module,
 					'module_id'            => $payload['module_id'] ?? '',
 					'link_field_name'      => $payload['link_field_name'] ?? '',
-					'related_module_query' => $more_args['query'] ?? '',
-					'related_fields'       => $more_args['select_fields'] ?? array(),
+					'related_module_query' => $payload['query'] ?? '',
+					'related_fields'       => $payload['select_fields'] ?? array(),
 				);
 
 			default:
