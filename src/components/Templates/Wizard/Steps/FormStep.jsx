@@ -91,8 +91,7 @@ export default function FormStep({ fields, data, setData, integration }) {
   useEffect(() => {
     if (!form) return;
 
-    const data = { id: form.id };
-    schema.fields.forEach((schema) => {
+    const data = schema.fields.reduce((data, schema) => {
       switch (schema.type) {
         case "object":
           data[schema.name] = [];
@@ -103,8 +102,12 @@ export default function FormStep({ fields, data, setData, integration }) {
         default:
           data[schema.name] = "";
       }
-    });
 
+      return data;
+    }, {});
+
+    data.id = form.id;
+    data.title = form.title;
     setData(data);
   }, [form]);
 
