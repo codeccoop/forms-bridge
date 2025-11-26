@@ -36,6 +36,7 @@ Forms Bridge has the following addons:
 * [Brevo](https://formsbridge.codeccoop.org/documentation/brevo/)
 * [Dolibarr](https://formsbridge.codeccoop.org/documentation/dolibarr/)
 * [FinanCoop](https://formsbridge.codeccoop.org/documentation/financoop/)
+* [Google Calendar](https://formsbridge.codeccoop.org/documentation/google-calendar/)
 * [Google Sheets](https://formsbridge.codeccoop.org/documentation/google-sheets/)
 * [Holded](https://formsbridge.codeccoop.org/documentation/holded/)
 * [Listmonk](https://formsbridge.codeccoop.org/documentation/listmonk/)
