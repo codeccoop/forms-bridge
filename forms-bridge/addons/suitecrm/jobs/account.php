@@ -229,7 +229,7 @@ function forms_bridge_suitecrm_create_account( $payload, $bridge ) {
 		return $response;
 	}
 
-	$account_id = $response['data']['entry_list'][0]['id'];
+	$account_id = $response['data']['entry_list'][0]['id'] ?? null;
 	if ( ! empty( $account_id ) ) {
 		$response = $bridge->patch(
 			array(
