@@ -51,6 +51,14 @@ function _manually_load_plugin() {
 	require ABSPATH . 'wp-content/mu-plugins/wpforms/wpforms.php';
 	require ABSPATH . 'wp-content/mu-plugins/woocommerce/woocommerce.php';
 
+	add_filter(
+		'woocommerce_load_webhooks_limit',
+		function () {
+			return -1;
+		},
+		90,
+	);
+
 	/* Plugin tests */
 	require dirname( __DIR__ ) . '/forms-bridge/deps/plugin/tests/bootstrap.php';
 }
