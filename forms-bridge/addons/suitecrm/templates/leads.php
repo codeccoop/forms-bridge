@@ -87,8 +87,28 @@ return array(
 					'label' => __( 'Cold Call', 'forms-bridge' ),
 				),
 				array(
+					'value' => 'Existing Customer',
+					'label' => __( 'Existing Customer', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Employee',
+					'label' => __( 'Employee', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Partner',
+					'label' => __( 'Partner', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Public Relations',
+					'label' => __( 'Public Relations', 'forms-bridge' ),
+				),
+				array(
 					'value' => 'Email',
 					'label' => __( 'Email', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Direct Mail',
+					'label' => __( 'Direct Mail', 'forms-bridge' ),
 				),
 				array(
 					'value' => 'Word of mouth',
@@ -105,10 +125,6 @@ return array(
 				array(
 					'value' => 'Trade Show',
 					'label' => __( 'Trade Show', 'forms-bridge' ),
-				),
-				array(
-					'value' => 'Partner',
-					'label' => __( 'Partner', 'forms-bridge' ),
 				),
 				array(
 					'value' => 'Other',
@@ -148,11 +164,6 @@ return array(
 				'type'  => 'tel',
 			),
 			array(
-				'label' => __( 'Mobile', 'forms-bridge' ),
-				'name'  => 'phone_mobile',
-				'type'  => 'tel',
-			),
-			array(
 				'label' => __( 'Company', 'forms-bridge' ),
 				'name'  => 'account_name',
 				'type'  => 'text',
@@ -166,31 +177,6 @@ return array(
 				'label' => __( 'Website', 'forms-bridge' ),
 				'name'  => 'website',
 				'type'  => 'url',
-			),
-			array(
-				'label' => __( 'Address', 'forms-bridge' ),
-				'name'  => 'primary_address_street',
-				'type'  => 'text',
-			),
-			array(
-				'label' => __( 'City', 'forms-bridge' ),
-				'name'  => 'primary_address_city',
-				'type'  => 'text',
-			),
-			array(
-				'label' => __( 'Postal Code', 'forms-bridge' ),
-				'name'  => 'primary_address_postalcode',
-				'type'  => 'text',
-			),
-			array(
-				'label' => __( 'State', 'forms-bridge' ),
-				'name'  => 'primary_address_state',
-				'type'  => 'text',
-			),
-			array(
-				'label' => __( 'Country', 'forms-bridge' ),
-				'name'  => 'primary_address_country',
-				'type'  => 'text',
 			),
 			array(
 				'label' => __( 'Message', 'forms-bridge' ),

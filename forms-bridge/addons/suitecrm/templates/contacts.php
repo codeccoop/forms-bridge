@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 return array(
 	'title'       => __( 'Contacts', 'forms-bridge' ),
 	'description' => __(
-		'Contact form template. The resulting bridge will convert form submissions into SuiteCRM contacts.',
+		'Contact form bridge template. The resulting bridge will convert form submissions into SuiteCRM contacts.',
 		'forms-bridge'
 	),
 	'fields'      => array(
@@ -54,8 +54,28 @@ return array(
 					'label' => __( 'Cold Call', 'forms-bridge' ),
 				),
 				array(
+					'value' => 'Existing Customer',
+					'label' => __( 'Existing Customer', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Employee',
+					'label' => __( 'Employee', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Partner',
+					'label' => __( 'Partner', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Public Relations',
+					'label' => __( 'Public Relations', 'forms-bridge' ),
+				),
+				array(
 					'value' => 'Email',
 					'label' => __( 'Email', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Direct Mail',
+					'label' => __( 'Direct Mail', 'forms-bridge' ),
 				),
 				array(
 					'value' => 'Word of mouth',
@@ -64,6 +84,14 @@ return array(
 				array(
 					'value' => 'Campaign',
 					'label' => __( 'Campaign', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Conference',
+					'label' => __( 'Conference', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Trade Show',
+					'label' => __( 'Trade Show', 'forms-bridge' ),
 				),
 				array(
 					'value' => 'Other',
@@ -101,11 +129,6 @@ return array(
 			array(
 				'label' => __( 'Phone', 'forms-bridge' ),
 				'name'  => 'phone_work',
-				'type'  => 'tel',
-			),
-			array(
-				'label' => __( 'Mobile', 'forms-bridge' ),
-				'name'  => 'phone_mobile',
 				'type'  => 'tel',
 			),
 			array(

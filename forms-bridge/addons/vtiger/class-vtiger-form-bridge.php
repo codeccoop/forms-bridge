@@ -227,7 +227,7 @@ class Vtiger_Form_Bridge extends Form_Bridge {
 		add_filter(
 			'http_bridge_request',
 			static function ( $request ) {
-				unset( $request['args']['headers']['authentication'] );
+				unset( $request['args']['headers']['Authorization'] );
 				self::$request = $request;
 				return $request;
 			},

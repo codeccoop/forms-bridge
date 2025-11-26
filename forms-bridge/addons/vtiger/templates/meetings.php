@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 return array(
 	'title'       => __( 'Meetings', 'forms-bridge' ),
 	'description' => __(
-		'Meetings bridge template. The resulting bridge will convert form submissions into Vtiger meetings.',
+		'Meetings form bridge template. The resulting bridge will convert form submissions into Vtiger meetings.',
 		'forms-bridge',
 	),
 	'fields'      => array(

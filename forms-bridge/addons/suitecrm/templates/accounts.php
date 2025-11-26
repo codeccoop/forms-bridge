@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 return array(
 	'title'       => __( 'Accounts', 'forms-bridge' ),
 	'description' => __(
-		'Account bridge template. The resulting bridge will convert form submissions into SuiteCRM accounts (companies/organizations).',
+		'Account form bridge template. The resulting bridge will convert form submissions into SuiteCRM accounts (companies/organizations).',
 		'forms-bridge'
 	),
 	'fields'      => array(
@@ -27,15 +27,11 @@ return array(
 			'value' => 'Contacts',
 		),
 		array(
-			'ref'         => '#bridge/custom_fields[]',
-			'name'        => 'assigned_user_id',
-			'label'       => __( 'Assigned User', 'forms-bridge' ),
-			'description' => __(
-				'User to assign the account to',
-				'forms-bridge'
-			),
-			'type'        => 'select',
-			'options'     => array(
+			'ref'     => '#bridge/custom_fields[]',
+			'name'    => 'assigned_user_id',
+			'label'   => __( 'Assigned User', 'forms-bridge' ),
+			'type'    => 'select',
+			'options' => array(
 				'endpoint' => 'Users',
 				'finger'   => array(
 					'value' => 'entry_list[].id',
@@ -147,6 +143,10 @@ return array(
 					'label' => __( 'Entertainment', 'forms-bridge' ),
 				),
 				array(
+					'value' => 'Environmental',
+					'label' => __( 'Environmental', 'forms-bridge' ),
+				),
+				array(
 					'value' => 'Finance',
 					'label' => __( 'Finance', 'forms-bridge' ),
 				),
@@ -167,6 +167,10 @@ return array(
 					'label' => __( 'Insurance', 'forms-bridge' ),
 				),
 				array(
+					'value' => 'Machinery',
+					'label' => __( 'Machinery', 'forms-bridge' ),
+				),
+				array(
 					'value' => 'Manufacturing',
 					'label' => __( 'Manufacturing', 'forms-bridge' ),
 				),
@@ -175,16 +179,36 @@ return array(
 					'label' => __( 'Media', 'forms-bridge' ),
 				),
 				array(
+					'value' => 'Not For Profit',
+					'label' => __( 'Not For Profit', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Recreation',
+					'label' => __( 'Recreation', 'forms-bridge' ),
+				),
+				array(
 					'value' => 'Retail',
 					'label' => __( 'Retail', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Shipping',
+					'label' => __( 'Shipping', 'forms-bridge' ),
 				),
 				array(
 					'value' => 'Technology',
 					'label' => __( 'Technology', 'forms-bridge' ),
 				),
 				array(
+					'value' => 'Telecomunications',
+					'label' => __( 'Telecomunications', 'forms-bridge' ),
+				),
+				array(
 					'value' => 'Transportation',
 					'label' => __( 'Transportation', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Utilities',
+					'label' => __( 'Utilities', 'forms-bridge' ),
 				),
 				array(
 					'value' => 'Other',
@@ -207,8 +231,28 @@ return array(
 					'label' => __( 'Cold Call', 'forms-bridge' ),
 				),
 				array(
+					'value' => 'Existing Customer',
+					'label' => __( 'Existing Customer', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Employee',
+					'label' => __( 'Employee', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Partner',
+					'label' => __( 'Partner', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Public Relations',
+					'label' => __( 'Public Relations', 'forms-bridge' ),
+				),
+				array(
 					'value' => 'Email',
 					'label' => __( 'Email', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Direct Mail',
+					'label' => __( 'Direct Mail', 'forms-bridge' ),
 				),
 				array(
 					'value' => 'Word of mouth',
@@ -219,6 +263,14 @@ return array(
 					'label' => __( 'Campaign', 'forms-bridge' ),
 				),
 				array(
+					'value' => 'Conference',
+					'label' => __( 'Conference', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Trade Show',
+					'label' => __( 'Trade Show', 'forms-bridge' ),
+				),
+				array(
 					'value' => 'Other',
 					'label' => __( 'Other', 'forms-bridge' ),
 				),
@@ -227,9 +279,25 @@ return array(
 		),
 	),
 	'bridge'      => array(
-		'endpoint' => 'Contacts',
-		'method'   => 'set_entry',
-		'workflow' => array( 'account', 'skip-contact' ),
+		'endpoint'  => 'Contacts',
+		'method'    => 'set_entry',
+		'workflow'  => array( 'account', 'skip-contact' ),
+		'mutations' => array(
+			array(
+				array(
+					'from' => 'email1',
+					'to'   => 'user_email',
+					'cast' => 'copy',
+				),
+			),
+			array(
+				array(
+					'from' => 'user_email',
+					'to'   => 'email1',
+					'cast' => 'string',
+				),
+			),
+		),
 	),
 	'form'        => array(
 		'fields' => array(
@@ -252,9 +320,15 @@ return array(
 				'required' => true,
 			),
 			array(
-				'label' => __( 'Email', 'forms-bridge' ),
-				'name'  => 'email1',
-				'type'  => 'email',
+				'label'    => __( 'Email', 'forms-bridge' ),
+				'name'     => 'email1',
+				'type'     => 'email',
+				'required' => true,
+			),
+			array(
+				'label' => __( 'Title', 'forms-bridge' ),
+				'name'  => 'title',
+				'type'  => 'text',
 			),
 			array(
 				'label' => __( 'Phone', 'forms-bridge' ),

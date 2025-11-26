@@ -203,8 +203,8 @@ return array(
 /**
  * Creates a new contact and add its ID to the payload.
  *
- * @param array       $payload Bridge payload.
- * @param Form_Bridge $bridge Bridge object.
+ * @param array                $payload Bridge payload.
+ * @param SuiteCRM_Form_Bridge $bridge Bridge object.
  *
  * @return array
  */

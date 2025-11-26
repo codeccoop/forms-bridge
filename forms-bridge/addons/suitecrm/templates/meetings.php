@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 return array(
 	'title'       => __( 'Meetings', 'forms-bridge' ),
 	'description' => __(
-		'Meetings bridge template. The resulting bridge will convert form submissions into SuiteCRM meetings.',
+		'Meetings form bridge template. The resulting bridge will convert form submissions into SuiteCRM meetings.',
 		'forms-bridge',
 	),
 	'fields'      => array(
@@ -61,22 +61,18 @@ return array(
 			'required' => true,
 		),
 		array(
-			'ref'         => '#bridge/custom_fields[]',
-			'name'        => 'meeting_assigned_user_id',
-			'label'       => __( 'Assigned User', 'forms-bridge' ),
-			'description' => __(
-				'User to assign the account to',
-				'forms-bridge'
-			),
-			'type'        => 'select',
-			'options'     => array(
+			'ref'      => '#bridge/custom_fields[]',
+			'name'     => 'assigned_user_id',
+			'label'    => __( 'Assigned User', 'forms-bridge' ),
+			'type'     => 'select',
+			'options'  => array(
 				'endpoint' => 'Users',
 				'finger'   => array(
 					'value' => 'entry_list[].id',
 					'label' => 'entry_list[].name_value_list.name.value',
 				),
 			),
-			'required'    => true,
+			'required' => true,
 		),
 		array(
 			'ref'     => '#bridge/custom_fields[]',
@@ -93,8 +89,28 @@ return array(
 					'label' => __( 'Cold Call', 'forms-bridge' ),
 				),
 				array(
+					'value' => 'Existing Customer',
+					'label' => __( 'Existing Customer', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Employee',
+					'label' => __( 'Employee', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Partner',
+					'label' => __( 'Partner', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Public Relations',
+					'label' => __( 'Public Relations', 'forms-bridge' ),
+				),
+				array(
 					'value' => 'Email',
 					'label' => __( 'Email', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Direct Mail',
+					'label' => __( 'Direct Mail', 'forms-bridge' ),
 				),
 				array(
 					'value' => 'Word of mouth',
@@ -103,6 +119,14 @@ return array(
 				array(
 					'value' => 'Campaign',
 					'label' => __( 'Campaign', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Conference',
+					'label' => __( 'Conference', 'forms-bridge' ),
+				),
+				array(
+					'value' => 'Trade Show',
+					'label' => __( 'Trade Show', 'forms-bridge' ),
 				),
 				array(
 					'value' => 'Other',
@@ -121,17 +145,19 @@ return array(
 				'value' => 'Planned',
 			),
 			array(
-				'name'  => 'meeting_type',
-				'value' => 'Sugar',
-			),
-			array(
 				'name'  => 'parent_type',
 				'value' => 'Contacts',
 			),
 		),
 		'workflow'      => array( 'date-fields-to-date', 'contact', 'meeting-invitees' ),
 		'mutations'     => array(
-			array(),
+			array(
+				array(
+					'from' => 'assigned_user_id',
+					'to'   => 'meeting_assigned_user_id',
+					'cast' => 'copy',
+				),
+			),
 			array(
 				array(
 					'from' => 'first_name',
@@ -222,11 +248,6 @@ return array(
 			array(
 				'label' => __( 'Phone', 'forms-bridge' ),
 				'name'  => 'phone_work',
-				'type'  => 'tel',
-			),
-			array(
-				'label' => __( 'Mobile', 'forms-bridge' ),
-				'name'  => 'phone_mobile',
 				'type'  => 'tel',
 			),
 			array(

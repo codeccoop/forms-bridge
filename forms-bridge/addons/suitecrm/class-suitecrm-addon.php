@@ -88,12 +88,7 @@ class SuiteCRM_Addon extends Addon {
 			)
 		);
 
-		return $bridge->submit(
-			array(
-				'select_fields' => array( 'id', 'name' ),
-				'max_results'   => 100,
-			)
-		);
+		return $bridge->submit( array( 'max_results' => 100 ) );
 	}
 
 	/**

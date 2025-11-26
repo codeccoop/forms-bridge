@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 return array(
 	'title'       => __( 'Accounts', 'forms-bridge' ),
 	'description' => __(
-		'Account form template. The resulting bridge will convert form submissions into Vtiger accounts (organizations).',
+		'Account form bridge template. The resulting bridge will convert form submissions into Vtiger accounts (organizations).',
 		'forms-bridge'
 	),
 	'fields'      => array(
