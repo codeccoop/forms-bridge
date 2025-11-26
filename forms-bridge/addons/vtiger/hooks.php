@@ -104,7 +104,7 @@ add_filter(
 						'name'        => 'base_url',
 						'label'       => __( 'Vtiger URL', 'forms-bridge' ),
 						'description' => __(
-							'Base URL of your Vtiger installation (e.g., https://crm.example.com)',
+							'Base URL of your Vtiger installation (e.g., https://crm.example.coop)',
 							'forms-bridge'
 						),
 						'type'        => 'url',

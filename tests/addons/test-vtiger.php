@@ -265,13 +265,13 @@ class VtigerTest extends WP_UnitTestCase {
 							'id'        => '4x11',
 							'firstname' => 'John',
 							'lastname'  => 'Doe',
-							'email'     => 'john.doe@example.com',
+							'email'     => 'john.doe@example.coop',
 						),
 						array(
 							'id'        => '4x12',
 							'firstname' => 'Jane',
 							'lastname'  => 'Smith',
-							'email'     => 'jane.smith@example.com',
+							'email'     => 'jane.smith@example.coop',
 						),
 					),
 				);
@@ -283,7 +283,7 @@ class VtigerTest extends WP_UnitTestCase {
 						'id'        => '4x11',
 						'firstname' => 'John',
 						'lastname'  => 'Doe',
-						'email'     => 'john.doe@example.com',
+						'email'     => 'john.doe@example.coop',
 						'phone'     => '555-1234',
 					),
 				);
@@ -546,7 +546,7 @@ class VtigerTest extends WP_UnitTestCase {
 		$payload = array(
 			'firstname' => 'John',
 			'lastname'  => 'Doe',
-			'email'     => 'john.doe@example.com',
+			'email'     => 'john.doe@example.coop',
 		);
 
 		$response = $bridge->submit( $payload );
