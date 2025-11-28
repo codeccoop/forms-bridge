@@ -5,7 +5,7 @@ Donate link: https://buymeacoffee.com/codeccoop
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Stable Tag: 4.2.2
-Tested up to: 6.8
+Tested up to: 6.9
 
 Bridge your WordPress forms without code, add custom fields, use field mappers, set up a workflow and make your data flow seamlessly to your backend.
 
