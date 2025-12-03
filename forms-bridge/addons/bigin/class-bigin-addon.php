@@ -113,7 +113,7 @@ class Bigin_Addon extends Zoho_Addon {
 	 * @return array List of fields and content type of the endpoint.
 	 */
 	public function get_endpoint_schema( $endpoint, $backend, $method = null ) {
-		if ( in_array( $method, array( 'POST', 'PUT' ), true ) ) {
+		if ( ! in_array( $method, array( 'POST', 'PUT' ), true ) ) {
 			return array();
 		}
 
