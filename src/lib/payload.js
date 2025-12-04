@@ -205,9 +205,12 @@ function castExpandedValue(values, mapper) {
   //   return [];
   // }
 
-  const parts = mapper.from.split("[]").filter((p) => p);
+  const parts = mapper.from.split("[]");
   const before = parts[0];
-  const after = parts.slice(1).join("[]");
+  const after = parts
+    .slice(1)
+    .filter((p, i) => p || i < parts.length - 1)
+    .join("[]");
 
   for (let i = 0; i < values.length; i++) {
     const pointer = `${before}[${i}]${after}`;

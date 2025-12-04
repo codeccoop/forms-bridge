@@ -630,26 +630,26 @@ class Form_Bridge {
 			return array();
 		}
 
-		$is_expanded =
-			strpos( preg_replace( '/\[\]$/', '', $mapper['from'] ), '[]' ) !==
-			false;
+		$is_expanded = false !== strpos( preg_replace( '/\[\]$/', '', $mapper['from'] ), '[]' );
 
 		if ( ! $is_expanded ) {
-			return array_map(
-				function ( $value ) use ( $mapper ) {
-					return $this->cast(
-						$value,
-						array(
-							'from' => '',
-							'to'   => '',
-							'cast' => $mapper['cast'],
-						)
-					);
-				},
-				$values
-			);
+			$new_values = array();
+
+			foreach ( $values as $value ) {
+				$new_values[] = $this->cast(
+					$value,
+					array(
+						'from' => '',
+						'to'   => '',
+						'cast' => $mapper['cast'],
+					)
+				);
+			}
+
+			return $new_values;
 		}
 
+		/*
 		preg_match_all(
 			'/\[\](?=[^\[])/',
 			preg_replace( '/\[\]$/', '', $mapper['to'] ),
@@ -669,10 +669,17 @@ class Form_Bridge {
 		) {
 			return array();
 		}
+		*/
 
-		$parts  = array_filter( explode( '[]', $mapper['from'] ) );
+		$parts  = explode( '[]', $mapper['from'] );
 		$before = $parts[0];
-		$after  = implode( '[]', array_slice( $parts, 1 ) );
+		$after  = array_slice( $parts, 1 );
+
+		if ( empty( $after[ count( $after ) - 1 ] ) ) {
+			array_pop( $after );
+		}
+
+		$after = implode( '[]', $after );
 
 		$l = count( $values );
 		for ( $i = 0; $i < $l; $i++ ) {
