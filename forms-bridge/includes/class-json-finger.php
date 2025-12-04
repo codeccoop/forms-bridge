@@ -465,13 +465,26 @@ class JSON_Finger {
 		$from = $this->get( $before );
 
 		if ( $unset ) {
+			if ( ! wp_is_numeric_array( $from ) ) {
+				if ( ! $after ) {
+					$this->unset( $before );
+				}
+
+				return $this->data;
+			}
+
 			$values = $from;
 		}
 
 		$is_numeric_array = wp_is_numeric_array( $values );
 
-		if ( ! wp_is_numeric_array( $from ) && $is_numeric_array ) {
-			$from = array();
+		if ( ! wp_is_numeric_array( $from ) ) {
+			if ( ! $is_numeric_array ) {
+				$from = array( $values );
+			} else {
+				$from = array();
+			}
+
 			$this->set( $before, $from );
 		}
 

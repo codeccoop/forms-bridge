@@ -342,16 +342,32 @@ JsonFinger.prototype.setExpanded = function (pointer, values, unset) {
     .filter((p, i) => p || i < parts.length - 1)
     .join("[]");
 
-  const from = this.get(before);
+  let from = this.get(before);
   if (unset) {
+    if (!Array.isArray(from)) {
+      if (!after) {
+        this.unset(before);
+      }
+
+      return this.data;
+    }
+
     values = from;
   }
 
+  const toArray = Array.isArray(values);
+
   if (!Array.isArray(from)) {
-    return this.data;
+    if (!toArray) {
+      from = [values];
+    } else {
+      from = [];
+    }
+
+    this.set(before, from);
   }
 
-  if (!Array.isArray(values) && !unset) {
+  if (!toArray && !unset) {
     const value = values;
     values = [];
 
