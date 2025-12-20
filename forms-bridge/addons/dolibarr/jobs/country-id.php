@@ -1,9 +1,22 @@
 <?php
+/**
+ * Country ID Dolibarr job.
+ *
+ * @package forms-bridge
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
+/**
+ * Gets the country_id value from the ISO-2 country code.
+ *
+ * @param array                $payload Bridge payload.
+ * @param Dolibarr_Form_Bridge $bridge Bridge object.
+ *
+ * @return array
+ */
 function forms_bridge_dolibarr_country_id_from_code( $payload, $bridge ) {
 	global $forms_bridge_iso2_countries;
 
@@ -12,7 +25,7 @@ function forms_bridge_dolibarr_country_id_from_code( $payload, $bridge ) {
 			return new WP_Error( 'Invalid ISO-2 country code', 'forms-bridge' );
 		}
 
-		// backward compatibility
+		// backward compatibility.
 		$payload['country'] = $payload['country_id'];
 	}
 
@@ -39,7 +52,7 @@ function forms_bridge_dolibarr_country_id_from_code( $payload, $bridge ) {
 return array(
 	'title'       => __( 'Country ID', 'forms-bridge' ),
 	'description' => __(
-		'Gets country_id value from country code and replace it on the payload',
+		'Gets country_id value from ISO-2 country code and replace it on the payload',
 		'forms-bridge'
 	),
 	'method'      => 'forms_bridge_dolibarr_country_id_from_code',

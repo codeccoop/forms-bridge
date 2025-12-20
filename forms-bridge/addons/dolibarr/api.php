@@ -5,10 +5,20 @@
  * @package formsbridge
  */
 
+use FORMS_BRIDGE\Dolibarr_Form_Bridge;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
+/**
+ * Search for a contact in Dolibarr by email, fisrtname and lastname.
+ *
+ * @param array                $payload Bridge payload.
+ * @param Dolibarr_Form_Bridge $bridge Bridge object.
+ *
+ * @return array|null Contact data.
+ */
 function forms_bridge_dolibarr_search_contact( $payload, $bridge ) {
 	$sqlfilters = array();
 
@@ -65,6 +75,14 @@ function forms_bridge_dolibarr_search_contact( $payload, $bridge ) {
 	return $response['data'][0];
 }
 
+/**
+ * Search for a thirdparty in Dolibarr by tva_intra, idprof1, email or code_client.
+ *
+ * @param array                $payload Bridge payload.
+ * @param Dolibarr_Form_Bridge $bridge Bridge object.
+ *
+ * @return array|null Thirdparty data.
+ */
 function forms_bridge_dolibarr_search_thirdparty( $payload, $bridge ) {
 	$sqlfilters = array( "(t.nom:like:'{$payload['name']}')" );
 
@@ -122,110 +140,27 @@ function forms_bridge_dolibarr_search_thirdparty( $payload, $bridge ) {
 	return $response['data'][0];
 }
 
-function forms_bridge_dolibarr_get_next_code_client( $payload, $bridge ) {
-	$required = isset( $payload['client'] ) && $payload['client'] != '0';
-
-	$response = $bridge
-		->patch(
-			array(
-				'name'     => 'dolibarr-get-next-code-client',
-				'endpoint' => '/api/index.php/thirdparties',
-				'method'   => 'GET',
-			)
-		)
-		->submit(
-			array(
-				'sortfield'  => 't.rowid',
-				'sortorder'  => 'DESC',
-				'properties' => 'code_client',
-				'limit'      => 1,
-			)
-		);
-
-	if ( is_wp_error( $response ) ) {
-		if ( ! $required ) {
-			$payload['code_client'] = '';
-			return $payload;
-		}
-
-		return $response;
-	}
-
-	$previous_code_client = $response['data'][0]['code_client'];
-
-	try {
-		[$prefix, $number] = explode( '-', $previous_code_client );
-
-		if ( empty( $number ) ) {
-			$number = $prefix;
-			$prefix = '';
-		}
-
-		$next = strval( $number + 1 );
-		while ( strlen( $next ) < strlen( $number ) ) {
-			$next = '0' . $next;
-		}
-	} catch ( Error ) {
-		if ( ! $required ) {
-			$payload['code_client'] = '';
-			return $payload;
-		}
-
-		return new WP_Error( 'unkown_code_format' );
-	}
-
-	if ( preg_match( '/^CU[0-9]{4}$/', $prefix ) ) {
-		$prefix = 'CU' . date( 'y' ) . date( 'm' );
-	} elseif ( preg_match( '/^CU[0-9]{2}$/', $prefix ) ) {
-		$prefix = 'CU' . date( 'y' );
-	}
-
-	if ( empty( $prefix ) ) {
-		return $next;
-	}
-
-	return $prefix . '-' . $next;
-}
-
-function forms_bridge_dolibarr_get_next_project_ref( $payload, $bridge ) {
-	$response = $bridge
-		->patch(
-			array(
-				'name'     => 'dolibar-get-next-project-ref',
-				'endpoint' => '/api/index.php/projects',
-				'method'   => 'GET',
-			)
-		)
-		->submit(
-			array(
-				'sortfield'  => 't.rowid',
-				'sortorder'  => 'DESC',
-				'properties' => 'ref',
-				'limit'      => 1,
-			)
-		);
-
-	if ( is_wp_error( $response ) ) {
-		return $response;
-	}
-
-	$previous_project_ref = $response['data'][0]['ref'];
-
-	[$prefix, $number] = explode( '-', $previous_project_ref );
-
-	$next = strval( $number + 1 );
-	while ( strlen( $next ) < strlen( $number ) ) {
-		$next = '0' . $next;
-	}
-
-	$prefix = 'PJ' . date( 'y' ) . date( 'm' );
-	return $prefix . '-' . $next;
-}
-
+/**
+ * Updates a contact on Dolibarr.
+ *
+ * @param array                $payload Bridge payload.
+ * @param Dolibarr_Form_Bridge $bridge Bridge object.
+ *
+ * @return array|null Contact data.
+ */
 function forms_bridge_dolibarr_update_contact( $payload, $bridge ) {
 	return forms_bridge_dolibarr_create_contact( $payload, $bridge, true );
 }
 
+/**
+ * Creates a contact on Dolibarr.
+ *
+ * @param array                $payload Bridge payload.
+ * @param Dolibarr_Form_Bridge $bridge Bridge object.
+ * @param boolean              $update True to perform an update request.
+ *
+ * @return array|null Contact data.
+ */
 function forms_bridge_dolibarr_create_contact(
 	$payload,
 	$bridge,
@@ -296,7 +231,7 @@ function forms_bridge_dolibarr_create_contact(
 		return $response;
 	}
 
-	if ( $method === 'POST' ) {
+	if ( 'POST' === $method ) {
 		$response = $bridge
 			->patch(
 				array(
@@ -311,10 +246,27 @@ function forms_bridge_dolibarr_create_contact(
 	return $response['data'];
 }
 
+/**
+ * Updates a thirdparty on Dolibarr.
+ *
+ * @param array                $payload Bridge payload.
+ * @param Dolibarr_Form_Bridge $bridge Bridge object.
+ *
+ * @return array|null Thirdparty data.
+ */
 function forms_bridge_dolibarr_update_thirdparty( $payload, $bridge ) {
 	return forms_bridge_dolibarr_create_thirdparty( $payload, $bridge, true );
 }
 
+/**
+ * Creates a thirdparty on Dolibarr.
+ *
+ * @param array                $payload Bridge payload.
+ * @param Dolibarr_Form_Bridge $bridge Bridge object.
+ * @param boolean              $update True to perform an update request.
+ *
+ * @return array|null Thirdparty data.
+ */
 function forms_bridge_dolibarr_create_thirdparty(
 	$payload,
 	$bridge,
@@ -371,15 +323,7 @@ function forms_bridge_dolibarr_create_thirdparty(
 	}
 
 	if ( ! isset( $thirdparty['code_client'] ) && ! $update ) {
-		$code_client = forms_bridge_dolibarr_get_next_code_client(
-			$payload,
-			$bridge
-		);
-		if ( is_wp_error( $code_client ) ) {
-			return $code_client;
-		}
-
-		$thirdparty['code_client'] = $code_client;
+		$thirdparty['code_client'] = -1;
 	}
 
 	$endpoint = '/api/index.php/thirdparties';
@@ -404,7 +348,7 @@ function forms_bridge_dolibarr_create_thirdparty(
 		return $response;
 	}
 
-	if ( $method === 'POST' ) {
+	if ( 'POST' === $method ) {
 		$response = $bridge
 			->patch(
 				array(
