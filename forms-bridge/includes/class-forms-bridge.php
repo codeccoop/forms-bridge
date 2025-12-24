@@ -550,13 +550,13 @@ class Forms_Bridge extends Base_Plugin {
 		}
 
 		$form_data = $bridge->form;
-		$payload   = wp_json_encode( $payload, JSON_PRETTY_PRINT );
+		$payload   = wp_json_encode( $payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 		$error     = wp_json_encode(
 			array(
 				'error'   => $error->get_error_message(),
 				'context' => $error->get_error_data(),
 			),
-			JSON_PRETTY_PRINT
+			JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
 		);
 
 		Logger::log( 'Bridge submission error', Logger::ERROR );

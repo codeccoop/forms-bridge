@@ -140,7 +140,7 @@ class Logger extends Singleton {
 		if ( is_array( $data ) ) {
 			$data = json_encode(
 				$data,
-				JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
+				JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
 			);
 		}
 
