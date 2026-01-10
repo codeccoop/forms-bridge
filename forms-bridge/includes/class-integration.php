@@ -71,7 +71,7 @@ class Integration extends Singleton {
 				$deps = array( 'woocommerce/woocommerce.php' );
 				break;
 			case 'formidable':
-				$dep = 'formidable/formidable.php';
+				$deps = array( 'formidable/formidable.php' );
 				break;
 			default:
 				return false;

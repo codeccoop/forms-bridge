@@ -15,6 +15,7 @@ use FrmAppHelper;
 use FrmEntry;
 use FrmEntryMeta;
 use FrmField;
+use stdClass;
 use TypeError;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -233,7 +234,42 @@ class Formidable_Integration extends BaseIntegration {
 		$fields     = array();
 		$frm_fields = FrmField::get_all_for_form( $form_id );
 
+		$repeater = null;
 		foreach ( $frm_fields as $frm_field ) {
+			if ( intval( $form_id ) !== intval( $frm_field->form_id ) ) {
+				if ( $repeater && $repeater->form_id !== $frm_field->form_id ) {
+					$fields[] = $this->serialize_field( $repeater );
+					$repeater = null;
+				}
+
+				if ( ! $repeater ) {
+					$repeater = (object) array(
+						'id'          => $frm_field->field_options['in_section'],
+						'field_key'   => $frm_field->form_name,
+						'name'        => 'repeater',
+						'description' => '',
+						'options'     => '',
+						'required'    => '0',
+						'form_id'     => $form_id,
+						'fields'      => array(),
+						'type'        => 'repeater',
+						'form_id'     => $frm_field->form_id,
+					);
+				}
+
+				$repeater_field = $this->serialize_field( $frm_field );
+				if ( $repeater_field ) {
+					$repeater->fields[] = $repeater_field;
+				}
+
+				continue;
+			}
+
+			if ( $repeater ) {
+				$fields[] = $this->serialize_field( $repeater );
+				$repeater = null;
+			}
+
 			$field = $this->serialize_field( $frm_field );
 
 			if ( $field ) {
@@ -264,8 +300,8 @@ class Formidable_Integration extends BaseIntegration {
 	 * @return array|null
 	 */
 	private function serialize_field( $field ) {
-		// Skip non-input fields
-		if ( in_array( $field->type, array( 'divider', 'html', 'captcha', 'submit' ), true ) ) {
+		// Skip non-input fields.
+		if ( in_array( $field->type, array( 'data', 'summary', 'break', 'end_divider', 'divider', 'html', 'captcha', 'submit' ), true ) ) {
 			return null;
 		}
 
@@ -283,29 +319,40 @@ class Formidable_Integration extends BaseIntegration {
 		}
 
 		switch ( $field->type ) {
+			case 'form':
+			case 'repeater':
+				$type = 'mixed';
+				break;
 			case 'checkbox':
 			case 'select':
 			case 'radio':
+			case 'lookup':
 				$type = 'select';
 				break;
+			case 'range':
+				if ( $field->field_options['is_range_slider'] ?? false ) {
+					return 'select';
+				}
+
+				return 'number';
+			case 'star':
 			case 'number':
+			case 'scale':
+			case 'quantity':
+			case 'total':
+			case 'user_id':
 				$type = 'number';
 				break;
+			case 'date':
 			case 'file':
-				$type = 'file';
+			case 'email':
+			case 'url':
+				$type = $field->type;
 				break;
 			case 'phone':
 				$type = 'tel';
 				break;
-			case 'email':
-				$type = 'email';
-				break;
-			case 'website':
-				$type = 'url';
-				break;
-			case 'date':
-				$type = 'date';
-				break;
+			case 'rte':
 			case 'textarea':
 				$type = 'textarea';
 				break;
@@ -331,6 +378,7 @@ class Formidable_Integration extends BaseIntegration {
 				'format'      => 'date' === $field->type ? 'yyyy-mm-dd' : '',
 				'schema'      => $this->field_value_schema( $field ),
 				'basetype'    => $field->type,
+				'form_id'     => $field->form_id,
 			),
 			$field,
 			'formidable'
@@ -351,7 +399,11 @@ class Formidable_Integration extends BaseIntegration {
 			return $field->multiple ?? false;
 		}
 
-		if ( 'checkbox' === $field->type ) {
+		if ( 'range' === $field->type ) {
+			return boolval( $field->options['is_range_slider'] ?? false );
+		}
+
+		if ( in_array( $field->type, array( 'repeater', 'checkbox', 'address', 'credit_card' ), true ) ) {
 			return true;
 		}
 
@@ -367,11 +419,73 @@ class Formidable_Integration extends BaseIntegration {
 	 */
 	private function field_value_schema( $field ) {
 		switch ( $field->type ) {
+			case 'form':
+				$embedded      = FrmForm::getOne( $field->field_options['form_select'] );
+				$embedded_data = $this->serialize_form( $embedded );
+
+				$schema = array(
+					'type'                 => 'object',
+					'properties'           => array(),
+					'additionalProperties' => false,
+				);
+
+				foreach ( $embedded_data['fields'] as $embedded_field ) {
+					$schema['properties'][ $embedded_field['name'] ] = $embedded_field['schema'];
+				}
+
+				return $schema;
+			case 'repeater':
+				$schema = array(
+					'type'            => 'array',
+					'items'           => array(
+						'type'                 => 'object',
+						'properties'           => array(),
+						'additionalProperties' => false,
+					),
+					'additionalItems' => true,
+				);
+
+				foreach ( $field->fields as $subfield ) {
+					$schema['items']['properties'][ $subfield['name'] ] = $subfield['schema'];
+				}
+
+				return $schema;
+			case 'star':
+			case 'scale':
+			case 'range':
+			case 'quantity':
+				return array( 'type' => 'integer' );
+			case 'total':
+			case 'number':
+				return array( 'type' => 'number' );
 			case 'checkbox':
 				return array(
 					'type'            => 'array',
 					'items'           => array( 'type' => 'string' ),
 					'additionalItems' => false,
+				);
+			case 'credit_card':
+				return array(
+					'type'                 => 'object',
+					'properties'           => array(
+						'cc'    => 'string',
+						'cvc'   => 'string',
+						'month' => 'string',
+						'year'  => 'string',
+					),
+					'additionalProperties' => false,
+				);
+			case 'address':
+				return array(
+					'type'                 => 'object',
+					'properties'           => array(
+						'line1'   => 'string',
+						'line2'   => 'string',
+						'city'    => 'string',
+						'country' => 'string',
+						'zip'     => 'string',
+					),
+					'additionalProperties' => false,
 				);
 			case 'select':
 				if ( $field->multiple ) {
@@ -383,24 +497,23 @@ class Formidable_Integration extends BaseIntegration {
 				} else {
 					return array( 'type' => 'string' );
 				}
-			case 'radio':
-				return array( 'type' => 'string' );
-			case 'number':
-				return array( 'type' => 'number' );
-			case 'file':
-				return array( 'type' => 'string' );
-			case 'email':
-				return array( 'type' => 'string' );
-			case 'textarea':
-				return array( 'type' => 'string' );
+			case 'name':
+				return array(
+					'type'                 => 'object',
+					'properties'           => array(
+						'first' => 'string',
+						'last'  => 'string',
+					),
+					'additionalProperties' => false,
+				);
 			case 'hidden':
-				return array( 'type' => 'string' );
-			case 'date':
-				return array( 'type' => 'string' );
-			case 'phone':
-				return array( 'type' => 'string' );
-			case 'website':
-				return array( 'type' => 'string' );
+				$type = 'string';
+
+				if ( 'number' === $field->field_options['format'] ) {
+					$type = 'number';
+				}
+
+				return array( 'type' => $type );
 			default:
 				return array( 'type' => 'string' );
 		}
@@ -417,6 +530,11 @@ class Formidable_Integration extends BaseIntegration {
 	public function serialize_submission( $submission, $form_data ) {
 		$data = array();
 
+		$by_field_id = array();
+		foreach ( $submission['values'] as $submission_value ) {
+			$by_field_id[ $submission_value->field_id ] = $submission_value;
+		}
+
 		foreach ( $form_data['fields'] as $field ) {
 			if ( $field['is_file'] ) {
 				continue;
@@ -425,12 +543,41 @@ class Formidable_Integration extends BaseIntegration {
 			$input_name = $field['name'];
 			$field_id   = $field['id'];
 
-			$value = $submission['values'][ $field_id ] ?? null;
+			$value = $by_field_id[ $field_id ] ?? null;
 
 			if ( null !== $value ) {
-				$value = $this->format_value( $value->meta_value, $field['basetype'] );
-				if ( null !== $value ) {
-					$data[ $input_name ] = $value;
+				if ( 'form' === $field['basetype'] ) {
+					$entry_id            = reset( maybe_unserialize( $value->meta_value ) );
+					$entry               = FrmEntry::getOne( $entry_id );
+					$embedded_form       = $this->get_form_by_id( $entry->form_id );
+					$embedded_submission = array(
+						'id'     => $entry_id,
+						'values' => FrmEntryMeta::get_entry_meta_info( $entry_id ),
+					);
+					$embedded_data       = $this->serialize_submission( $embedded_submission, $embedded_form );
+
+					$data[ $embedded_form['title'] ] = $embedded_data;
+				} elseif ( 'repeater' === $field['basetype'] ) {
+					$entries_ids   = maybe_unserialize( $value->meta_value );
+					$repeater_form = $this->get_form_by_id( $field['form_id'] );
+
+					$repeater_data = array();
+					foreach ( $entries_ids as $entry_id ) {
+						$repeater_submission = array(
+							'id'     => $entry_id,
+							'values' => FrmEntryMeta::get_entry_meta_info( $entry_id ),
+						);
+
+						$repeater_data[] = $this->serialize_submission( $repeater_submission, $repeater_form );
+					}
+
+					$data[ $field['name'] ] = $repeater_data;
+				} else {
+					$value = $this->format_value( $value->meta_value, $field['basetype'] );
+
+					if ( null !== $value ) {
+						$data[ $input_name ] = $value;
+					}
 				}
 			}
 		}
@@ -449,9 +596,22 @@ class Formidable_Integration extends BaseIntegration {
 	private function format_value( $value, $field_type ) {
 		try {
 			switch ( $field_type ) {
+				case 'star':
+				case 'scale':
+				case 'quantity':
+					return (int) $value;
+				case 'range':
+					if ( false !== strpos( $value, ',' ) ) {
+						return array_map( 'intval', explode( ',', $value ) );
+					}
+
+					return (int) $value;
+				case 'total':
 				case 'number':
 					return (float) $value;
 				case 'checkbox':
+					$value = maybe_unserialize( $value );
+
 					if ( is_array( $value ) ) {
 						return array_filter( $value );
 					} else {
@@ -463,27 +623,25 @@ class Formidable_Integration extends BaseIntegration {
 					} else {
 						return $value;
 					}
-				case 'file':
-					return $value;
-				case 'hidden':
-					return $value;
-				case 'date':
-					return $value;
-				case 'email':
-					return $value;
-				case 'textarea':
-					return $value;
-				case 'phone':
-					return $value;
-				case 'website':
-					return $value;
-				case 'radio':
-					return $value;
+				case 'credit_card':
+				case 'address':
+				case 'name':
+					return maybe_unserialize( $value );
 				case 'user_id':
 					$value = maybe_unserialize( $value );
-					return $value['unique_id'] ?? null;
-				default:
+					if ( is_array( $value ) ) {
+						return intval( $value['unique_id'] ?? null );
+					}
+
+					return (int) $value;
+				case 'hidden':
+					if ( is_numeric( $value ) ) {
+						return (float) $value;
+					}
+
 					return $value;
+				default:
+					return (string) $value;
 			}
 		} catch ( TypeError $e ) {
 			return $value;
@@ -726,7 +884,7 @@ class Formidable_Integration extends BaseIntegration {
 	 * @return array
 	 */
 	private function url_field( $args ) {
-		return $this->field_template( 'website', $args );
+		return $this->field_template( 'url', $args );
 	}
 
 	/**
