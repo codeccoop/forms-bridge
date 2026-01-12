@@ -202,22 +202,23 @@ class Formidable_Integration extends BaseIntegration {
 	 * @return array|null Collection of uploaded files.
 	 */
 	public function uploads() {
-		$form_data = $this->form();
-		if ( ! $form_data ) {
+		global $frm_vars;
+
+		$form_id = FrmAppHelper::get_post_param( 'form_id', '', 'absint' );
+
+		if ( ! $form_id || ! isset( $frm_vars['created_entries'][ $form_id ]['entry_id'] ) ) {
 			return null;
 		}
 
-		$entry_id = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
-		if ( ! $entry_id ) {
-			return null;
-		}
-
-		$submission = FrmEntry::getOne( $entry_id );
-		if ( ! $submission ) {
-			return null;
-		}
+		$entry_id = $frm_vars['created_entries'][ $form_id ]['entry_id'];
 
 		$form = $this->form();
+
+		$submission = array(
+			'id'     => $entry_id,
+			'values' => FrmEntryMeta::get_entry_meta_info( $entry_id ),
+		);
+
 		return $this->submission_uploads( $submission, $form );
 	}
 
@@ -376,7 +377,7 @@ class Formidable_Integration extends BaseIntegration {
 				'options'     => $options,
 				'is_file'     => 'file' === $field->type,
 				'is_multi'    => $this->is_multi_field( $field ),
-				'conditional' => false,
+				'conditional' => ! empty( $field->field_options['hide_field'] ) && ! empty( $field->field_options['hide_opt'] ),
 				'format'      => 'date' === $field->type ? 'yyyy-mm-dd' : '',
 				'schema'      => $this->field_value_schema( $field ),
 				'basetype'    => $field->type,
@@ -398,7 +399,7 @@ class Formidable_Integration extends BaseIntegration {
 	 */
 	private function is_multi_field( $field ) {
 		if ( 'file' === $field->type ) {
-			return $field->multiple ?? false;
+			return boolval( $field->field_options['multiple'] ?? false );
 		}
 
 		if ( 'range' === $field->type ) {
@@ -417,7 +418,7 @@ class Formidable_Integration extends BaseIntegration {
 	 *
 	 * @param object $field Field instance.
 	 *
-	 * @return array JSON schema of the value of the field.
+	 * @return array|null JSON schema of the value of the field.
 	 */
 	private function field_value_schema( $field ) {
 		switch ( $field->type ) {
@@ -516,6 +517,8 @@ class Formidable_Integration extends BaseIntegration {
 				}
 
 				return array( 'type' => $type );
+			case 'file':
+				return null;
 			default:
 				return array( 'type' => 'string' );
 		}
@@ -542,10 +545,9 @@ class Formidable_Integration extends BaseIntegration {
 				continue;
 			}
 
-			$input_name = $field['name'];
+			$field_name = $field['name'];
 			$field_id   = $field['id'];
-
-			$value = $by_field_id[ $field_id ] ?? null;
+			$value      = $by_field_id[ $field_id ] ?? null;
 
 			if ( null !== $value ) {
 				if ( 'form' === $field['basetype'] ) {
@@ -579,7 +581,7 @@ class Formidable_Integration extends BaseIntegration {
 					$value = $this->format_value( $value->meta_value, $field['basetype'] );
 
 					if ( null !== $value ) {
-						$data[ $input_name ] = $value;
+						$data[ $field_name ] = $value;
 					}
 				}
 			}
@@ -660,49 +662,66 @@ class Formidable_Integration extends BaseIntegration {
 	 * @return array Uploaded files data.
 	 */
 	protected function submission_uploads( $submission, $form_data ) {
-		return array_reduce(
-			array_filter(
-				$form_data['fields'],
-				function ( $field ) {
-					return $field['is_file'];
-				}
-			),
-			function ( $carry, $field ) use ( $submission, $form_data ) {
-				$field_id = $field['id'];
-				$value    = isset( $submission->metas[ $field_id ] ) ? $submission->metas[ $field_id ] : null;
+		global $frm_vars;
 
-				if ( ! $value ) {
-					return $carry;
-				}
+		$uploads = array();
 
-				$upload_dir = wp_upload_dir();
-				$paths      = array();
+		$media_id = $frm_vars['media_id'] ?? array();
+		foreach ( $media_id as $field_id => $attachment_ids ) {
+			$paths = array();
 
-				if ( is_array( $value ) ) {
-					foreach ( $value as $file_url ) {
-						$file_path = str_replace( $upload_dir['baseurl'], $upload_dir['basedir'], $file_url );
-						if ( is_file( $file_path ) ) {
-							$paths[] = $file_path;
+			if ( ! is_array( $attachment_ids ) ) {
+				$attachment_ids = array( $attachment_ids );
+			}
+
+			foreach ( $form_data['fields'] as $field ) {
+				if ( intval( $field['id'] ) === intval( $field_id ) ) {
+					foreach ( $attachment_ids as $attachment_id ) {
+						$attachment_path = get_attached_file( $attachment_id );
+
+						if ( $attachment_path && is_file( $attachment_path ) ) {
+							if ( ! is_readable( $attachment_path ) ) {
+								global $wp_filesystem;
+
+								$tmpdir = get_temp_dir();
+
+								clearstatcache();
+								$attachment_chmod = fileperms( $attachment_path ) & 0777;
+
+								$wp_filesystem->chmod( $attachment_path, 0400 );
+
+								$attachment_filename = basename( $attachment_path );
+								$attachment_contents = $wp_filesystem->get_contents( $attachment_path );
+
+								$wp_filesystem->chmod( $attachment_path, $attachment_chmod );
+
+								$attachment_path = $tmpdir . $attachment_filename;
+								$wp_filesystem->put_contents( $attachment_path, $attachment_contents );
+							}
+
+							$paths[] = $attachment_path;
+
+							if ( ! is_readable( $attachment_path ) ) {
+								global $wp_filesystem;
+								$wp_filesystem->chown( $attachment_path, 0400 );
+								$protected_paths[] = $attachment_path;
+							}
 						}
 					}
-				} else {
-					$file_path = str_replace( $upload_dir['baseurl'], $upload_dir['basedir'], $value );
-					if ( is_file( $file_path ) ) {
-						$paths[] = $file_path;
-					}
-				}
 
-				if ( ! empty( $paths ) ) {
-					$carry[ $field['name'] ] = array(
-						'path'     => $field['is_multi'] ? $paths : $paths[0],
-						'is_multi' => $field['is_multi'],
-					);
+					break;
 				}
+			}
 
-				return $carry;
-			},
-			array()
-		);
+			if ( ! empty( $paths ) ) {
+				$uploads[ $field['name'] ] = array(
+					'path'     => $field['is_multi'] ? $paths : $paths[0],
+					'is_multi' => $field['is_multi'],
+				);
+			}
+		}
+
+		return $uploads;
 	}
 
 	/**
