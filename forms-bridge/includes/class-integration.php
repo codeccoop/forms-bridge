@@ -56,25 +56,33 @@ class Integration extends Singleton {
 	private static function check_dependencies( $integration ) {
 		switch ( $integration ) {
 			case 'wpcf7':
-				$dep = 'contact-form-7/wp-contact-form-7.php';
+				$deps = array( 'contact-form-7/wp-contact-form-7.php' );
 				break;
 			case 'gf':
-				$dep = 'gravityforms/gravityforms.php';
+				$deps = array( 'gravityforms/gravityforms.php' );
 				break;
 			case 'wpforms':
-				$dep = 'wpforms/wpforms.php';
+				$deps = array( 'wpforms/wpforms.php', 'wpforms-lite/wpforms.php' );
 				break;
 			case 'ninja':
-				$dep = 'ninja-forms/ninja-forms.php';
+				$deps = array( 'ninja-forms/ninja-forms.php' );
 				break;
 			case 'woo':
-				$dep = 'woocommerce/woocommerce.php';
+				$deps = array( 'woocommerce/woocommerce.php' );
 				break;
 			default:
 				return false;
 		}
 
-		return Forms_Bridge::is_plugin_active( $dep ) || defined( 'WP_TESTS_DOMAIN' );
+		$is_active = false;
+		foreach ( $deps as $dep ) {
+			if ( Forms_Bridge::is_plugin_active( $dep ) ) {
+				$is_active = true;
+				break;
+			}
+		}
+
+		return $is_active || defined( 'WP_TESTS_DOMAIN' );
 	}
 
 	/**
