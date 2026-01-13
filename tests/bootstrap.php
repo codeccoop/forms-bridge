@@ -52,12 +52,40 @@ function _manually_load_plugin() {
 	require ABSPATH . 'wp-content/mu-plugins/wpforms-lite/wpforms.php';
 	require ABSPATH . 'wp-content/mu-plugins/woocommerce/woocommerce.php';
 
+	// WooCommerce interceptors
 	add_filter(
 		'woocommerce_load_webhooks_limit',
 		function () {
 			return -1;
 		},
 		90,
+	);
+
+	// Formidable mixtures
+	add_action(
+		'muplugins_loaded',
+		function () {
+			global $wp_rewrite;
+			$wp_rewrite = (object) array(
+				'feeds' => array(),
+			);
+
+			function wp_get_current_user() {
+				return new WP_User( 1, 'testuser' );
+			}
+
+			function get_user_by() {
+				return new WP_User( 1, 'testuser' );
+			}
+
+			function is_user_logged_in() {
+				return true;
+			}
+
+			$frmdb = new FrmMigrate();
+			$frmdb->upgrade();
+		},
+		20,
 	);
 
 	/* Plugin tests */

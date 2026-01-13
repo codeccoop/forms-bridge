@@ -45,19 +45,22 @@ class FormidableTest extends BaseIntegrationTest {
 
 		// Add fields if they exist in config
 		if ( isset( $config->fields ) && is_array( $config->fields ) ) {
-			foreach ( $config->field as $field ) {
+			foreach ( $config->fields as $field ) {
 				$field_data = array(
+					'type'          => $field->type,
 					'field_key'     => $field->field_key,
 					'name'          => $field->name,
 					'description'   => $field->description,
 					'required'      => $field->required,
 					'options'       => $field->options,
 					'field_options' => $field->field_options,
+					'form_id'       => $form_id,
+					'default_value' => $field->default_value,
 				);
 
 				$field_data['field_options']['draft'] = 0;
 
-				FrmField::create( $field_values );
+				FrmField::create( $field_data );
 			}
 		}
 
@@ -68,53 +71,46 @@ class FormidableTest extends BaseIntegrationTest {
 		return (bool) FrmForm::destroy( $form->id );
 	}
 
-	public function test_job_position_form_serialization() {
-		$form      = self::get_form( 'Job position' );
+	public function test_appointments_form_serialization() {
+		$form      = self::get_form( 'Appointments' );
 		$form_data = $this->serialize_form( $form );
 
 		$fields = $form_data['fields'];
-		$this->assertEquals( 7, count( $fields ) );
+		$this->assertEquals( 6, count( $fields ) );
 
 		$field = $fields[0];
 		$this->assertField( $field, 'text' );
 
+		$field = $fields[2];
+		$this->assertField( $field, 'email' );
+
 		$field = $fields[3];
-		$this->assertField( $field, 'textarea' );
-
-		$field = $fields[4];
-		$this->assertEquals( 3, count( $field['options'] ) );
-		$this->assertField( $field, 'select' );
-
-		$field = $fields[5];
-		$this->assertField( $field, 'file', array( 'is_file' => true ) );
-
-		$field = $fields[6];
 		$this->assertField(
 			$field,
-			'checkbox',
-			array(
-				'basetype' => 'acceptance',
-				'schema'   => 'boolean',
-				'required' => false,
-			)
+			'date',
+			array( 'format' => 'yyyy-mm-dd' ),
 		);
+
+		$field = $fields[4];
+		$this->assertEquals( 24, count( $field['options'] ) );
+		$this->assertField( $field, 'select' );
 	}
 
-	public function test_job_position_form_submission_serialization() {
-		$form = self::get_form( 'Job position' );
+	public function test_appointments_submission_serialization() {
+		$form = self::get_form( 'Appointments' );
 
 		$form_data = $this->serialize_form( $form );
 
 		$store = self::store();
 		foreach ( $store as $name => $object ) {
-			if ( 'job-position-submission' === $name ) {
+			if ( 'appointments-submission' === $name ) {
 				$submission = $object;
 				break;
 			}
 		}
 
 		if ( ! isset( $submission ) ) {
-			throw new Exception( 'Job position submission not found' );
+			throw new Exception( 'Appointments submission not found' );
 		}
 
 		$payload = $this->serialize_submission( $submission, $form_data );
@@ -126,68 +122,32 @@ class FormidableTest extends BaseIntegrationTest {
 		$this->assertTrue( $payload['acceptance'] );
 	}
 
-	public function test_contact_form_serialization() {
-		$form = self::get_form( 'Contact Form' );
+	public function test_contacts_form_serialization() {
+		$form = self::get_form( 'Contacts' );
 
 		$form_data = $this->serialize_form( $form );
 
 		$fields = $form_data['fields'];
-		$this->assertEquals( 13, count( $fields ) );
+		$this->assertEquals( 4, count( $fields ) );
 
 		$field = $fields[0];
-		$this->assertField( $field, 'text' );
+		$this->assertField( $field, 'email' );
 
 		$field = $fields[2];
-		$this->assertField( $field, 'tel' );
+		$this->assertField( $field, 'text' );
 
 		$field = $fields[3];
-		$this->assertField( $field, 'url', array( 'required' => false ) );
-
-		$field = $fields[9];
-		$this->assertEqualSets(
-			array(
-				'value' => 'm',
-				'label' => 'Male',
-			),
-			$field['options'][0]
-		);
-		$this->assertField(
-			$field,
-			'select',
-			array(
-				'basetype' => 'radio',
-				'required' => false,
-			)
-		);
-
-		$field = $fields[12];
-		$this->assertEqualSets(
-			array(
-				'value' => 'DevOps',
-				'label' => 'DevOps',
-			),
-			$field['options'][2]
-		);
-		$this->assertField(
-			$field,
-			'select',
-			array(
-				'schema'   => 'array',
-				'basetype' => 'checkbox',
-				'required' => false,
-				'is_multi' => true,
-			)
-		);
+		$this->assertField( $field, 'text', array( 'required' => false ) );
 	}
 
-	public function test_contact_form_submission_serialization() {
-		$form = self::get_form( 'Contact Form' );
+	public function test_contacts_submission_serialization() {
+		$form = self::get_form( 'Contacts' );
 
 		$form_data = $this->serialize_form( $form );
 
 		$store = self::store();
 		foreach ( $store as $name => $object ) {
-			if ( 'contact-submission' === $name ) {
+			if ( 'contacts-submission' === $name ) {
 				$submission = $object;
 				break;
 			}
@@ -203,6 +163,44 @@ class FormidableTest extends BaseIntegrationTest {
 		$this->assertSame( 'https://www.codeccoop.org', $payload['website'] );
 		$this->assertSame( 'm', $payload['gender'] );
 		$this->assertEqualSets( array( 'Web development', 'Sys admin' ), $payload['skills'] );
+	}
+
+	public function test_leads_form_serialization() {
+		$form = self::get_form( 'Leads' );
+
+		$form_data = $this->serialize_form( $form );
+
+		$fields = $form_data['fields'];
+		$this->assertEquals( 5, count( $fields ) );
+
+		$field = $fields[3];
+		$this->assertField( $field, 'text', array( 'required' => false ) );
+
+		$field = $fields[4];
+		$this->assertField( $field, 'textarea', array( 'required' => false ) );
+	}
+
+	public function test_leads_submission_serialization() {
+		$form = self::get_form( 'Leads' );
+
+		$form_data = $this->serialize_form( $form );
+
+		$store = self::store();
+		foreach ( $store as $name => $object ) {
+			if ( 'leads-submission' === $name ) {
+				$submission = $object;
+				break;
+			}
+		}
+
+		if ( ! isset( $submission ) ) {
+			throw new Exception( 'Leads submission not found' );
+		}
+
+		$payload = $this->serialize_submission( $submission, $form_data );
+
+		$this->assertSame( 'VICENTA SERRA', $payload['your-name'] );
+		$this->assertSame( 'https://www.codeccoop.org', $payload['website'] );
 	}
 
 	public function test_form_templates() {

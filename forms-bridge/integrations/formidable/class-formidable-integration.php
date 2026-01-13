@@ -365,6 +365,14 @@ class Formidable_Integration extends BaseIntegration {
 			case 'hidden':
 				$type = 'hidden';
 				break;
+			case 'toggle':
+				if ( $field->options[0] === '' && $field->options[1] === '1' ) {
+					$type = 'checkbox';
+				} else {
+					$type = 'text';
+				}
+
+				break;
 			default:
 				$type = 'text';
 		}
@@ -376,7 +384,7 @@ class Formidable_Integration extends BaseIntegration {
 				'type'        => $type,
 				'name'        => trim( $field->name ),
 				'label'       => trim( $field->name ),
-				'required'    => $field->required,
+				'required'    => (bool) $field->required,
 				'options'     => $options,
 				'is_file'     => 'file' === $field->type,
 				'is_multi'    => $this->is_multi_field( $field ),
@@ -522,6 +530,14 @@ class Formidable_Integration extends BaseIntegration {
 				return array( 'type' => $type );
 			case 'file':
 				return null;
+			case 'toggle':
+				if ( $field->options[0] === '' && $field->options[1] === '1' ) {
+					$type = 'boolean';
+				} else {
+					$type = 'text';
+				}
+
+				return array( 'type' => $type );
 			default:
 				return array( 'type' => 'string' );
 		}
@@ -581,7 +597,7 @@ class Formidable_Integration extends BaseIntegration {
 
 					$data[ $field['name'] ] = $repeater_data;
 				} else {
-					$value = $this->format_value( $value->meta_value, $field['basetype'] );
+					$value = $this->format_value( $value->meta_value, $field );
 
 					if ( null !== $value ) {
 						$data[ $field_name ] = $value;
@@ -596,14 +612,14 @@ class Formidable_Integration extends BaseIntegration {
 	/**
 	 * Formats field values with noop fallback.
 	 *
-	 * @param mixed  $value Field's value.
-	 * @param string $field_type Formidable field type.
+	 * @param mixed $value Field's value.
+	 * @param array $field Serialized field data.
 	 *
 	 * @return mixed Formatted value.
 	 */
-	private function format_value( $value, $field_type ) {
+	private function format_value( $value, $field ) {
 		try {
-			switch ( $field_type ) {
+			switch ( $field['basetype'] ) {
 				case 'star':
 				case 'scale':
 				case 'quantity':
@@ -648,6 +664,8 @@ class Formidable_Integration extends BaseIntegration {
 					}
 
 					return $value;
+				case 'toggle':
+					return $field['type'] === 'checkbox' ? boolval( $value ) : $value;
 				default:
 					return (string) $value;
 			}

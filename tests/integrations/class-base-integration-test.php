@@ -66,6 +66,8 @@ abstract class BaseIntegrationTest extends WP_UnitTestCase {
 				}
 			} elseif ( is_object( $form ) && property_exists( $form, 'post_title' ) && $form->post_title === $title ) {
 				return $form;
+			} elseif ( is_object( $form ) && property_exists( $form, 'name' ) && $form->name === $title ) {
+				return $form;
 			}
 		}
 
