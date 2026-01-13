@@ -484,7 +484,7 @@ class GF_Integration extends BaseIntegration {
 	 *
 	 * @param GF_Field $field Field instance.
 	 *
-	 * @return array JSON schema of the value of the field.
+	 * @return array|null JSON schema of the value of the field.
 	 */
 	private function field_value_schema( $field ) {
 		switch ( $field->type ) {
@@ -567,7 +567,7 @@ class GF_Integration extends BaseIntegration {
 			case 'quantity':
 				return array( 'type' => 'number' );
 			case 'fileupload':
-				return;
+				return null;
 			case 'consent':
 				return array( 'type' => 'boolean' );
 			default:

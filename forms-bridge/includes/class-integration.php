@@ -70,6 +70,9 @@ class Integration extends Singleton {
 			case 'woo':
 				$deps = array( 'woocommerce/woocommerce.php' );
 				break;
+			case 'formidable':
+				$deps = array( 'formidable/formidable.php' );
+				break;
 			default:
 				return false;
 		}

@@ -395,13 +395,6 @@ class GSheetsTest extends WP_UnitTestCase {
 	 * Test appending data with headers auto-creation.
 	 */
 	public function test_append_creates_headers() {
-		// Mock empty headers response.
-		self::$mock_response = array(
-			'range'          => 'EmptySheet!A1:Z1',
-			'majorDimension' => 'ROWS',
-			'values'         => array(),
-		);
-
 		$bridge = new GSheets_Form_Bridge(
 			array(
 				'name'     => 'test-headers-bridge',

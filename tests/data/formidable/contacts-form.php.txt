@@ -1,0 +1,36 @@
+O:8:"stdClass":13:{s:2:"id";s:2:"26";s:8:"form_key";s:8:"contacts";s:4:"name";s:8:"Contacts";s:11:"description";s:0:"";s:14:"parent_form_id";s:1:"0";s:9:"logged_in";s:1:"0";s:8:"editable";s:1:"0";s:11:"is_template";s:1:"0";s:16:"default_template";s:1:"0";s:6:"status";s:9:"published";s:7:"options";a:18:{s:12:"submit_value";s:6:"Submit";s:14:"success_action";s:7:"message";s:11:"success_msg";s:54:"Your responses were successfully submitted. Thank you!";s:9:"show_form";i:0;s:7:"akismet";s:0:"";s:13:"stopforumspam";i:0;s:8:"antispam";i:0;s:7:"no_save";i:0;s:9:"ajax_load";i:0;s:11:"js_validate";i:0;s:10:"form_class";s:0:"";s:12:"custom_style";i:1;s:11:"before_html";s:224:"<legend class="frm_screen_reader">[form_name]</legend>
+[if form_name]<h3 class="frm_form_title">[form_name]</h3>[/if form_name]
+[if form_description]<div class="frm_description">[form_description]</div>[/if form_description]";s:10:"after_html";s:0:"";s:11:"submit_html";s:511:"<div class="frm_submit frm_flex">
+<button class="frm_button_submit" type="submit"  [button_action]>[button_label]</button>
+[if back_button]<button type="submit" name="frm_prev_page" formnovalidate="formnovalidate" class="frm_prev_page" [back_hook]>[back_label]</button>[/if back_button]
+[if save_draft]<button class="frm_save_draft" [draft_hook]>[draft_label]</button>[/if save_draft]
+[if start_over]<a href="#" tabindex="0" class="frm_start_over" [start_over_hook]>[start_over_label]</a>[/if start_over]
+</div>";s:10:"show_title";i:0;s:16:"show_description";i:0;s:11:"ajax_submit";i:0;}s:10:"created_at";s:19:"2026-01-13 10:03:07";s:6:"fields";a:4:{i:0;O:8:"stdClass":13:{s:2:"id";s:3:"254";s:9:"field_key";s:10:"your-email";s:4:"name";s:10:"Your email";s:11:"description";s:0:"";s:4:"type";s:5:"email";s:13:"default_value";s:0:"";s:7:"options";s:0:"";s:11:"field_order";s:1:"1";s:8:"required";s:1:"1";s:13:"field_options";a:18:{s:4:"size";s:0:"";s:3:"max";s:0:"";s:5:"label";s:0:"";s:5:"blank";s:29:"[field_name] cannot be blank.";s:18:"required_indicator";s:1:"*";s:7:"invalid";s:0:"";s:10:"unique_msg";s:0:"";s:14:"separate_value";i:0;s:14:"clear_on_focus";i:0;s:7:"classes";s:0:"";s:11:"custom_html";s:493:"<div id="frm_field_[id]_container" class="frm_form_field form-field [required_class][error_class]">
+	<label for="field_[key]" id="field_[key]_label" class="frm_primary_label">[field_name]
+		<span class="frm_required" aria-hidden="true">[required_label]</span>
+	</label>
+	[input]
+	[if description]<div class="frm_description" id="frm_desc_field_[key]">[description]</div>[/if description]
+	[if error]<div class="frm_error" role="alert" id="frm_error_field_[key]">[error]</div>[/if error]
+</div>";s:6:"minnum";i:1;s:6:"maxnum";i:10;s:4:"step";i:1;s:6:"format";s:0:"";s:11:"placeholder";s:0:"";s:5:"draft";i:0;s:12:"autocomplete";s:5:"email";}s:7:"form_id";s:2:"26";s:10:"created_at";s:19:"2026-01-13 10:03:07";s:9:"form_name";s:8:"Contacts";}i:1;O:8:"stdClass":13:{s:2:"id";s:3:"255";s:9:"field_key";s:15:"your-first-name";s:4:"name";s:15:"Your first name";s:11:"description";s:0:"";s:4:"type";s:4:"text";s:13:"default_value";s:0:"";s:7:"options";s:0:"";s:11:"field_order";s:1:"2";s:8:"required";s:1:"1";s:13:"field_options";a:17:{s:4:"size";s:0:"";s:3:"max";s:0:"";s:5:"label";s:0:"";s:5:"blank";s:29:"[field_name] cannot be blank.";s:18:"required_indicator";s:1:"*";s:7:"invalid";s:0:"";s:10:"unique_msg";s:0:"";s:14:"separate_value";i:0;s:14:"clear_on_focus";i:0;s:7:"classes";s:0:"";s:11:"custom_html";s:493:"<div id="frm_field_[id]_container" class="frm_form_field form-field [required_class][error_class]">
+	<label for="field_[key]" id="field_[key]_label" class="frm_primary_label">[field_name]
+		<span class="frm_required" aria-hidden="true">[required_label]</span>
+	</label>
+	[input]
+	[if description]<div class="frm_description" id="frm_desc_field_[key]">[description]</div>[/if description]
+	[if error]<div class="frm_error" role="alert" id="frm_error_field_[key]">[error]</div>[/if error]
+</div>";s:6:"minnum";i:1;s:6:"maxnum";i:10;s:4:"step";i:1;s:6:"format";s:0:"";s:11:"placeholder";s:0:"";s:5:"draft";i:0;}s:7:"form_id";s:2:"26";s:10:"created_at";s:19:"2026-01-13 10:03:07";s:9:"form_name";s:8:"Contacts";}i:2;O:8:"stdClass":13:{s:2:"id";s:3:"256";s:9:"field_key";s:14:"your-last-name";s:4:"name";s:14:"Your last name";s:11:"description";s:0:"";s:4:"type";s:4:"text";s:13:"default_value";s:0:"";s:7:"options";s:0:"";s:11:"field_order";s:1:"3";s:8:"required";s:1:"1";s:13:"field_options";a:17:{s:4:"size";s:0:"";s:3:"max";s:0:"";s:5:"label";s:0:"";s:5:"blank";s:29:"[field_name] cannot be blank.";s:18:"required_indicator";s:1:"*";s:7:"invalid";s:0:"";s:10:"unique_msg";s:0:"";s:14:"separate_value";i:0;s:14:"clear_on_focus";i:0;s:7:"classes";s:0:"";s:11:"custom_html";s:493:"<div id="frm_field_[id]_container" class="frm_form_field form-field [required_class][error_class]">
+	<label for="field_[key]" id="field_[key]_label" class="frm_primary_label">[field_name]
+		<span class="frm_required" aria-hidden="true">[required_label]</span>
+	</label>
+	[input]
+	[if description]<div class="frm_description" id="frm_desc_field_[key]">[description]</div>[/if description]
+	[if error]<div class="frm_error" role="alert" id="frm_error_field_[key]">[error]</div>[/if error]
+</div>";s:6:"minnum";i:1;s:6:"maxnum";i:10;s:4:"step";i:1;s:6:"format";s:0:"";s:11:"placeholder";s:0:"";s:5:"draft";i:0;}s:7:"form_id";s:2:"26";s:10:"created_at";s:19:"2026-01-13 10:03:07";s:9:"form_name";s:8:"Contacts";}i:3;O:8:"stdClass":13:{s:2:"id";s:3:"257";s:9:"field_key";s:10:"your-phone";s:4:"name";s:10:"Your phone";s:11:"description";s:0:"";s:4:"type";s:4:"text";s:13:"default_value";s:0:"";s:7:"options";s:0:"";s:11:"field_order";s:1:"4";s:8:"required";s:1:"0";s:13:"field_options";a:17:{s:4:"size";s:0:"";s:3:"max";s:0:"";s:5:"label";s:0:"";s:5:"blank";s:29:"[field_name] cannot be blank.";s:18:"required_indicator";s:1:"*";s:7:"invalid";s:0:"";s:10:"unique_msg";s:0:"";s:14:"separate_value";i:0;s:14:"clear_on_focus";i:0;s:7:"classes";s:0:"";s:11:"custom_html";s:493:"<div id="frm_field_[id]_container" class="frm_form_field form-field [required_class][error_class]">
+	<label for="field_[key]" id="field_[key]_label" class="frm_primary_label">[field_name]
+		<span class="frm_required" aria-hidden="true">[required_label]</span>
+	</label>
+	[input]
+	[if description]<div class="frm_description" id="frm_desc_field_[key]">[description]</div>[/if description]
+	[if error]<div class="frm_error" role="alert" id="frm_error_field_[key]">[error]</div>[/if error]
+</div>";s:6:"minnum";i:1;s:6:"maxnum";i:10;s:4:"step";i:1;s:6:"format";s:0:"";s:11:"placeholder";s:0:"";s:5:"draft";i:0;}s:7:"form_id";s:2:"26";s:10:"created_at";s:19:"2026-01-13 10:03:07";s:9:"form_name";s:8:"Contacts";}}}

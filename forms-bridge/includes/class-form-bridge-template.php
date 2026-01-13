@@ -927,7 +927,7 @@ class Form_Bridge_Template {
 
 		if ( 'woo' === $integration ) {
 			$data['form']['id'] = 1;
-		} elseif ( 'wpforms' === $integration ) {
+		} elseif ( in_array( $integration, array( 'wpforms', 'formidable' ), true ) ) {
 			$mappers = array();
 			foreach ( $data['form']['fields'] as &$field ) {
 				if ( 'file' !== $field['type'] ) {
@@ -1005,9 +1005,7 @@ class Form_Bridge_Template {
 
 					if ( ! $result ) {
 						if ( $create_form ) {
-							$integration_instance->remove_form(
-								$data['form']['id']
-							);
+							$integration_instance->remove_form( $data['form']['id'] );
 						}
 
 						return new WP_Error(
@@ -1060,9 +1058,7 @@ class Form_Bridge_Template {
 
 			if ( ! $bridge_created ) {
 				if ( $create_form ) {
-					$integration_instance->remove_form(
-						$data['bridge']['form_id']
-					);
+					$integration_instance->remove_form( $data['form']['id'] );
 				}
 
 				if ( $create_credential ) {

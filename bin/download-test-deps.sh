@@ -13,13 +13,14 @@ else
 	mkdir -p "$WORDPRESS_DIR/wp-content/mu-plugins"
 fi
 
-URLS=('https://downloads.wordpress.org/plugin/contact-form-7.6.1.3.zip'
-	'https://downloads.wordpress.org/plugin/ninja-forms.3.13.0.zip'
-	'https://www.codeccoop.org/formsbridge/plugins/wpforms.zip'
+URLS=('https://downloads.wordpress.org/plugin/contact-form-7.6.1.4.zip'
+	'https://downloads.wordpress.org/plugin/formidable.6.26.1.zip'
 	'https://www.codeccoop.org/formsbridge/plugins/gravityforms.zip'
-	'https://downloads.wordpress.org/plugin/woocommerce.10.3.4.zip')
+	'https://downloads.wordpress.org/plugin/ninja-forms.3.13.3.zip'
+	'https://downloads.wordpress.org/plugin/woocommerce.10.4.3.zip'
+	'https://downloads.wordpress.org/plugin/wpforms-lite.1.9.8.7.zip')
 
-PLUGINS=('contact-form-7' 'gravityforms' 'ninja-forms' 'wpforms', 'woocommerce')
+PLUGINS=('contact-form-7' 'formidable' 'gravityforms' 'ninja-forms' 'woocommerce' 'wpforms-lite')
 
 COUNT=${#PLUGINS[@]}
 
