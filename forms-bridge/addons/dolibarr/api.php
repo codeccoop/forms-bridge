@@ -321,7 +321,7 @@ function forms_bridge_dolibarr_create_thirdparty(
 	}
 
 	if ( ! isset( $thirdparty['code_client'] ) && ! $update ) {
-		$thirdparty['code_client'] = -1;
+		$thirdparty['code_client'] = 'auto';
 	}
 
 	$endpoint = '/api/index.php/thirdparties';
@@ -351,8 +351,7 @@ function forms_bridge_dolibarr_create_thirdparty(
 			->patch(
 				array(
 					'name'     => 'dolibarr-get-new-thirdparty-data',
-					'endpoint' =>
-						'/api/index.php/thirdparties/' . $response['data'],
+					'endpoint' => '/api/index.php/thirdparties/' . $response['data'],
 					'method'   => 'GET',
 				)
 			)

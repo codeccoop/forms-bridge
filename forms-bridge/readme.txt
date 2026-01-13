@@ -105,6 +105,12 @@ Browse the plugin's documentation on [formsbridge.codeccoop.org](https://formsbr
 
 == Changelog ==
 
+= 4.2.4 =
+* feat: formidable forms integration
+* feat: wpforms lite support
+* feat: dolibarr next code client api flag
+* feat: prettify json logs
+
 = 4.2.3 =
 * feat: tested up to 6.9
 * fix: zoho addons introspection
