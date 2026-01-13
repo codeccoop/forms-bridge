@@ -24,8 +24,9 @@ let them do the forms and then work together to make your business work with eas
 Forms Bridge supports the following form builders:
 
 - [Contact Form 7](https://wordpress.org/plugins/contact-form-7/)
+- [Formidable Forms](https://wordpress.org/plugins/formidable/)
 - [GravityForms](https://www.gravityforms.com)
-- [WP Forms (PRO)](https://wpforms.com/)
+- [WP Forms](https://wpforms.com/)
 - [Ninja Forms](https://wordpress.org/plugins/ninja-forms/)
 - [WooCommerce](https://wordpress.org/plugins/woocommerce)
 

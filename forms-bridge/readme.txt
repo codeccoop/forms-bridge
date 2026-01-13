@@ -4,7 +4,7 @@ Tags: forms, integration, erp, crm, rest api
 Donate link: https://buymeacoffee.com/codeccoop
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable Tag: 4.2.3
+Stable Tag: 4.2.4
 Tested up to: 6.9
 
 Bridge your WordPress forms without code, add custom fields, use field mappers, set up a workflow and make your data flow seamlessly to your backend.
@@ -20,8 +20,9 @@ Form builders are well known plugins that add forms to WordPress. We do bridges,
 Forms Bridge supports the following form builders:
 
 * [Contact Form 7](https://wordpress.org/plugins/contact-form-7/)
+* [Formidable Forms](https://wordpress.org/plugins/formidable/)
 * [GravityForms](https://www.gravityforms.com)
-* [WP Forms (PRO)](https://wpforms.com/)
+* [WP Forms](https://wpforms.com/)
 * [Ninja Forms](https://wordpress.org/plugins/ninja-forms/)
 * [WooCommerce](https://wordpress.org/plugins/woocommerce)
 
