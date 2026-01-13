@@ -927,7 +927,7 @@ class Form_Bridge_Template {
 
 		if ( 'woo' === $integration ) {
 			$data['form']['id'] = 1;
-		} elseif ( 'wpforms' === $integration ) {
+		} elseif ( in_array( $integration, array( 'wpforms', 'formidable' ), true ) ) {
 			$mappers = array();
 			foreach ( $data['form']['fields'] as &$field ) {
 				if ( 'file' !== $field['type'] ) {

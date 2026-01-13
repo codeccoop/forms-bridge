@@ -304,13 +304,11 @@ class Formidable_Integration extends BaseIntegration {
 	 * @return array|null
 	 */
 	private function serialize_field( $field ) {
-		// Skip non-input fields.
-		if ( in_array( $field->type, array( 'data', 'summary', 'break', 'end_divider', 'divider', 'html', 'captcha', 'submit' ), true ) ) {
+		$skip_fields = array( 'data', 'summary', 'break', 'end_divider', 'divider', 'html', 'captcha', 'submit' );
+
+		if ( in_array( $field->type, $skip_fields, true ) ) {
 			return null;
 		}
-
-		$label = $field->name ?: $field->description;
-		$name  = $field->field_key ?: $label;
 
 		$options = array();
 		if ( isset( $field->options ) && is_array( $field->options ) ) {
@@ -376,8 +374,8 @@ class Formidable_Integration extends BaseIntegration {
 			array(
 				'id'          => $field->id,
 				'type'        => $type,
-				'name'        => trim( $name ),
-				'label'       => trim( $label ),
+				'name'        => trim( $field->name ),
+				'label'       => trim( $field->name ),
 				'required'    => $field->required,
 				'options'     => $options,
 				'is_file'     => 'file' === $field->type,
@@ -550,8 +548,8 @@ class Formidable_Integration extends BaseIntegration {
 				continue;
 			}
 
-			$field_name = $field['name'];
-			$field_id   = $field['id'];
+			$field_name = trim( $field['name'] );
+			$field_id   = absint( $field['id'] );
 			$value      = $by_field_id[ $field_id ] ?? null;
 
 			if ( null !== $value ) {
@@ -653,7 +651,7 @@ class Formidable_Integration extends BaseIntegration {
 				default:
 					return (string) $value;
 			}
-		} catch ( TypeError $e ) {
+		} catch ( TypeError ) {
 			return $value;
 		}
 	}
@@ -719,7 +717,7 @@ class Formidable_Integration extends BaseIntegration {
 			}
 
 			if ( ! empty( $paths ) ) {
-				$uploads[ $field['name'] ] = array(
+				$uploads[ trim( $field['name'] ) ] = array(
 					'path'     => $field['is_multi'] ? $paths : $paths[0],
 					'is_multi' => $field['is_multi'],
 				);
@@ -738,12 +736,12 @@ class Formidable_Integration extends BaseIntegration {
 	 */
 	private function prepare_fields( $fields ) {
 		$formidable_fields = array();
-		$count             = count( $fields );
+
+		$count = count( $fields );
 		for ( $i = 0; $i < $count; $i++ ) {
 			$field = $fields[ $i ];
 			$args  = array(
-				'name'          => $field['name'],
-				'label'         => $field['label'] ?? '',
+				'name'          => $field['label'],
 				'required'      => $field['required'] ?? false,
 				'default_value' => $field['value'] ?? '',
 			);
@@ -806,13 +804,13 @@ class Formidable_Integration extends BaseIntegration {
 			$args,
 			array(
 				'type'          => $type,
-				'field_key'     => $args['name'] ?? 'untitled',
-				'name'          => $args['label'] ?? 'Untitled',
-				'required'      => $args['required'] ?? '',
+				'field_key'     => sanitize_title( $args['name'] ),
+				'name'          => $args['name'],
+				'required'      => $args['required'] ?? false,
 				'description'   => '',
 				'options'       => $args['options'] ?? '',
 				'field_options' => $options,
-				'multiple'      => $args['is_multi'] ?? 0,
+				'multiple'      => $args['is_multi'] ?? false,
 			),
 		);
 	}

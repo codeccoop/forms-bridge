@@ -22,9 +22,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  * WPForms integration.
  */
 class WPForms_Integration extends BaseIntegration {
-
+	/**
+	 * Handles integration name.
+	 *
+	 * @var string
+	 */
 	const NAME = 'wpforms';
 
+	/**
+	 * Handles integration title.
+	 *
+	 * @var string
+	 */
 	const TITLE = 'WP Forms';
 
 	/**
@@ -278,26 +287,13 @@ class WPForms_Integration extends BaseIntegration {
 	 * @param array[] $fields List of serialized fields.
 	 * @param array[] $all_fields Complete list of form data fields.
 	 *
-	 * @return array
+	 * @return array|null
 	 */
 	private function serialize_field( $field, $fields = array(), $all_fields = array() ) {
-		if (
-			in_array(
-				$field['type'],
-				array(
-					'submit',
-					'pagebreak',
-					'layout',
-					'captcha',
-					'content',
-					'entry-preview',
-					'html',
-					'divider',
-				),
-				true
-			)
-		) {
-			return;
+		$skip_fields = array( 'submit', 'pagebreak', 'layout', 'captcha', 'content', 'entry-preview', 'html', 'divider' );
+
+		if ( in_array( $field['type'], $skip_fields, true ) ) {
+			return null;
 		}
 
 		$repeaters = array();
