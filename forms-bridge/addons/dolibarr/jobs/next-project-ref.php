@@ -10,22 +10,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sets ref to -1 on the payload to inform Dolibarr to set this field to the next
- * project ref in hte serie on project creation.
+ * It queries the next valid project ref and sets its value as the 'ref' attribute of
+ * the payload.
  *
- * @param array $payload Bridge payload.
+ * @param array                $payload Bridge payload.
+ * @param Dolibarr_Form_Bridge $bridge Bridge object.
  *
  * @return array
  */
-function forms_bridge_dolibarr_next_project_ref( $payload ) {
-	$payload['ref'] = -1;
+function forms_bridge_dolibarr_next_project_ref( $payload, $bridge ) {
+	$project_ref = forms_bridge_dolibarr_get_next_project_ref( $payload, $bridge );
+
+	if ( is_wp_error( $project_ref ) ) {
+		return $project_ref;
+	}
+
+	$payload['ref'] = $project_ref;
 	return $payload;
 }
 
 return array(
 	'title'       => __( 'Next project ref', 'forms-bridge' ),
 	'description' => __(
-		'Sets ref to -1 to let Dolibarr fulfill the field with the next value of the serie',
+		'Query the next valid project ref',
 		'forms-bridge',
 	),
 	'method'      => 'forms_bridge_dolibarr_next_project_ref',
@@ -33,7 +40,7 @@ return array(
 	'output'      => array(
 		array(
 			'name'   => 'ref',
-			'schema' => array( 'type' => 'integer' ),
+			'schema' => array( 'type' => 'string' ),
 		),
 	),
 );

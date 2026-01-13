@@ -5,8 +5,6 @@
  * @package formsbridge
  */
 
-use FORMS_BRIDGE\Dolibarr_Form_Bridge;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
@@ -362,4 +360,59 @@ function forms_bridge_dolibarr_create_thirdparty(
 	}
 
 	return $response['data'];
+}
+
+/**
+ * Retrives the last project ref and returns the next value from the serie.
+ *
+ * @param array                $payload Bridge payload.
+ * @param Dolibarr_Form_Bridge $bridge Bridge object.
+ *
+ * @return string Next project ref.
+ */
+function forms_bridge_dolibarr_get_next_project_ref( $payload, $bridge ) {
+	$response = $bridge
+		->patch(
+			array(
+				'name'     => 'dolibar-get-next-project-ref',
+				'endpoint' => '/api/index.php/projects',
+				'method'   => 'GET',
+			)
+		)
+		->submit(
+			array(
+				'sortfield'  => 't.rowid',
+				'sortorder'  => 'DESC',
+				'properties' => 'ref',
+				'limit'      => 1,
+			)
+		);
+
+	if ( is_wp_error( $response ) ) {
+		return $response;
+	}
+
+	if ( isset( $response['data'][0]['ref'] ) ) {
+		$previous_project_ref = $response['data'][0]['ref'] ?: 'PJ0000-000';
+	} else {
+		$previous_project_ref = 'PJ0000-000';
+	}
+
+	[$prefix, $number] = explode( '-', $previous_project_ref );
+
+	if ( ! $number ) {
+		$number = '0';
+	}
+
+	$next   = strval( intval( $number ) + 1 );
+	$digits = strlen( $number );
+	$count  = strlen( $next );
+
+	while ( $count < $digits ) {
+		$next = '0' . $next;
+		++$count;
+	}
+
+	$prefix = 'PJ' . date( 'y' ) . date( 'm' );
+	return $prefix . '-' . $next;
 }
