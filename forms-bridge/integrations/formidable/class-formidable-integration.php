@@ -15,7 +15,7 @@ use FrmAppHelper;
 use FrmEntry;
 use FrmEntryMeta;
 use FrmField;
-use stdClass;
+use FrmFieldsHelper;
 use TypeError;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -69,7 +69,6 @@ class Formidable_Integration extends BaseIntegration {
 		}
 
 		$form = FrmForm::getOne( $form_id );
-		// $params = $frm_vars['form_params'][ $form_id ];
 
 		return $this->serialize_form( $form );
 	}
@@ -87,7 +86,6 @@ class Formidable_Integration extends BaseIntegration {
 			return null;
 		}
 
-		// $params = FrmForm::get_params( $form );
 		return $this->serialize_form( $form );
 	}
 
@@ -118,18 +116,31 @@ class Formidable_Integration extends BaseIntegration {
 			return null;
 		}
 
+		global $wpdb;
+
 		$form_data = array(
 			'name'        => $data['title'],
-			'description' => $data['description'] ?? '',
+			'description' => '',
 			'status'      => 'published',
-			'form_key'    => sanitize_title( $data['title'] ),
-			'field_data'  => $this->prepare_fields( $data['fields'] ),
+			'form_key'    => FrmAppHelper::get_unique_key( sanitize_title( $data['title'] ), $wpdb->prefix . 'frm_forms', 'form_key' ),
 		);
 
 		$form_id = FrmForm::create( $form_data );
 
-		if ( is_wp_error( $form_id ) ) {
+		if ( ! $form_id ) {
 			return null;
+		}
+
+		$fields = $this->prepare_fields( $data['fields'] );
+		foreach ( $fields as $field ) {
+			$field_values = FrmFieldsHelper::setup_new_vars( $field['type'], $form_id );
+
+			$field['field_options'] = array_merge( $field_values['field_options'], $field['field_options'] );
+			$field_values           = array_merge( $field_values, $field );
+
+			$field_values['field_options']['draft'] = 0;
+			$field_values                           = apply_filters( 'frm_before_field_created', $field_values );
+			FrmField::create( $field_values );
 		}
 
 		return $form_id;
@@ -171,25 +182,20 @@ class Formidable_Integration extends BaseIntegration {
 	 * @return array|null
 	 */
 	public function submission( $raw = false ) {
-		global $frm_vars;
-
-		$form_id = FrmAppHelper::get_post_param( 'form_id', '', 'absint' );
-
-		if ( ! $form_id || ! isset( $frm_vars['created_entries'][ $form_id ]['entry_id'] ) ) {
+		$submission_id = $this->submission_id();
+		if ( ! $submission_id ) {
 			return null;
 		}
-
-		$entry_id = $frm_vars['created_entries'][ $form_id ]['entry_id'];
 
 		$form = $this->form();
 
 		$submission = array(
-			'id'     => $entry_id,
-			'values' => FrmEntryMeta::get_entry_meta_info( $entry_id ),
+			'id'     => $submission_id,
+			'values' => FrmEntryMeta::get_entry_meta_info( $submission_id ),
 		);
 
 		if ( $raw ) {
-			$submission['entry'] = FrmEntry::getOne( $entry_id );
+			$submission['entry'] = FrmEntry::getOne( $submission_id );
 			return $submission;
 		}
 
@@ -202,24 +208,19 @@ class Formidable_Integration extends BaseIntegration {
 	 * @return array|null Collection of uploaded files.
 	 */
 	public function uploads() {
-		global $frm_vars;
-
-		$form_id = FrmAppHelper::get_post_param( 'form_id', '', 'absint' );
-
-		if ( ! $form_id || ! isset( $frm_vars['created_entries'][ $form_id ]['entry_id'] ) ) {
+		$submission_id = $this->submission_id();
+		if ( ! $submission_id ) {
 			return null;
 		}
 
-		$entry_id = $frm_vars['created_entries'][ $form_id ]['entry_id'];
-
 		$form = $this->form();
 
-		$submission = array(
-			'id'     => $entry_id,
-			'values' => FrmEntryMeta::get_entry_meta_info( $entry_id ),
-		);
+		// $submission = array(
+		// 'id'     => $submission_id,
+		// 'values' => FrmEntryMeta::get_entry_meta_info( $submission_id ),
+		// );
 
-		return $this->submission_uploads( $submission, $form );
+		return $this->submission_uploads( null, $form );
 	}
 
 	/**
@@ -314,9 +315,13 @@ class Formidable_Integration extends BaseIntegration {
 		$options = array();
 		if ( isset( $field->options ) && is_array( $field->options ) ) {
 			foreach ( $field->options as $option ) {
+				if ( ! is_array( $option ) ) {
+					$option = array( 'value' => $option );
+				}
+
 				$options[] = array(
 					'value' => $option['value'],
-					'label' => $option['label'],
+					'label' => $option['label'] ?? $option['value'],
 				);
 			}
 		}
@@ -491,7 +496,7 @@ class Formidable_Integration extends BaseIntegration {
 					'additionalProperties' => false,
 				);
 			case 'select':
-				if ( $field->field_options['multiple'] ) {
+				if ( $field->field_options['multiple'] ?? false ) {
 					return array(
 						'type'            => 'array',
 						'items'           => array( 'type' => 'string' ),
@@ -737,16 +742,14 @@ class Formidable_Integration extends BaseIntegration {
 		for ( $i = 0; $i < $count; $i++ ) {
 			$field = $fields[ $i ];
 			$args  = array(
-				'name'     => $field['name'],
-				'label'    => $field['label'] ?? '',
-				'required' => $field['required'] ?? false,
+				'name'          => $field['name'],
+				'label'         => $field['label'] ?? '',
+				'required'      => $field['required'] ?? false,
+				'default_value' => $field['value'] ?? '',
 			);
 
 			switch ( $field['type'] ) {
 				case 'hidden':
-					if ( isset( $field['value'] ) ) {
-						$args['default_value'] = $field['value'];
-					}
 					$formidable_fields[] = $this->hidden_field( $args );
 					break;
 				case 'number':
@@ -794,16 +797,23 @@ class Formidable_Integration extends BaseIntegration {
 	 *
 	 * @param string $type Field type.
 	 * @param array  $args Field arguments.
+	 * @param array  $options Field options.
 	 *
 	 * @return array
 	 */
-	private function field_template( $type, $args ) {
-		return array(
-			'type'        => $type,
-			'name'        => $args['name'],
-			'label'       => $args['label'],
-			'required'    => $args['required'],
-			'description' => $args['description'] ?? '',
+	private function field_template( $type, $args, $options = array() ) {
+		return array_merge(
+			$args,
+			array(
+				'type'          => $type,
+				'field_key'     => $args['name'] ?? 'untitled',
+				'name'          => $args['label'] ?? 'Untitled',
+				'required'      => $args['required'] ?? '',
+				'description'   => '',
+				'options'       => $args['options'] ?? '',
+				'field_options' => $options,
+				'multiple'      => $args['is_multi'] ?? 0,
+			),
 		);
 	}
 
@@ -815,7 +825,7 @@ class Formidable_Integration extends BaseIntegration {
 	 * @return array
 	 */
 	private function email_field( $args ) {
-		return $this->field_template( 'email', $args );
+		return $this->field_template( 'email', $args, array( 'autocomplete' => 'email' ) );
 	}
 
 	/**
@@ -826,7 +836,7 @@ class Formidable_Integration extends BaseIntegration {
 	 * @return array
 	 */
 	private function tel_field( $args ) {
-		return $this->field_template( 'phone', $args );
+		return $this->field_template( 'phone', $args, array( 'autocomplete' => 'tel' ) );
 	}
 
 	/**
@@ -849,21 +859,14 @@ class Formidable_Integration extends BaseIntegration {
 	 * @return array
 	 */
 	private function select_field( $args ) {
-		$options = array();
-		foreach ( $args['options'] as $option ) {
-			$options[] = $option['label'];
+		foreach ( $args['options'] as &$option ) {
+			$option['image'] = 0;
 		}
 
 		if ( $args['is_multi'] ) {
-			return array_merge(
-				$this->field_template( 'checkbox', $args ),
-				array( 'options' => $options )
-			);
+			return $this->field_template( 'checkbox', $args );
 		} else {
-			return array_merge(
-				$this->field_template( 'select', $args ),
-				array( 'options' => $options )
-			);
+			return $this->field_template( 'select', $args );
 		}
 	}
 
@@ -875,12 +878,13 @@ class Formidable_Integration extends BaseIntegration {
 	 * @return array
 	 */
 	private function file_field( $args ) {
-		return array_merge(
-			$this->field_template( 'file', $args ),
+		return $this->field_template(
+			'file',
+			$args,
 			array(
-				'multiple'   => $args['is_multi'],
-				'file_types' => $args['filetypes'],
-			)
+				'multiple' => $args['is_multi'] ?? false,
+				'ftypes'   => $args['filetypes'] ?? array(),
+			),
 		);
 	}
 
@@ -892,10 +896,7 @@ class Formidable_Integration extends BaseIntegration {
 	 * @return array
 	 */
 	private function hidden_field( $args ) {
-		return array_merge(
-			$this->field_template( 'hidden', $args ),
-			array( 'default_value' => $args['default_value'] ?? '' )
-		);
+		return $this->field_template( 'hidden', $args );
 	}
 
 	/**
@@ -950,10 +951,8 @@ class Formidable_Integration extends BaseIntegration {
 	 * @return array
 	 */
 	private function checkbox_field( $args ) {
-		return array_merge(
-			$this->field_template( 'checkbox', $args ),
-			array( 'options' => array( __( 'Checked', 'forms-bridge' ) ) )
-		);
+		$args['options'] = array( '', '1' );
+		return $this->field_template( 'toggle', $args );
 	}
 }
 

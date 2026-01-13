@@ -1005,9 +1005,7 @@ class Form_Bridge_Template {
 
 					if ( ! $result ) {
 						if ( $create_form ) {
-							$integration_instance->remove_form(
-								$data['form']['id']
-							);
+							$integration_instance->remove_form( $data['form']['id'] );
 						}
 
 						return new WP_Error(
@@ -1060,9 +1058,7 @@ class Form_Bridge_Template {
 
 			if ( ! $bridge_created ) {
 				if ( $create_form ) {
-					$integration_instance->remove_form(
-						$data['bridge']['form_id']
-					);
+					$integration_instance->remove_form( $data['form']['id'] );
 				}
 
 				if ( $create_credential ) {
