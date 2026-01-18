@@ -92,6 +92,74 @@ class Holded_Addon extends Addon {
 	}
 
 	/**
+	 * Performs an introspection of the backend API and returns a list of available endpoints.
+	 *
+	 * @param string      $backend Target backend name.
+	 * @param string|null $method HTTP method.
+	 *
+	 * @return array|WP_Error
+	 */
+	public function get_endpoints( $backend, $method = null ) {
+		$paths = array();
+
+		foreach ( self::OAS_URLS as $module => $oas_path ) {
+			$oas_url = self::OAS_BASE_URL . $oas_path . '?dereference=false&reduce=false';
+
+			$response = wp_remote_get(
+				$oas_url,
+				array(
+					'headers' => array(
+						'Accept'     => 'application/json',
+						'Host'       => 'developers.holded.com',
+						'Alt-Used'   => 'developers.holded.com',
+						'Referer'    => 'https://developers.holded.com/reference/list-contacts-1',
+						'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0',
+					),
+				),
+			);
+
+			if ( is_wp_error( $response ) ) {
+				continue;
+			}
+
+			$data = json_decode( $response['body'], true );
+			if ( ! $data ) {
+				continue;
+			}
+
+			$oa_explorer = new OpenAPI( $data['data']['api']['schema'] );
+
+			$module_paths = $oa_explorer->paths();
+
+			if ( $method ) {
+				$method       = strtolower( $method );
+				$method_paths = array();
+
+				foreach ( $module_paths as $path ) {
+					$path_obj = $oa_explorer->path_obj( $path );
+
+					if ( $path_obj && isset( $path_obj[ $method ] ) ) {
+						$method_paths[] = $path;
+					}
+				}
+
+				$module_paths = $method_paths;
+			}
+
+			$module_paths = array_map(
+				function ( $path ) use ( $module ) {
+					return '/api/' . $module . '/v1' . $path;
+				},
+				$module_paths,
+			);
+
+			$paths = array_merge( $paths, $module_paths );
+		}
+
+		return $paths;
+	}
+
+	/**
 	 * Performs an introspection of the backend endpoint and returns API fields
 	 * and accepted content type.
 	 *
