@@ -98,11 +98,12 @@ class Vtiger_Addon extends Addon {
 	/**
 	 * Fetch available modules from the backend.
 	 *
-	 * @param Backend $backend HTTP backend object.
+	 * @param string      $backend HTTP backend object.
+	 * @param string|null $method API method.
 	 *
 	 * @return array
 	 */
-	public function get_endpoints( $backend ) {
+	public function get_endpoints( $backend, $method = null ) {
 		$bridge = new Vtiger_Form_Bridge(
 			array(
 				'name'     => '__vtiger-' . time(),

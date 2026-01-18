@@ -94,11 +94,12 @@ class SuiteCRM_Addon extends Addon {
 	/**
 	 * Fetch available modules from the backend.
 	 *
-	 * @param Backend $backend HTTP backend object.
+	 * @param string      $backend Backend name.
+	 * @param string|null $method API method.
 	 *
 	 * @return array
 	 */
-	public function get_endpoints( $backend ) {
+	public function get_endpoints( $backend, $method = null ) {
 		$bridge = new SuiteCRM_Form_Bridge(
 			array(
 				'name'     => '__suitecrm-' . time(),

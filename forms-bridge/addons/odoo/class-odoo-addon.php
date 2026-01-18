@@ -93,13 +93,14 @@ class Odoo_Addon extends Addon {
 	/**
 	 * Fetch available models from the backend
 	 *
-	 * @param Backend $backend HTTP backend object.
+	 * @param string      $backend Backend name.
+	 * @param string|null $method RPC method.
 	 *
 	 * @return array
 	 *
 	 * @todo Implementar el endpoint de consulta de endpoints disponibles.
 	 */
-	public function get_endpoints( $backend ) {
+	public function get_endpoints( $backend, $method = null ) {
 		$bridge = new Odoo_Form_Bridge(
 			array(
 				'name'     => '__odoo-' . time(),

@@ -79,13 +79,14 @@ class Brevo_Addon extends Addon {
 	/**
 	 * Fetch available models from the OAS spec.
 	 *
-	 * @param Backend $backend HTTP backend object.
+	 * @param string      $backend Backend name.
+	 * @param string|null $method HTTP method.
 	 *
 	 * @return array
 	 *
 	 * @todo Implementar el endpoint de consulta de endpoints disponibles.
 	 */
-	public function get_endpoints( $backend ) {
+	public function get_endpoints( $backend, $method = null ) {
 		$response = wp_remote_get(
 			self::OAS_URL,
 			array(
@@ -107,6 +108,19 @@ class Brevo_Addon extends Addon {
 		$oa_explorer = new OpenAPI( $data['oasDefinition'] );
 
 		$paths = $oa_explorer->paths();
+
+		if ( $method ) {
+			$method_paths = array();
+			foreach ( $paths as $path ) {
+				$path_obj = $oa_explorer->path_obj( $path );
+
+				if ( $path_obj && isset( $path_obj[ strtolower( $method ) ] ) ) {
+					$method_paths[] = $path;
+				}
+			}
+
+			$paths = $method_paths;
+		}
 
 		return array_map(
 			function ( $path ) {

@@ -157,6 +157,62 @@ class Dolibarr_Addon extends Addon {
 
 		return $fields;
 	}
+
+	/**
+	 * Performs an introspection of the backend API and returns a list of available endpoints.
+	 *
+	 * @param string      $backend Backend name.
+	 * @param string|null $method HTTP method.
+	 *
+	 * @return array|WP_Error
+	 */
+	public function get_endpoints( $backend, $method = null ) {
+		$bridge = new Dolibarr_Form_Bridge(
+			array(
+				'name'     => '__dolibarr-' . time(),
+				'endpoint' => self::SWAGGER_ENDPOINT,
+				'backend'  => $backend,
+				'method'   => 'GET',
+			)
+		);
+
+		$response = $bridge->submit();
+
+		if ( is_wp_error( $response ) ) {
+			return array();
+		}
+
+		$version = $response['data']['swagger'] ?? null;
+		if ( ! $version ) {
+			return array();
+		}
+
+		$oa_explorer = new OpenAPI( $response['data'] );
+
+		$paths = $oa_explorer->paths();
+
+		if ( $method ) {
+			$method       = strtolower( $method );
+			$method_paths = array();
+
+			foreach ( $paths as $path ) {
+				$path_obj = $oa_explorer->path_obj( $path );
+
+				if ( $path_obj && isset( $path_obj[ $method ] ) ) {
+					$method_paths[] = $path;
+				}
+			}
+
+			$paths = $method_paths;
+		}
+
+		return array_map(
+			function ( $path ) {
+				return '/api/index.php' . $path;
+			},
+			$paths,
+		);
+	}
 }
 
 Dolibarr_Addon::setup();
