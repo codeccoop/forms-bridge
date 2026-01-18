@@ -139,7 +139,8 @@ class Formidable_Integration extends BaseIntegration {
 			$field_values           = array_merge( $field_values, $field );
 
 			$field_values['field_options']['draft'] = 0;
-			$field_values                           = apply_filters( 'frm_before_field_created', $field_values );
+
+			$field_values = apply_filters( 'frm_before_field_created', $field_values );
 			FrmField::create( $field_values );
 		}
 
@@ -330,6 +331,13 @@ class Formidable_Integration extends BaseIntegration {
 				$type = 'mixed';
 				break;
 			case 'checkbox':
+				if ( is_array( $field->options ) && 1 === count( $field->options ) && '1' === ( $field->options[0]['value'] ?? false ) ) {
+					$type = 'checkbox';
+				} else {
+					$type = 'select';
+				}
+
+				break;
 			case 'select':
 			case 'radio':
 			case 'lookup':
@@ -365,14 +373,6 @@ class Formidable_Integration extends BaseIntegration {
 			case 'hidden':
 				$type = 'hidden';
 				break;
-			case 'toggle':
-				if ( is_array( $field->options ) && '' === ( $field->options[0] ?? false ) && '1' === ( $field->options[1] ?? false ) ) {
-					$type = 'checkbox';
-				} else {
-					$type = 'text';
-				}
-
-				break;
 			default:
 				$type = 'text';
 		}
@@ -387,10 +387,10 @@ class Formidable_Integration extends BaseIntegration {
 				'required'    => (bool) $field->required,
 				'options'     => $options,
 				'is_file'     => 'file' === $field->type,
-				'is_multi'    => $this->is_multi_field( $field ),
+				'is_multi'    => $this->is_multi_field( $field, $type ),
 				'conditional' => ! empty( $field->field_options['hide_field'] ) && ! empty( $field->field_options['hide_opt'] ),
 				'format'      => 'date' === $field->type ? 'yyyy-mm-dd' : '',
-				'schema'      => $this->field_value_schema( $field ),
+				'schema'      => $this->field_value_schema( $field, $type ),
 				'basetype'    => $field->type,
 				'form_id'     => $field->form_id,
 			),
@@ -405,10 +405,11 @@ class Formidable_Integration extends BaseIntegration {
 	 * Checks if a field is multi-value field.
 	 *
 	 * @param object $field Target field instance.
+	 * @param string $norm_type Normalized field type.
 	 *
 	 * @return boolean
 	 */
-	private function is_multi_field( $field ) {
+	private function is_multi_field( $field, $norm_type ) {
 		if ( 'file' === $field->type ) {
 			return boolval( $field->field_options['multiple'] ?? false );
 		}
@@ -417,7 +418,11 @@ class Formidable_Integration extends BaseIntegration {
 			return boolval( $field->options['is_range_slider'] ?? false );
 		}
 
-		if ( in_array( $field->type, array( 'repeater', 'checkbox', 'address', 'credit_card' ), true ) ) {
+		if ( 'checkbox' === $field->type && 'select' === $norm_type ) {
+			return true;
+		}
+
+		if ( in_array( $field->type, array( 'repeater', 'address', 'credit_card' ), true ) ) {
 			return true;
 		}
 
@@ -428,10 +433,11 @@ class Formidable_Integration extends BaseIntegration {
 	 * Gets the field value JSON schema.
 	 *
 	 * @param object $field Field instance.
+	 * @param string $norm_type Normalized field type.
 	 *
 	 * @return array|null JSON schema of the value of the field.
 	 */
-	private function field_value_schema( $field ) {
+	private function field_value_schema( $field, $norm_type ) {
 		switch ( $field->type ) {
 			case 'form':
 				$embedded      = FrmForm::getOne( $field->field_options['form_select'] );
@@ -472,12 +478,6 @@ class Formidable_Integration extends BaseIntegration {
 			case 'total':
 			case 'number':
 				return array( 'type' => 'number' );
-			case 'checkbox':
-				return array(
-					'type'            => 'array',
-					'items'           => array( 'type' => 'string' ),
-					'additionalItems' => false,
-				);
 			case 'credit_card':
 				return array(
 					'type'                 => 'object',
@@ -530,14 +530,16 @@ class Formidable_Integration extends BaseIntegration {
 				return array( 'type' => $type );
 			case 'file':
 				return null;
-			case 'toggle':
-				if ( is_array( $field->options ) && '' === ( $field->options[0] ?? false ) && '1' === ( $field->options[1] ?? false ) ) {
-					$type = 'boolean';
+			case 'checkbox':
+				if ( 'checkbox' === $norm_type ) {
+					return array( 'type' => 'boolean' );
 				} else {
-					$type = 'text';
+					return array(
+						'type'            => 'array',
+						'items'           => array( 'type' => 'string' ),
+						'additionalItems' => true,
+					);
 				}
-
-				return array( 'type' => $type );
 			default:
 				return array( 'type' => 'string' );
 		}
@@ -603,6 +605,8 @@ class Formidable_Integration extends BaseIntegration {
 						$data[ $field_name ] = $value;
 					}
 				}
+			} elseif ( 'checkbox' === $field['type'] ) {
+				$data[ $field_name ] = false;
 			}
 		}
 
@@ -635,12 +639,21 @@ class Formidable_Integration extends BaseIntegration {
 					return (float) $value;
 				case 'checkbox':
 					$value = maybe_unserialize( $value );
+					$is_boolean = 'checkbox' === $field['type'];
 
 					if ( is_array( $value ) ) {
+						if ( $is_boolean ) {
+							return (bool) $value[0] ?? false;
+						}
+
 						return array_filter( $value );
-					} else {
-						return array( $value );
 					}
+
+					if ( $is_boolean ) {
+						return (bool) $value;
+					}
+
+					return array( $value );
 				case 'select':
 					if ( is_array( $value ) ) {
 						return array_filter( $value );
@@ -664,8 +677,6 @@ class Formidable_Integration extends BaseIntegration {
 					}
 
 					return $value;
-				case 'toggle':
-					return 'checkbox' === $field['type'] ? boolval( $value ) : $value;
 				default:
 					return (string) $value;
 			}
@@ -795,9 +806,12 @@ class Formidable_Integration extends BaseIntegration {
 					$formidable_fields[] = $this->date_field( $args );
 					break;
 				case 'file':
-					$args['is_multi']    = $field['is_multi'] ?? false;
-					$args['filetypes']   = $field['filetypes'] ?? '';
-					$formidable_fields[] = $this->file_field( $args );
+					if ( $this->full_support() ) {
+						$args['is_multi']    = $field['is_multi'] ?? false;
+						$args['filetypes']   = $field['filetypes'] ?? '';
+						$formidable_fields[] = $this->file_field( $args );
+					}
+
 					break;
 				case 'text':
 				default:
@@ -945,6 +959,12 @@ class Formidable_Integration extends BaseIntegration {
 	 * @return array
 	 */
 	private function date_field( $args ) {
+		if ( ! $this->full_support() ) {
+			$args['default_value'] = 'yyyy-mm-dd';
+			$args['placeholder']   = 'yyyy-mm-dd';
+			return $this->field_template( 'text', $args, array( 'format' => '^\d{4}-\d{1,2}-\d{1,2}' ) );
+		}
+
 		return $this->field_template( 'date', $args );
 	}
 
@@ -967,8 +987,24 @@ class Formidable_Integration extends BaseIntegration {
 	 * @return array
 	 */
 	private function checkbox_field( $args ) {
-		$args['options'] = array( '', '1' );
-		return $this->field_template( 'toggle', $args );
+		$args['options'] = array(
+			array(
+				'label' => $args['name'],
+				'value' => '1',
+				'image' => 0,
+			),
+		);
+
+		return $this->field_template( 'checkbox', $args );
+	}
+
+	/**
+	 * Returns true if the formidable pro version is installed.
+	 *
+	 * @return boolean
+	 */
+	private function full_support() {
+		return (bool) apply_filters( 'frm_pro_installed', false );
 	}
 }
 
