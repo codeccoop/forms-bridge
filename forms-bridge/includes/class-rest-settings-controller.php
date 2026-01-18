@@ -332,16 +332,34 @@ class REST_Settings_Controller extends Base_Controller {
 						'callback'            => static function ( $request ) use ( $addon ) {
 							return self::ping_backend( $addon, $request );
 						},
-						'permission_callback' => array(
-							self::class,
-							'permission_callback',
-						),
+						'permission_callback' => array( self::class, 'permission_callback' ),
 						'args'                => array(
 							'backend'    => FBAPI::get_backend_schema(),
 							'credential' => FBAPI::get_credential_schema(),
 						),
 					),
 				)
+			);
+
+			register_rest_route(
+				'forms-bridge/v1',
+				"/{$addon}/backend/endpoints",
+				array(
+					array(
+						'methods'              => WP_REST_Server::CREATABLE,
+						'callback'            => static function ( $request ) use ( $addon ) {
+							return self::get_backend_endpoints( $addon, $request );
+						},
+						'permission_callback' => array( self::class, 'permission_callback' ),
+						'args'                => array(
+							'backend' => FBAPI::get_backend_schema(),
+							'method'  => array(
+								'description' => __( 'HTTP method used to filter the list of endpoints', 'forms-bridge' ),
+								'type'        => 'string',
+							),
+						),
+					),
+				),
 			);
 
 			register_rest_route(
@@ -353,25 +371,16 @@ class REST_Settings_Controller extends Base_Controller {
 						'callback'            => static function ( $request ) use ( $addon ) {
 							return self::get_endpoint_schema( $addon, $request );
 						},
-						'permission_callback' => array(
-							self::class,
-							'permission_callback',
-						),
+						'permission_callback' => array( self::class, 'permission_callback' ),
 						'args'                => array(
 							'backend'  => FBAPI::get_backend_schema(),
 							'endpoint' => array(
-								'description' => __(
-									'Target endpoint name',
-									'forms-bridge'
-								),
+								'description' => __( 'Target endpoint name', 'forms-bridge' ),
 								'type'        => 'string',
 								'required'    => true,
 							),
 							'method'   => array(
-								'description' => __(
-									'HTTP method',
-									'forms-bridge',
-								),
+								'description' => __( 'HTTP method', 'forms-bridge' ),
 								'type'        => 'string',
 							),
 						),
@@ -819,6 +828,39 @@ class REST_Settings_Controller extends Base_Controller {
 	}
 
 	/**
+	 * Backend endpoints route callback.
+	 *
+	 * @param string          $addon Addon name.
+	 * @param WP_REST_Request $request Request object.
+	 *
+	 * @return array|WP_Error
+	 */
+	private static function get_backend_endpoints( $addon, $request ) {
+		$handler = self::prepare_addon_backend_request_handler( $addon, $request );
+
+		if ( is_wp_error( $handler ) ) {
+			return $handler;
+		}
+
+		[$addon, $backend] = $handler;
+
+		$endpoints = $addon->get_endpoints( $backend, $request['method'] );
+
+		if ( is_wp_error( $endpoints ) ) {
+			$error = self::internal_server_error();
+			$error->add(
+				$endpoints->get_error_code(),
+				$endpoints->get_error_message(),
+				$endpoints->get_error_data()
+			);
+
+			return $error;
+		}
+
+		return $endpoints;
+	}
+
+	/**
 	 * Backend endpoint schema route callback.
 	 *
 	 * @param string          $addon Addon name.
@@ -827,10 +869,7 @@ class REST_Settings_Controller extends Base_Controller {
 	 * @return array|WP_Error
 	 */
 	private static function get_endpoint_schema( $addon, $request ) {
-		$handler = self::prepare_addon_backend_request_handler(
-			$addon,
-			$request
-		);
+		$handler = self::prepare_addon_backend_request_handler( $addon, $request );
 
 		if ( is_wp_error( $handler ) ) {
 			return $handler;

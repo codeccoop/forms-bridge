@@ -596,6 +596,18 @@ class Addon extends Singleton {
 	}
 
 	/**
+	 * Performs an introspection of the backend API and returns a list of available endpoints.
+	 *
+	 * @param string      $backend Target backend name.
+	 * @param string|null $method HTTP method.
+	 *
+	 * @return array|WP_Error
+	 */
+	public function get_endpoints( $backend, $method = null ) {
+		return array();
+	}
+
+	/**
 	 * Get posts from the database based on a post type and an addon name.
 	 *
 	 * @param string $post_type Post type slug.
