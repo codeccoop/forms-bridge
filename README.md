@@ -2,6 +2,7 @@
 
 [![Plugin version](https://img.shields.io/wordpress/plugin/v/forms-bridge)](https://wordpress.org/plugins/forms-bridge/)
 ![GitHub Actions Tests Workflow Status](https://img.shields.io/github/actions/workflow/status/codeccoop/forms-bridge/tests.yml?label=tests)
+
 Seamlessly connect WordPress forms to CRMs, ERPs, and APIs — no coding required. Automate data flow with field mappers, custom fields, and workflows.
 
 ## Bridges
