@@ -70,6 +70,22 @@ class Financoop_Addon extends Addon {
 	}
 
 	/**
+	 * Performs an introspection of the backend API and returns a list of available endpoints.
+	 *
+	 * @param string      $backend Target backend name.
+	 * @param string|null $method HTTP method.
+	 *
+	 * @return array|WP_Error
+	 */
+	public function get_endpoints( $backend, $method = null ) {
+		return array(
+			'/api/campaign/{campaign_id}/subscription_request',
+			'/api/campaign/{campaign_id}/donation_request',
+			'/api/campaign/{campaign_id}/loan_request',
+		);
+	}
+
+	/**
 	 * Performs an introspection of the backend endpoint and returns API fields
 	 * and accepted content type.
 	 *
