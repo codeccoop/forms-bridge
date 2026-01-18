@@ -92,36 +92,36 @@ class Listmonk_Addon extends Addon {
 			if ( ! is_wp_error( $response ) ) {
 				$data = yaml_parse( $response['body'] );
 
-				$oa_explorer = new OpenAPI( $data );
-				$paths       = $oa_explorer->paths();
+				if ( $data ) {
+					$oa_explorer = new OpenAPI( $data );
+					$paths       = $oa_explorer->paths();
 
-				if ( $method ) {
-					$method       = strtolower( $method );
-					$method_paths = array();
+					if ( $method ) {
+						$method       = strtolower( $method );
+						$method_paths = array();
 
-					foreach ( $paths as $path ) {
-						$path_obj = $oa_explorer->path_obj( $path );
+						foreach ( $paths as $path ) {
+							$path_obj = $oa_explorer->path_obj( $path );
 
-						if ( $path_obj && isset( $path_obj[ $method ] ) ) {
-							$method_paths[] = $path;
+							if ( $path_obj && isset( $path_obj[ $method ] ) ) {
+								$method_paths[] = $path;
+							}
 						}
+
+						$paths = $method_paths;
 					}
 
-					$paths = $method_paths;
+					return array_map(
+						function ( $path ) {
+							return '/api' . $path;
+						},
+						$paths
+					);
 				}
-
-				return array_map(
-					function ( $path ) {
-						return '/api' . $path;
-					},
-					$paths
-				);
 			}
 		}
 
-		return array(
-			'/api/subscribers',
-		);
+		return array( '/api/subscribers' );
 	}
 
 	/**

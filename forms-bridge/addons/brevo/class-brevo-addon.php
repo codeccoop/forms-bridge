@@ -46,7 +46,8 @@ class Brevo_Addon extends Addon {
 	 *
 	 * @var string
 	 */
-	public const OAS_URL = 'https://developers.brevo.com/reference/get_companies?json=on';
+	// public const OAS_URL = 'https://developers.brevo.com/reference/get_companies?json=on';
+	public const OAS_URL = 'https://api.brevo.com/v3/swagger_definition_v3.yml';
 
 	/**
 	 * Performs a request against the backend to check the connexion status.
@@ -87,47 +88,43 @@ class Brevo_Addon extends Addon {
 	 * @todo Implementar el endpoint de consulta de endpoints disponibles.
 	 */
 	public function get_endpoints( $backend, $method = null ) {
-		$response = wp_remote_get(
-			self::OAS_URL,
-			array(
-				'headers' => array(
-					'Accept'     => 'application/json',
-					'Host'       => 'developers.brevo.com',
-					'Referer'    => 'https://developers.brevo.com/reference/get_companies',
-					'Alt-Used'   => 'developers.brevo.com',
-					'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0',
-				),
-			)
-		);
+		if ( function_exists( 'yaml_parse' ) ) {
+			$response = wp_remote_get( self::OAS_URL );
 
-		if ( is_wp_error( $response ) ) {
-			return array();
-		}
+			if ( ! is_wp_error( $response ) ) {
+				$data = yaml_parse( $response['body'] );
 
-		$data        = json_decode( $response['body'], true );
-		$oa_explorer = new OpenAPI( $data['oasDefinition'] );
+				if ( $data ) {
+					$oa_explorer = new OpenAPI( $data );
 
-		$paths = $oa_explorer->paths();
+					$paths = $oa_explorer->paths();
 
-		if ( $method ) {
-			$method_paths = array();
-			foreach ( $paths as $path ) {
-				$path_obj = $oa_explorer->path_obj( $path );
+					if ( $method ) {
+						$method       = strtolower( $method );
+						$method_paths = array();
 
-				if ( $path_obj && isset( $path_obj[ strtolower( $method ) ] ) ) {
-					$method_paths[] = $path;
+						foreach ( $paths as $path ) {
+							$path_obj = $oa_explorer->path_obj( $path );
+
+							if ( $path_obj && isset( $path_obj[ $method ] ) ) {
+								$method_paths[] = $path;
+							}
+						}
+
+						$paths = $method_paths;
+					}
+
+					return array_map(
+						function ( $path ) {
+							return '/v3' . $path;
+						},
+						$paths,
+					);
 				}
 			}
 
-			$paths = $method_paths;
+			return array( '/v3/contacts' );
 		}
-
-		return array_map(
-			function ( $path ) {
-				return '/v3' . $path;
-			},
-			$paths,
-		);
 	}
 
 	/**
