@@ -59,7 +59,11 @@ function forms_bridge_job_format_date_fields( $payload ) {
 		true
 	);
 
-	$date_format = $form_data['fields'][ $date_index ]['format'] ?? '';
+	if ( false !== $date_index ) {
+		$date_format = $form_data['fields'][ $date_index ]['format'];
+	} else {
+		$date_format = 'yyyy-mm-dd';
+	}
 
 	if ( strstr( $date_format, '-' ) ) {
 		$separator = '-';
