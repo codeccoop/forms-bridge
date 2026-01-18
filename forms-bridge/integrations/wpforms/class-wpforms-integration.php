@@ -362,8 +362,14 @@ class WPForms_Integration extends BaseIntegration {
 			case 'payment-multiple':
 			case 'payment-checkbox':
 			case 'select':
-			case 'checkbox':
 				$type = 'select';
+				break;
+			case 'checkbox':
+				if ( 1 === count( $options ) && '1' === $options[0]['value'] ) {
+					$type = 'checkbox';
+				} else {
+					$type = 'select';
+				}
 				break;
 			case 'number-slider':
 			case 'number':
@@ -402,11 +408,11 @@ class WPForms_Integration extends BaseIntegration {
 				'required'    => '1' === ( $field['required'] ?? '' ),
 				'options'     => $options,
 				'is_file'     => 'file-upload' === $field['type'],
-				'is_multi'    => $this->is_multi_field( $field ),
+				'is_multi'    => $this->is_multi_field( $field, $type ),
 				'conditional' => false,
 				'format'      => $format,
 				'children'    => array_values( $children ),
-				'schema'      => $this->field_value_schema( $field, $children ),
+				'schema'      => $this->field_value_schema( $field, $children, $type ),
 				'basetype'    => $field['type'],
 			),
 			$field,
@@ -417,12 +423,17 @@ class WPForms_Integration extends BaseIntegration {
 	/**
 	 * Checks if a filed is multi value field.
 	 *
-	 * @param array $field Target field instance.
+	 * @param array  $field Target field instance.
+	 * @param string $norm_type Normalized field type.
 	 *
 	 * @return boolean
 	 */
-	private function is_multi_field( $field ) {
-		if ( 'checkbox' === $field['type'] || 'repeater' === $field['type'] ) {
+	private function is_multi_field( $field, $norm_type ) {
+		if ( 'checkbox' === $field['type'] && 'select' === $norm_type ) {
+			return true;
+		}
+
+		if ( 'repeater' === $field['type'] ) {
 			return true;
 		}
 
@@ -443,12 +454,13 @@ class WPForms_Integration extends BaseIntegration {
 	/**
 	 * Gets the field value JSON schema.
 	 *
-	 * @param array $field Field instance.
-	 * @param array $children Children fields.
+	 * @param array  $field Field instance.
+	 * @param array  $children Children fields.
+	 * @param string $norm_type Normalized field type.
 	 *
 	 * @return array JSON schema of the value of the field.
 	 */
-	private function field_value_schema( $field, $children = array() ) {
+	private function field_value_schema( $field, $children = array(), $norm_type ) {
 		switch ( $field['type'] ) {
 			case 'name':
 			case 'email':
@@ -483,6 +495,10 @@ class WPForms_Integration extends BaseIntegration {
 
 				return array( 'type' => 'string' );
 			case 'checkbox':
+				if ( 'checkbox' === $norm_type ) {
+					return array( 'type' => 'boolean' );
+				}
+
 				$items = array();
 				$count = count( $field['choices'] );
 				for ( $i = 0; $i < $count; $i++ ) {
@@ -582,18 +598,28 @@ class WPForms_Integration extends BaseIntegration {
 			}
 		}
 
-		foreach ( $submission['fields'] as $field ) {
-			if ( 'file-upload' === $field['type'] ) {
+		$submission_fields = array_values( $submission['fields'] );
+
+		foreach ( $form_data['fields'] as $field_data ) {
+			if ( 'file' === $field_data['type'] ) {
 				continue;
 			}
 
-			$i = array_search(
-				trim( $field['name'] ),
-				array_column( $form_data['fields'], 'name' ),
+			$index = array_search(
+				trim( $field_data['name'] ),
+				array_column( $submission_fields, 'name' ),
 				true
 			);
 
-			$field_data = $form_data['fields'][ $i ];
+			if ( false === $index ) {
+				if ( 'checkbox' === $field_data['type'] ) {
+					$data[ $field_data['name'] ] = false;
+				}
+
+				continue;
+			}
+
+			$field = $submission_fields[ $index ];
 
 			$field['id'] = preg_replace( '/_\d+$/', '', $field['id'] );
 			if ( isset( $fields_in_repeaters[ $field['id'] ] ) ) {
@@ -661,7 +687,7 @@ class WPForms_Integration extends BaseIntegration {
 
 		if (
 			'select' === $field_data['basetype'] ||
-			'checkbox' === $field_data['basetype']
+			'checkbox' === $field_data['basetype'] && 'select' === $field_data['type']
 		) {
 			if ( $field_data['is_multi'] ) {
 				return array_map(
@@ -671,6 +697,10 @@ class WPForms_Integration extends BaseIntegration {
 					explode( "\n", $field['value'] )
 				);
 			}
+		}
+
+		if ( 'checkbox' === $field_data['basetype'] && 'checkbox' === $field_data['type'] ) {
+			return (bool) $field['value'];
 		}
 
 		if ( 'address' === $field_data['basetype'] ) {
@@ -768,12 +798,13 @@ class WPForms_Integration extends BaseIntegration {
 					$wp_fields[ strval( $id ) ] = $this->textarea_field( ...$args );
 					break;
 				case 'hidden':
-					if ( isset( $field['value'] ) ) {
+					if ( $this->full_support() && isset( $field['value'] ) ) {
 						if ( is_bool( $field['value'] ) ) {
 							$field['value'] = $field['value'] ? '1' : '0';
 						}
 
-						$args[]                     = (string) $field['value'];
+						$args[] = (string) $field['value'];
+
 						$wp_fields[ strval( $id ) ] = $this->hidden_field( ...$args );
 					}
 
@@ -787,8 +818,11 @@ class WPForms_Integration extends BaseIntegration {
 					$wp_fields[ strval( $id ) ] = $this->checkbox_field( ...$args );
 					break;
 				case 'file':
-					$args[]                     = $field['filetypes'] ?? '';
-					$wp_fields[ strval( $id ) ] = $this->file_field( ...$args );
+					if ( $this->full_support() ) {
+						$args[]                     = $field['filetypes'] ?? '';
+						$wp_fields[ strval( $id ) ] = $this->file_field( ...$args );
+					}
+
 					break;
 				case 'date':
 					$wp_fields[ strval( $id ) ] = $this->date_field( ...$args );
@@ -808,12 +842,26 @@ class WPForms_Integration extends BaseIntegration {
 					$wp_fields[ strval( $id ) ] = $this->number_field( ...$args );
 					break;
 				case 'tel':
-					$wp_fields[ strval( $id ) ] = $this->field_template(
-						'phone',
-						...$args
-					);
+					if ( ! $this->full_support() ) {
+						$wp_field = $this->field_template( 'text', ...$args );
+					} else {
+						$wp_field = $this->field_template( 'phone', ...$args );
+					}
+
+					$wp_fields[ strval( $id ) ] = $wp_field;
 					break;
 				case 'url':
+					if ( ! $this->full_support() ) {
+						$wp_field = array_merge(
+							$this->field_template( 'text', ...$args ),
+							array( 'input_mask' => 'alias:url' ),
+						);
+					} else {
+						$wp_field = $this->field_template( 'url', ...$args );
+					}
+
+					$wp_fields[ strval( $id ) ] = $wp_field;
+					break;
 				case 'email':
 				default:
 					$wp_fields[ strval( $id ) ] = $this->field_template(
@@ -918,7 +966,7 @@ class WPForms_Integration extends BaseIntegration {
 				'choices'       => array(
 					array(
 						'label'      => $name,
-						'value'      => __( 'Checked', 'forms-bridge' ),
+						'value'      => '1',
 						'image'      => '',
 						'icon'       => '',
 						'icon_style' => 'regular',
@@ -956,6 +1004,13 @@ class WPForms_Integration extends BaseIntegration {
 	 * @return array
 	 */
 	private function date_field( $id, $name, $required ) {
+		if ( ! $this->full_support() ) {
+			return array_merge(
+				$this->field_template( 'text', $id, $name, $required ),
+				array( 'input_mask' => 'date:yyyy-mm-dd' ),
+			);
+		}
+
 		return array_merge(
 			$this->field_template( 'date-time', $id, $name, $required ),
 			array(
@@ -1083,6 +1138,15 @@ class WPForms_Integration extends BaseIntegration {
 				'extensions'      => $filetypes,
 			)
 		);
+	}
+
+	/**
+	 * Returns true if the wpforms pro version is installed.
+	 *
+	 * @return boolean
+	 */
+	private function full_support() {
+		return (bool) wpforms()->is_pro();
 	}
 }
 

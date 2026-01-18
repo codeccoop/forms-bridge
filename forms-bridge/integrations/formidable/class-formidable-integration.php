@@ -331,7 +331,7 @@ class Formidable_Integration extends BaseIntegration {
 				$type = 'mixed';
 				break;
 			case 'checkbox':
-				if ( is_array( $field->options ) && 1 === count( $field->options ) && '1' === ( $field->options[0]['value'] ?? false ) ) {
+				if ( 1 === count( $options ) && '1' === $options[0]['value'] ) {
 					$type = 'checkbox';
 				} else {
 					$type = 'select';
@@ -638,7 +638,7 @@ class Formidable_Integration extends BaseIntegration {
 				case 'number':
 					return (float) $value;
 				case 'checkbox':
-					$value = maybe_unserialize( $value );
+					$value      = maybe_unserialize( $value );
 					$is_boolean = 'checkbox' === $field['type'];
 
 					if ( is_array( $value ) ) {
