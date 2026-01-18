@@ -131,6 +131,29 @@ class GCalendar_Addon extends Addon {
 	}
 
 	/**
+	 * Performs an introspection of the backend API and returns a list of available endpoints.
+	 *
+	 * @param string      $backend Target backend name.
+	 * @param string|null $method HTTP method.
+	 *
+	 * @return array|WP_Error
+	 */
+	public function get_endpoints( $backend, $method = null ) {
+		$response = $this->fetch( null, $backend );
+
+		if ( is_wp_error( $response ) ) {
+			return array();
+		}
+
+		return array_map(
+			function ( $calendar ) {
+				return '/calendar/v3/calendars/' . $calendar['id'] . '/events';
+			},
+			$response['data']['items']
+		);
+	}
+
+	/**
 	 * Performs an introspection of the backend endpoint and returns API fields
 	 * and accepted content type.
 	 *

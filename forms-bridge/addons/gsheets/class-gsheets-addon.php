@@ -153,6 +153,29 @@ class GSheets_Addon extends Addon {
 	}
 
 	/**
+	 * Performs an introspection of the backend API and returns a list of available endpoints.
+	 *
+	 * @param string      $backend Target backend name.
+	 * @param string|null $method HTTP method.
+	 *
+	 * @return array|WP_Error
+	 */
+	public function get_endpoints( $backend, $method = null ) {
+		$response = $this->fetch( null, $backend );
+
+		if ( is_wp_error( $response ) || empty( $response['data']['files'] ) ) {
+			return array();
+		}
+
+		return array_map(
+			function ( $file ) {
+				return '/v4/spreadsheets/' . $file['id'];
+			},
+			$response['data']['files']
+		);
+	}
+
+	/**
 	 * Performs an introspection of the backend endpoint and returns API fields
 	 * and accepted content type.
 	 *
