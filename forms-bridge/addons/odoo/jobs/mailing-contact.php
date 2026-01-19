@@ -1,10 +1,26 @@
 <?php
+/**
+ * Update mailing contacts Odoo add-on job.
+ *
+ * @package formsbridge
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-function forms_brige_odoo_update_mailing_contact( $payload, $bridge ) {
+/**
+ * It performs a search request in order to find some mailing contact in Odoo by email. If found,
+ * then updates its list subscriptions and skip the submission. Otherwise returns the payload
+ * without changes and let the bridge to continue with the workflow.
+ *
+ * @param array            $payload Bridge payload.
+ * @param Odoo_Form_Bridge $bridge Bridge object.
+ *
+ * @return array|null|WP_Error
+ */
+function forms_bridge_odoo_update_mailing_contact( $payload, $bridge ) {
+	// Patch the current bridge and dispatch a search request by email to mailing.contacts.
 	$response = $bridge
 		->patch(
 			array(
@@ -16,10 +32,13 @@ function forms_brige_odoo_update_mailing_contact( $payload, $bridge ) {
 		)
 		->submit( array( array( 'email', '=', $payload['email'] ) ) );
 
+	// If no contact is found the response is a 404 Not Found error.
 	if ( ! is_wp_error( $response ) ) {
 		$contact_id = $response['data']['result'][0];
 		$list_ids   = $payload['list_ids'];
 
+		// Dispatch a `write` operation to update the `list_ids` field of the
+		// `mailing.contact` model.
 		$response = $bridge
 			->patch(
 				array(
@@ -31,10 +50,13 @@ function forms_brige_odoo_update_mailing_contact( $payload, $bridge ) {
 			)
 			->submit( array( $contact_id ), array( 'list_ids' => $list_ids ) );
 
+		// If Odoo returns an error, then return the error as the output of the job.
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
 
+		// Otherwise, return an empty payload to abort the bridge submission. All work
+		// is done!
 		return;
 	}
 
@@ -47,7 +69,7 @@ return array(
 		'Search for a subscribed mailing contact, updates its subscriptions and skips if succeed',
 		'forms-bridge'
 	),
-	'method'      => 'forms_brige_odoo_update_mailing_contact',
+	'method'      => 'forms_bridge_odoo_update_mailing_contact',
 	'input'       => array(
 		array(
 			'name'     => 'email',

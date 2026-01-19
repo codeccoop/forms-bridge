@@ -1,9 +1,24 @@
 <?php
+/**
+ * Appointment dates Holded add-on job.
+ *
+ * @package formsbridge
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
+/**
+ * Given a date string in format 'Y-m-d H:i:s' and a duration as a numeric value, it creates
+ * two payload fields:
+ *   - startDate: The date value in timestamp format.
+ *   - duration: As a float value with 1 as its fallback value.
+ *
+ * @param array $payload Bridge payload.
+ *
+ * @return array|WP_Error
+ */
 function forms_bridge_holded_appointment_dates( $payload ) {
 	$datetime = DateTime::createFromFormat( 'Y-m-d H:i:s', $payload['date'] );
 	if ( $datetime === false ) {
