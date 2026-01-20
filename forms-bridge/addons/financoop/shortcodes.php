@@ -51,10 +51,12 @@ add_shortcode(
 		$atts['currency'] = $atts['currency'] ?? '€';
 
 		try {
+			$campaign_id = absint( $atts['id'] );
+
 			$bridge = new Financoop_Form_Bridge(
 				array(
 					'name'     => '__financoop-' . time(),
-					'endpoint' => "/api/campaign/{$atts['id']}",
+					'endpoint' => "/api/campaign/{$campaign_id}",
 					'backend'  => $atts['backend'],
 					'method'   => 'GET',
 				),
@@ -82,18 +84,10 @@ add_shortcode(
 		?><article class="financoop-campaign wp-block-group">
 	<div class="financoop-campaign-header">
 		<div class="financoop-campaign-state">
-		<?php
-		echo esc_html(
-			$campaign['state']
-		);
-		?>
+		<?php echo esc_html( $campaign['state'] ); ?>
 		</div>
 		<h3 class="wp-block-heading">
-		<?php
-		echo esc_html(
-			$campaign['name']
-		);
-		?>
+		<?php echo esc_html( $campaign['name'] ); ?>
 		</h3>
 		<?php if ( $campaign['description'] ) : ?>
 		<p><?php echo wp_kses_post( $campaign['description'] ); ?></p>
@@ -162,114 +156,49 @@ function financoop_render_source_progress(
 	$progress = round( min( 100, $progress ), 2 );
 	$goal     = (int) $goal;
 
-	if ( $goal === 0 ) {
+	if ( 0 === $goal ) {
 		return '';
 	}
 
 	ob_start();
 	?>
-	<div class="financoop-campaign-progress" data-source="
-	<?php
-	echo esc_attr(
-		$source
-	);
-	?>
-	">
+	<div class="financoop-campaign-progress" data-source="<?php echo esc_attr( $source ); ?>">
 	<h4 class="wp-block-heading"><?php echo esc_html( $label ); ?></h4>
 
 	<p class="financoop-campaign-progress-item fraction">
-		<span class="label">
-		<?php
-		echo esc_html(
-			_x( 'Achieved', 'financoop campaign widget', 'forms-bridge' )
-		);
-		?>
-	: </span><span class="value">
-	<?php
-	echo number_format(
-		$amount,
-		2,
-		',',
-		'.'
-	);
-	?>
-	/ <span class="value">
-	<?php
-	echo number_format(
-		$goal,
-		2,
-		',',
-		'.'
-	);
-	?>
-<span class="unit"><?php echo esc_html( $currency ); ?></span></span>
+		<span class="label"><?php echo esc_html( _x( 'Achieved', 'financoop campaign widget', 'forms-bridge' ) ); ?>: </span>
+		<span class="value">
+			<?php echo number_format( $amount, 2, ',', '.' ); ?> / <?php echo number_format( $goal, 2, ',', '.' ); ?>
+			<span class="unit"><?php echo esc_html( $currency ); ?></span>
+		</span>
 	</p>
 
 	<p class="financoop-campaign-progress-item goal">
-		<span class="label">
-		<?php
-		echo esc_html(
-			_x( 'Goal', 'financoop campaign widget', 'forms-bridge' )
-		);
-		?>
-	: </span><span class="value">
-	<?php
-	echo number_format(
-		$goal,
-		2,
-		',',
-		'.'
-	);
-	?>
-	<span class="unit"><?php echo esc_html( $currency ); ?></span></span>
+		<span class="label"><?php echo esc_html( _x( 'Goal', 'financoop campaign widget', 'forms-bridge' ) ); ?>: </span>
+		<span class="value">
+			<?php echo number_format( $goal, 2, ',', '.' ); ?>
+			<span class="unit"><?php echo esc_html( $currency ); ?></span>
+		</span>
 	</p>
 
 	<p class="financoop-campaign-progress-item amount">
-		<span class="label">
-		<?php
-		echo esc_html(
-			_x( 'Received', 'financoop campaign widget', 'forms-bridge' )
-		);
-		?>
-	: </span><span class="value">
-	<?php
-	echo number_format(
-		$amount,
-		2,
-		',',
-		'.'
-	);
-	?>
-	<span class="unit"><?php echo esc_html( $currency ); ?></span></span>
+		<span class="label"><?php echo esc_html( _x( 'Received', 'financoop campaign widget', 'forms-bridge' ) ); ?>:</span>
+		<span class="value">
+			<?php echo number_format( $amount, 2, ',', '.' ); ?>
+			<span class="unit"><?php echo esc_html( $currency ); ?></span>
+		</span>
 	</p>
 
 	<p class="financoop-campaign-progress-item percentage">
-		<span class="label">
-		<?php
-		echo esc_html(
-			_x( 'Progress', 'financoop campaign widget', 'forms-bridge' )
-		);
-		?>
-		: </span><span class="value">
-		<?php
-		echo number_format(
-			$progress,
-			2,
-			',',
-			'.'
-		);
-		?>
-		<span class="unit">%</span></span>
+		<span class="label"><?php echo esc_html( _x( 'Progress', 'financoop campaign widget', 'forms-bridge' ) ); ?>: </span>
+		<span class="value">
+			<?php echo number_format( $progress, 2, ',', '.' ); ?>
+			<span class="unit">%</span>
+		</span>
 	</p>
 
 	<div class="financoop-campaign-progress-item progress-bar">
-		<progress value='
-		<?php
-		echo intval(
-			$progress
-		);
-		?>
-		' max='100'><?php echo $progress; ?> %</progress>
+		<progress value='<?php echo intval( $progress ); ?>' max='100'><?php echo intval( $progress ); ?> %</progress>
 	</div>
 </div>
 	<?php
@@ -376,7 +305,7 @@ function forms_bridge_financoop_shortcode_error( $message, $atts ) {
 			array( 'id', 'backend', 'sources', 'currency' ),
 			function ( $handle, $attr ) use ( $atts ) {
 				if ( isset( $atts[ $attr ] ) ) {
-					$value    = implode( ',', (array) $atts[ $attr ] );
+					$value    = esc_html( implode( ',', (array) $atts[ $attr ] ) );
 					$handle[] = "{$attr}='{$value}'";
 				}
 
