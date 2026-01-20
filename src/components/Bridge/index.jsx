@@ -137,6 +137,11 @@ export default function Bridge({ data, update, remove, schema, copy, names }) {
     }
   }, [data.name]);
 
+  useEffect(() => {
+    setState(data);
+    setPing(false);
+  }, [addon]);
+
   const reloaded = useRef(false);
   useEffect(() => {
     if (!loading && reloaded.current && diff(data, state)) {
