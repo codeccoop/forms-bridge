@@ -16,7 +16,7 @@ Seamlessly connect WordPress forms to CRMs, ERPs, and APIs — no coding require
 
 Forms Bridge lets you automate data flow from WordPress forms to any API-powered system—without writing a single line of code.
 
-Whether you use Zoho, Odoo, Dolibarr, Zulip, or a custom backend, Forms Bridge makes it easy to map fields, add custom data, and set up workflows so your form submissions go exactly where you need them. **If it has an API it can be bridged!**
+Whether you use Zoho, Odoo, Dolibarr, Zulip, or a custom backend, Forms Bridge makes it easy to map fields, add custom data, and set up workflows so your form submissions go exactly where you need them. **If it has an API, it can be bridged!**
 
 **Why use Forms Bridge**
 
@@ -99,7 +99,7 @@ Authenticate your HTTP requests using API keys, Basic Auth, OAuth, RPC credentia
 Add hidden data (like user IDs or product codes) and rename/transform fields to match your API’s requirements.
 
 **Workflows**
-Chain together jobs to pre-process data before it’s sent. Filter, validate, enrich submissions automatically.
+Chain together jobs to pre-process data before it’s sent. Filter, validate, and enrich submissions automatically.
 
 **Templates**
 Use pre-built templates to integrate WooCommerce orders, CRM leads, or calendar events in minutes.
