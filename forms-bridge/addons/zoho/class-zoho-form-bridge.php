@@ -70,7 +70,16 @@ class Zoho_Form_Bridge extends Form_Bridge {
 			2
 		);
 
-		$response = $this->backend()->$method(
+		$backend = $this->backend();
+
+		if ( ! $backend ) {
+			return new WP_Error(
+				'invalid_backend',
+				'The bridge does not have a valid backend'
+			);
+		}
+
+		$response = $backend->$method(
 			$this->endpoint,
 			$payload,
 			array(),
