@@ -197,11 +197,7 @@ class Addon extends Singleton {
 						$registry = self::registry();
 						$addons   = array();
 						foreach ( self::$addons as $name => $addon ) {
-							$logo_path =
-							FORMS_BRIDGE_ADDONS_DIR .
-							'/' .
-							$addon::NAME .
-							'/assets/logo.png';
+							$logo_path = FORMS_BRIDGE_ADDONS_DIR . '/' . $addon::NAME . '/assets/logo.png';
 
 							if ( is_file( $logo_path ) && is_readable( $logo_path ) ) {
 								$logo = plugin_dir_url( $logo_path ) . 'logo.png';

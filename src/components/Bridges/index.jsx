@@ -12,8 +12,8 @@ const { TabPanel } = wp.components;
 const { useEffect, useMemo, useRef } = wp.element;
 const { __ } = wp.i18n;
 
-const CSS = `.bridges-tabs-panel .components-tab-panel__tabs{overflow-x:auto;}
-.bridges-tabs-panel .components-tab-panel__tabs>button{flex-shrink:0;}`;
+const CSS = `.bridges-tabs-panel>.components-tab-panel__tabs{overflow-x:auto;}
+.bridges-tabs-panel>.components-tab-panel__tabs>button{flex-shrink:0;}`;
 
 const DEFAULTS = {
   name: "bridge-" + Date.now(),

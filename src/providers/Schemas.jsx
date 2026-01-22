@@ -52,7 +52,8 @@ export default function SchemasProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (tab && tab !== "general" && tab !== "http") fetch(tab);
+    if (tab && tab !== "general" && tab !== "http" && tab !== "forms")
+      fetch(tab);
   }, [fetch, tab]);
 
   const schema = useMemo(() => {

@@ -197,10 +197,19 @@ class Integration extends Singleton {
 						$registry     = self::registry();
 						$integrations = array();
 						foreach ( self::$integrations as $name => $integration ) {
+							$logo_path = FORMS_BRIDGE_INTEGRATIONS_DIR . '/' . $integration::NAME . '/assets/logo.png';
+
+							if ( is_file( $logo_path ) && is_readable( $logo_path ) ) {
+								$logo = plugin_dir_url( $logo_path ) . 'logo.png';
+							} else {
+								$logo = '';
+							}
+
 							$integrations[ $name ] = array(
 								'name'    => $name,
 								'title'   => $integration::TITLE,
 								'enabled' => $registry[ $name ] ?? false,
+								'logo'    => $logo,
 							);
 						}
 

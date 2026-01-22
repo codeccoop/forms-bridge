@@ -2,6 +2,7 @@ import { useLoading } from "./Loading";
 import { useError } from "./Error";
 import { useIntegrations } from "../hooks/useGeneral";
 import diff from "../lib/diff";
+import { useSettings } from "./Settings";
 
 const { createContext, useContext, useState, useEffect, useRef } = wp.element;
 const apiFetch = wp.apiFetch;
@@ -10,6 +11,7 @@ const { __ } = wp.i18n;
 const FormsContext = createContext([]);
 
 export default function FormsProvider({ children }) {
+  const [settings] = useSettings();
   const [loading, setLoading] = useLoading();
   const [, setError] = useError();
   const [forms, setForms] = useState([]);
@@ -29,11 +31,11 @@ export default function FormsProvider({ children }) {
   }, [integrations]);
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || window.__wpfbInvalidated) return;
     if (invalid.current) {
       fetch().then(() => (invalid.current = false));
     }
-  }, [loading, integrations]);
+  }, [settings, loading, integrations]);
 
   const fetch = useRef(() => {
     setLoading(true);

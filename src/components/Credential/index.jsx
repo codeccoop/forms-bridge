@@ -172,7 +172,7 @@ export default function Credential({
               padding: "6px 6px",
             }}
             onClick={copy}
-            label={__("Duplaicate", "forms-bridge")}
+            label={__("Duplicate", "forms-bridge")}
             showTooltip
             __next40pxDefaultSize
           >

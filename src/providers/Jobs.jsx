@@ -99,7 +99,7 @@ export default function JobsProvider({ children }) {
           }
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
           setError(__("Job reset error", "forms-bridge"));
         })
         .finally(() => setLoading(false));

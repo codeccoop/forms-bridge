@@ -100,8 +100,21 @@ export default function Mutations({
           onRequestClose={onClose}
           className="no-scrollable"
         >
+          <p
+            style={{
+              marginTop: "-3rem",
+              position: "absolute",
+              zIndex: 1,
+            }}
+          >
+            {__(
+              "Transform the form submission with field mappings and value mutations",
+              "forms-bridge"
+            )}
+          </p>
           <div
             style={{
+              marginTop: "2rem",
               minWidth: "575px",
               minHeight: "125px",
               height: "100%",

@@ -251,7 +251,7 @@ export default function Bridge({ data, update, remove, schema, copy, names }) {
                 padding: "6px 6px",
               }}
               onClick={copy}
-              label={__("Duplaicate", "forms-bridge")}
+              label={__("Duplicate", "forms-bridge")}
               showTooltip
               __next40pxDefaultSize
             >

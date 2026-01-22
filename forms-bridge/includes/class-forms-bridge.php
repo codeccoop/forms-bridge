@@ -283,7 +283,23 @@ class Forms_Bridge extends Base_Plugin {
 			return;
 		}
 
-		foreach ( $bridges as $bridge ) {
+		usort(
+			$bridges,
+			function ( $a, $b ) {
+				if ( 0 > $a->order ) {
+					return 1;
+				} elseif ( 0 > $b->order ) {
+					return -1;
+				}
+
+				return $a->order - $b->order;
+			}
+		);
+
+		$l = count( $bridges );
+		for ( $i = 0; $i < $l; ++$i ) {
+			$bridge = $bridges[ $i ];
+
 			if ( ! $bridge->enabled ) {
 				Logger::log(
 					'Skip submission for disabled bridge ' . $bridge->name
@@ -436,6 +452,15 @@ class Forms_Bridge extends Base_Plugin {
 					$payload ?? $submission,
 					$attachments ?? array()
 				);
+
+				if (
+					false === $bridge->allow_failure
+					&& count( $bridges ) > 1
+					&& $i < count( $bridges ) - 1
+				) {
+					Logger::log( 'Early exit from the submission loop due to an error', Logger::ERROR );
+					break;
+				}
 			} finally {
 				self::$current_bridge = null;
 			}
