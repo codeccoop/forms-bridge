@@ -5,7 +5,7 @@ Tags: form integration, erp integration, crm integration, api integration, autom
 Donate link: https://buymeacoffee.com/codeccoop
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable Tag: 4.2.5
+Stable Tag: 4.3.0
 Tested up to: 6.9
 
 Seamlessly connect WordPress forms to CRMs, ERPs, and APIs — no coding required. Automate data flow with field mappers, custom fields, and workflows.
@@ -160,6 +160,15 @@ You can get support from Còdec using the [Forms Bridge support forum](https://w
 9. Debug console – Monitor and troubleshoot requests.
 
 == Changelog ==
+
+= 4.3.0 =
+* feat: form's bridge chain order
+* feat: bridge failure policy
+* feat: zoho and bigin add-on test cases
+* fix: inherit state between bridges with the same name
+* fix: xss vulnerability on financoop add-on shortcodes
+* fix: autoload option to false
+* fix: defer forms ajax loading
 
 = 4.2.5 =
 * feat: integrations pro support check and polyfills
