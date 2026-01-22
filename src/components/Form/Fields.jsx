@@ -31,7 +31,7 @@ export default function FormFields({ fields }) {
         }}
       >
         <StagePayload
-          fields={fields}
+          fields={fields.filter((field) => !field.is_file)}
           mappers={[]}
           showDiff={false}
           diff={DIFF_MOCK}
