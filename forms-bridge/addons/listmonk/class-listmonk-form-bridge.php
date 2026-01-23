@@ -32,14 +32,11 @@ class Listmonk_Form_Bridge extends Form_Bridge {
 			$error_response = $response->get_error_data()['response'] ?? null;
 
 			$code = $error_response['response']['code'] ?? null;
-			if ( $code !== 409 ) {
+			if ( 409 !== $code ) {
 				return $response;
 			}
 
-			if (
-				! isset( $payload['email'] ) ||
-				$this->endpoint !== '/api/subscribers'
-			) {
+			if ( ! isset( $payload['email'] ) || '/api/subscribers' !== $this->endpoint ) {
 				return $response;
 			}
 
