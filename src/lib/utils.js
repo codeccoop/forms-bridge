@@ -39,14 +39,6 @@ export function validateBackend(data) {
     return false;
   }
 
-  if (data.authentication?.type) {
-    isValid = isValid && data.authentication.client_secret;
-
-    if (data.authentication.type !== "Bearer") {
-      isValid = isValid && data.authentication.client_id;
-    }
-  }
-
   return isValid;
 }
 

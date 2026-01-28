@@ -40,7 +40,7 @@ class GCalendarTest extends WP_UnitTestCase {
 			new Credential(
 				array(
 					'name'          => 'gcalendar-test-credential',
-					'schema'        => 'Bearer',
+					'schema'        => 'OAuth',
 					'oauth_url'     => 'https://accounts.google.com/o/oauth2/v2',
 					'client_id'     => 'test-client-id',
 					'client_secret' => 'test-client-secret',

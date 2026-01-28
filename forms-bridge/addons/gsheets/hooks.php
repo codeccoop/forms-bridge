@@ -59,7 +59,7 @@ add_filter(
 						'ref'   => '#credential',
 						'name'  => 'schema',
 						'type'  => 'text',
-						'value' => 'Bearer',
+						'value' => 'OAuth',
 					),
 					array(
 						'ref'   => '#credential',
@@ -144,7 +144,7 @@ add_filter(
 				),
 				'credential' => array(
 					'name'          => '',
-					'schema'        => 'Bearer',
+					'schema'        => 'OAuth',
 					'oauth_url'     => 'https://accounts.google.com/o/oauth2/v2',
 					'scope'         => 'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets',
 					'client_id'     => '',

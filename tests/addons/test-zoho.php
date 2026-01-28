@@ -68,7 +68,7 @@ class ZohoTest extends WP_UnitTestCase {
 			new Credential(
 				array(
 					'name'          => self::CREDENTIAL_NAME,
-					'schema'        => 'Bearer',
+					'schema'        => 'OAuth',
 					'client_id'     => 'test-client-id',
 					'client_secret' => 'test-client-secret',
 					'region'        => 'zoho.eu',

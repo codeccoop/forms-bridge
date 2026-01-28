@@ -47,27 +47,20 @@ export default function AuthorizeButton({ addon, data }) {
       method: "POST",
       data: { credential: data },
     })
-      .then(({ success, redirect_url }) => {
+      .then(({ success, data }) => {
         if (!success) throw "error";
 
+        const { url, params } = data;
         const form = document.createElement("form");
-        form.action = redirect_url;
+        form.action = url;
         form.method = "GET";
         form.target = "_blank";
 
-        let innerHTML = `
-<input name="client_id" value="${data.client_id}" />
-<input name="response_type" value="code" />
-<input name="redirect_uri" value="${restUrl("http-bridge/v1/oauth/redirect")}" />
-<input name="access_type" value="offline" />
-<input name="state" value="${btoa(addon)}" />
-`;
-
-        if (data.scope) {
-          innerHTML += `<input name="scope" value="${data.scope}" />`;
-        }
-
-        form.innerHTML = innerHTML;
+        form.innerHTML = Object.keys(params).reduce((html, name) => {
+          const value = params[name];
+          if (!value) return html;
+          return html + `<input name="${name}" value="${value}" />`;
+        }, "");
 
         form.style.visibility = "hidden";
         document.body.appendChild(form);

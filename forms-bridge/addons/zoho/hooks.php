@@ -30,7 +30,7 @@ add_filter(
 						'ref'   => '#credential',
 						'name'  => 'schema',
 						'type'  => 'text',
-						'value' => 'Bearer',
+						'value' => 'OAuth',
 					),
 					array(
 						'ref'   => '#credential',
@@ -172,7 +172,7 @@ add_filter(
 				),
 				'credential' => array(
 					'name'          => '',
-					'schema'        => 'Bearer',
+					'schema'        => 'OAuth',
 					'oauth_url'     => 'https://accounts.{region}/oauth/v2',
 					'scope'         => 'ZohoCRM.modules.ALL,ZohoCRM.settings.modules.READ,ZohoCRM.settings.layouts.READ,ZohoCRM.users.READ',
 					'client_id'     => '',
@@ -182,13 +182,8 @@ add_filter(
 					'refresh_token' => '',
 				),
 				'backend'    => array(
+					'name'     => 'Zoho API',
 					'base_url' => 'https://www.zohoapis.{region}',
-					'headers'  => array(
-						array(
-							'name'  => 'Accept',
-							'value' => 'application/json',
-						),
-					),
 				),
 			),
 			$defaults,

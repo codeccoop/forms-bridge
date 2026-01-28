@@ -30,7 +30,7 @@ add_filter(
 						'ref'   => '#credential',
 						'name'  => 'schema',
 						'type'  => 'text',
-						'value' => 'Bearer',
+						'value' => 'OAuth',
 					),
 					array(
 						'ref'   => '#credential',
@@ -281,7 +281,7 @@ add_filter(
 				),
 				'credential' => array(
 					'name'          => '',
-					'schema'        => 'Bearer',
+					'schema'        => 'OAuth',
 					'oauth_url'     => 'https://slack.com/oauth/v2',
 					'scope'         => 'chat:write,channels:read,users:read',
 					'client_id'     => '',

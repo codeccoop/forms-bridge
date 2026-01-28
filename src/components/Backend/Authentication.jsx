@@ -8,6 +8,7 @@ const OPTIONS = [
   { label: "Basic", value: "Basic" },
   { label: "Token", value: "Token" },
   { label: "Bearer", value: "Bearer" },
+  { label: "OAuth", value: "OAuth" },
 ];
 
 export default function BackendAuthentication({ data = {}, setData }) {
@@ -23,7 +24,7 @@ export default function BackendAuthentication({ data = {}, setData }) {
           __nextHasNoMarginBottom
         />
       </FieldWrapper>
-      {data.schema && data.schema !== "Bearer" && (
+      {data.schema && data.schema !== "OAuth" && (
         <FieldWrapper>
           <TextControl
             label={__("Client ID", "forms-bridge")}

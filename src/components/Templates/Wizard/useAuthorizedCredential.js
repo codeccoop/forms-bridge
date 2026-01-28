@@ -64,7 +64,7 @@ export default function useAuthorizedCredential({ data = {}, fields = [] }) {
     setError(false);
   }, [credential]);
 
-  const isOauth = data.schema === "Bearer";
+  const isOauth = data.schema === "OAuth";
 
   const authorized = useMemo(() => {
     if (!isOauth || !!data.refresh_token) return true;
@@ -107,27 +107,20 @@ export default function useAuthorizedCredential({ data = {}, fields = [] }) {
       method: "POST",
       data: { credential },
     })
-      .then(({ success, redirect_url }) => {
+      .then(({ success, data }) => {
         if (!success) throw "error";
 
+        const { url, params } = data;
         const form = document.createElement("form");
+        form.action = url;
         form.method = "GET";
-        form.action = redirect_url;
         form.target = "_blank";
 
-        let innerHTML = `
-        <input name="client_id" value="${credential.client_id}" />
-        <input name="response_type" value="code" />
-        <input name="redirect_uri" value="${restUrl("http-bridge/v1/oauth/redirect")}" />
-        <input name="access_type" value="offline" />
-        <input name="state" value="${btoa(addon)}" />
-        `;
-
-        if (credential.scope) {
-          innerHTML += `<input name="scope" value="${credential.scope}" />`;
-        }
-
-        form.innerHTML = innerHTML;
+        form.innerHTML = Object.keys(params).reduce((html, name) => {
+          const value = params[name];
+          if (!value) return html;
+          return html + `<input name="${name}" value="${value}" />`;
+        }, "");
 
         form.style.visibility = "hidden";
         document.body.appendChild(form);
