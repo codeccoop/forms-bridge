@@ -5,6 +5,9 @@
  * @package formsbridge
  */
 
+use FORMS_BRIDGE\GSheets_Form_Bridge;
+use HTTP_BRIDGE\Backend;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
@@ -172,6 +175,46 @@ add_filter(
 		}
 
 		$data['bridge']['endpoint'] = '/v4/spreadsheets/' . $data['bridge']['endpoint'];
+
+		if ( empty( $data['form']['fields'] ) ) {
+			$backend_data               = $data['backend'];
+			$backend_data['credential'] = $data['credential']['name'];
+			$backend_data['name']       = '__gsheets-' . time();
+
+			Backend::temp_registration( $backend_data );
+
+			$bridge_data            = $data['bridge'];
+			$bridge_data['name']    = '__gsheets-' . time();
+			$bridge_data['backend'] = $backend_data['name'];
+
+			$bridge = new GSheets_Form_Bridge( $bridge_data );
+
+			$headers = $bridge->get_headers();
+			if ( ! is_wp_error( $headers ) ) {
+				foreach ( $headers as $header ) {
+					$field_name = sanitize_title( $header );
+
+					$data['form']['fields'][] = array(
+						'name'  => $field_name,
+						'label' => $header,
+						'type'  => 'text',
+					);
+
+					if ( $field_name !== $header ) {
+						if ( ! isset( $data['bridge']['mutations'][0] ) ) {
+							$data['bridge']['mutations'][0] = array();
+						}
+
+						$data['bridge']['mutations'][0][] = array(
+							'from' => $field_name,
+							'to'   => $header,
+							'cast' => 'inherit',
+						);
+					}
+				}
+			}
+		}
+
 		return $data;
 	},
 	10,
