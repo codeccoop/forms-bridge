@@ -509,7 +509,24 @@ class WPCF7_Integration extends BaseIntegration {
 		$tag  = "[{$type} {$name} ";
 
 		foreach ( $field as $key => $val ) {
-			if ( ! in_array( $key, array( 'name', 'type', 'value', 'required', 'label' ), true ) ) {
+			if (
+				$val &&
+				! in_array(
+					$key,
+					array(
+						'name',
+						'type',
+						'value',
+						'required',
+						'label',
+						'is_multi',
+						'is_file',
+						'conditional',
+						'options',
+					),
+					true,
+				)
+			) {
 				$key  = sanitize_text_field( $key );
 				$val  = trim( sanitize_text_field( $val ) );
 				$tag .= "{$key}:{$val} ";
