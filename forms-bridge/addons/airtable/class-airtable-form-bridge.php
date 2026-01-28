@@ -28,32 +28,74 @@ class Airtable_Form_Bridge extends Form_Bridge {
 	}
 
 	/**
-	 * Fetches the fields of the Airtable table and returns them as an array.
+	 * Gets the base id from the bridge endpoint.
 	 *
-	 * @param Backend|null $backend Bridge backend instance.
+	 * @return string|null
+	 */
+	private function base_id() {
+		preg_match( '/\/v\d+\/([^\/]+)\/([^\/]+)/', $this->endpoint, $matches );
+
+		if ( 3 !== count( $matches ) ) {
+			return null;
+		}
+
+		return $matches[1];
+	}
+
+	/**
+	 * Gets the table id from the bridge endpoint.
+	 *
+	 * @return string|null
+	 */
+	private function table_id() {
+		preg_match( '/\/v\d+\/([^\/]+)\/([^\/]+)/', $this->endpoint, $matches );
+
+		if ( 3 !== count( $matches ) ) {
+			return null;
+		}
+
+		return explode( '/', $matches[2] )[0];
+	}
+
+	/**
+	 * Fetches the fields of the Airtable table and returns them as an array.
 	 *
 	 * @return array<mixed>|WP_Error
 	 */
-	public function get_fields( $backend = null ) {
+	public function get_fields() {
 		if ( ! $this->is_valid ) {
-			return new WP_Error( 'invalid_bridge' );
+			return new WP_Error( 'invalid_bridge', 'The bridge is invalid', $this->data );
 		}
 
-		if ( ! $backend ) {
-			$backend = $this->backend;
+		$base_id  = $this->base_id();
+		$table_id = $this->table_id();
+
+		if ( ! $base_id || ! $table_id ) {
+			return new WP_Error( 'invalid_endpoint', 'The bridge has an invalid  endpoint', $this->data );
 		}
 
-		$response = $backend->get( $this->endpoint . '?maxRecords=1' );
+		$response = $this->patch(
+			array(
+				'method'   => 'GET',
+				'endpoint' => "/v0/meta/bases/{$base_id}/tables",
+			)
+		)->submit();
 
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
 
-		if ( empty( $response['data']['fields'] ) ) {
-			return array();
+		foreach ( $response['data']['tables'] as $candidate ) {
+			if ( $table_id === $candidate['id'] || $table_id === $candidate['name'] ) {
+				$table = $candidate;
+			}
 		}
 
-		return $response['data']['fields'];
+		if ( ! isset( $table ) ) {
+			return new WP_Error( 'not_found', 'Table not found', $this->data );
+		}
+
+		return $table['fields'];
 	}
 
 	/**
@@ -78,27 +120,27 @@ class Airtable_Form_Bridge extends Form_Bridge {
 			return new WP_Error( 'invalid_backend', 'Backend not found' );
 		}
 
-		$fields = $this->get_fields( $backend );
-		if ( is_wp_error( $fields ) ) {
-			return $fields;
-		}
-
-		$payload = self::flatten_payload( $payload );
-
-		$records = array();
-		foreach ( $fields as $field ) {
-			$field_name = $field['name'];
-			if ( isset( $payload[ $field_name ] ) ) {
-				$records['fields'][ $field_name ] = $payload[ $field_name ];
-			}
-		}
-
 		$endpoint = $this->endpoint;
 		$method   = $this->method;
 
 		if ( 'POST' === $method ) {
+			$fields = $this->get_fields( $backend );
+			if ( is_wp_error( $fields ) ) {
+				return $fields;
+			}
+
+			$payload = self::flatten_payload( $payload );
+
+			$record = array();
+			foreach ( $fields as $field ) {
+				$field_name = $field['name'];
+				if ( isset( $payload[ $field_name ] ) ) {
+					$record['fields'][ $field_name ] = $payload[ $field_name ];
+				}
+			}
+
 			$payload = array(
-				'records' => array( $records ),
+				'records' => array( $record ),
 			);
 		}
 

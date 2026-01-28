@@ -1,12 +1,21 @@
 <?php
+/**
+ * Class Airtable_Addon
+ *
+ * @package formsbridge
+ */
 
 namespace FORMS_BRIDGE;
+
+use FBAPI;
+use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
 require_once 'class-airtable-form-bridge.php';
+require_once 'hooks.php';
 
 /**
  * Airtable addon class.
@@ -46,34 +55,13 @@ class Airtable_Addon extends Addon {
 			array(
 				'name'     => '__airtable-' . time(),
 				'backend'  => $backend,
-				'endpoint' => '/',
+				'endpoint' => '/v0/meta/bases',
 				'method'   => 'GET',
 			)
 		);
 
-		$backend = $bridge->backend;
-		if ( ! $backend ) {
-			Logger::log( 'Airtable backend ping error: Bridge has no valid backend', Logger::ERROR );
-			return false;
-		}
-
-		$credential = $backend->credential;
-		if ( ! $credential ) {
-			Logger::log( 'Airtable backend ping error: Backend has no valid credential', Logger::ERROR );
-			return false;
-		}
-
-		$parsed = wp_parse_url( $backend->base_url );
-		$host   = $parsed['host'] ?? '';
-
-		if ( 'api.airtable.com' !== $host ) {
-			Logger::log( 'Airtable backend ping error: Backend does not point to the Airtable API endpoints', Logger::ERROR );
-			return false;
-		}
-
-		$access_token = $credential->get_access_token();
-
-		if ( ! $access_token ) {
+		$response = $bridge->submit();
+		if ( is_wp_error( $response ) ) {
 			Logger::log( 'Airtable backend ping error: Unable to recover the credential access token', Logger::ERROR );
 			return false;
 		}
@@ -90,32 +78,24 @@ class Airtable_Addon extends Addon {
 	 * @return array|WP_Error
 	 */
 	public function fetch( $endpoint, $backend ) {
-		$backend = FBAPI::get_backend( $backend );
-		if ( ! $backend ) {
-			return new WP_Error( 'invalid_backend' );
+		$endpoints = $this->get_endpoints( $backend );
+
+		if ( is_wp_error( $endpoint ) ) {
+			return $endpoint;
 		}
 
-		$credential = $backend->credential;
-		if ( ! $credential ) {
-			return new WP_Error( 'invalid_credential' );
-		}
-
-		$access_token = $credential->get_access_token();
-		if ( ! $access_token ) {
-			return new WP_Error( 'invalid_credential' );
-		}
-
-		$response = http_bridge_get(
-			'https://api.airtable.com/v0/meta/bases',
-			array(),
-			array(
-				'Authorization' => "Bearer {$access_token}",
-				'Accept'        => 'application/json',
-			)
+		$response = array(
+			'data' => array( 'tables' => array() ),
 		);
 
-		if ( is_wp_error( $response ) ) {
-			return $response;
+		foreach ( $endpoints as $endpoint ) {
+			list( $base_id, $table_name ) = array_slice( explode( '/', $endpoint ), 2 );
+
+			$response['data']['tables'][] = array(
+				'endpoint' => $endpoint,
+				'name'     => $table_name,
+				'base'     => $base_id,
+			);
 		}
 
 		return $response;
@@ -130,18 +110,36 @@ class Airtable_Addon extends Addon {
 	 * @return array|WP_Error
 	 */
 	public function get_endpoints( $backend, $method = null ) {
-		$response = $this->fetch( null, $backend );
+		$bridge = new Airtable_Form_Bridge(
+			array(
+				'name'     => '__airtable-endpoints',
+				'backend'  => $backend,
+				'endpoint' => '/v0/meta/bases',
+				'method'   => 'GET',
+			),
+		);
+
+		$response = $bridge->submit();
 
 		if ( is_wp_error( $response ) || empty( $response['data']['bases'] ) ) {
 			return array();
 		}
 
-		return array_map(
-			function ( $base ) {
-				return '/v0/' . $base['id'] . '/' . $base['tables'][0]['id'];
-			},
-			$response['data']['bases']
-		);
+		$endpoints = array();
+		foreach ( $response['data']['bases'] as $base ) {
+			$response = $bridge->patch( array( 'endpoint' => "/v0/meta/bases/{$base['id']}/tables" ) )
+				->submit();
+
+			if ( is_wp_error( $response ) ) {
+				break;
+			}
+
+			foreach ( $response['data']['tables'] as $table ) {
+				$endpoints[] = "/v0/{$base['id']}/{$table['name']}";
+			}
+		}
+
+		return $endpoints;
 	}
 
 	/**
@@ -159,30 +157,14 @@ class Airtable_Addon extends Addon {
 			return array();
 		}
 
-		$bridge  = null;
-		$bridges = FBAPI::get_addon_bridges( self::NAME );
-		foreach ( $bridges as $candidate ) {
-			$data = $candidate->data();
-			if ( ! $data ) {
-				continue;
-			}
-
-			if (
-				$data['endpoint'] === $endpoint &&
-				$data['backend'] === $backend
-			) {
-				/**
-				 * Current bridge.
-				 *
-				 * @var Airtable_Form_Bridge
-				 */
-				$bridge = $candidate;
-			}
-		}
-
-		if ( ! isset( $bridge ) ) {
-			return array();
-		}
+		$bridge = new Airtable_Form_Bridge(
+			array(
+				'name'     => '__airtable-endpoint-schema',
+				'method'   => 'GET',
+				'backend'  => $backend,
+				'endpoint' => $endpoint,
+			)
+		);
 
 		$fields = $bridge->get_fields();
 
@@ -192,9 +174,51 @@ class Airtable_Addon extends Addon {
 
 		$schema = array();
 		foreach ( $fields as $field ) {
+			if (
+				in_array(
+					$field['type'],
+					array(
+						'aiText',
+						'formula',
+						'autoNumber',
+						'button',
+						'count',
+						'createdBy',
+						'createdTime',
+						'lastModifiedBy',
+						'lastModifiedTime',
+						'rollup',
+						'externalSyncSource',
+						'multipleAttachments',
+					),
+					true,
+				)
+			) {
+				continue;
+			}
+
+			switch ( $field['type'] ) {
+				case 'rating':
+				case 'number':
+					$type = 'number';
+					break;
+				case 'checkbox':
+					$type = 'boolean';
+					break;
+				case 'multipleSelects':
+				case 'multipleCollaborators':
+				case 'multipleLookupValues':
+				case 'multipleRecordLinks':
+					$type = 'array';
+					break;
+				default:
+					$type = 'string';
+					break;
+			}
+
 			$schema[] = array(
 				'name'   => $field['name'],
-				'schema' => array( 'type' => $field['type'] ),
+				'schema' => array( 'type' => $type ),
 			);
 		}
 

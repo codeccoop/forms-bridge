@@ -10,26 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 add_filter(
-	'forms_bridge_bridge_schema',
-	function ( $schema, $addon ) {
-		if ( 'airtable' !== $addon ) {
-			return $schema;
-		}
-
-		$schema['properties']['endpoint']['default'] = '/{base_id}/{table_name}';
-
-		$schema['properties']['backend']['const'] = 'Airtable API';
-
-		$schema['properties']['method']['enum']    = array( 'GET', 'POST', 'PUT', 'PATCH' );
-		$schema['properties']['method']['default'] = 'POST';
-
-		return $schema;
-	},
-	10,
-	2
-);
-
-add_filter(
 	'forms_bridge_template_defaults',
 	function ( $defaults, $addon, $schema ) {
 		if ( 'airtable' !== $addon ) {
@@ -53,19 +33,29 @@ add_filter(
 						'value' => 'Bearer',
 					),
 					array(
-						'ref'      => '#credential',
-						'name'     => 'api_key',
-						'label'    => __( 'API Key', 'forms-bridge' ),
-						'type'     => 'text',
-						'required' => true,
-					),
-					array(
-						'ref'         => '#bridge',
-						'name'        => 'endpoint',
-						'label'       => __( 'Endpoint', 'forms-bridge' ),
-						'description' => __( 'Format: base_id/table_name', 'forms-bridge' ),
+						'ref'         => '#credential',
+						'name'        => 'access_token',
+						'label'       => __( 'Access token', 'forms-bridge' ),
+						'description' => __(
+							'Register your Personal Access Token in the <a target="_blank" href="https://airtable.com/create/tokens">Airtable Builder Hub</a>',
+							'forms-bridge'
+						),
 						'type'        => 'text',
 						'required'    => true,
+					),
+					array(
+						'ref'      => '#bridge',
+						'name'     => 'endpoint',
+						'label'    => __( 'Table', 'forms-bridge' ),
+						'type'     => 'text',
+						'required' => true,
+						'options'  => array(
+							'endpoint' => '/v0/meta/bases',
+							'finger'   => array(
+								'value' => 'tables[].endpoint',
+								'label' => 'tables[].name',
+							),
+						),
 					),
 					array(
 						'ref'   => '#bridge',
@@ -86,25 +76,16 @@ add_filter(
 				'backend'    => array(
 					'name'     => 'Airtable API',
 					'base_url' => 'https://api.airtable.com',
-					'headers'  => array(
-						array(
-							'name'  => 'Authorization',
-							'value' => 'Bearer {api_key}',
-						),
-						array(
-							'name'  => 'Content-Type',
-							'value' => 'application/json',
-						),
-					),
 				),
 				'bridge'     => array(
 					'backend'  => 'Airtable API',
 					'endpoint' => '',
 				),
 				'credential' => array(
-					'name'    => '',
-					'schema'  => 'Bearer',
-					'api_key' => '',
+					'name'         => '',
+					'schema'       => 'Bearer',
+					'access_token' => '',
+					'expires_at'   => 0,
 				),
 			),
 			$defaults,
@@ -118,17 +99,17 @@ add_filter(
 );
 
 add_filter(
-	'forms_bridge_template_data',
-	function ( $data, $template_id ) {
-		if ( strpos( $template_id, 'airtable-' ) !== 0 ) {
-			return $data;
+	'http_bridge_oauth_url',
+	function ( $url, $verb ) {
+		if ( false === strstr( $url, 'airtable.com' ) ) {
+			return $url;
 		}
 
-		// Ensure endpoint format is correct for Airtable
-		if ( ! empty( $data['bridge']['endpoint'] ) && strpos( $data['bridge']['endpoint'], '/' ) === false ) {
-			$data['bridge']['endpoint'] = '/' . $data['bridge']['endpoint'];
+		if ( 'auth' === $verb ) {
+			$url .= 'orize';
 		}
-		return $data;
+
+		return $url;
 	},
 	10,
 	2
