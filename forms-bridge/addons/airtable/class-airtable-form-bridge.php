@@ -163,6 +163,13 @@ class Airtable_Form_Bridge extends Form_Bridge {
 
 			if ( ! is_array( $value ) ) {
 				$flat[ $key ] = $value;
+			} elseif ( wp_is_numeric_array( $value ) ) {
+				$flat[ $key ] = array_map(
+					function ( $value ) {
+						return array( 'name' => $value );
+					},
+					$value,
+				);
 			} else {
 				foreach ( $value as $_key => $_val ) {
 					$flat[ $_key ] = $_val;
@@ -190,7 +197,7 @@ class Airtable_Form_Bridge extends Form_Bridge {
 			$simple_items = array_filter( $value, fn( $item ) => ! is_array( $item ) );
 
 			if ( count( $simple_items ) === count( $value ) ) {
-				return implode( ',', $value );
+				return $simple_items;
 			}
 		}
 

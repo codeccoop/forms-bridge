@@ -84,7 +84,7 @@ class GSheets_Form_Bridge extends Form_Bridge {
 	 *
 	 * @param Backend|null $backend Bridge backend instance.
 	 *
-	 * @return array<string>
+	 * @return array<string>|WP_Error
 	 */
 	public function get_headers( $backend = null ) {
 		if ( ! $this->is_valid ) {

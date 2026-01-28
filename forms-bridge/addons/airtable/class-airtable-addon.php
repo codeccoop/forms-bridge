@@ -190,6 +190,9 @@ class Airtable_Addon extends Addon {
 						'rollup',
 						'externalSyncSource',
 						'multipleAttachments',
+						'multipleCollaborators',
+						'multipleLookupValues',
+						'multipleRecordLinks',
 					),
 					true,
 				)
@@ -206,9 +209,6 @@ class Airtable_Addon extends Addon {
 					$type = 'boolean';
 					break;
 				case 'multipleSelects':
-				case 'multipleCollaborators':
-				case 'multipleLookupValues':
-				case 'multipleRecordLinks':
 					$type = 'array';
 					break;
 				default:
