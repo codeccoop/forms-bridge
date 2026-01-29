@@ -441,6 +441,8 @@ class WPCF7_Integration extends BaseIntegration {
 					'path'     => $is_multi ? $paths : $paths[0],
 					'is_multi' => $is_multi,
 				);
+			} else {
+				unset( $uploads[ $file_name ] );
 			}
 		}
 

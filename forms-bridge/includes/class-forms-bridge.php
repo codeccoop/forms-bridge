@@ -491,7 +491,7 @@ class Forms_Bridge extends Base_Plugin {
 	 *
 	 * @return array Map of uploaded files.
 	 */
-	public static function attachments( $uploads ) {
+	public static function attachments( $uploads = array() ) {
 		$attachments = array();
 
 		foreach ( $uploads as $name => $upload ) {
