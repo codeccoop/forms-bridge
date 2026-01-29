@@ -78,27 +78,43 @@ class Airtable_Addon extends Addon {
 	 * @return array|WP_Error
 	 */
 	public function fetch( $endpoint, $backend ) {
-		$endpoints = $this->get_endpoints( $backend );
-
-		if ( is_wp_error( $endpoint ) ) {
-			return $endpoint;
-		}
-
-		$response = array(
-			'data' => array( 'tables' => array() ),
+		$bridge = new Airtable_Form_Bridge(
+			array(
+				'name'     => '__airtable-meta-bases',
+				'backend'  => $backend,
+				'endpoint' => '/v0/meta/bases',
+				'method'   => 'GET',
+			),
 		);
 
-		foreach ( $endpoints as $endpoint ) {
-			list( $base_id, $table_name ) = array_slice( explode( '/', $endpoint ), 2 );
+		$response = $bridge->submit();
 
-			$response['data']['tables'][] = array(
-				'endpoint' => $endpoint,
-				'name'     => $table_name,
-				'base'     => $base_id,
-			);
+		if ( is_wp_error( $response ) ) {
+			return $response;
 		}
 
-		return $response;
+		$tables = array();
+		foreach ( $response['data']['bases'] as $base ) {
+			$schema_response = $bridge->patch( array( 'endpoint' => "/v0/meta/bases/{$base['id']}/tables" ) )
+				->submit();
+
+			if ( is_wp_error( $schema_response ) ) {
+				return $schema_response;
+			}
+
+			foreach ( $schema_response['data']['tables'] as $table ) {
+				$tables[] = array(
+					'base_id'   => $base['id'],
+					'base_name' => $base['name'],
+					'label'     => "{$base['name']}/{$table['name']}",
+					'name'      => $table['name'],
+					'id'        => $table['id'],
+					'endpoint'  => "/v0/{$base['id']}/{$table['name']}",
+				);
+			}
+		}
+
+		return array( 'data' => array( 'tables' => $tables ) );
 	}
 
 	/**
@@ -110,33 +126,15 @@ class Airtable_Addon extends Addon {
 	 * @return array|WP_Error
 	 */
 	public function get_endpoints( $backend, $method = null ) {
-		$bridge = new Airtable_Form_Bridge(
-			array(
-				'name'     => '__airtable-endpoints',
-				'backend'  => $backend,
-				'endpoint' => '/v0/meta/bases',
-				'method'   => 'GET',
-			),
-		);
+		$response = $this->fetch( null, $backend );
 
-		$response = $bridge->submit();
-
-		if ( is_wp_error( $response ) || empty( $response['data']['bases'] ) ) {
+		if ( is_wp_error( $response ) ) {
 			return array();
 		}
 
 		$endpoints = array();
-		foreach ( $response['data']['bases'] as $base ) {
-			$response = $bridge->patch( array( 'endpoint' => "/v0/meta/bases/{$base['id']}/tables" ) )
-				->submit();
-
-			if ( is_wp_error( $response ) ) {
-				break;
-			}
-
-			foreach ( $response['data']['tables'] as $table ) {
-				$endpoints[] = "/v0/{$base['id']}/{$table['name']}";
-			}
+		foreach ( $response['data']['tables'] as $table ) {
+			$endpoints[] = $table['endpoint'];
 		}
 
 		return $endpoints;

@@ -57,7 +57,7 @@ add_filter(
 							'endpoint' => '/v0/meta/bases',
 							'finger'   => array(
 								'value' => 'tables[].endpoint',
-								'label' => 'tables[].name',
+								'label' => 'tables[].label',
 							),
 						),
 					),
