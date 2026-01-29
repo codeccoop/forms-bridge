@@ -22,7 +22,7 @@ Whether you use Zoho, Odoo, Dolibarr, Zulip, or a custom backend, Forms Bridge m
 
 ✅ No code required – Set up integrations with a user-friendly interface.
 ✅ Works with your favorite form plugins – Contact Form 7, Gravity Forms, WPForms, Ninja Forms, WooCommerce, and Formidable Forms.
-✅ 15+ ready-to-use add-ons – Connect to Zoho, Odoo, Dolibarr, Google Sheets, Slack, Mailchimp, and more.
+✅ 20+ ready-to-use add-ons – Connect to Zoho, Odoo, Dolibarr, Google Sheets, Slack, Mailchimp, and more.
 ✅ Advanced data mapping – Rename, transform, and enrich form data before sending it.
 ✅ Workflow automation – Pre-process submissions with custom jobs.
 ✅ Reusable templates – Get started in minutes with pre-built blueprints.
@@ -160,6 +160,12 @@ You can get support from Còdec using the [Forms Bridge support forum](https://w
 9. Debug console – Monitor and troubleshoot requests.
 
 == Changelog ==
+
+= 4.3.1 =
+feat: airtable add-on
+feat: dynamic form field templates for google sheets, airtable and nextcloud
+feat: nextcloud get endpoints method
+fix: skip internal field attributes in wpcf7 form creation
 
 = 4.3.0 =
 * feat: form's bridge chain order
