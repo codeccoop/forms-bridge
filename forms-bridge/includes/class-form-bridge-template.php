@@ -970,10 +970,7 @@ class Form_Bridge_Template {
 				if ( ! $form_id ) {
 					return new WP_Error(
 						'form_creation_error',
-						__(
-							'Forms bridge can\'t create the form',
-							'forms-bridge'
-						),
+						__( 'Forms bridge can\'t create the form', 'forms-bridge' ),
 						array(
 							'status' => 400,
 							'data'   => $data['form'],
@@ -991,8 +988,7 @@ class Form_Bridge_Template {
 				);
 			}
 
-			$data['bridge']['form_id'] =
-				$integration . ':' . $data['form']['id'];
+			$data['bridge']['form_id'] = $integration . ':' . $data['form']['id'];
 
 			$create_credential = false;
 			if ( ! empty( $data['credential']['name'] ) ) {

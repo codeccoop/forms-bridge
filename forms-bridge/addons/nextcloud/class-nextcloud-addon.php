@@ -8,6 +8,8 @@
 namespace FORMS_BRIDGE;
 
 use FBAPI;
+use SimpleXMLElement;
+use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -104,7 +106,105 @@ class Nextcloud_Addon extends Addon {
 	 * @return array|WP_Error
 	 */
 	public function fetch( $endpoint, $backend ) {
-		return array();
+		if ( ! class_exists( 'SimpleXMLElement' ) ) {
+			return new WP_Error( 'xml_not_supported', 'Requires phpxml extension to be enabled' );
+		}
+
+		$backend = FBAPI::get_backend( $backend );
+		if ( ! $backend ) {
+			return new WP_Error( 'invalid_backend', 'Backend not found', array( 'backend' => $backend ) );
+		}
+
+		$credential = $backend->credential;
+		if ( ! $credential ) {
+			return new WP_Error( 'invalid_backend', 'Backend has no credential', $backend->data() );
+		}
+
+		$authorization = $credential->authorization();
+		if ( ! $authorization ) {
+			return new WP_Error( 'invalid_credential', 'Credential has no authorization', $credential->data() );
+		}
+
+		$url = $backend->url( '/remote.php/dav/files/' . rawurlencode( $credential->client_id ) );
+
+		$response = wp_remote_request(
+			$url,
+			array(
+				'method'  => 'PROPFIND',
+				'headers' => array(
+					'Depth'         => '5',
+					'Authorization' => $authorization,
+					'Content-Type'  => 'text/xml',
+				),
+				'body'    => '<?xml version="1.0" encoding="utf-8" ?>'
+					. '<d:propfind xmlns:d="DAV:">'
+						. '<d:prop><d:href/></d:prop>'
+					. '</d:propfind>',
+			)
+		);
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$xml = new SimpleXMLElement( $response['body'] );
+		$xml->registerXPathNamespace( 'd', 'DAV:' );
+
+		$parsed_url = wp_parse_url( $url );
+		$basepath   = $parsed_url['path'] ?? '/';
+
+		$files = array();
+		foreach ( $xml->xpath( '//d:response' ) as $item ) {
+			$href     = (string) $item->children( 'DAV:' )->href;
+			$filepath = rawurldecode( str_replace( $basepath, '', $href ) );
+
+			if ( '/' === $filepath ) {
+				continue;
+			}
+
+			$pathinfo = pathinfo( $filepath );
+			$is_file  = isset( $pathinfo['extension'] );
+
+			if ( $is_file && 'csv' !== strtolower( $pathinfo['extension'] ) ) {
+				continue;
+			}
+
+			if ( ! $is_file && 'files' === $endpoint ) {
+				continue;
+			} elseif ( $is_file && 'directories' === $endpoint ) {
+				continue;
+			}
+
+			$files[] = array(
+				'path'    => substr( $filepath, 1 ),
+				'is_file' => $is_file,
+			);
+		}
+
+		return array( 'data' => array( 'files' => $files ) );
+	}
+
+	/**
+	 * Performs an introspection of the backend API and returns a list of available endpoints.
+	 *
+	 * @param string      $backend Target backend name.
+	 * @param string|null $method HTTP method.
+	 *
+	 * @return array|WP_Error
+	 */
+	public function get_endpoints( $backend, $method = null ) {
+		$response = $this->fetch( 'endpoints', $backend );
+
+		if ( is_wp_error( $response ) ) {
+			return array();
+		}
+
+		$endpoints = array();
+		foreach ( $response['data']['files'] as $file ) {
+			$endpoints[] = $file['path'];
+		}
+
+		return $endpoints;
 	}
 
 	/**

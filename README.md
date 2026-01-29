@@ -58,6 +58,7 @@ Forms Bridge has the following add-ons:
 
 **🗓️ Productivity**
 
+- [Airtable](https://formsbridge.codeccoop.org/documentation/airtable)
 - [Google Calendar](https://formsbridge.codeccoop.org/documentation/google-calendar/)
 - [Google Sheets](https://formsbridge.codeccoop.org/documentation/google-sheets/)
 - [Nextcloud](https://formsbridge.codeccoop.org/documentation/nextcloud/)

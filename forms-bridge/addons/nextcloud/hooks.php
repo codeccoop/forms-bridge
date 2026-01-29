@@ -5,6 +5,10 @@
  * @package formsbridge
  */
 
+use FORMS_BRIDGE\Nextcloud_Form_Bridge;
+use HTTP_BRIDGE\Backend;
+use HTTP_BRIDGE\Credential;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
@@ -71,6 +75,13 @@ add_filter(
 						'name'    => 'endpoint',
 						'label'   => __( 'Filepath', 'forms-bridge' ),
 						'pattern' => '.+\.csv$',
+						'options' => array(
+							'endpoint' => 'files',
+							'finger'   => array(
+								'label' => 'files[].path',
+								'value' => 'files[].path',
+							),
+						),
 					),
 					array(
 						'ref'      => '#credential',
@@ -136,6 +147,51 @@ add_filter(
 
 		if ( ! preg_match( '/\.csv$/i', $data['bridge']['endpoint'] ) ) {
 			$data['bridge']['endpoint'] .= '.csv';
+		}
+
+		if ( empty( $data['form']['fields'] ) ) {
+			$credential_data         = $data['credential'];
+			$credential_data['name'] = '__nextcloud-' . time();
+
+			Credential::temp_registration( $credential_data );
+
+			$backend_data               = $data['backend'];
+			$backend_data['credential'] = $credential_data['name'];
+			$backend_data['name']       = '__nextcloud-' . time();
+
+			Backend::temp_registration( $backend_data );
+
+			$bridge_data            = $data['bridge'];
+			$bridge_data['name']    = '__nextcloud-' . time();
+			$bridge_data['backend'] = $backend_data['name'];
+
+			$bridge = new Nextcloud_Form_Bridge( $bridge_data );
+
+			$headers = $bridge->table_headers();
+
+			if ( is_array( $headers ) ) {
+				foreach ( $headers as $header ) {
+					$field_name = sanitize_title( $header );
+
+					$data['form']['fields'][] = array(
+						'name'  => $field_name,
+						'label' => $header,
+						'type'  => 'text',
+					);
+
+					if ( $header !== $field_name ) {
+						if ( ! isset( $data['bridge']['mutations'][0] ) ) {
+							$data['bridge']['mutations'][0] = array();
+						}
+
+						$data['bridge']['mutations'][0][] = array(
+							'from' => $field_name,
+							'to'   => $header,
+							'cast' => 'inherit',
+						);
+					}
+				}
+			}
 		}
 
 		return $data;
