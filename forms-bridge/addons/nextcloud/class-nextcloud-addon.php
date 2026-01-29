@@ -8,6 +8,7 @@
 namespace FORMS_BRIDGE;
 
 use FBAPI;
+use SimpleXMLElement;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -105,6 +106,82 @@ class Nextcloud_Addon extends Addon {
 	 */
 	public function fetch( $endpoint, $backend ) {
 		return array();
+	}
+
+	/**
+	 * Performs an introspection of the backend API and returns a list of available endpoints.
+	 *
+	 * @param string      $backend Target backend name.
+	 * @param string|null $method HTTP method.
+	 *
+	 * @return array|WP_Error
+	 */
+	public function get_endpoints( $backend, $method = null ) {
+		if ( ! class_exists( 'SimpleXMLElement' ) ) {
+			return array();
+		}
+
+		$backend = FBAPI::get_backend( $backend );
+		if ( ! $backend ) {
+			return array();
+		}
+
+		$credential = $backend->credential;
+		if ( ! $credential ) {
+			return array();
+		}
+
+		$authorization = $credential->authorization();
+		if ( ! $authorization ) {
+			return array();
+		}
+
+		$url = $backend->url( '/remote.php/dav/files/' . rawurlencode( $credential->client_id ) );
+
+		$response = wp_remote_request(
+			$url,
+			array(
+				'method'  => 'PROPFIND',
+				'headers' => array(
+					'Depth'         => '5',
+					'Authorization' => $authorization,
+					'Content-Type'  => 'text/xml',
+				),
+				'body'    => '<?xml version="1.0" encoding="utf-8" ?>'
+					. '<d:propfind xmlns:d="DAV:">'
+						. '<d:prop><d:href/></d:prop>'
+					. '</d:propfind>',
+			)
+		);
+
+		if ( is_wp_error( $response ) ) {
+			return array();
+		}
+
+		$xml = new SimpleXMLElement( $response['body'] );
+		$xml->registerXPathNamespace( 'd', 'DAV:' );
+
+		$parsed_url = parse_url( $url );
+		$basepath   = $parsed_url['path'] ?? '/';
+
+		$endpoints = array();
+		foreach ( $xml->xpath( '//d:response' ) as $item ) {
+			$href     = (string) $item->children( 'DAV:' )->href;
+			$endpoint = rawurldecode( str_replace( $basepath, '', $href ) );
+
+			if ( '/' === $endpoint ) {
+				continue;
+			}
+
+			$pathinfo = pathinfo( $endpoint );
+			if ( isset( $pathinfo['extension'] ) && 'csv' !== strtolower( $pathinfo['extension'] ) ) {
+				continue;
+			}
+
+			$endpoints[] = substr( $endpoint, 1 );
+		}
+
+		return $endpoints;
 	}
 
 	/**
