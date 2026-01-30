@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once 'class-grist-form-bridge.php';
+require_once 'hooks.php';
 
 /**
  * Grist addon class.
@@ -50,31 +51,17 @@ class Grist_Addon extends Addon {
 	 * @return boolean
 	 */
 	public function ping( $backend ) {
-		$bridge = new Grist_Form_Bridge(
-			array(
-				'name'     => '__grist-' . time(),
-				'backend'  => $backend,
-				'endpoint' => '/api/docs',
-				'method'   => 'GET',
-			)
-		);
+		$backend = FBAPI::get_backend( $backend );
 
-		$backend = $bridge->backend;
 		if ( ! $backend ) {
-			Logger::log( 'Grist backend ping error: Bridge has no valid backend', Logger::ERROR );
+			Logger::log( 'Grist backend ping error: Backend is unkown or invalid', Logger::ERROR );
 			return false;
 		}
 
-		$credential = $backend->credential;
-		if ( ! $credential ) {
-			Logger::log( 'Grist backend ping error: Backend has no valid credential', Logger::ERROR );
-			return false;
-		}
+		$response = $backend->get( '/api/orgs' );
 
-		$access_token = $credential->get_access_token();
-
-		if ( ! $access_token ) {
-			Logger::log( 'Grist backend ping error: Unable to recover the credential access token', Logger::ERROR );
+		if ( is_wp_error( $response ) ) {
+			Logger::log( 'Grist backend ping error: Unable to list grist organizations', Logger::ERROR );
 			return false;
 		}
 
@@ -92,33 +79,59 @@ class Grist_Addon extends Addon {
 	public function fetch( $endpoint, $backend ) {
 		$backend = FBAPI::get_backend( $backend );
 		if ( ! $backend ) {
-			return new WP_Error( 'invalid_backend' );
+			return new WP_Error( 'invalid_backend', 'Backend is unkown or invalid', array( 'backend' => $backend ) );
 		}
 
-		$credential = $backend->credential;
-		if ( ! $credential ) {
-			return new WP_Error( 'invalid_credential' );
+		if ( $endpoint && '/api/orgs/{orgId}/tables' !== $endpoint ) {
+			return $backend->get( $endpoint );
 		}
 
-		$access_token = $credential->get_access_token();
-		if ( ! $access_token ) {
-			return new WP_Error( 'invalid_credential' );
+		if ( preg_match( '/[^\/]+(?=\.getgrist.com)/', $backend->base_url, $matches ) ) {
+			$org_id = $matches[0];
 		}
 
-		$response = http_bridge_get(
-			$backend->base_url . $endpoint,
-			array(),
-			array(
-				'Authorization' => "Bearer {$access_token}",
-				'Accept'        => 'application/json',
-			)
-		);
+		if ( ! isset( $org_id ) ) {
+			foreach ( $backend->headers as $header => $value ) {
+				if ( 'orgid' === strtolower( $header ) ) {
+					$org_id = $value;
+					break;
+				}
+			}
+		}
+
+		if ( ! isset( $org_id ) ) {
+			return new WP_Error( 'invalid_backend', 'Backend does not have the orgId header', $backend->data() );
+		}
+
+		$response = $backend->get( "/api/orgs/{$org_id}/workspaces" );
 
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
 
-		return $response;
+		$tables = array();
+		foreach ( $response['data'] as $workspace ) {
+			foreach ( $workspace['docs'] as $doc ) {
+				$docs_response = $backend->get( "/api/docs/{$doc['id']}/tables" );
+
+				if ( is_wp_error( $docs_response ) ) {
+					continue;
+				}
+
+				foreach ( $docs_response['data']['tables'] as $table ) {
+					$tables[] = array(
+						'org_id'   => $org_id,
+						'doc_id'   => $doc['urlId'],
+						'doc_name' => $doc['name'],
+						'id'       => $table['id'],
+						'label'    => "{$doc['name']}/{$table['id']}",
+						'endpoint' => "/api/docs/{$doc['urlId']}/tables/{$table['id']}/records",
+					);
+				}
+			}
+		}
+
+		return array( 'data' => array( 'tables' => $tables ) );
 	}
 
 	/**
@@ -130,13 +143,18 @@ class Grist_Addon extends Addon {
 	 * @return array|WP_Error
 	 */
 	public function get_endpoints( $backend, $method = null ) {
-		// Grist doesn't have a standard endpoint discovery API
-		// Return common Grist API endpoints
-		return array(
-			'/api/docs',
-			'/api/tables',
-			'/api/records',
-		);
+		$response = $this->fetch( null, $backend );
+
+		if ( is_wp_error( $response ) ) {
+			return array();
+		}
+
+		$endpoints = array();
+		foreach ( $response['data']['tables'] as $table ) {
+			$endpoints[] = $table['endpoint'];
+		}
+
+		return $endpoints;
 	}
 
 	/**
@@ -154,28 +172,16 @@ class Grist_Addon extends Addon {
 			return array();
 		}
 
-		$bridge  = null;
-		$bridges = FBAPI::get_addon_bridges( self::NAME );
-		foreach ( $bridges as $candidate ) {
-			$data = $candidate->data();
-			if ( ! $data ) {
-				continue;
-			}
+		$bridge = new Grist_Form_Bridge(
+			array(
+				'name'     => '__grist-endpoint-introspection',
+				'backend'  => $backend,
+				'endpoint' => $endpoint,
+				'method'   => 'GET',
+			)
+		);
 
-			if (
-				$data['endpoint'] === $endpoint &&
-				$data['backend'] === $backend
-			) {
-				/**
-				 * Current bridge.
-				 *
-				 * @var Grist_Form_Bridge
-				 */
-				$bridge = $candidate;
-			}
-		}
-
-		if ( ! isset( $bridge ) ) {
+		if ( ! $bridge->is_valid ) {
 			return array();
 		}
 
@@ -187,9 +193,27 @@ class Grist_Addon extends Addon {
 
 		$schema = array();
 		foreach ( $fields as $field ) {
+			switch ( $field['type'] ) {
+				case 'number':
+					$type = 'number';
+					break;
+				case 'checkbox':
+					$type = 'boolean';
+					break;
+				case 'select':
+					$type = $field['is_multi'] ? 'array' : 'string';
+					break;
+				case 'file':
+					$type = 'file';
+					break;
+				default:
+					$type = 'string';
+					break;
+			}
+
 			$schema[] = array(
 				'name'   => $field['name'],
-				'schema' => array( 'type' => $field['type'] ),
+				'schema' => array( 'type' => $type ),
 			);
 		}
 
