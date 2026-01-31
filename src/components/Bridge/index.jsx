@@ -51,7 +51,7 @@ export default function Bridge({ data, update, remove, schema, copy, names }) {
       mutations = mutations
         .slice(0, mutationIndex)
         .concat([[]])
-        .concat(mutations.slice(mutationIndex));
+        .concat(mutations.slice(mutationIndex + 1));
     }
 
     patchState({ workflow, mutations });

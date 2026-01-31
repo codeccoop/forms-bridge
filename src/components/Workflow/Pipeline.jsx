@@ -87,7 +87,7 @@ export default function WorkflowPipeline({ workflow, setWorkflow, setEdit }) {
         .concat([jobName])
         .concat(workflow.slice(index + 1, workflow.length));
 
-      setWorkflow(newWorkflow);
+      setWorkflow(newWorkflow, index);
     },
     [workflow]
   );
