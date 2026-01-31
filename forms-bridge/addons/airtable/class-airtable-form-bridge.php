@@ -296,10 +296,10 @@ class Airtable_Form_Bridge extends Form_Bridge {
 				)->post(
 					"/v0/{$base_id}/{$record_id}/{$attachment['id']}/uploadAttachment",
 					array(
-						'contentType' => $filetype['type'],
+						'contentType' => $filetype['type'] ?? 'octet/stream',
 						'file'        => $attachment['file'],
 						'filename'    => $filename,
-					)
+					),
 				);
 
 				if ( is_wp_error( $upload_response ) ) {

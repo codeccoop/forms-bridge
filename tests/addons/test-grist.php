@@ -446,7 +446,7 @@ class GristTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test POST request to create a record.
+	 * Test POST request to create a record with uploads.
 	 */
 	public function test_post_create_record_with_upload() {
 		$bridge = new Grist_Form_Bridge(

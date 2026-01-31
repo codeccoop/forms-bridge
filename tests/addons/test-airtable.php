@@ -184,7 +184,7 @@ class AirtableTest extends WP_UnitTestCase {
 						),
 					),
 				);
-			} elseif ( preg_match( '#/v0/meta/bases/(app\d+)/tables#', $path, $matches ) ) {
+			} elseif ( preg_match( '#^/v0/meta/bases/(app\d+)/tables$#', $path, $matches ) ) {
 				// Tables for a specific base.
 				return array(
 					'tables' => array(
@@ -213,14 +213,35 @@ class AirtableTest extends WP_UnitTestCase {
 									'type' => 'number',
 								),
 								array(
-									'id'   => 'fld888888888',
-									'name' => 'Tags',
-									'type' => 'multipleSelects',
+									'id'      => 'fld888888888',
+									'name'    => 'Tags',
+									'type'    => 'multipleSelects',
+									'options' => array(
+										'choices' => array(
+											array(
+												'name' => 'A',
+												'id'   => 't1',
+											),
+											array(
+												'name' => 'B',
+												'id'   => 't2',
+											),
+											array(
+												'name' => 'C',
+												'id'   => 't3',
+											),
+										),
+									),
 								),
 								array(
 									'id'   => 'fld999999999',
 									'name' => 'Summary',
 									'type' => 'aiText',
+								),
+								array(
+									'id'   => 'fld2222222222',
+									'name' => 'Profile Picture',
+									'type' => 'multipleAttachments',
 								),
 							),
 						),
@@ -239,45 +260,73 @@ class AirtableTest extends WP_UnitTestCase {
 					),
 				);
 			}
-		} elseif ( preg_match( '#/v0/(app\d+)/([^/]+)#', $path, $matches ) ) {
+		} elseif ( preg_match( '#^/v0/(app\d+)/([^/]+)$#', $path, $matches ) ) {
 			// Table data endpoint.
 			if ( 'GET' === $method ) {
 				// Mock field schema for GET requests.
 				return array(
-					'fields' => array(
+					'records' => array(
 						array(
-							'id'   => 'fld123456789',
-							'name' => 'Name',
-							'type' => 'singleLineText',
-						),
-						array(
-							'id'   => 'fld987654321',
-							'name' => 'Email',
-							'type' => 'email',
-						),
-						array(
-							'id'   => 'fld555555555',
-							'name' => 'Active',
-							'type' => 'checkbox',
-						),
-						array(
-							'id'   => 'fld777777777',
-							'name' => 'Score',
-							'type' => 'number',
-						),
-						array(
-							'id'   => 'fld888888888',
-							'name' => 'Tags',
-							'type' => 'multipleSelects',
+							'id'          => 'rec123456789',
+							'createdTime' => '2023-01-01T00:00:00.000Z',
+							'fields'      => array(
+								array(
+									'id'   => 'fld123456789',
+									'name' => 'Name',
+									'type' => 'singleLineText',
+								),
+								array(
+									'id'   => 'fld987654321',
+									'name' => 'Email',
+									'type' => 'email',
+								),
+								array(
+									'id'   => 'fld555555555',
+									'name' => 'Active',
+									'type' => 'checkbox',
+								),
+								array(
+									'id'   => 'fld777777777',
+									'name' => 'Score',
+									'type' => 'number',
+								),
+								array(
+									'id'   => 'fld888888888',
+									'name' => 'Tags',
+									'type' => 'multipleSelects',
+								),
+							),
 						),
 					),
 				);
 			} elseif ( 'POST' === $method ) {
 				// Mock successful record creation for POST requests.
 				return array(
-					'id'          => 'rec123456789',
-					'fields'      => $body['records'][0]['fields'],
-					'createdTime' => '2023-01-01T00:00:00.000Z',
+					'records' => array(
+						array(
+							'id'          => 'rec123456789',
+							'fields'      => $body['records'][0]['fields'],
+							'createdTime' => '2023-01-01T00:00:00.000Z',
+						),
+					),
+				);
+			}
+		} elseif ( preg_match( '#^/v0/(app\d+)/([^/]+)/uploadAttachment$#', $path, $matches ) ) {
+			if ( $method === 'POST' ) {
+				return array(
+					'createdTime' => '2022-02-01T21:25:05.663Z',
+					'fields'      => array(
+						'fld00000000000000' => array(
+							array(
+								'filename' => 'sample.txt',
+								'id'       => 'att00000000000000',
+								'size'     => 11,
+								'type'     => 'text/plain',
+								'url'      => 'https://v5.airtableusercontent.com/v3/u/29/29/1716940800000/ffhiecnieIwxisnIBDSAln/foDeknw_G5CdkdPW1j-U0yUCX9YSaE1EJft3wvXb85pnTY1sKZdYeFvKpsM-fqOa6Bnu5MQVPA_ApINEUXL_E3SAZn6z01VN9Pn9SluhSy4NoakZGapcvl4tuN3jktO2Dt7Ck_gh4oMdsrcV8J-t_A/53m17XmDDHsNtIqzM1PQVnRKutK6damFgNNS5WCaTbI',
+							),
+						),
+					),
+					'id'          => 'rec00000000000000',
 				);
 			}
 		}
@@ -372,16 +421,49 @@ class AirtableTest extends WP_UnitTestCase {
 		);
 
 		$payload = array(
-			'Name'  => 'John Doe',
-			'Email' => 'john.doe@example.com',
+			'Name'   => 'John Doe',
+			'Email'  => 'john.doe@example.com',
+			'Score'  => 99,
+			'Tags'   => array( 'A', 'B' ),
+			'Active' => true,
 		);
 
 		$response = $bridge->submit( $payload );
 
 		$this->assertFalse( is_wp_error( $response ) );
 		$this->assertArrayHasKey( 'data', $response );
-		$this->assertEquals( 'rec123456789', $response['data']['id'] );
-		$this->assertEquals( 'John Doe', $response['data']['fields']['Name'] );
+		$this->assertEquals( 'rec123456789', $response['data']['records'][0]['id'] );
+		$this->assertEquals( 'John Doe', $response['data']['records'][0]['fields']['Name'] );
+	}
+
+	/**
+	 * Test POST request to create a record with uploads.
+	 */
+	public function test_post_create_record_with_uploads() {
+		$bridge = new Airtable_Form_Bridge(
+			array(
+				'name'     => self::BRIDGE_NAME,
+				'backend'  => self::BACKEND_NAME,
+				'endpoint' => '/v0/app123456789/Contacts',
+				'method'   => 'POST',
+			)
+		);
+
+		$payload = array(
+			'Name'            => 'John Doe',
+			'Email'           => 'john.doe@example.com',
+			'Score'           => 99,
+			'Tags'            => array( 'A', 'B' ),
+			'Active'          => true,
+			'Profile Picture' => 'file',
+		);
+
+		$response = $bridge->submit( $payload );
+
+		$this->assertFalse( is_wp_error( $response ) );
+		$this->assertArrayHasKey( 'data', $response );
+		$this->assertEquals( 'rec123456789', $response['data']['records'][0]['id'] );
+		$this->assertEquals( 'John Doe', $response['data']['records'][0]['fields']['Name'] );
 	}
 
 	/**
@@ -401,8 +483,10 @@ class AirtableTest extends WP_UnitTestCase {
 
 		$this->assertFalse( is_wp_error( $response ) );
 		$this->assertArrayHasKey( 'data', $response );
-		$this->assertArrayHasKey( 'fields', $response['data'] );
-		$this->assertCount( 5, $response['data']['fields'] );
+		$this->assertArrayHasKey( 'records', $response['data'] );
+		$this->assertCount( 1, $response['data']['records'] );
+		$this->assertArrayHasKey( 'fields', $response['data']['records'][0] );
+		$this->assertCount( 5, $response['data']['records'][0]['fields'] );
 	}
 
 	/**
@@ -474,6 +558,7 @@ class AirtableTest extends WP_UnitTestCase {
 		$this->assertContains( 'Active', $field_names );
 		$this->assertContains( 'Score', $field_names );
 		$this->assertContains( 'Tags', $field_names );
+		$this->assertContains( 'Profile Picture', $field_names );
 
 		// Check field types.
 		$schema_map = array();
@@ -486,6 +571,7 @@ class AirtableTest extends WP_UnitTestCase {
 		$this->assertEquals( 'boolean', $schema_map['Active'] );
 		$this->assertEquals( 'number', $schema_map['Score'] );
 		$this->assertEquals( 'array', $schema_map['Tags'] );
+		$this->assertEquals( 'file', $schema_map['Profile Picture'] );
 	}
 
 	/**
@@ -581,20 +667,6 @@ class AirtableTest extends WP_UnitTestCase {
 	 * Test field filtering in schema - should exclude certain field types.
 	 */
 	public function test_field_filtering_in_schema() {
-		// Add a field that should be excluded.
-		$mock_fields = array(
-			array(
-				'id'   => 'fld_excluded',
-				'name' => 'ExcludedField',
-				'type' => 'aiText', // This type should be excluded.
-			),
-			array(
-				'id'   => 'fld_included',
-				'name' => 'IncludedField',
-				'type' => 'singleLineText', // This type should be included.
-			),
-		);
-
 		$addon  = Addon::addon( 'airtable' );
 		$schema = $addon->get_endpoint_schema(
 			'/v0/app123456789/Contacts',
@@ -606,6 +678,6 @@ class AirtableTest extends WP_UnitTestCase {
 		$field_names = array_column( $schema, 'name' );
 		$this->assertContains( 'Name', $field_names );
 		$this->assertNotContains( 'Summary', $field_names );
-		$this->assertCount( 5, $schema );
+		$this->assertCount( 6, $schema );
 	}
 }
