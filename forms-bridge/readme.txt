@@ -164,16 +164,15 @@ You can get support from Còdec using the [Forms Bridge support forum](https://w
 == Changelog ==
 
 = 4.3.1 =
-feat: airtable add-on
-feat: grist add-on
-feat: dynamic form field templates for google sheets, airtable and nextcloud
-feat: nextcloud get endpoints method
-feat: rename bearer to oauth and new support for bearer tokens
-feat: support for oauth pkce flow
-feat: fetch endpoints in new bridge form
-fix: skip internal field attributes in wpcf7 form creation
-fix: workflow pipeline mutation updates
-
+* feat: airtable add-on
+* feat: grist add-on
+* feat: dynamic form field templates for google sheets, airtable and nextcloud
+* feat: nextcloud get endpoints method
+* feat: rename bearer to oauth and new support for bearer tokens
+* feat: support for oauth pkce flow
+* feat: fetch endpoints in new bridge form
+* fix: skip internal field attributes in wpcf7 form creation
+* fix: workflow pipeline mutation updates
 
 = 4.3.0 =
 * feat: form's bridge chain order
