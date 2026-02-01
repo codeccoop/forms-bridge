@@ -1,11 +1,11 @@
 === Forms Bridge - Infinite integrations ===
 
 Contributors: codeccoop
-Tags: form integration, erp integration, crm integration, api integration, automation
+Tags: form integration, erp, crm, api integration, automation
 Donate link: https://buymeacoffee.com/codeccoop
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable Tag: 4.3.1
+Stable Tag: 4.3.2
 Tested up to: 6.9
 
 Seamlessly connect WordPress forms to CRMs, ERPs, and APIs — no coding required. Automate data flow with field mappers, custom fields, and workflows.
@@ -22,7 +22,7 @@ Whether you use Zoho, Odoo, Dolibarr, Zulip, or a custom backend, Forms Bridge m
 
 ✅ No code required – Set up integrations with a user-friendly interface.
 ✅ Works with your favorite form plugins – Contact Form 7, Gravity Forms, WPForms, Ninja Forms, WooCommerce, and Formidable Forms.
-✅ 20+ ready-to-use add-ons – Connect to Zoho, Odoo, Dolibarr, Google Sheets, Slack, Mailchimp, and more.
+✅ 20+ ready-to-use add-ons – Connect to Zoho, Odoo, Dolibarr, Google Sheets, Slack, Listmonk, and more.
 ✅ Advanced data mapping – Rename, transform, and enrich form data before sending it.
 ✅ Workflow automation – Pre-process submissions with custom jobs.
 ✅ Reusable templates – Get started in minutes with pre-built blueprints.
@@ -163,6 +163,12 @@ You can get support from Còdec using the [Forms Bridge support forum](https://w
 
 == Changelog ==
 
+= 4.3.2 =
+* feat: fetch endpoints in new bridge form
+* feat: api fields datalists
+* feat: api fields datalists
+* fix: workflow pipeline mutation updates
+
 = 4.3.1 =
 * feat: airtable add-on
 * feat: grist add-on
@@ -170,9 +176,7 @@ You can get support from Còdec using the [Forms Bridge support forum](https://w
 * feat: nextcloud get endpoints method
 * feat: rename bearer to oauth and new support for bearer tokens
 * feat: support for oauth pkce flow
-* feat: fetch endpoints in new bridge form
 * fix: skip internal field attributes in wpcf7 form creation
-* fix: workflow pipeline mutation updates
 
 = 4.3.0 =
 * feat: form's bridge chain order
