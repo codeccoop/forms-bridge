@@ -70,69 +70,34 @@ class Form_Bridge_Template {
 			'type'                 => 'object',
 			'properties'           => array(
 				'name'         => array(
-					'title'       => _x(
-						'Name',
-						'Bridge template schema',
-						'forms-bridge'
-					),
-					'description' => __(
-						'Internal and unique name of the template',
-						'forms-bridge'
-					),
+					'title'       => _x( 'Name', 'Bridge template schema', 'forms-bridge' ),
+					'description' => __( 'Internal and unique name of the template', 'forms-bridge' ),
 					'type'        => 'string',
 					'minLength'   => 1,
 				),
 				'title'        => array(
-					'title'       => _x(
-						'Title',
-						'Bridge template schema',
-						'forms-bridge'
-					),
-					'description' => __(
-						'Public title of the template',
-						'forms-bridge'
-					),
+					'title'       => _x( 'Title', 'Bridge template schema', 'forms-bridge' ),
+					'description' => __( 'Public title of the template', 'forms-bridge' ),
 					'type'        => 'string',
 					'minLength'   => 1,
 				),
 				'description'  => array(
-					'title'       => _x(
-						'Description',
-						'Bridge template schema',
-						'forms-bridge'
-					),
-					'description' => __(
-						'Short description of the template purpose',
-						'forms-bridge'
-					),
+					'title'       => _x( 'Description', 'Bridge template schema', 'forms-bridge' ),
+					'description' => __( 'Short description of the template purpose', 'forms-bridge' ),
 					'type'        => 'string',
 					'default'     => '',
 				),
 				'integrations' => array(
-					'title'       => _x(
-						'Integrations',
-						'Bridge template schema',
-						'forms-bridge'
-					),
-					'description' => __(
-						'Template\'s supported integrations',
-						'forms-bridge'
-					),
+					'title'       => _x( 'Integrations', 'Bridge template schema', 'forms-bridge' ),
+					'description' => __( 'Template\'s supported integrations', 'forms-bridge' ),
 					'type'        => 'array',
 					'items'       => array( 'type' => 'string' ),
 					'uniqueItems' => true,
 					'minItems'    => 1,
 				),
 				'fields'       => array(
-					'title'       => _x(
-						'Fields',
-						'Bridge template schema',
-						'forms-bridge'
-					),
-					'description' => __(
-						'Template fields to be filled by the user',
-						'forms-bridge'
-					),
+					'title'       => _x( 'Fields', 'Bridge template schema', 'forms-bridge' ),
+					'description' => __( 'Template fields to be filled by the user', 'forms-bridge' ),
 					'type'        => 'array',
 					'items'       => array(
 						'type'                 => 'object',
@@ -183,62 +148,38 @@ class Form_Bridge_Template {
 							'options'     => array(
 								'anyOf' => array(
 									array(
-										'description' => __(
-											'List of field options',
-											'forms-bridge'
-										),
+										'description' => __( 'List of field options', 'forms-bridge' ),
 										'type'        => 'array',
 										'items'       => array(
 											'type'       => 'object',
 											'properties' => array(
-												'label' => array(
-													'type' => 'string',
-												),
-												'value' => array(
-													'type' => 'string',
-												),
+												'label' => array( 'type' => 'string' ),
+												'value' => array( 'type' => 'string' ),
 											),
 											'required'   => array( 'value', 'label' ),
 										),
 										'uniqueItems' => true,
 									),
 									array(
-										'description' => __(
-											'How to get options from the addon API',
-											'forms-bridge'
-										),
+										'description' => __( 'How to get options from the addon API', 'forms-bridge' ),
 										'type'        => 'object',
 										'properties'  => array(
 											'endpoint' => array(
-												'description' => __(
-													'Endpoint to get values from',
-													'forms-bridge'
-												),
+												'description' => __( 'Endpoint to get values from', 'forms-bridge' ),
 												'type' => 'string',
 											),
 											'finger'   => array(
-												'description' => __(
-													'Fingers to get values from the endpoint response',
-													'forms-bridge'
-												),
+												'description' => __( 'Fingers to get values from the endpoint response', 'forms-bridge' ),
 												'oneOf' => array(
 													array(
 														'type' => 'object',
 														'properties' => array(
-															'value' => array(
-																'type' =>
-																	'string',
-															),
-															'label' => array(
-																'type' =>
-																	'string',
-															),
+															'value' => array( 'type' => 'string' ),
+															'label' => array( 'type' => 'string' ),
 														),
 														'required' => array( 'value' ),
 													),
-													array(
-														'type' => 'string',
-													),
+													array( 'type' => 'string' ),
 												),
 											),
 										),
@@ -248,29 +189,21 @@ class Form_Bridge_Template {
 							),
 							'enum'        => array(
 								'type'        => 'array',
-								'items'       => array(
-									'type' => array( 'integer', 'number', 'string' ),
-								),
+								'items'       => array( 'type' => array( 'integer', 'number', 'string' ) ),
 								'uniqueItems' => true,
 							),
 							'min'         => array( 'type' => 'integer' ),
 							'max'         => array( 'type' => 'integer' ),
 							'multiple'    => array( 'type' => 'boolean' ),
+							'pattern'     => array( 'type' => 'string' ),
 						),
 						'required'             => array( 'ref', 'name', 'type' ),
 						'additionalProperties' => true,
 					),
 				),
 				'form'         => array(
-					'title'                => _x(
-						'Form',
-						'Bridge template schema',
-						'forms-bridge'
-					),
-					'description'          => __(
-						'Form title and fields settings',
-						'forms-bridge'
-					),
+					'title'                => _x( 'Form', 'Bridge template schema', 'forms-bridge' ),
+					'description'          => __( 'Form title and fields settings', 'forms-bridge' ),
 					'type'                 => 'object',
 					'properties'           => array(
 						'title'  => array(
@@ -317,9 +250,7 @@ class Form_Bridge_Template {
 														'boolean',
 													),
 												),
-												'label' => array(
-													'type' => 'string',
-												),
+												'label' => array( 'type' => 'string' ),
 											),
 											'required'   => array( 'value', 'label' ),
 										),
@@ -396,25 +327,23 @@ class Form_Bridge_Template {
 	private static function child_schema_to_template( $schema, $title ) {
 		if ( isset( $schema['oneOf'] ) ) {
 			$schema['oneOf'] = array_map(
-				static function ( $schema ) use (
-					$title
-				) {
+				static function ( $schema ) use ( $title ) {
 					$title = $schema['title'] ?? $title;
 					return self::child_schema_to_template( $schema, $title );
 				},
 				$schema['oneOf']
 			);
+
 			return $schema;
 		} elseif ( isset( $schema['anyOf'] ) ) {
 			$schema['anyOf'] = array_map(
-				static function ( $schema ) use (
-					$title
-				) {
+				static function ( $schema ) use ( $title ) {
 					$title = $schema['title'] ?? $title;
 					return self::child_schema_to_template( $schema, $title );
 				},
 				$schema['anyOf']
 			);
+
 			return $schema;
 		}
 
@@ -566,25 +495,11 @@ class Form_Bridge_Template {
 			'name'        => $post->post_name,
 			'title'       => $post->post_title,
 			'description' => $post->post_excerpt,
-			'fields'      =>
-				(array) ( get_post_meta( $post->ID, '_template-fields', true ) ?:
-				array() ),
-			'form'        =>
-				(array) ( get_post_meta( $post->ID, '_template-form', true ) ?:
-				array() ),
-			'bridge'      =>
-				(array) ( get_post_meta( $post->ID, '_template-bridge', true ) ?:
-				array() ),
-			'backend'     =>
-				(array) ( get_post_meta( $post->ID, '_template-backend', true ) ?:
-				array() ),
-			'credential'  =>
-				(array) ( get_post_meta(
-					$post->ID,
-					'_template-credential',
-					true
-				) ?:
-				array() ),
+			'fields'      => (array) ( get_post_meta( $post->ID, '_template-fields', true ) ?: array() ),
+			'form'        => (array) ( get_post_meta( $post->ID, '_template-form', true ) ?: array() ),
+			'bridge'      => (array) ( get_post_meta( $post->ID, '_template-bridge', true ) ?: array() ),
+			'backend'     => (array) ( get_post_meta( $post->ID, '_template-backend', true ) ?: array() ),
+			'credential'  => (array) ( get_post_meta( $post->ID, '_template-credential', true ) ?: array() ),
 		);
 	}
 
@@ -733,11 +648,7 @@ class Form_Bridge_Template {
 			update_post_meta( $post_id, '_template-form', $this->form );
 			update_post_meta( $post_id, '_template-bridge', $this->bridge );
 			update_post_meta( $post_id, '_template-backend', $this->backend );
-			update_post_meta(
-				$post_id,
-				'_template-credential',
-				$this->credential
-			);
+			update_post_meta( $post_id, '_template-credential', $this->credential );
 		}
 
 		return $post_id;
@@ -822,10 +733,7 @@ class Form_Bridge_Template {
 					'invalid_field',
 					sprintf(
 						/* translators: %s: Field name */
-						__(
-							'Field `%s` does not match the schema',
-							'forms-bridge'
-						),
+						__( 'Field `%s` does not match the schema', 'forms-bridge' ),
 						$field['name']
 					)
 				);
@@ -886,10 +794,7 @@ class Form_Bridge_Template {
 						'invalid_ref',
 						sprintf(
 							/* translators: %s: ref value */
-							__(
-								'Invalid template field ref `%s`',
-								'forms-bridge'
-							),
+							__( 'Invalid template field ref `%s`', 'forms-bridge' ),
 							$field['ref']
 						)
 					);
@@ -909,12 +814,7 @@ class Form_Bridge_Template {
 			}
 		}
 
-		$data = apply_filters(
-			'forms_bridge_template_data',
-			$data,
-			$this->id,
-			$this
-		);
+		$data = apply_filters( 'forms_bridge_template_data', $data, $this->id, $this );
 
 		if ( is_wp_error( $data ) ) {
 			return $data;
@@ -941,10 +841,7 @@ class Form_Bridge_Template {
 				$field['name'] = $field['label'];
 			}
 
-			$data['bridge']['mutations'][0] = array_merge(
-				$mappers,
-				$data['bridge']['mutations'][0] ?? array()
-			);
+			$data['bridge']['mutations'][0] = array_merge( $mappers, $data['bridge']['mutations'][0] ?? array() );
 		}
 
 		$integration_instance = Integration::integration( $integration );
@@ -958,11 +855,7 @@ class Form_Bridge_Template {
 			if ( $create_form ) {
 				do_action_ref_array(
 					'forms_bridge_before_template_form',
-					array(
-						$data['form'],
-						$this->name,
-						$this,
-					)
+					array( $data['form'], $this->name, $this ),
 				);
 
 				$form_id = $integration_instance->create_form( $data['form'] );
@@ -980,21 +873,14 @@ class Form_Bridge_Template {
 
 				$data['form']['id'] = $form_id;
 
-				do_action(
-					'forms_bridge_template_form',
-					$data['form'],
-					$this->id,
-					$this
-				);
+				do_action( 'forms_bridge_template_form', $data['form'], $this->id, $this );
 			}
 
 			$data['bridge']['form_id'] = $integration . ':' . $data['form']['id'];
 
 			$create_credential = false;
 			if ( ! empty( $data['credential']['name'] ) ) {
-				$create_credential = ! $this->credential_exists(
-					$data['credential']['name']
-				);
+				$create_credential = ! $this->credential_exists( $data['credential']['name'] );
 
 				if ( $create_credential ) {
 					$result = $this->create_credential( $data['credential'] );
@@ -1006,10 +892,7 @@ class Form_Bridge_Template {
 
 						return new WP_Error(
 							'credential_creation_error',
-							__(
-								'Forms bridge can\'t create the credential',
-								'forms-bridge',
-							),
+							__( 'Forms bridge can\'t create the credential', 'forms-bridge' ),
 							array(
 								'status' => 400,
 								'data'   => $data['credential'],
@@ -1036,10 +919,7 @@ class Form_Bridge_Template {
 
 					return new WP_Error(
 						'backend_creation_error',
-						__(
-							'Forms bridge can\'t create the backend',
-							'forms-bridge',
-						),
+						__( 'Forms bridge can\'t create the backend', 'forms-bridge' ),
 						array(
 							'status' => 400,
 							'data'   => $data['backend'],
@@ -1067,10 +947,7 @@ class Form_Bridge_Template {
 
 				return new WP_Error(
 					'bridge_creation_error',
-					__(
-						'Forms bridge can\'t create the form bridge',
-						'forms-bridge',
-					),
+					__( 'Forms bridge can\'t create the form bridge', 'forms-bridge' ),
 					array(
 						'status' => 400,
 						'data'   => $data['bridge'],
@@ -1097,9 +974,7 @@ class Form_Bridge_Template {
 			return new WP_Error(
 				'internal_server_error',
 				$e->getMessage(),
-				array(
-					'status' => 500,
-				)
+				array( 'status' => 500 )
 			);
 		}
 
@@ -1144,11 +1019,7 @@ class Form_Bridge_Template {
 
 		do_action_ref_array(
 			'forms_bridge_before_template_backend',
-			array(
-				$data,
-				$this->name,
-				$this,
-			)
+			array( $data, $this->name, $this ),
 		);
 
 		$setting->backends = array_merge( $backends, array( $data ) );
@@ -1174,9 +1045,7 @@ class Form_Bridge_Template {
 
 		$setting->backends = array_filter(
 			$backends,
-			static function (
-				$backend
-			) use ( $name ) {
+			static function ( $backend ) use ( $name ) {
 				return $backend['name'] !== $name;
 			}
 		);
@@ -1212,11 +1081,7 @@ class Form_Bridge_Template {
 
 		do_action_ref_array(
 			'forms_bridge_before_template_bridge',
-			array(
-				$data,
-				$this->name,
-				$this,
-			)
+			array( $data, $this->name, $this ),
 		);
 
 		$setting->bridges = array_merge( $bridges, array( $data ) );

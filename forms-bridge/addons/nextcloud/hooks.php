@@ -56,14 +56,6 @@ add_filter(
 					),
 					array(
 						'ref'      => '#bridge',
-						'name'     => 'endpoint',
-						'label'    => __( 'Filepath', 'forms-bridge' ),
-						'type'     => 'text',
-						'required' => true,
-						'pattern'  => '.+.csv$',
-					),
-					array(
-						'ref'      => '#bridge',
 						'name'     => 'method',
 						'label'    => __( 'Method', 'forms-bridge' ),
 						'type'     => 'text',
