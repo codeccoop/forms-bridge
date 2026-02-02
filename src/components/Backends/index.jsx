@@ -9,8 +9,8 @@ const { useRef, useEffect } = wp.element;
 const { TabPanel } = wp.components;
 const { __ } = wp.i18n;
 
-const CSS = `.backends-tabs-panel .components-tab-panel__tabs{overflow-x:auto;}
-.backends-tabs-panel .components-tab-panel__tabs>button{flex-shrink:0;}`;
+const CSS = `.backends-tabs-panel>.components-tab-panel__tabs{overflow-x:auto;}
+.backends-tabs-panel>.components-tab-panel__tabs>button{flex-shrink:0;}`;
 
 export default function Backends({ backends, setBackends }) {
   const names = useBackendNames();

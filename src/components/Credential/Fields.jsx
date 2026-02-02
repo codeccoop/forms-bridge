@@ -1,5 +1,6 @@
 import { isset } from "../../lib/utils";
 import { StringField, SelectField } from "../Bridge/Fields";
+
 const { useEffect, useMemo } = wp.element;
 
 export const INTERNALS = [

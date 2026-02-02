@@ -45,7 +45,7 @@ export default function Logger() {
     <PanelBody title={__("Debug", "forms-bridge")} initialOpen={!!debug}>
       <p>
         {__(
-          "Activate the debug mode and open the loggin console to see bridged form submissions' logs",
+          "Activate the debug mode and open the loggin console to see bridged form submissions logs",
           "forms-bridge"
         )}
       </p>

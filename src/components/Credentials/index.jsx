@@ -10,8 +10,8 @@ const { useEffect, useRef, useMemo } = wp.element;
 const { PanelBody, TabPanel } = wp.components;
 const { __ } = wp.i18n;
 
-const CSS = `.credentials-tabs-panel .components-tab-panel__tabs{overflow-x:auto;}
-.credentials-tabs-panel .components-tab-panel__tabs>button{flex-shrink:0;}`;
+const CSS = `.credentials-tabs-panel>.components-tab-panel__tabs{overflow-x:auto;}
+.credentials-tabs-panel>.components-tab-panel__tabs>button{flex-shrink:0;}`;
 
 export default function Credentials({ credentials, setCredentials }) {
   const [addon] = useTab();

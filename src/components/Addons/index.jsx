@@ -31,10 +31,10 @@ export default function Addons() {
   );
 
   return (
-    <PanelBody title={__("Addons", "forms-bridge")} initialOpen={false}>
+    <PanelBody title={__("Add-ons", "forms-bridge")} initialOpen={false}>
       <p>
         {__(
-          "Each addon allows you to create API specific bridges and comes with a library of bridge templates and workflow jobs",
+          "Each add-on allows you to create API specific bridges and comes with a library of bridge templates and workflow jobs",
           "forms-bridge"
         )}
       </p>
