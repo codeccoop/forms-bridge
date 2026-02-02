@@ -31,7 +31,7 @@ Forms Bridge supports the following form builders:
 
 ## Add-ons
 
-Forms Bridge comes with free add-ons. Each add-on adds to the plugin new bridges
+Forms Bridge comes with free add-ons. Each add-on add to the plugin new bridges
 to work with specific APIs, new workflow jobs and bridge templates.
 
 Forms Bridge has the following add-ons:
@@ -133,6 +133,7 @@ more details about the hooks.
 ### Dependencies
 
 The repository handles dependencies as [git submodules](https://www.atlassian.com/git/tutorials/git-submodule).
+
 In order to work local, you have to clone this repository and initialize its submodules
 with this command:
 

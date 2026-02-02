@@ -1,12 +1,12 @@
 === Forms Bridge - Infinite integrations ==
 
 Contributors: codeccoo
-Tags: form integration, erp, crm, api integration, automatio
+Tags: form integration, erp, crm, api integration, automation
 Donate link: https://buymeacoffee.com/codeccoo
 License: GPLv2 or late
 License URI: http://www.gnu.org/licenses/gpl-2.0.htm
 Stable Tag: 4.3.
-Tested up to: 6.
+Tested up to: 6.9
 
 Seamlessly connect WordPress forms to CRMs, ERPs, and APIs — no coding required. Automate data flow with field mappers, custom fields, and workflows
 
@@ -107,7 +107,7 @@ Chain together jobs to pre-process data before it’s sent. Filter, validate, an
 Use pre-built templates to integrate WooCommerce orders, CRM leads, or calendar events in minutes.
 
 **Debugging console**
-onitor requests, responses, and errors in real time.
+Monitor requests, responses, and errors in real time.
 
 == Links ==
 
@@ -135,21 +135,21 @@ In addition, you can extend Forms Bridge with code using its hooks and PHP APIs.
 
 Absolutely! Forms Bridge supports any HTTP API, whether it’s a cloud service or a self-hosted solution (like a Dockerized API on your VPS). If your API uses standard HTTP methods (GET, POST, PUT, etc.), Forms Bridge can connect to it.
 
-aybe a little understanding about how HTTP and HTTP-like APIs works will be required to set up your custom integrations.
+Maybe a little understanding about how HTTP and HTTP-like APIs works will be required to set up your custom integrations.
 
-= What if my API requires authentication?
+= What if my API requires authentication? =
 
-Forms Bridge supports API keys, Basic Auth, Bearer Tokens, OAuth, RPC credentials, Digest Auth and custom headers
+Forms Bridge supports API keys, Basic Auth, Bearer Tokens, OAuth, RPC credentials, Digest Auth and custom headers.
 
-= Is there a free trial?
+= Is there a free trial? =
 
-Forms Bridge, including all its add-ons, is free to use
+Forms Bridge, including all its add-ons, is free to use.
 
-= How can I get support?
+= How can I get support? =
 
 You can get support from Còdec using the [Forms Bridge support forum](https://wordpress.org/support/plugin/forms-bridge/) for free. We aim to respond to all inquiries within 24-48 hours.
 
-== Screenshots =
+== Screenshots ==
 
 1. Settings page – Configure global plugin options
 2. Backends – Save and reuse API connection details
