@@ -9,6 +9,7 @@ import useResponsive from "../../hooks/useResponsive";
 import BridgePayload from "./Payload";
 import { useBackends } from "../../hooks/useHttp";
 import ArrowUpIcon from "../icons/ArrowUp";
+import useTab from "../../hooks/useTab";
 
 const { Button } = wp.components;
 const { useState, useEffect, useMemo, useRef, useCallback } = wp.element;
@@ -16,8 +17,16 @@ const { __ } = wp.i18n;
 
 export default function NewBridge({ add, schema, names }) {
   const isResponsive = useResponsive();
+  const [tab] = useTab();
+  const fromTab = useRef(tab);
 
   const [data, setData] = useState({});
+
+  if (fromTab.current !== tab) {
+    setData({});
+  }
+
+  fromTab.current = tab;
 
   const [error, setError] = useError();
 

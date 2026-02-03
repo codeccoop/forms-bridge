@@ -36,16 +36,19 @@ export default function BridgeFields({ data, setData, schema, errors = {} }) {
 
   const [forms] = useForms();
   const formOptions = useMemo(() => {
-    if (!forms.length) return [{ label: "", value: "" }];
+    const options = [{ label: "", value: "" }];
+    if (!forms.length) return options;
 
-    return forms
-      .map(({ _id, title }) => ({
-        label: title,
-        value: _id,
-      }))
-      .sort((a, b) => {
-        return a.label > b.label ? 1 : -1;
-      });
+    return options.concat(
+      forms
+        .map(({ _id, title }) => ({
+          label: title,
+          value: _id,
+        }))
+        .sort((a, b) => {
+          return a.label > b.label ? 1 : -1;
+        })
+    );
   }, [forms]);
 
   const fields = useMemo(() => {
