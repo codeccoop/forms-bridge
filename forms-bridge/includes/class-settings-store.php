@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class Settings_Store
+ *
+ * @package formsbridge
+ */
 
 namespace FORMS_BRIDGE;
 

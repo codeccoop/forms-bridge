@@ -184,6 +184,8 @@ export default function Bridge({ data, update, remove, schema, copy, names }) {
   }, [state.backend]);
 
   const doPing = useCallback(() => {
+    if (!backend) return;
+
     setLoading(true);
 
     apiFetch({

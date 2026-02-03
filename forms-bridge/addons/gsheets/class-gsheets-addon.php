@@ -190,7 +190,6 @@ class GSheets_Addon extends Addon {
 			return array();
 		}
 
-		$bridge  = null;
 		$bridges = FBAPI::get_addon_bridges( self::NAME );
 		foreach ( $bridges as $candidate ) {
 			$data = $candidate->data();

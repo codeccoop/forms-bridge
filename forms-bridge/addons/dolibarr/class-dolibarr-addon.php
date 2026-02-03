@@ -141,6 +141,8 @@ class Dolibarr_Addon extends Addon {
 		foreach ( $entry as $field => $value ) {
 			if ( wp_is_numeric_array( $value ) ) {
 				$type = 'array';
+			} elseif ( is_array( $value ) ) {
+				$type = 'object';
 			} elseif ( is_double( $value ) ) {
 				$type = 'number';
 			} elseif ( is_int( $value ) ) {

@@ -659,7 +659,7 @@ class Addon extends Singleton {
 			$name = pathinfo( $file )['filename'];
 			$ext  = pathinfo( $file )['extension'] ?? null;
 
-			if ( ! in_array( $ext, $extensions ) ) {
+			if ( ! in_array( $ext, $extensions, true ) ) {
 				continue;
 			}
 

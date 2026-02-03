@@ -18,6 +18,8 @@ export const INTERNALS = [
 const ORDER = ["name", "form_id", "backend", "endpoint", "method"];
 
 export default function BridgeFields({ data, setData, schema, errors = {} }) {
+  const endpoints = useApiEndpoints();
+
   const [backends] = useBackends();
   const backendOptions = useMemo(() => {
     if (!backends.length) return [{ label: "", value: "" }];
@@ -45,8 +47,6 @@ export default function BridgeFields({ data, setData, schema, errors = {} }) {
         return a.label > b.label ? 1 : -1;
       });
   }, [forms]);
-
-  const endpoints = useApiEndpoints();
 
   const fields = useMemo(() => {
     if (!schema) return [];

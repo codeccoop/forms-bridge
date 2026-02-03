@@ -57,7 +57,7 @@ class Logger extends Singleton {
 		$dir = wp_upload_dir()['basedir'] . '/forms-bridge';
 
 		if ( ! is_dir( $dir ) ) {
-			if ( ! mkdir( $dir ) ) {
+			if ( ! wp_mkdir_p( $dir ) ) {
 				return;
 			}
 		}
