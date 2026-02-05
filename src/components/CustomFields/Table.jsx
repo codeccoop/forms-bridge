@@ -306,17 +306,16 @@ export default function CustomFieldsTable({ customFields, setCustomFields }) {
                       __next40pxDefaultSize
                     >
                       {"{...}"}
-                      {fieldSelector === i && (
-                        <DropdownSelect
-                          title={__("Fields", "forms-bridge")}
-                          tags={fieldOptions}
-                          onChange={(fieldName) => {
-                            setFieldSelector(-1);
-                            setCustomField("name", i, fieldName);
-                          }}
-                          onFocusOutside={() => setFieldSelector(-1)}
-                        />
-                      )}
+                      <DropdownSelect
+                        open={fieldSelector === i}
+                        title={__("Fields", "forms-bridge")}
+                        tags={fieldOptions}
+                        onChange={(fieldName) => {
+                          setFieldSelector(-1);
+                          setCustomField("name", i, fieldName);
+                        }}
+                        onRequestClose={() => setFieldSelector(-1)}
+                      />
                     </Button>
                   </div>
                 </td>
@@ -344,17 +343,16 @@ export default function CustomFieldsTable({ customFields, setCustomFields }) {
                       __next40pxDefaultSize
                     >
                       $
-                      {tagSelector === i && (
-                        <DropdownSelect
-                          title={__("Tags", "forms-bridge")}
-                          tags={tagOptions}
-                          onChange={(tag) => {
-                            setTagSelector(-1);
-                            setCustomField("value", i, value + tag);
-                          }}
-                          onFocusOutside={() => setTagSelector(-1)}
-                        />
-                      )}
+                      <DropdownSelect
+                        open={tagSelector === i}
+                        title={__("Tags", "forms-bridge")}
+                        tags={tagOptions}
+                        onChange={(tag) => {
+                          setTagSelector(-1);
+                          setCustomField("value", i, value + tag);
+                        }}
+                        onRequestClose={() => setTagSelector(-1)}
+                      />
                     </Button>
                   </div>
                 </td>

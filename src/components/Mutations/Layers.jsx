@@ -335,17 +335,16 @@ export default function MutationLayers({ fields, mappers, setMappers }) {
                         __next40pxDefaultSize
                       >
                         {"{...}"}
-                        {fieldSelector === i && (
-                          <DropdownSelect
-                            title={__("Fields", "forms-bridge")}
-                            tags={fieldOptions}
-                            onChange={(fieldName) => {
-                              setFieldSelector(-1);
-                              setMapper("to", i, fieldName);
-                            }}
-                            onFocusOutside={() => setFieldSelector(-1)}
-                          />
-                        )}
+                        <DropdownSelect
+                          open={fieldSelector === i}
+                          title={__("Fields", "forms-bridge")}
+                          tags={fieldOptions}
+                          onChange={(fieldName) => {
+                            setFieldSelector(-1);
+                            setMapper("to", i, fieldName);
+                          }}
+                          onRequestClose={() => setFieldSelector(-1)}
+                        />
                       </Button>
                     </div>
                   </td>
