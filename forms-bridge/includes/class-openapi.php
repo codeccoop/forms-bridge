@@ -185,16 +185,15 @@ class OpenAPI {
 			}
 
 			if ( 'body' === $param['in'] && isset( $param['schema'] ) ) {
-				if ( isset( $param['schema']['properties'] ) && is_array( $param['schema']['properties'] ) ) {
+				if ( isset( $param['schema']['properties'] ) ) {
 					array_splice( $parameters, $i, 1 );
 
-					foreach ( $param['schema']['properties'] as $prop => $prop_schema ) {
-						$parameters[] = array_merge(
-							$prop_schema,
-							array(
-								'name' => $prop,
-								'in'   => 'body',
-							),
+					$properties = $param['schema']['properties'] ?? array();
+					foreach ( $properties as $prop => $prop_schema ) {
+						$parameters[] = array(
+							'name'   => $prop,
+							'in'     => 'body',
+							'schema' => $prop_schema,
 						);
 					}
 				}
@@ -351,6 +350,20 @@ class OpenAPI {
 			$properties = $obj['properties'] ?? array();
 			foreach ( $properties as $name => $prop_schema ) {
 				$properties[ $name ] = $this->expand_refs( $prop_schema );
+			}
+
+			if ( isset( $obj['additionalProperties'] ) && is_array( $obj['additionalProperties'] ) ) {
+				$additionals = $this->expand_refs( $obj['additionalProperties'] );
+
+				if ( isset( $additionals['type'] ) ) {
+					$properties['*'] = $additionals;
+				}
+
+				$obj['additionalProperties'] = false;
+			} elseif ( empty( $properties ) ) {
+				$obj['additionalProperties'] = true;
+			} else {
+				$obj['additionalProperties'] = false;
 			}
 
 			$obj['properties'] = $properties;

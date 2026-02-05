@@ -854,6 +854,13 @@ class Addon extends Singleton {
 				$props = $field['schema']['properties'] ?? array();
 				$queue = array();
 
+				if ( true === ( $field['schema']['additionalProperties'] ?? false ) ) {
+					$schema[] = array(
+						'name'   => JSON_Finger::pointer( array_merge( $finger, array( '*' ) ) ),
+						'schema' => array( 'type' => 'mixed' ),
+					);
+				}
+
 				while ( $props ) {
 					foreach ( $props as $key => $prop_schema ) {
 						$schema[] = array(
