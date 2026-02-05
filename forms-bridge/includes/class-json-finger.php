@@ -409,7 +409,7 @@ class JSON_Finger {
 
 			$key = array_pop( $keys );
 			if ( $unset ) {
-				if ( wp_is_numeric_array( $partial ) ) {
+				if ( ! empty( $partial ) && wp_is_numeric_array( $partial ) ) {
 					array_splice( $partial, $key, 1 );
 				} elseif ( is_array( $partial ) ) {
 					unset( $partial[ $key ] );
