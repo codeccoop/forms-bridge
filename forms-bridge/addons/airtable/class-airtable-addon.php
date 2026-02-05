@@ -167,34 +167,39 @@ class Airtable_Addon extends Addon {
 			return array();
 		}
 
-		$schema = array();
+		$api_schema = array();
 		foreach ( $fields as $field ) {
+			$schema = array();
 			switch ( $field['type'] ) {
 				case 'number':
-					$type = 'number';
+					$schema['type'] = 'number';
 					break;
 				case 'checkbox':
-					$type = 'boolean';
+					$schema['type'] = 'boolean';
 					break;
 				case 'select':
-					$type = $field['is_multi'] ? 'array' : 'string';
+					$schema['type'] = 'string';
+					if ( $field['is_multi'] ) {
+						$schema['items'] = $schema;
+						$schema['type']  = 'array';
+					}
 					break;
 				case 'file':
-					$type = 'file';
+					$schema['type'] = 'file';
 					break;
 				case 'textarea':
 				default:
-					$type = 'string';
+					$schema['type'] = 'string';
 					break;
 			}
 
-			$schema[] = array(
+			$api_schema[] = array(
 				'name'   => $field['name'],
-				'schema' => array( 'type' => $type ),
+				'schema' => $schema,
 			);
 		}
 
-		return $schema;
+		return self::expand_endpoint_schema( $api_schema );
 	}
 }
 

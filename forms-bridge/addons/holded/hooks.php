@@ -1,4 +1,9 @@
 <?php
+/**
+ * Holded addon hooks.
+ *
+ * @package formsbridge
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -7,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_filter(
 	'forms_bridge_bridge_schema',
 	function ( $schema, $addon ) {
-		if ( $addon !== 'holded' ) {
+		if ( 'holded' !== $addon ) {
 			return $schema;
 		}
 
@@ -21,7 +26,7 @@ add_filter(
 add_filter(
 	'forms_bridge_template_defaults',
 	function ( $defaults, $addon, $schema ) {
-		if ( $addon !== 'holded' ) {
+		if ( 'holded' !== $addon ) {
 			return $defaults;
 		}
 
@@ -77,16 +82,17 @@ add_filter(
 add_filter(
 	'forms_bridge_template_data',
 	function ( $data, $template_id ) {
-		if ( strpos( $template_id, 'holded-' ) !== 0 ) {
+		if ( 0 !== strpos( $template_id, 'holded-' ) ) {
 			return $data;
 		}
 
 		$index = array_search(
 			'tags',
-			array_column( $data['bridge']['custom_fields'], 'name' )
+			array_column( $data['bridge']['custom_fields'], 'name' ),
+			true,
 		);
 
-		if ( $index !== false ) {
+		if ( false !== $index ) {
 			$field = &$data['bridge']['custom_fields'][ $index ];
 
 			if ( ! empty( $field['value'] ) ) {
@@ -94,7 +100,8 @@ add_filter(
 					array_map( 'trim', explode( ',', strval( $field['value'] ) ) )
 				);
 
-				for ( $i = 0; $i < count( $tags ); $i++ ) {
+				$l = count( $tags );
+				for ( $i = 0; $i < $l; $i++ ) {
 					$data['bridge']['custom_fields'][] = array(
 						'name'  => "tags[{$i}]",
 						'value' => $tags[ $i ],

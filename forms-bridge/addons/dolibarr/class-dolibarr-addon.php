@@ -139,25 +139,49 @@ class Dolibarr_Addon extends Addon {
 
 		$fields = array();
 		foreach ( $entry as $field => $value ) {
-			if ( wp_is_numeric_array( $value ) ) {
-				$type = 'array';
-			} elseif ( is_array( $value ) ) {
-				$type = 'object';
-			} elseif ( is_double( $value ) ) {
-				$type = 'number';
-			} elseif ( is_int( $value ) ) {
-				$type = 'integer';
-			} else {
-				$type = 'string';
-			}
-
 			$fields[] = array(
 				'name'   => $field,
-				'schema' => array( 'type' => $type ),
+				'schema' => $this->get_value_schema( $value ),
 			);
 		}
 
-		return $fields;
+		return self::expand_endpoint_schema( $fields );
+	}
+
+	/**
+	 * Return the json schema of a given value.
+	 *
+	 * @param mixed $value Target value.
+	 *
+	 * @return array
+	 */
+	private function get_value_schema( $value ) {
+		$schema = array();
+		// phpcs:disable Universal.Operators.StrictComparisons
+		if ( wp_is_numeric_array( $value ) ) {
+			$schema['type'] = 'array';
+
+			if ( count( $value ) ) {
+				$schema['items'] = $this->get_value_schema( $value[0] );
+			} else {
+				$schema['items'] = array( 'type' => 'string' );
+			}
+		} elseif ( is_array( $value ) ) {
+			$schema['type'] = 'object';
+
+			foreach ( $value as $name => $val ) {
+				$schema['properties'][ $name ] = $this->get_value_schema( $val );
+			}
+		} elseif ( is_double( $value ) ) {
+			$schema['type'] = 'number';
+		} elseif ( intval( $value ) == $value ) {
+			$schema['type'] = 'integer';
+		} else {
+			$schema['type'] = 'string';
+		}
+		// phpcs:enable
+
+		return $schema;
 	}
 
 	/**
