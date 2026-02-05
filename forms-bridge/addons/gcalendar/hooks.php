@@ -18,7 +18,7 @@ add_filter(
 
 		$schema['properties']['endpoint']['default'] = '/calendars/v3/calendar/{$calendarId}/events';
 
-		$schema['properties']['backend']['default'] = 'Calendar API';
+		$schema['properties']['backend']['default'] = 'Google API';
 
 		$schema['properties']['method']['enum']    = array( 'GET', 'POST', 'PUT', 'PATCH', 'DELETE' );
 		$schema['properties']['method']['default'] = 'POST';
@@ -135,7 +135,7 @@ add_filter(
 					array(
 						'ref'     => '#backend',
 						'name'    => 'name',
-						'default' => 'Calendar API',
+						'default' => 'Google API',
 					),
 					array(
 						'ref'   => '#backend',
@@ -144,7 +144,7 @@ add_filter(
 					),
 				),
 				'backend'    => array(
-					'name'     => 'Calendar API',
+					'name'     => 'Google API',
 					'base_url' => 'https://www.googleapis.com',
 					'headers'  => array(
 						array(
@@ -154,7 +154,7 @@ add_filter(
 					),
 				),
 				'bridge'     => array(
-					'backend'  => 'Calendar API',
+					'backend'  => 'Google API',
 					'endpoint' => '/calendar/v3/calendars/{$calendarId}/events',
 				),
 				'credential' => array(
