@@ -111,7 +111,7 @@ class Grist_Addon extends Addon {
 
 		$tables = array();
 		foreach ( $response['data'] as $workspace ) {
-			if ( $workspace['isSupportWorkspace'] ) {
+			if ( $workspace['isSupportWorkspace'] ?? false ) {
 				continue;
 			}
 

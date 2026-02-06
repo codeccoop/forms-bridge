@@ -11,6 +11,8 @@ use FORMS_BRIDGE\Addon;
 use HTTP_BRIDGE\Backend;
 use HTTP_BRIDGE\Credential;
 
+use function PHPUnit\Framework\assertEquals;
+
 /**
  * Zoho addon test case.
  */
@@ -346,7 +348,6 @@ class ZohoTest extends WP_UnitTestCase {
 				'endpoint' => '/crm/v7/Contacts',
 				'method'   => 'POST',
 			),
-			'zoho'
 		);
 
 		$this->assertTrue( $bridge->is_valid );
@@ -361,10 +362,13 @@ class ZohoTest extends WP_UnitTestCase {
 				'name' => 'invalid-bridge',
 				// Missing required fields.
 			),
-			'zoho'
 		);
 
-		$this->assertFalse( $bridge->is_valid );
+		$this->assertTrue( $bridge->is_valid );
+		$this->assertEquals( '/', $bridge->endpoint );
+		$this->assertEquals( '', $bridge->form_id );
+		$this->assertEquals( '', $bridge->backend );
+		$this->assertEquals( 'POST', $bridge->method );
 	}
 
 	/**
@@ -378,7 +382,6 @@ class ZohoTest extends WP_UnitTestCase {
 				'endpoint' => '/crm/v7/Contacts',
 				'method'   => 'POST',
 			),
-			'zoho'
 		);
 
 		$payload = array(
@@ -410,7 +413,6 @@ class ZohoTest extends WP_UnitTestCase {
 				'endpoint' => '/crm/v7/Deals',
 				'method'   => 'POST',
 			),
-			'zoho'
 		);
 
 		$payload = array(
@@ -441,7 +443,6 @@ class ZohoTest extends WP_UnitTestCase {
 				'endpoint' => '/crm/v7/Contacts',
 				'method'   => 'GET',
 			),
-			'zoho'
 		);
 
 		$response = $bridge->submit();

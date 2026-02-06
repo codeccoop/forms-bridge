@@ -19,20 +19,14 @@ add_filter(
 			return $schema;
 		}
 
-		$schema['properties']['endpoint']['title']       = __(
-			'Module',
-			'forms-bridge'
-		);
+		$schema['properties']['endpoint']['title']       = __( 'Module', 'forms-bridge' );
 		$schema['properties']['endpoint']['description'] = __(
 			'Name of the target SuiteCRM module (e.g., Contacts, Leads, Accounts)',
 			'forms-bridge'
 		);
 		$schema['properties']['endpoint']['default']     = 'Contacts';
 
-		$schema['properties']['method']['description'] = __(
-			'SuiteCRM API method name',
-			'forms-bridge'
-		);
+		$schema['properties']['method']['description'] = __( 'SuiteCRM API method name', 'forms-bridge' );
 		$schema['properties']['method']['enum']        = array(
 			'set_entry',
 			'get_entry',

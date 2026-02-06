@@ -404,7 +404,11 @@ class AirtableTest extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertFalse( $bridge->is_valid );
+		$this->assertTrue( $bridge->is_valid );
+		$this->assertEquals( '/', $bridge->endpoint );
+		$this->assertEquals( '', $bridge->backend );
+		$this->assertEquals( '', $bridge->form_id );
+		$this->assertEquals( 'POST', $bridge->method );
 	}
 
 	/**
@@ -570,7 +574,7 @@ class AirtableTest extends WP_UnitTestCase {
 		$this->assertEquals( 'string', $schema_map['Email'] );
 		$this->assertEquals( 'boolean', $schema_map['Active'] );
 		$this->assertEquals( 'number', $schema_map['Score'] );
-		$this->assertEquals( 'array', $schema_map['Tags'] );
+		$this->assertEquals( 'string[]', $schema_map['Tags'] );
 		$this->assertEquals( 'file', $schema_map['Profile Picture'] );
 	}
 

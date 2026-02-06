@@ -182,12 +182,6 @@ class Odoo_Addon extends Addon {
 				$schema = array( 'type' => $spec['type'] );
 			}
 
-			/**
-			* until: date
-			* current_status: selection
-			* res_id: many2one_reference
-			*/
-
 			$schema['required'] = $spec['required'];
 
 			$fields[] = array(

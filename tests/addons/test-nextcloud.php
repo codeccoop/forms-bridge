@@ -291,7 +291,11 @@ class NextcloudTest extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertFalse( $bridge->is_valid );
+		$this->assertTrue( $bridge->is_valid );
+		$this->assertEquals( '/', $bridge->endpoint );
+		$this->assertEquals( '', $bridge->backend );
+		$this->assertEquals( '', $bridge->form_id );
+		$this->assertEquals( 'PUT', $bridge->method );
 	}
 
 	/**

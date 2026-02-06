@@ -414,7 +414,11 @@ class GristTest extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertFalse( $bridge->is_valid );
+		$this->assertTrue( $bridge->is_valid );
+		$this->assertEquals( '/', $bridge->endpoint );
+		$this->assertEquals( '', $bridge->backend );
+		$this->assertEquals( '', $bridge->form_id );
+		$this->assertEquals( 'POST', $bridge->method );
 	}
 
 	/**
@@ -575,7 +579,7 @@ class GristTest extends WP_UnitTestCase {
 		$this->assertEquals( 'string', $schema_map['name'] );
 		$this->assertEquals( 'string', $schema_map['email'] );
 		$this->assertEquals( 'boolean', $schema_map['active'] );
-		$this->assertEquals( 'array', $schema_map['tags'] );
+		$this->assertEquals( 'string[]', $schema_map['tags'] );
 		$this->assertEquals( 'file', $schema_map['attachment'] );
 		$this->assertEquals( 'number', $schema_map['age'] );
 	}

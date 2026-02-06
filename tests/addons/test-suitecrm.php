@@ -358,7 +358,11 @@ class SuiteCRMTest extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertFalse( $bridge->is_valid );
+		$this->assertTrue( $bridge->is_valid );
+		$this->assertEquals( 'Contacts', $bridge->endpoint );
+		$this->assertEquals( '', $bridge->form_id );
+		$this->assertEquals( '', $bridge->backend );
+		$this->assertEquals( 'set_entry', $bridge->method );
 	}
 
 	/**

@@ -163,7 +163,7 @@ class SuiteCRM_Addon extends Addon {
 
 		$fields = array();
 		foreach ( $response['data']['module_fields'] as $name => $spec ) {
-			if ( $spec['calculated'] ) {
+			if ( $spec['calculated'] ?? false ) {
 				continue;
 			}
 
