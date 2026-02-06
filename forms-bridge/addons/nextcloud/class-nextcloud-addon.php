@@ -80,7 +80,7 @@ class Nextcloud_Addon extends Addon {
 		}
 
 		$credential = $backend->credential;
-		if ( ! $credential ) {
+		if ( ! $credential || 'Basic' !== $credential->schema ) {
 			return false;
 		}
 
@@ -114,7 +114,7 @@ class Nextcloud_Addon extends Addon {
 		}
 
 		$credential = $backend->credential;
-		if ( ! $credential ) {
+		if ( ! $credential || 'Basic' !== $credential->schema ) {
 			return new WP_Error( 'invalid_backend', 'Backend has no credential', $backend->data() );
 		}
 
@@ -143,6 +143,12 @@ class Nextcloud_Addon extends Addon {
 
 		if ( is_wp_error( $response ) ) {
 			return $response;
+		}
+
+		if ( 300 >= $response['response']['code'] ) {
+			$error = new WP_Error( 'bad_request', 'Can not conenct to the backend' );
+			$error->add_data( $response );
+			return $error;
 		}
 
 		$xml = new SimpleXMLElement( $response['body'] );
