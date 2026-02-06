@@ -164,6 +164,10 @@ You can get support from Còdec using the [Forms Bridge support forum](https://w
 == Changelog ==
 
 = 4.3.3 =
+feat: improve addons introspection
+feat: nextcloud post bridge refactor
+feat: dropdown select with dynamic search
+feat: remove http url validations
 feat: fallback openapi json static files
 fix: nextcloud template endpoint field definition
 fix: brevo default endpoints list
