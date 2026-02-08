@@ -1,0 +1,4 @@
+* introspection api cache
+* introspection filters on generic addon
+* check dav modified on nextcloud table headers requests
+* odoo pings as login requests

@@ -46,7 +46,6 @@ class Brevo_Addon extends Addon {
 	 *
 	 * @var string
 	 */
-	// public const OAS_URL = 'https://developers.brevo.com/reference/get_companies?json=on';
 	public const OAS_URL = 'https://api.brevo.com/v3/swagger_definition_v3.yml';
 
 	/**

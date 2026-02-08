@@ -26,6 +26,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class REST_Settings_Controller extends Base_Controller {
 
 	/**
+	 * Handles the current introspection request data as json.
+	 *
+	 * @var string|null
+	 */
+	private static $introspection_data = null;
+
+	/**
 	 * Inherits the parent initialized and register the post types route
 	 */
 	protected static function init() {
@@ -647,7 +654,7 @@ class REST_Settings_Controller extends Base_Controller {
 			return $handler;
 		}
 
-		[$addon, $backend] = $handler;
+		list( $addon, $backend ) = $handler;
 
 		$template = FBAPI::get_template( $request['name'], $addon::NAME );
 		if ( ! $template ) {
@@ -751,12 +758,17 @@ class REST_Settings_Controller extends Base_Controller {
 	 * @param string          $addon Target addon name.
 	 * @param WP_REST_Request $request Request instance.
 	 *
-	 * @return [Addon, string, string|null]|WP_Error
+	 * @return [Addon, string]|WP_Error
 	 */
 	private static function prepare_addon_backend_request_handler(
 		$addon,
 		$request
 	) {
+		$addon = FBAPI::get_addon( $addon );
+		if ( ! $addon ) {
+			return self::bad_request();
+		}
+
 		$backend = wpct_plugin_sanitize_with_schema(
 			$request['backend'],
 			FBAPI::get_backend_schema()
@@ -765,6 +777,10 @@ class REST_Settings_Controller extends Base_Controller {
 		if ( is_wp_error( $backend ) ) {
 			return self::bad_request();
 		}
+
+		$introspection_data = array( 'backend' => $backend );
+
+		Backend::temp_registration( $backend );
 
 		$credential = $request['credential'];
 		if ( ! empty( $credential ) ) {
@@ -777,18 +793,20 @@ class REST_Settings_Controller extends Base_Controller {
 				return self::bad_request();
 			}
 
+			Credential::temp_registration( $credential );
 			$backend['credential'] = $credential['name'];
+
+			$introspection_data['credential'] = $credential;
+		} elseif ( ! empty( $backend['credential'] ) ) {
+			$credential = FBAPI::get_credential( $backend['credential'] );
+
+			if ( $credential ) {
+				$introspection_data['credential'] = $credential->data();
+			}
 		}
 
-		$addon = FBAPI::get_addon( $addon );
-		if ( ! $addon ) {
-			return self::bad_request();
-		}
-
-		Backend::temp_registration( $backend );
-		Credential::temp_registration( $credential );
-
-		return array( $addon, $backend['name'], $credential['name'] ?? null );
+		self::$introspection_data = wp_json_encode( $introspection_data );
+		return array( $addon, $backend['name'] );
 	}
 
 	/**
@@ -800,16 +818,18 @@ class REST_Settings_Controller extends Base_Controller {
 	 * @return array|WP_Error
 	 */
 	private static function ping_backend( $addon, $request ) {
-		$handler = self::prepare_addon_backend_request_handler(
-			$addon,
-			$request
-		);
+		$handler = self::prepare_addon_backend_request_handler( $addon, $request );
 
 		if ( is_wp_error( $handler ) ) {
 			return $handler;
 		}
 
-		[$addon, $backend] = $handler;
+		list( $addon, $backend ) = $handler;
+
+		$result = self::cache_lookup( $addon::NAME, $backend, 'ping' );
+		if ( null !== $result ) {
+			return $result;
+		}
 
 		$result = $addon->ping( $backend );
 
@@ -824,7 +844,11 @@ class REST_Settings_Controller extends Base_Controller {
 			return $error;
 		}
 
-		return array( 'success' => $result );
+		return self::cache_response(
+			array( $addon::NAME, $backend, 'ping' ),
+			array( 'success' => $result ),
+			$addon->introspection_cache_expiration( 'ping' ),
+		);
 	}
 
 	/**
@@ -842,7 +866,12 @@ class REST_Settings_Controller extends Base_Controller {
 			return $handler;
 		}
 
-		[$addon, $backend] = $handler;
+		list( $addon, $backend ) = $handler;
+
+		$endpoints = self::cache_lookup( $addon::NAME, $backend, 'endpoints' );
+		if ( null !== $endpoints ) {
+			return $endpoints;
+		}
 
 		$endpoints = $addon->get_endpoints( $backend, $request['method'] );
 
@@ -857,7 +886,11 @@ class REST_Settings_Controller extends Base_Controller {
 			return $error;
 		}
 
-		return $endpoints;
+		return self::cache_response(
+			array( $addon::NAME, $backend, 'endpoints' ),
+			$endpoints,
+			$addon->introspection_cache_expiration( 'endpoints' ),
+		);
 	}
 
 	/**
@@ -875,7 +908,12 @@ class REST_Settings_Controller extends Base_Controller {
 			return $handler;
 		}
 
-		[$addon, $backend] = $handler;
+		list( $addon, $backend ) = $handler;
+
+		$schema = self::cache_lookup( $addon::NAME, $backend, 'schema' );
+		if ( null !== $schema ) {
+			return $schema;
+		}
 
 		$schema = $addon->get_endpoint_schema( $request['endpoint'], $backend, $request['method'] );
 
@@ -890,7 +928,11 @@ class REST_Settings_Controller extends Base_Controller {
 			return $error;
 		}
 
-		return $schema;
+		return self::cache_response(
+			array( $addon::NAME, $backend, 'schema' ),
+			$schema,
+			$addon->introspection_cache_expiration( 'schema' ),
+		);
 	}
 
 	/**
@@ -917,5 +959,51 @@ class REST_Settings_Controller extends Base_Controller {
 			'backend'    => $backend,
 			'credential' => $credential,
 		);
+	}
+
+	/**
+	 * Lokkup for a cached introspection response.
+	 *
+	 * @param string[] ...$keys Introspection request keys: addon and backend names.
+	 *
+	 * @return array|null Cached introspection response.
+	 */
+	private static function cache_lookup( ...$keys ) {
+		$key       = sanitize_title( implode( '-', array_filter( $keys ) ) );
+		$transient = get_transient( $key );
+		if ( ! $transient ) {
+			return null;
+		}
+
+		if ( $transient['key'] === self::$introspection_data ) {
+			return $transient['data'];
+		} else {
+			delete_transient( $key );
+		}
+	}
+
+	/**
+	 * Cache an introspection response data.
+	 *
+	 * @param string[] $keys Introspection request keys: addon and backend names.
+	 * @param array    $data Response data.
+	 * @param int      $expiration Cache expiration time in seconds.
+	 *
+	 * @return array Cached data.
+	 */
+	private static function cache_response( $keys, $data, $expiration ) {
+		if ( ! $expiration ) {
+			return $data;
+		}
+
+		$key = sanitize_title( implode( '-', array_filter( $keys ) ) );
+
+		$transient_data = array(
+			'key'  => self::$introspection_data,
+			'data' => $data,
+		);
+
+		set_transient( $key, $transient_data, $expiration );
+		return $data;
 	}
 }

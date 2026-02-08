@@ -604,6 +604,18 @@ class Addon extends Singleton {
 	}
 
 	/**
+	 * Gets expiration time for introspection cache based on the introspection
+	 * method.
+	 *
+	 * @param string $method Introspection method (ping, endpoints, schema).
+	 *
+	 * @return int Time in seconds.
+	 */
+	public function introspection_cache_expiration( $method ) {
+		return apply_filters( 'forms_bridge_introspection_cache_expiration', 60, $method, self::NAME );
+	}
+
+	/**
 	 * Get posts from the database based on a post type and an addon name.
 	 *
 	 * @param string $post_type Post type slug.
