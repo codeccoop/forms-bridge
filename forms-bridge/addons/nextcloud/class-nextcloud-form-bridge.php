@@ -98,8 +98,9 @@ class Nextcloud_Form_Bridge extends Form_Bridge {
 		}
 
 		if ( ! is_file( $filepath ) ) {
-			$touched = true;
-			$result  = touch( $filepath );
+			// phpcs:disable WordPress.WP.AlternativeFunctions
+			$result = touch( $filepath );
+			// phpcs:enable
 
 			if ( ! $result ) {
 				return new WP_Error(
@@ -108,6 +109,8 @@ class Nextcloud_Form_Bridge extends Form_Bridge {
 					array( 'filepath' => $filepath ),
 				);
 			}
+
+			$touched = true;
 		} else {
 			$touched = false;
 		}
@@ -127,7 +130,12 @@ class Nextcloud_Form_Bridge extends Form_Bridge {
 			return $filepath;
 		}
 
-		if ( $touched ) {
+		$dav_modified = $touched ? time() + 3600 : $this->get_dav_modified_date();
+		if ( is_wp_error( $dav_modified ) ) {
+			$dav_modified = time() + 3600;
+		}
+
+		if ( $touched || filemtime( $filepath ) < $dav_modified ) {
 			$filepath = $this->download_file();
 
 			if ( is_wp_error( $filepath ) ) {
@@ -135,9 +143,11 @@ class Nextcloud_Form_Bridge extends Form_Bridge {
 			}
 		}
 
+		// phpcs:disable WordPress.WP.AlternativeFunctions
 		$stream = fopen( $filepath, 'r' );
 		$line   = fgets( $stream );
 		fclose( $stream );
+		// phpcs:enable
 
 		if ( false === $line ) {
 			return;
@@ -153,7 +163,11 @@ class Nextcloud_Form_Bridge extends Form_Bridge {
 	 *
 	 * @return integer|null
 	 */
-	private function get_dav_modified_date( $backend ) {
+	private function get_dav_modified_date( $backend = null ) {
+		if ( ! $backend ) {
+			$backend = $this->backend();
+		}
+
 		$response = $backend->head( rawurlencode( $this->endpoint ) );
 
 		if ( is_wp_error( $response ) ) {
@@ -263,6 +277,7 @@ class Nextcloud_Form_Bridge extends Form_Bridge {
 	private function add_row( $payload ) {
 		$row = $this->payload_to_row( $payload );
 
+		// phpcs:disable WordPress.WP.AlternativeFunctions
 		$filepath = $this->filepath();
 		$sock     = fopen( $filepath, 'r' );
 		$cursor   = -1;
@@ -275,6 +290,7 @@ class Nextcloud_Form_Bridge extends Form_Bridge {
 		}
 
 		file_put_contents( $filepath, $row, FILE_APPEND );
+		// phpcs:enable
 	}
 
 	/**
@@ -324,14 +340,20 @@ class Nextcloud_Form_Bridge extends Form_Bridge {
 				$row     = $this->payload_to_row( $payload );
 				$csv     = implode( "\n", array( $headers, $row ) );
 
+				// phpcs:disable WordPress.WP.AlternativeFunctions
 				file_put_contents( $filepath, $csv );
+				// phpcs:enable
+
 				$response = $backend->put( $endpoint, $csv );
 			} elseif ( $touched ) {
 				$headers = $this->payload_to_headers( $payload );
 				$row     = $this->payload_to_row( $payload );
 				$csv     = implode( "\n", array( $headers, $row ) );
 
+				// phpcs:disable WordPress.WP.AlternativeFunctions
 				file_put_contents( $filepath, $csv );
+				// phpcs:enable
+
 				$response = $backend->put( $endpoint, $csv );
 			} else {
 				$local_modified = filemtime( $filepath );
@@ -346,7 +368,9 @@ class Nextcloud_Form_Bridge extends Form_Bridge {
 
 				$this->add_row( $payload );
 
+				// phpcs:disable WordPress.WP.AlternativeFunctions
 				$csv = file_get_contents( $filepath );
+				// phpcs:enable
 
 				$bom = pack( 'H*', 'EFBBBF' );
 				$csv = preg_replace( "/^$bom/", '', trim( $csv ) );
@@ -358,7 +382,10 @@ class Nextcloud_Form_Bridge extends Form_Bridge {
 				return $response;
 			}
 
+			// phpcs:disable WordPress.WP.AlternativeFunctions
 			touch( $filepath, time() );
+			// phpcs:enable
+
 			return $response;
 		}
 
