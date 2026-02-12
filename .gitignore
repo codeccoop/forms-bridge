@@ -32,3 +32,5 @@ addons/enabled/*
 languages/*.php
 languages/*.po~
 languages/*.pot~
+
+todos
