@@ -973,6 +973,10 @@ class REST_Settings_Controller extends Base_Controller {
 	 * @return array|null Cached introspection response.
 	 */
 	private static function cache_lookup( ...$keys ) {
+		if ( Logger::is_active() ) {
+			return null;
+		}
+
 		$key       = 'fb-introspection-' . sanitize_title( implode( '-', array_filter( $keys ) ) );
 		$transient = get_transient( $key );
 		if ( ! $transient ) {
