@@ -142,6 +142,10 @@ class Odoo_Form_Bridge extends Form_Bridge {
 	 * @return array{0:string, 1:integer}|WP_Error Tuple with RPC session id and user id.
 	 */
 	private static function rpc_login( $login, $backend ) {
+		if ( self::$session ) {
+			return self::$session;
+		}
+
 		$session_id = 'forms-bridge-' . time();
 
 		$payload = self::rpc_payload( $session_id, 'common', 'login', $login );

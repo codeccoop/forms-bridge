@@ -51,6 +51,13 @@ class Forms_Bridge extends Base_Plugin {
 	private static $current_bridge;
 
 	/**
+	 * Handles the current bridge request. Available only during form submissions.
+	 *
+	 * @var array|null
+	 */
+	private static $current_request;
+
+	/**
 	 * Initializes integrations, addons and setup plugin hooks.
 	 *
 	 * @param mixed[] ...$args Constructor arguments.
@@ -301,13 +308,13 @@ class Forms_Bridge extends Base_Plugin {
 			$bridge = $bridges[ $i ];
 
 			if ( ! $bridge->enabled ) {
-				Logger::log(
-					'Skip submission for disabled bridge ' . $bridge->name
-				);
+				Logger::log( "Skip submission for disabled bridge '{$bridge->name}'" );
 				continue;
 			}
 
 			self::$current_bridge = $bridge;
+
+			Logger::log( "Start submission for bridge '{$bridge->name}'" );
 
 			try {
 				$attachments = apply_filters(
@@ -407,6 +414,8 @@ class Forms_Bridge extends Base_Plugin {
 					$attachments
 				);
 
+				add_action( 'http_bridge_before_request', array( self::class, 'http_request_interceptor' ), 99, 1 );
+
 				$response = $bridge->submit( $payload, $attachments );
 
 				$error = is_wp_error( $response ) ? $response : null;
@@ -419,6 +428,11 @@ class Forms_Bridge extends Base_Plugin {
 						$attachments
 					);
 				} else {
+					if ( self::$current_request ) {
+						Logger::log( 'Submission request' );
+						Logger::log( self::$current_request );
+					}
+
 					Logger::log( 'Submission response' );
 					Logger::log( $response );
 
@@ -462,9 +476,38 @@ class Forms_Bridge extends Base_Plugin {
 					break;
 				}
 			} finally {
-				self::$current_bridge = null;
+				self::$current_bridge  = null;
+				self::$current_request = null;
+
+				remove_action( 'http_bridge_before_request', array( self::class, 'http_request_interceptor' ), 99 );
 			}
 		}
+	}
+
+	/**
+	 * Intercepts http requests and, if request matches with current bridge endpoint,
+	 * stores its params.
+	 *
+	 * @param array $request Current HTTP request params.
+	 *
+	 * @return array
+	 */
+	public static function http_request_interceptor( $request ) {
+		if ( ! self::$current_bridge ) {
+			return $request;
+		}
+
+		$backend = self::$current_bridge->backend;
+		if ( ! $backend ) {
+			return $request;
+		}
+
+		$url = $backend->url( self::$current_bridge->endpoint );
+		if ( $url === $request['url'] ) {
+			self::$current_request = $request;
+		}
+
+		return $request;
 	}
 
 	/**
