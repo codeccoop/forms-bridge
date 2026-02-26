@@ -198,7 +198,8 @@ class Odoo_Form_Bridge extends Form_Bridge {
 		if ( ! $credential ) {
 			return new WP_Error(
 				'invalid_credential',
-				'The bridge does not have a valid credential'
+				'The bridge does not have a valid credential',
+				$backend->data(),
 			);
 		}
 
