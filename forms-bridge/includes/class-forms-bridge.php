@@ -427,6 +427,15 @@ class Forms_Bridge extends Base_Plugin {
 						$payload,
 						$attachments
 					);
+
+					if (
+						false === $bridge->allow_failure
+						&& count( $bridges ) > 1
+						&& $i < count( $bridges ) - 1
+					) {
+						Logger::log( 'Early exit from the submission loop due to an error', Logger::ERROR );
+						break;
+					}
 				} else {
 					if ( self::$current_request ) {
 						Logger::log( 'Submission request' );
