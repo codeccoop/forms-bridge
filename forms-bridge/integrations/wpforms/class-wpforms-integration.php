@@ -696,6 +696,9 @@ class WPForms_Integration extends BaseIntegration {
 					},
 					explode( "\n", $field['value'] )
 				);
+			} else {
+				$raw_value = $field['value_raw'] ?? $field['value'];
+				return $raw_value;
 			}
 		}
 
