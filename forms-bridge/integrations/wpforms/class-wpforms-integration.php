@@ -714,7 +714,7 @@ class WPForms_Integration extends BaseIntegration {
 			'number-slider' === $field_data['basetype']
 		) {
 			return (float) $field['value'];
-		} elseif ( 'select' === $field['type'] ) {
+		} elseif ( 'select' === $field_data['type'] ) {
 			if ( $field_data['is_multi'] ) {
 				return array_map( 'trim', explode( "\n", $field['value_raw'] ?? $field['value'] ) );
 			}
