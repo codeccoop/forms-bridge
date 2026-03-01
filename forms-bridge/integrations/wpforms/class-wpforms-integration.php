@@ -723,7 +723,7 @@ class WPForms_Integration extends BaseIntegration {
 		} elseif ( 'checkbox' === $field_data['type'] ) {
 			return (bool) $field['value'];
 		} elseif ( 'address' === $field_data['basetype'] ) {
-			$post_values  = $_POST['wpforms']['fields'][ $field['id'] ] ?? array();
+			$post_values = $_POST['wpforms']['fields'][ $field['id'] ] ?? array();
 			$field_value = array();
 			foreach ( array_keys( $field_data['schema']['properties'] ) as $prop ) {
 				$field_value[ $prop ] = $post_values[ $prop ] ?? '';
