@@ -414,6 +414,7 @@ class WPForms_Integration extends BaseIntegration {
 				'children'    => array_values( $children ),
 				'schema'      => $this->field_value_schema( $field, $type, $children ),
 				'basetype'    => $field['type'],
+				'dynamic'     => ! empty( $field['dynamic_choices'] ),
 			),
 			$field,
 			'wpforms'
@@ -429,7 +430,7 @@ class WPForms_Integration extends BaseIntegration {
 	 * @return boolean
 	 */
 	private function is_multi_field( $field, $norm_type ) {
-		if ( 'checkbox' === $field['type'] && 'select' === $norm_type ) {
+		if ( ( 'checkbox' === $field['type'] || 'payment-checkbox' === $field['type'] ) && 'select' === $norm_type ) {
 			return true;
 		}
 
@@ -466,12 +467,11 @@ class WPForms_Integration extends BaseIntegration {
 			case 'email':
 			case 'text':
 			case 'textarea':
-			case 'payment-total':
 			case 'payment-single':
-			case 'radio':
 			case 'password':
 			case 'url':
 				return array( 'type' => 'string' );
+			case 'payment-total':
 			case 'number-slider':
 			case 'number':
 				return array( 'type' => 'number' );
@@ -479,37 +479,43 @@ class WPForms_Integration extends BaseIntegration {
 			case 'payment-multiple':
 			case 'payment-checkbox':
 			case 'select':
-				if ( $field['multiple'] ?? false ) {
-					$items = array();
-					$count = count( $field['choices'] );
-					for ( $i = 0; $i < $count; $i++ ) {
-						$items[] = array( 'type' => 'string' );
-					}
-
-					return array(
-						'type'            => 'array',
-						'items'           => $items,
-						'additionalItems' => false,
-					);
-				}
-
-				return array( 'type' => 'string' );
 			case 'checkbox':
+			case 'radio':
 				if ( 'checkbox' === $norm_type ) {
 					return array( 'type' => 'boolean' );
 				}
 
-				$items = array();
-				$count = count( $field['choices'] );
-				for ( $i = 0; $i < $count; $i++ ) {
-					$items[] = array( 'type' => 'string' );
+				if ( $field['multiple'] ?? false || false !== strstr( $field['type'], 'checkbox' ) ) {
+					if ( ! empty( $field['dynamic_choices'] ) ) {
+						return array(
+							'type'  => 'array',
+							'items' => array(
+								'type'       => 'object',
+								'properties' => array(
+									'value' => array( 'type' => 'string' ),
+									'id'    => array( 'type' => 'integer' ),
+								),
+							),
+						);
+					}
+
+					return array(
+						'type'  => 'array',
+						'items' => array( 'type' => 'string' ),
+					);
 				}
 
-				return array(
-					'type'            => 'array',
-					'items'           => $items,
-					'additionalItems' => false,
-				);
+				if ( ! empty( $field['dynamic_choices'] ) ) {
+					return array(
+						'type'       => 'object',
+						'properties' => array(
+							'value' => array( 'type' => 'string' ),
+							'id'    => array( 'type' => 'integer' ),
+						),
+					);
+				}
+
+				return array( 'type' => 'string' );
 			case 'date-time':
 				if ( 'date-time' === $field['format'] ) {
 					return array(
@@ -635,9 +641,11 @@ class WPForms_Integration extends BaseIntegration {
 			$repeater_data = array();
 			foreach ( $repeater['children'] as $child ) {
 				foreach ( $fields_in_repeaters as $id => $fields ) {
+					// phpcs:disable Universal.Operators.StrictComparisons
 					if ( $id == $child['id'] ) {
 						break;
 					}
+					// phpcs:enable
 				}
 
 				$l = count( $fields );
@@ -657,71 +665,77 @@ class WPForms_Integration extends BaseIntegration {
 		return $data;
 	}
 
+	/**
+	 * Formats the field value based on its type and settings.
+	 *
+	 * @param array $field Submission field.
+	 * @param array $field_data Serialized form field data.
+	 *
+	 * @return mixed
+	 */
 	private function format_value( $field, $field_data ) {
-		if ( strstr( $field_data['basetype'], 'payment' ) ) {
-			$field['value'] = html_entity_decode( $field['value'] );
-		}
+		if ( $field_data['dynamic'] && isset( $field['value_raw'] ) ) {
+			$ids    = array_map( 'intval', explode( ',', $field['value_raw'] ) );
+			$values = array_map( 'trim', explode( "\n", $field['value'] ) );
+			$count  = count( $values );
 
-		if ( 'hidden' === $field_data['basetype'] ) {
+			$field_value = array();
+			for ( $i = 0; $i < $count; ++$i ) {
+				$field_values[] = array(
+					'id'    => $ids[ $i ],
+					'value' => $values[ $i ],
+				);
+			}
+
+			return $field_data['is_multi'] ? $field_values : $field_values[0];
+		} elseif ( 'payment-total' === $field_data['basetype'] ) {
+			return (float) $field['amount'];
+		} elseif ( strstr( $field_data['basetype'], 'payment' ) ) {
+			$field_value = html_entity_decode( $field['value'] );
+
+			if ( 'payment-checkbox' === $field_data['basetype'] ) {
+				return array_map( 'trim', explode( "\n", $field_value ) );
+			}
+
+			if ( isset( $field['quantity'] ) ) {
+				$field_value .= ' (x' . $field['quantity'] . ')';
+			}
+
+			return $field_value;
+		} elseif ( 'hidden' === $field_data['basetype'] ) {
 			$number_val = (float) $field['value'];
 			if ( strval( $number_val ) === $field['value'] ) {
 				return $number_val;
 			}
-		}
 
-		if (
+			return $field['value'];
+		} elseif (
 			'number' === $field_data['basetype'] ||
 			'number-slider' === $field_data['basetype']
 		) {
-			if ( isset( $field['amount'] ) ) {
-				$value = (float) $field['amount'];
-				if ( isset( $field['currency'] ) ) {
-					$value .= ' ' . $field['currency'];
-				}
-
-				return $value;
-			} else {
-				return (float) preg_replace( '/[^0-9\.,]/', '', $field['value'] );
-			}
-		}
-
-		if (
-			'select' === $field_data['basetype'] ||
-			'checkbox' === $field_data['basetype'] && 'select' === $field_data['type']
-		) {
+			return (float) $field['value'];
+		} elseif ( 'select' === $field['type'] ) {
 			if ( $field_data['is_multi'] ) {
-				return array_map(
-					function ( $value ) {
-						return trim( $value );
-					},
-					explode( "\n", $field['value'] )
-				);
-			} else {
-				$raw_value = $field['value_raw'] ?? $field['value'];
-				return $raw_value;
+				return array_map( 'trim', explode( "\n", $field['value_raw'] ?? $field['value'] ) );
 			}
-		}
 
-		if ( 'checkbox' === $field_data['basetype'] && 'checkbox' === $field_data['type'] ) {
+			return $field['value_raw'] ?? $field['value'];
+		} elseif ( 'checkbox' === $field_data['type'] ) {
 			return (bool) $field['value'];
-		}
-
-		if ( 'address' === $field_data['basetype'] ) {
+		} elseif ( 'address' === $field_data['basetype'] ) {
 			$post_values  = $_POST['wpforms']['fields'][ $field['id'] ] ?? array();
-			$field_values = array();
+			$field_value = array();
 			foreach ( array_keys( $field_data['schema']['properties'] ) as $prop ) {
-				$field_values[ $prop ] = $post_values[ $prop ] ?? '';
+				$field_value[ $prop ] = $post_values[ $prop ] ?? '';
 			}
 
-			return $field_values;
-		}
-
-		if ( 'date-time' === $field_data['basetype'] ) {
+			return $field_value;
+		} elseif ( 'date-time' === $field_data['basetype'] ) {
 			if ( 'object' === $field_data['schema']['type'] ) {
-				$post_values = $_POST['wpforms']['fields'][ $field['id'] ];
+				$post_values = $_POST['wpforms']['fields'][ $field['id'] ] ?? array();
 				return array(
-					'date' => $post_values['date'],
-					'time' => $post_values['time'],
+					'date' => $post_values['date'] ?? '',
+					'time' => $post_values['time'] ?? '',
 				);
 			}
 		}
@@ -740,9 +754,7 @@ class WPForms_Integration extends BaseIntegration {
 	protected function submission_uploads( $submission, $form_data ) {
 		$form_fields = wpforms_get_form_fields(
 			(int) $form_data['id'],
-			array(
-				'file-upload',
-			)
+			array( 'file-upload' )
 		);
 
 		if ( empty( $form_fields ) ) {
@@ -752,9 +764,11 @@ class WPForms_Integration extends BaseIntegration {
 		$fields = array();
 		foreach ( $form_fields as $form_field ) {
 			foreach ( $submission['fields'] as $submission_field ) {
+				// phpcs:disable Universal.Operators.StrictComparisons
 				if ( $submission_field['id'] == $form_field['id'] ) {
 					$fields[] = $submission_field;
 				}
+				// phpcs:enable
 			}
 		}
 
