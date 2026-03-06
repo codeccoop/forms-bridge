@@ -7,6 +7,8 @@
 
 namespace FORMS_BRIDGE;
 
+use Error;
+use Exception;
 use FBAPI;
 use WP_Error;
 
@@ -260,6 +262,13 @@ class Form_Bridge {
 	protected $addon;
 
 	/**
+	 * Handles the current bridge request. Available only during form submissions.
+	 *
+	 * @var array|null
+	 */
+	private static $http_request;
+
+	/**
 	 * Stores the form bridge's data as a private attribute.
 	 *
 	 * @param array  $data Bridge data.
@@ -361,7 +370,7 @@ class Form_Bridge {
 			return;
 		}
 
-		[$integration, $form_id] = explode( ':', $form_id );
+		list( $integration, $form_id ) = explode( ':', $form_id );
 		return FBAPI::get_form_by_id( $form_id, $integration );
 	}
 
@@ -380,7 +389,7 @@ class Form_Bridge {
 			return;
 		}
 
-		list($integration) = explode( ':', $form_id );
+		list( $integration ) = explode( ':', $form_id );
 		return $integration;
 	}
 
@@ -422,44 +431,249 @@ class Form_Bridge {
 	 * @param array $attachments Submission's attached files.
 	 *
 	 * @return array|WP_Error Http request response.
+	 *
+	 * @throws Error On email notification errors.
+	 * @throws Exception On email notification errors.
 	 */
 	public function submit( $payload = array(), $attachments = array() ) {
-		if ( ! $this->is_valid ) {
-			return new WP_Error(
-				'invalid_bridge',
-				'Bridge data is invalid',
-				(array) $this->data,
-			);
+		Forms_Bridge::set_current_bridge( $this );
+
+		if ( ! $this->enabled ) {
+			Logger::log( "Skip submission for disabled bridge '{$this->name}'" );
+			return;
 		}
 
-		$schema = $this->schema( $this->addon );
+		Logger::log( "Start '{$this->name}' bridge submission" );
 
-		$allowed_methods = $schema['properties']['method']['enum'] ?? array( $this->method );
-		if ( ! in_array( $this->method, $allowed_methods, true ) ) {
-			return new WP_Error(
-				'method_not_allowed',
-				sprintf(
-					/* translators: %s: method name */
-					__( 'HTTP method %s is not allowed', 'forms-bridge' ),
-					sanitize_text_field( $this->method )
+		try {
+			if ( ! $this->is_valid ) {
+				return new WP_Error(
+					'invalid_bridge',
+					'Bridge data is invalid',
+					(array) $this->data,
+				);
+			}
+
+			$schema = $this->schema( $this->addon );
+
+			$allowed_methods = $schema['properties']['method']['enum'] ?? array( $this->method );
+			if ( ! in_array( $this->method, $allowed_methods, true ) ) {
+				return new WP_Error(
+					'method_not_allowed',
+					sprintf(
+						/* translators: %s: method name */
+						__( 'HTTP method %s is not allowed', 'forms-bridge' ),
+						sanitize_text_field( $this->method )
+					),
+					array( 'method' => $this->method )
+				);
+			}
+
+			$backend = $this->backend();
+			if ( ! $backend ) {
+				return new WP_Error(
+					'invalid_backend',
+					'The bridge does not have a valid backend',
+					(array) $this->data,
+				);
+			}
+
+			$method = $this->method;
+
+			$attachments = apply_filters( 'forms_bridge_attachments', $attachments, $this );
+
+			if ( $attachments ) {
+				$string_schemas = array( 'application/json', 'application/x-www-form-urlencoded' );
+				if ( in_array( strtolower( $this->content_type() ), $string_schemas, true ) ) {
+					$attachments = $this->stringify_attachments( $attachments );
+
+					foreach ( $attachments as $name => $value ) {
+						$payload[ $name ] = $value;
+					}
+
+					$attachments = array();
+				} else {
+					Logger::log( 'Bridge attachments' );
+					Logger::log( $attachments );
+				}
+			}
+
+			$payload = $this->prepare_payload( $payload );
+
+			Logger::log( 'Bridge payload' );
+			Logger::log( $payload );
+
+			$skip = $payload && apply_filters(
+				'forms_bridge_skip_submission',
+				false,
+				$this,
+				$payload,
+				$attachments,
+			);
+
+			if ( ! $payload || $skip ) {
+				Logger::log( 'Skip submission' );
+				return;
+			}
+
+			add_action(
+				'http_bridge_before_request',
+				array( $this, 'http_request_interceptor' ),
+				99,
+				1
+			);
+
+			do_action( 'forms_bridge_before_submission', $this, $payload, $attachments );
+			$response = $backend->$method( $this->endpoint, $payload, array(), $attachments );
+
+			if ( ! is_wp_error( $response ) ) {
+				Forms_Bridge::notify_error(
+					$this,
+					$response,
+					$payload,
+					$attachments,
+				);
+			} else {
+				if ( self::$http_request ) {
+					Logger::log( 'Bridge request' );
+					Logger::log( self::$http_request );
+				}
+
+				Logger::log( 'Bridge response' );
+				Logger::log( $response );
+
+				do_action(
+					'forms_bridge_after_submission',
+					$this,
+					$response,
+					$payload,
+					$attachments,
+				);
+			}
+		} catch ( Exception | Error $e ) {
+			$message = $e->getMessage();
+			if ( 'notification_error' === $message ) {
+				throw $e;
+			}
+
+			$response = new WP_Error(
+				'internal_server_error',
+				$message,
+				array(
+					'file' => $e->getFile(),
+					'line' => $e->getLine(),
 				),
-				array( 'method' => $this->method )
 			);
+
+			Forms_Bridge::notify_error(
+				$this,
+				$response,
+				$payload,
+				$attachments,
+			);
+		} finally {
+			remove_action( 'http_bridge_before_request', array( $this, 'http_request_interceptor' ), 99 );
+			Forms_Bridge::set_current_bridge( null );
 		}
 
+		return $response;
+	}
+
+	/**
+	 * Intercepts http requests and, if request matches with current bridge endpoint,
+	 * stores its params.
+	 *
+	 * @param array $request Current HTTP request params.
+	 *
+	 * @return array
+	 */
+	public function http_request_interceptor( $request ) {
 		$backend = $this->backend();
 		if ( ! $backend ) {
-			return new WP_Error(
-				'invalid_backend',
-				'The bridge does not have a valid backend',
-				(array) $this->data,
-			);
+			return $request;
 		}
 
-		$method = $this->method;
-
-		return $backend->$method( $this->endpoint, $payload, array(), $attachments );
+		$url = $backend->url( $this->endpoint );
+		if ( $url === $request['url'] ) {
+			self::$http_request = $request;
+			remove_action( 'http_bridge_before_request', array( $this, 'http_request_interceptor' ), 99, 1 );
+		}
 	}
+
+	/**
+	 * Preprocess the bridge payload before submissions.
+	 *
+	 * @param array $payload Bridge payload.
+	 *
+	 * @return array
+	 */
+	private function prepare_payload( $payload ) {
+		$payload = $this->add_custom_fields( $payload );
+
+		$this->prepare_mappers();
+		$payload = $this->apply_mutation( $payload, $this->mutations[0] ?? array() );
+
+		$prune_empties = apply_filters( 'forms_bridge_prune_empties', true, $this );
+		if ( $prune_empties ) {
+			$payload = $this->prune_empties( $payload );
+		}
+
+		$workflow = $this->workflow();
+		if ( $workflow ) {
+			$payload = $workflow->run( $payload, $this );
+		}
+
+		return apply_filters( 'forms_bridge_payload', $payload, $this );
+	}
+
+	/**
+	 * Clean up submission empty fields.
+	 *
+	 * @param array $payload Submission data.
+	 *
+	 * @return array Submission payload without empty fields.
+	 */
+	public static function prune_empties( $payload ) {
+		foreach ( $payload as $key => $val ) {
+			if ( '' === $val || null === $val ) {
+				unset( $payload[ $key ] );
+			}
+		}
+
+		return $payload;
+	}
+
+	/**
+	 * Returns the attachments array with each attachment path replaced with its
+	 * content as a base64 encoded string. For each file on the list, adds an
+	 * additonal field with the file name on the response.
+	 *
+	 * @param array $attachments Submission attachments data.
+	 *
+	 * @return array Array with base64 encoded file contents and file names.
+	 */
+	final public static function stringify_attachments( $attachments ) {
+		foreach ( $attachments as $name => $path ) {
+			if ( ! is_file( $path ) || ! is_readable( $path ) ) {
+				continue;
+			}
+
+			$suffix = '';
+			if ( preg_match( '/_\d+$/', $name, $matches ) ) {
+				$suffix = $matches[0];
+				$name   = substr( $name, 0, -strlen( $suffix ) );
+			}
+
+			$filename                                     = basename( $path );
+			$content                                      = file_get_contents( $path );
+			$attachments[ $name . $suffix ]               = base64_encode( $content );
+			$attachments[ $name . '_filename' . $suffix ] = $filename;
+		}
+
+		return $attachments;
+	}
+
+
 
 	/**
 	 * Apply cast mappers to data.
@@ -469,16 +683,12 @@ class Form_Bridge {
 	 *
 	 * @return array Data modified by the bridge's mappers.
 	 */
-	final public function apply_mutation( $data, $mutation = null ) {
-		if ( ! is_array( $data ) ) {
+	final public static function apply_mutation( $data, $mutation ) {
+		if ( ! is_array( $data ) || ! is_array( $mutation ) ) {
 			return $data;
 		}
 
 		$finger = new JSON_Finger( $data );
-
-		if ( null === $mutation ) {
-			$mutation = $this->mutations[0] ?? array();
-		}
 
 		foreach ( $mutation as $mapper ) {
 			$is_valid = JSON_Finger::validate( $mapper['from'] ) && JSON_Finger::validate( $mapper['to'] );
@@ -509,7 +719,7 @@ class Form_Bridge {
 			}
 
 			if ( 'null' !== $mapper['cast'] ) {
-				$finger->set( $mapper['to'], $this->cast( $value, $mapper ) );
+				$finger->set( $mapper['to'], self::cast( $value, $mapper ) );
 			}
 		}
 
@@ -524,9 +734,9 @@ class Form_Bridge {
 	 *
 	 * @return mixed
 	 */
-	private function cast( $value, $mapper ) {
+	public static function cast( $value, $mapper ) {
 		if ( strpos( $mapper['from'], '[]' ) !== false ) {
-			return $this->cast_expanded( $value, $mapper );
+			return self::cast_expanded( $value, $mapper );
 		}
 
 		switch ( $mapper['cast'] ) {
@@ -625,7 +835,7 @@ class Form_Bridge {
 	 *
 	 * @return array
 	 */
-	private function cast_expanded( $values, $mapper ) {
+	private static function cast_expanded( $values, $mapper ) {
 		if ( ! wp_is_numeric_array( $values ) ) {
 			return array();
 		}
@@ -636,7 +846,7 @@ class Form_Bridge {
 			$new_values = array();
 
 			foreach ( $values as $value ) {
-				$new_values[] = $this->cast(
+				$new_values[] = self::cast(
 					$value,
 					array(
 						'from' => '',
@@ -648,28 +858,6 @@ class Form_Bridge {
 
 			return $new_values;
 		}
-
-		/*
-		preg_match_all(
-			'/\[\](?=[^\[])/',
-			preg_replace( '/\[\]$/', '', $mapper['to'] ),
-			$to_expansions
-		);
-		preg_match_all(
-			'/\[\](?=[^\[])/',
-			preg_replace( '/\[\]$/', '', $mapper['from'] ),
-			$from_expansions
-		);
-
-		if ( empty( $from_expansions ) && count( $to_expansions ) > 1 ) {
-			return array();
-		} elseif (
-			! empty( $from_expansions ) &&
-			count( $to_expansions[0] ) > count( $from_expansions[0] )
-		) {
-			return array();
-		}
-		*/
 
 		$parts  = explode( '[]', $mapper['from'] );
 		$before = $parts[0];
@@ -684,7 +872,7 @@ class Form_Bridge {
 		$l = count( $values );
 		for ( $i = 0; $i < $l; $i++ ) {
 			$pointer      = "{$before}[{$i}]{$after}";
-			$values[ $i ] = $this->cast(
+			$values[ $i ] = self::cast(
 				$values[ $i ],
 				array(
 					'from' => $pointer,
@@ -700,10 +888,18 @@ class Form_Bridge {
 	/**
 	 * Apply modifications to the bridge mutations layers to handle conditional
 	 * and multi response form fields.
-	 *
-	 * @param array $form_data Form data.
 	 */
-	final public function prepare_mappers( $form_data ) {
+	private function prepare_mappers() {
+		static $prepared_mutations;
+		if ( $prepared_mutations ) {
+			return;
+		}
+
+		$form_data = $this->form();
+		if ( ! $form_data ) {
+			return;
+		}
+
 		foreach ( $form_data['fields'] as $field ) {
 			$is_file        = $field['is_file'] ?? false;
 			$is_conditional = $field['conditional'] ?? false;
@@ -716,7 +912,7 @@ class Form_Bridge {
 				false === ( $schema['additionalItems'] ?? true )
 			) {
 				$min_items = $field['schema']['minItems'] ?? 0;
-				$max_items = $field['schema']['maxItems'] ?? 0;
+				$max_items = $field['schema']['maxItems'] ?? $min_items;
 
 				$is_conditional = $is_conditional || $min_items < $max_items;
 			}
@@ -737,14 +933,9 @@ class Form_Bridge {
 							$from === $name ||
 							( $is_file && $from === $name . '_filename' )
 						) {
-							$this->data['mutations'][ $i ][ $j ]['from'] =
-								'?' . $mapper['from'];
+							$this->data['mutations'][ $i ][ $j ]['from'] = '?' . $mapper['from'];
 
-							$name = preg_replace(
-								'/\[\d*\]/',
-								'',
-								$mapper['to']
-							);
+							$name = preg_replace( '/\[\d*\]/', '', $mapper['to'] );
 						}
 					}
 				}
@@ -764,10 +955,8 @@ class Form_Bridge {
 						continue;
 					}
 
-					$this->data['mutations'][0][ $i ]['from'] =
-						$mapper['from'] . '_1';
-					$this->data['mutations'][0][ $i ]['to']   =
-						$mapper['to'] . '_1';
+					$this->data['mutations'][0][ $i ]['from'] = $mapper['from'] . '_1';
+					$this->data['mutations'][0][ $i ]['to']   = $mapper['to'] . '_1';
 
 					for ( $j = 2; $j < 10; $j++ ) {
 						$from = strstr( $mapper['from'], '?' ) ?: '?' . $mapper['from'];
@@ -781,6 +970,8 @@ class Form_Bridge {
 				}
 			}
 		}
+
+		$prepared_mutations = true;
 	}
 
 	/**
@@ -790,7 +981,7 @@ class Form_Bridge {
 	 *
 	 * @return array
 	 */
-	private static function get_tag_value( $tag ) {
+	public static function get_tag_value( $tag ) {
 		switch ( $tag ) {
 			case 'site_title':
 				return get_bloginfo( 'name' );
@@ -866,13 +1057,30 @@ class Form_Bridge {
 	}
 
 	/**
+	 * Replace magic tags from the value.
+	 *
+	 * @param string $value Target value.
+	 *
+	 * @return string
+	 */
+	private static function replace_field_tags( $value ) {
+		foreach ( self::TAGS as $tag ) {
+			if ( false !== strstr( $value, '$' . $tag ) ) {
+				$value = str_replace( '$' . $tag, self::get_tag_value( $tag ), $value );
+			}
+		}
+
+		return $value;
+	}
+
+	/**
 	 * Adds bridge's custom fields to a payload.
 	 *
 	 * @param array $payload Bridge payload.
 	 *
 	 * @return array
 	 */
-	final public function add_custom_fields( $payload = array() ) {
+	private function add_custom_fields( $payload = array() ) {
 		if ( ! is_array( $payload ) ) {
 			return $payload;
 		}
@@ -882,8 +1090,8 @@ class Form_Bridge {
 		$custom_fields = $this->custom_fields ?: array();
 
 		foreach ( $custom_fields as $custom_field ) {
-			$is_value = JSON_Finger::validate( $custom_field['name'] );
-			if ( ! $is_value ) {
+			$is_valid = JSON_Finger::validate( $custom_field['name'] );
+			if ( ! $is_valid ) {
 				continue;
 			}
 
@@ -892,23 +1100,6 @@ class Form_Bridge {
 		}
 
 		return $finger->data();
-	}
-
-	/**
-	 * Replace magic tags from the value.
-	 *
-	 * @param string $value Target value.
-	 *
-	 * @return string
-	 */
-	private function replace_field_tags( $value ) {
-		foreach ( self::TAGS as $tag ) {
-			if ( false !== strstr( $value, '$' . $tag ) ) {
-				$value = str_replace( '$' . $tag, $this->get_tag_value( $tag ), $value );
-			}
-		}
-
-		return $value;
 	}
 
 	/**

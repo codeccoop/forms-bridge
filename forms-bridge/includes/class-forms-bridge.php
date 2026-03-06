@@ -51,13 +51,6 @@ class Forms_Bridge extends Base_Plugin {
 	private static $current_bridge;
 
 	/**
-	 * Handles the current bridge request. Available only during form submissions.
-	 *
-	 * @var array|null
-	 */
-	private static $current_request;
-
-	/**
 	 * Initializes integrations, addons and setup plugin hooks.
 	 *
 	 * @param mixed[] ...$args Constructor arguments.
@@ -241,15 +234,21 @@ class Forms_Bridge extends Base_Plugin {
 	 *
 	 * @return Form_Bridge|null
 	 */
-	public static function current_bridge() {
+	public static function get_current_bridge() {
 		return self::$current_bridge;
 	}
 
 	/**
-	 * Proceed with the submission sub-routine.
+	 * Public setter of the current bridge reference.
 	 *
-	 * @throws Error     In case email error notification fails.
-	 * @throws Exception In case email error notification fails.
+	 * @param Form_Bridge $bridge Bridge object.
+	 */
+	public static function set_current_bridge( $bridge ) {
+		self::$current_bridge = $bridge;
+	}
+
+	/**
+	 * Proceed with the submission sub-routine.
 	 */
 	public static function do_submission() {
 		$form_data = FBAPI::get_current_form();
@@ -287,6 +286,7 @@ class Forms_Bridge extends Base_Plugin {
 		Logger::log( $uploads );
 
 		if ( empty( $submission ) && empty( $uploads ) ) {
+			Logger::log( 'Skip empty submission' );
 			return;
 		}
 
@@ -307,175 +307,11 @@ class Forms_Bridge extends Base_Plugin {
 		for ( $i = 0; $i < $l; ++$i ) {
 			$bridge = $bridges[ $i ];
 
-			if ( ! $bridge->enabled ) {
-				Logger::log( "Skip submission for disabled bridge '{$bridge->name}'" );
-				continue;
-			}
+			$attachments = self::uploads_to_attachments( $uploads );
+			$response    = $bridge->submit( $submission, $attachments );
 
-			self::$current_bridge = $bridge;
-
-			Logger::log( "Start submission for bridge '{$bridge->name}'" );
-
-			try {
-				$attachments = apply_filters(
-					'forms_bridge_attachments',
-					self::attachments( $uploads ),
-					$bridge
-				);
-
-				if ( ! empty( $attachments ) ) {
-					$content_type = (string) $bridge->content_type;
-					if (
-						in_array(
-							strtolower( $content_type ),
-							array(
-								'application/json',
-								'application/x-www-form-urlencoded',
-							),
-							true
-						)
-					) {
-						$attachments = self::stringify_attachments( $attachments );
-						foreach ( $attachments as $name => $value ) {
-							$submission[ $name ] = $value;
-						}
-
-						$attachments = array();
-						Logger::log( 'Submission after attachments stringify' );
-						Logger::log( $submission );
-					}
-				}
-
-				$payload = $bridge->add_custom_fields( $submission );
-				Logger::log( 'Submission payload with bridge custom fields' );
-				Logger::log( $payload );
-
-				$bridge->prepare_mappers( $form_data );
-				$payload = $bridge->apply_mutation( $payload );
-				Logger::log( 'Submission payload after mutation' );
-				Logger::log( $payload );
-
-				$prune_empties = apply_filters(
-					'forms_bridge_prune_empties',
-					true,
-					$bridge
-				);
-
-				if ( $prune_empties ) {
-					$payload = self::prune_empties( $payload );
-					Logger::log( 'Submission payload after prune empties' );
-					Logger::log( $payload );
-				}
-
-				$workflow = $bridge->workflow;
-				if ( $workflow ) {
-					$payload = $workflow->run( $payload, $bridge );
-
-					if ( empty( $payload ) ) {
-						Logger::log( 'Skip empty payload after bridge workflow' );
-						continue;
-					}
-
-					Logger::log( 'Payload after workflow' );
-					Logger::log( $payload );
-				}
-
-				$payload = apply_filters(
-					'forms_bridge_payload',
-					$payload,
-					$bridge
-				);
-
-				if ( empty( $payload ) ) {
-					Logger::log( 'Skip empty payload after user filter' );
-					continue;
-				}
-
-				Logger::log( 'Bridge payload' );
-				Logger::log( $payload );
-
-				$skip = apply_filters(
-					'forms_bridge_skip_submission',
-					false,
-					$bridge,
-					$payload,
-					$attachments
-				);
-
-				if ( $skip ) {
-					Logger::log( 'Skip submission' );
-					continue;
-				}
-
-				do_action(
-					'forms_bridge_before_submission',
-					$bridge,
-					$payload,
-					$attachments
-				);
-
-				add_action( 'http_bridge_before_request', array( self::class, 'http_request_interceptor' ), 99, 1 );
-
-				$response = $bridge->submit( $payload, $attachments );
-
-				$error = is_wp_error( $response ) ? $response : null;
-				if ( $error ) {
-					do_action(
-						'forms_bridge_on_failure',
-						$bridge,
-						$error,
-						$payload,
-						$attachments
-					);
-
-					if (
-						false === $bridge->allow_failure
-						&& count( $bridges ) > 1
-						&& $i < count( $bridges ) - 1
-					) {
-						Logger::log( 'Early exit from the submission loop due to an error', Logger::ERROR );
-						break;
-					}
-				} else {
-					if ( self::$current_request ) {
-						Logger::log( 'Submission request' );
-						Logger::log( self::$current_request );
-					}
-
-					Logger::log( 'Submission response' );
-					Logger::log( $response );
-
-					do_action(
-						'forms_bridge_after_submission',
-						$bridge,
-						$response,
-						$payload,
-						$attachments
-					);
-				}
-			} catch ( Error | Exception $e ) {
-				$message = $e->getMessage();
-				if ( 'notification_error' === $message ) {
-					throw $e;
-				}
-
-				$error = new WP_Error(
-					'internal_server_error',
-					$e->getMessage(),
-					array(
-						'file' => $e->getFile(),
-						'line' => $e->getLine(),
-					)
-				);
-
-				do_action(
-					'forms_bridge_on_failure',
-					$bridge,
-					$error,
-					$payload ?? $submission,
-					$attachments ?? array()
-				);
-
+			$error = is_wp_error( $response ) ? $response : null;
+			if ( $error ) {
 				if (
 					false === $bridge->allow_failure
 					&& count( $bridges ) > 1
@@ -484,57 +320,10 @@ class Forms_Bridge extends Base_Plugin {
 					Logger::log( 'Early exit from the submission loop due to an error', Logger::ERROR );
 					break;
 				}
-			} finally {
-				self::$current_bridge  = null;
-				self::$current_request = null;
-
-				remove_action( 'http_bridge_before_request', array( self::class, 'http_request_interceptor' ), 99 );
 			}
 		}
 	}
 
-	/**
-	 * Intercepts http requests and, if request matches with current bridge endpoint,
-	 * stores its params.
-	 *
-	 * @param array $request Current HTTP request params.
-	 *
-	 * @return array
-	 */
-	public static function http_request_interceptor( $request ) {
-		if ( ! self::$current_bridge ) {
-			return $request;
-		}
-
-		$backend = self::$current_bridge->backend;
-		if ( ! $backend ) {
-			return $request;
-		}
-
-		$url = $backend->url( self::$current_bridge->endpoint );
-		if ( $url === $request['url'] ) {
-			self::$current_request = $request;
-		}
-
-		return $request;
-	}
-
-	/**
-	 * Clean up submission empty fields.
-	 *
-	 * @param array $submission_data Submission data.
-	 *
-	 * @return array Submission data without empty fields.
-	 */
-	private static function prune_empties( $submission_data ) {
-		foreach ( $submission_data as $key => $val ) {
-			if ( '' === $val || null === $val ) {
-				unset( $submission_data[ $key ] );
-			}
-		}
-
-		return $submission_data;
-	}
 
 	/**
 	 * Transform collection of uploads to an attachments map.
@@ -543,48 +332,18 @@ class Forms_Bridge extends Base_Plugin {
 	 *
 	 * @return array Map of uploaded files.
 	 */
-	public static function attachments( $uploads = array() ) {
+	public static function uploads_to_attachments( $uploads = array() ) {
 		$attachments = array();
 
 		foreach ( $uploads as $name => $upload ) {
 			if ( $upload['is_multi'] ) {
-								$len = count( $uploads[ $name ]['path'] );
+				$len = count( $uploads[ $name ]['path'] );
 				for ( $i = 1; $i <= $len; $i++ ) {
 					$attachments[ $name . '_' . $i ] = $upload['path'][ $i - 1 ];
 				}
 			} else {
 				$attachments[ $name ] = $upload['path'];
 			}
-		}
-
-		return $attachments;
-	}
-
-	/**
-	 * Returns the attachments array with each attachment path replaced with its
-	 * content as a base64 encoded string. For each file on the list, adds an
-	 * additonal field with the file name on the response.
-	 *
-	 * @param array $attachments Submission attachments data.
-	 *
-	 * @return array Array with base64 encoded file contents and file names.
-	 */
-	private static function stringify_attachments( $attachments ) {
-		foreach ( $attachments as $name => $path ) {
-			if ( ! is_file( $path ) || ! is_readable( $path ) ) {
-				continue;
-			}
-
-			$suffix = '';
-			if ( preg_match( '/_\d+$/', $name, $matches ) ) {
-				$suffix = $matches[0];
-				$name   = substr( $name, 0, -strlen( $suffix ) );
-			}
-
-			$filename                                     = basename( $path );
-			$content                                      = file_get_contents( $path );
-			$attachments[ $name . $suffix ]               = base64_encode( $content );
-			$attachments[ $name . '_filename' . $suffix ] = $filename;
 		}
 
 		return $attachments;
@@ -600,7 +359,7 @@ class Forms_Bridge extends Base_Plugin {
 	 *
 	 * @throws Exception  When email notification fails.
 	 */
-	private static function notify_error(
+	public static function notify_error(
 		$bridge,
 		$error,
 		$payload,
