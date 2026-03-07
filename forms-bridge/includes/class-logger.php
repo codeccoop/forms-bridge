@@ -98,18 +98,20 @@ class Logger extends Singleton {
 		while ( ftell( $socket ) > 0 && $lines >= 0 ) {
 			$seek = min( ftell( $socket ), $buffer );
 
+			// Move pointer backward, then read and return to the initial position.
 			fseek( $socket, -$seek, SEEK_CUR );
-
-			$chunk  = fread( $socket, $seek );
-			$output = $chunk . $output;
-
+			$chunk = fread( $socket, $seek );
 			fseek( $socket, -mb_strlen( $chunk, '8bit' ), SEEK_CUR );
+
+			// Prepend chunk to the output as we're reading logs right to left.
+			$output = $chunk . $output;
 
 			$cursor      = ftell( $socket );
 			$line_breaks = substr_count( $chunk, "\n" );
 
+			// Ellipsis lines if no line breaks in a buffer to save memory.
 			if ( ! $line_breaks ) {
-				while ( ftell( $socket ) > 0 ) {
+				while ( ! $line_breaks && ftell( $socket ) > 0 ) {
 					$seek = min( ftell( $socket ), $buffer );
 
 					fseek( $socket, -$seek, SEEK_CUR );
@@ -117,47 +119,36 @@ class Logger extends Singleton {
 					fseek( $socket, -mb_strlen( $chunk, '8bit' ), SEEK_CUR );
 
 					$line_breaks = substr_count( $chunk, "\n" );
-
-					if ( $line_breaks ) {
-						// Then, read forward and concat to the output with an ellipsis.
-						fseek( $socket, strrpos( $chunk, "\n" ) + 1, SEEK_CUR );
-						$chunk     = fread( $socket, min( $buffer, $cursor - ftell( $socket ) ) );
-						$chunk_len = mb_strlen( $chunk, '8bit' );
-
-						fseek( $socket, -$chunk_len, SEEK_CUR );
-
-						if ( ftell( $socket ) + $chunk_len === $cursor ) {
-							// If chunk ends at the start of the previous, don't add the ellipsis.
-							$output = $chunk . $output;
-						} else {
-							// Concat an ellipsis representation between the last chunk and the previous output.
-							$output = $chunk . ' (...) ' . $output;
-						}
-
-						break;
-					}
 				}
 
-				if ( ! $line_breaks ) {
-					// End of file reached without any line break.
-					$chunk = fread( $socket, min( $buffer, $cursor - ftell( $socket ) ) );
-
-					if ( ftell( $socket ) + mb_strlen( $chunk, '8bit' ) === $cursor ) {
-						$output = $chunk . $output;
-					} else {
-						$output = $chunk . ' (...) ' . $output;
-					}
-
-					fseek( $socket, 0, SEEK_SET );
+				// Move the cursor to the first line break match.
+				if ( $line_breaks ) {
+					$offset = strrpos( $chunk, "\n" ) + 1;
+					fseek( $socket, $offset, SEEK_CUR );
 				}
 
-				// Cursor is at the first line break occurrence. No line breaks added to the output.
+				$new_cursor = ftell( $socket );
+				$seek       = min( $buffer, $cursor - $new_cursor );
+				$chunk      = fread( $socket, $seek );
+				fseek( $socket, -mb_strlen( $chunk, '8bit' ), SEEK_CUR );
+
+				// If chunk ends at cursor, there is no gap between the current output
+				// and the last chunk. Skip ellipsis.
+				if ( $new_cursor + $seek === $cursor ) {
+					$output = $chunk . $output;
+				} else {
+					$output = $chunk . ' (...) ' . $output;
+				}
+
+				// Cursor is at the fist line break, or at the beginning of the file.
+				// In any cases, we didn't substract any line to the line counter.
 				$line_breaks = 0;
 			}
 
 			$lines -= $line_breaks;
 		}
 
+		// In case the loop reads more lines than required, shift lines from the output.
 		while ( $lines++ < 0 ) {
 			$output = substr( $output, strpos( $output, "\n" ) + 1 );
 		}
