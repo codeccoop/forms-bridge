@@ -98,16 +98,57 @@ class Logger extends Singleton {
 		while ( ftell( $socket ) > 0 && $lines >= 0 ) {
 			$seek = min( ftell( $socket ), $buffer );
 
+			// Move pointer backward, then read and return to the initial position.
 			fseek( $socket, -$seek, SEEK_CUR );
-
-			$chunk  = fread( $socket, $seek );
-			$output = $chunk . $output;
-
+			$chunk = fread( $socket, $seek );
 			fseek( $socket, -mb_strlen( $chunk, '8bit' ), SEEK_CUR );
 
-			$lines -= substr_count( $chunk, "\n" );
+			// Prepend chunk to the output as we're reading logs right to left.
+			$output = $chunk . $output;
+
+			$cursor      = ftell( $socket );
+			$line_breaks = substr_count( $chunk, "\n" );
+
+			// Ellipsis lines if no line breaks in a buffer to save memory.
+			if ( ! $line_breaks ) {
+				while ( ! $line_breaks && ftell( $socket ) > 0 ) {
+					$seek = min( ftell( $socket ), $buffer );
+
+					fseek( $socket, -$seek, SEEK_CUR );
+					$chunk = fread( $socket, $seek );
+					fseek( $socket, -mb_strlen( $chunk, '8bit' ), SEEK_CUR );
+
+					$line_breaks = substr_count( $chunk, "\n" );
+				}
+
+				// Move the cursor to the first line break match.
+				if ( $line_breaks ) {
+					$offset = strrpos( $chunk, "\n" ) + 1;
+					fseek( $socket, $offset, SEEK_CUR );
+				}
+
+				$new_cursor = ftell( $socket );
+				$seek       = min( $buffer, $cursor - $new_cursor );
+				$chunk      = fread( $socket, $seek );
+				fseek( $socket, -mb_strlen( $chunk, '8bit' ), SEEK_CUR );
+
+				// If chunk ends at cursor, there is no gap between the current output
+				// and the last chunk. Skip ellipsis.
+				if ( $new_cursor + $seek === $cursor ) {
+					$output = $chunk . $output;
+				} else {
+					$output = $chunk . ' (...) ' . $output;
+				}
+
+				// Cursor is at the fist line break, or at the beginning of the file.
+				// In any cases, we didn't substract any line to the line counter.
+				$line_breaks = 0;
+			}
+
+			$lines -= $line_breaks;
 		}
 
+		// In case the loop reads more lines than required, shift lines from the output.
 		while ( $lines++ < 0 ) {
 			$output = substr( $output, strpos( $output, "\n" ) + 1 );
 		}
