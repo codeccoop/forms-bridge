@@ -109,8 +109,17 @@ class Logger extends Singleton {
 			$cursor      = ftell( $socket );
 			$line_breaks = substr_count( $chunk, "\n" );
 
-			// Ellipsis lines if no line breaks in a buffer to save memory.
-			if ( ! $line_breaks ) {
+			// Ellipsis lines if no line breaks in a buffer span to save memory.
+			if ( ! $line_breaks && ftell( $socket ) > 0 ) {
+				// First, move the cursor to the last line break and remove the offset from the output.
+				$offset = strpos( $output, "\n" );
+				if ( false !== $offset ) {
+					$output = substr( $output, $offset );
+					fseek( $socket, $offset, SEEK_CUR );
+					$cursor = ftell( $socket );
+				}
+
+				// Then loops until some line break is found, or the end of the file is reached.
 				while ( ! $line_breaks && ftell( $socket ) > 0 ) {
 					$seek = min( ftell( $socket ), $buffer );
 
@@ -127,6 +136,7 @@ class Logger extends Singleton {
 					fseek( $socket, $offset, SEEK_CUR );
 				}
 
+				// Read a new chunk starting at the new cursor.
 				$new_cursor = ftell( $socket );
 				$seek       = min( $buffer, $cursor - $new_cursor );
 				$chunk      = fread( $socket, $seek );
@@ -137,7 +147,7 @@ class Logger extends Singleton {
 				if ( $new_cursor + $seek === $cursor ) {
 					$output = $chunk . $output;
 				} else {
-					$output = $chunk . ' (...) ' . $output;
+					$output = $chunk . '... ' . $output;
 				}
 
 				// Cursor is at the fist line break, or at the beginning of the file.
