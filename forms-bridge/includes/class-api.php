@@ -69,6 +69,19 @@ class FBAPI {
 	}
 
 	/**
+	 * Alias of the get_form_by_id method.
+	 *
+	 * @param string $form_id Form ID. If the ID does not come with the integration prefix,
+	 * the integration parameter is required.
+	 * @param string $integration Integration name.
+	 *
+	 * @return array|null
+	 */
+	public static function get_form( $form_id, $integration = null ) {
+		return self::get_form_by_id( $form_id, $integration );
+	}
+
+	/**
 	 * Gets the collection of available forms.
 	 *
 	 * @return array
