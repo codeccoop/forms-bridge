@@ -241,10 +241,6 @@ class WPCF7_Integration extends BaseIntegration {
 		$basetype = $field->basetype;
 		$type     = $basetype;
 
-		if ( 'conditional' === $basetype ) {
-			$type = $field->get_option( 'type' )[0];
-		}
-
 		switch ( $basetype ) {
 			case 'radio':
 			case 'checkbox':
@@ -284,7 +280,7 @@ class WPCF7_Integration extends BaseIntegration {
 				'options'     => $options,
 				'is_file'     => 'file' === $type,
 				'is_multi'    => $this->is_multi_field( $field ),
-				'conditional' => in_array( $field->basetype, array( 'conditional', 'fileconditional' ), true ),
+				'conditional' => false,
 				'format'      => $format,
 				'schema'      => $this->field_value_schema( $field ),
 				'basetype'    => $basetype,
@@ -373,7 +369,6 @@ class WPCF7_Integration extends BaseIntegration {
 					'maxItems'        => count( $tag->values ),
 				);
 			case 'file':
-			case 'files':
 				return;
 			case 'acceptance':
 				return array( 'type' => 'boolean' );
