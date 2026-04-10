@@ -107,24 +107,24 @@ class GF_Integration extends BaseIntegration {
 	 * @param WP_Error    $error Bridge error.
 	 */
 	public function add_error_note( $bridge, $error ) {
-		if ( ! is_wp_error( $error ) ) {
-			$error_message  = __( 'Unkown error', 'forms-bridge' );
-			$error_response = '';
-		} else {
-			$response = $error->get_error_data()['response'] ?? null;
-
-			if ( empty( $response ) ) {
-				$error_message  = __( 'Timeout error', 'forms-bridge' );
-				$error_response = '';
-			} else {
-				$error_message  = sprintf( '%s %s', $response['response']['code'], $response['response']['message'] );
-				$error_response = $response['body'] ?? '';
-			}
-		}
-
 		add_action(
 			'gform_after_submission',
-			function ( $entry ) use ( $bridge, $error_message, $error_response ) {
+			function ( $entry ) use ( $bridge, $error ) {
+				if ( ! is_wp_error( $error ) ) {
+					$error_message  = __( 'Unkown error', 'forms-bridge' );
+					$error_response = '';
+				} else {
+					$response = $error->get_error_data()['response'] ?? null;
+
+					if ( empty( $response ) ) {
+						$error_message  = __( 'Timeout error', 'forms-bridge' );
+						$error_response = '';
+					} else {
+						$error_message  = sprintf( '%s %s', $response['response']['code'], $response['response']['message'] );
+						$error_response = $response['body'] ?? '';
+					}
+				}
+
 				/* translators: %s: bridge name */
 				$note_message = sprintf( __( 'The %s bridge submission has failed with the following error:', 'forms-bridge' ), $bridge->name );
 
