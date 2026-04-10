@@ -252,7 +252,7 @@ class Forms_Bridge extends Base_Plugin {
 	 *
 	 * @return bool|WP_Error
 	 */
-	public static function do_submission() {
+	public static function do_submissions() {
 		$form_data = FBAPI::get_current_form();
 
 		if ( ! $form_data ) {
