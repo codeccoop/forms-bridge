@@ -9,6 +9,7 @@ namespace FORMS_BRIDGE\GF;
 
 use Error;
 use FBAPI;
+use FORMS_BRIDGE\Form_Bridge;
 use TypeError;
 use FORMS_BRIDGE\Forms_Bridge;
 use FORMS_BRIDGE\Integration as BaseIntegration;
@@ -46,9 +47,102 @@ class GF_Integration extends BaseIntegration {
 	 */
 	protected function init() {
 		add_action(
-			'gform_after_submission',
-			function () {
+			'gform_entry_post_save',
+			function ( $entry ) {
+				if ( isset( $entry['status'] ) && 'spam' === $entry['status'] ) {
+					return $entry;
+				}
+
+				add_action(
+					'forms_bridge_after_submission',
+					array( $this, 'add_success_note' ),
+					50,
+					1
+				);
+
+				add_action(
+					'forms_bridge_on_failure',
+					array( $this, 'add_error_note' ),
+					50,
+					2
+				);
+
 				Forms_Bridge::do_submission();
+
+				return $entry;
+			},
+			90,
+			1
+		);
+	}
+
+	/**
+	 * Binds a handler to the after_submission hook to add a success note to the gf entry.
+	 *
+	 * @param Form_Bridge $bridge Current bridge object.
+	 */
+	public function add_success_note( $bridge ) {
+		add_action(
+			'gform_after_submission',
+			function ( $entry ) use ( $bridge ) {
+				GFAPI::add_note(
+					$entry['id'],
+					0,
+					'Forms Bridge',
+					/* translators: %s: bridge name */
+					sprintf( __( 'The %s bridge submissions has been done successfully', 'forms-bridge' ), $bridge->name ),
+					'forms-bridge',
+					'success',
+				);
+			},
+			10,
+			1,
+		);
+	}
+
+	/**
+	 * Binds a handler to the after_submission hook to add an error note to the gf entry.
+	 *
+	 * @param Form_Bridge $bridge Current bridge object.
+	 * @param WP_Error    $error Bridge error.
+	 */
+	public function add_error_note( $bridge, $error ) {
+		if ( ! is_wp_error( $error ) ) {
+			$error_message  = __( 'Unkown error', 'forms-bridge' );
+			$error_response = '';
+		} else {
+			$response = $error->get_error_data()['response'] ?? null;
+
+			if ( empty( $response ) ) {
+				$error_message  = __( 'Timeout error', 'forms-bridge' );
+				$error_response = '';
+			} else {
+				$error_message  = sprintf( '%s %s', $response['response']['code'], $response['response']['message'] );
+				$error_response = $response['body'] ?? '';
+			}
+		}
+
+		add_filter(
+			'gform_notes_avatar',
+			function () {
+				return 'Forms Bridge';
+			}
+		);
+
+		add_action(
+			'gform_after_submission',
+			function ( $entry ) use ( $bridge, $error_message, $error_response ) {
+				/* translators: %s: bridge name */
+				$note_message = sprintf( __( 'The %s bridge submission has failed with the following error:', 'forms-bridge' ), $bridge->name );
+
+				GFAPI::add_note(
+					$entry['id'],
+					0,
+					'Forms Bridge',
+					sprintf( '<p>%s<br><br>%s<br><br>%s</p>', $note_message, $error_message, $error_response ),
+					'forms-bridge',
+					'error',
+				);
 			}
 		);
 	}
