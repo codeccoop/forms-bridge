@@ -249,6 +249,8 @@ class Forms_Bridge extends Base_Plugin {
 
 	/**
 	 * Proceed with the submission sub-routine.
+	 *
+	 * @return bool|WP_Error
 	 */
 	public static function do_submission() {
 		$form_data = FBAPI::get_current_form();
@@ -318,10 +320,12 @@ class Forms_Bridge extends Base_Plugin {
 					&& $i < count( $bridges ) - 1
 				) {
 					Logger::log( 'Early exit from the submission loop due to an error', Logger::ERROR );
-					break;
+					return $error;
 				}
 			}
 		}
+
+		return true;
 	}
 
 
