@@ -122,13 +122,6 @@ class GF_Integration extends BaseIntegration {
 			}
 		}
 
-		add_filter(
-			'gform_notes_avatar',
-			function () {
-				return 'Forms Bridge';
-			}
-		);
-
 		add_action(
 			'gform_after_submission',
 			function ( $entry ) use ( $bridge, $error_message, $error_response ) {
