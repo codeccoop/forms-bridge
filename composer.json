@@ -1,5 +1,6 @@
 {
   "name": "codeccoop/forms-bridge",
+  "version": "4.4.5",
   "scripts": {
     "test": "vendor/bin/phpunit -c phpunit.xml.dist",
     "lint": "vendor/bin/phpcs",
