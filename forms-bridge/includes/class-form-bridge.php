@@ -834,17 +834,17 @@ class Form_Bridge {
 				$locale       = get_locale();
 				return $translations[ $locale ]['native_name'] ?? $locale;
 			case 'datetime':
-				return date( 'Y-m-d H:i:s', time() );
+				return wp_date( 'Y-m-d H:i:s' );
 			case 'gmt_datetime':
-				return gmdate( 'Y-m-d H:i:s', time() );
+				return gmdate( 'Y-m-d H:i:s' );
 			case 'timestamp':
 				return time();
 			case 'iso_date':
-				return date( 'c', time() );
+				return wp_date( 'c' );
 			case 'gmt_iso_date':
-				return gmdate( 'c', time() );
+				return gmdate( 'c' );
 			case 'utc_date':
-				$date = gmdate( 'c', time() );
+				$date = gmdate( 'c' );
 				return preg_replace( '/\+\d+\:\d+$/', 'Z', $date );
 			case 'user_id':
 				return wp_get_current_user()->ID;
